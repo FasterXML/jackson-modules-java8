@@ -23,15 +23,15 @@ All modules are licensed under [Apache License 2.0](http://www.apache.org/licens
 ### Maven dependencies
 
 ```xml
-dependency>
+<dependency>
     <groupId>com.fasterxml.jackson.module</groupId>
     <artifactId>jackson-module-parameter-names</artifactId>
 </dependency>
-dependency>
+<dependency>
     <groupId>com.fasterxml.jackson.datatype</groupId>
     <artifactId>jackson-datatype-jdk8</artifactId>
 </dependency>
-dependency>
+<dependency>
     <groupId>com.fasterxml.jackson.datatype</groupId>
     <artifactId>jackson-datatype-jsr310</artifactId>
     <version>2.6.1</version>
