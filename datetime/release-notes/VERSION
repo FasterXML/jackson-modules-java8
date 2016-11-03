@@ -1,0 +1,177 @@
+Project: jackson-datatype-jsr310
+
+------------------------------------------------------------------------
+=== Releases ===
+------------------------------------------------------------------------
+
+2.8.5 (not yet released)
+
+#89: If the JsonFormat pattern is all numeric, the InstantDeserializer will
+  do the wrong thing
+ (reported, contributed fix, by ubik2@github)
+
+2.8.4 (14-Oct-2016)
+
+No changes since 2.8.3
+
+2.8.3 (17-Sep-2016)
+
+#85: Adjust visibility of FromIntegerArguments and FromDecimalArguments
+ (requested by Hadrien K)
+
+2.8.2 (30-Aug-2016)
+2.8.1 (20-Jul-2016)
+
+No changes since 2.8.0.
+
+2.8.0 (04-Jul-2016)
+
+#78: output LocalDate json schema format as DATE
+ (reported by dtanner@github)
+#80: Add Support for `JsonFormat.Feature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE`
+ (contributed by Alexey B)
+- Added support for `@JsonFormat.Value` part of "config overrides", new in
+  databind 2.8
+- Add support for `JsonFormat.Feature.WRITE_DATES_WITH_ZONE_ID` for `ZonedDateTime`
+  (only type for which Zone Id is being written as of now)
+
+2.7.8 (26-Sep-2016)
+2.7.7 (27-Aug-2016)
+2.7.6 (23-Jul-2016)
+2.7.5 (11-Jun-2016)
+
+#79: Can't deserialize Instant from JSON of serialized Date
+ (reported by Lovro P)
+
+2.7.4 (29-Apr-2016)
+
+#68: Handle JSON serialized Dates from JavaScript in LocalDateTimeDeserializer
+ (contributed by Arzie@github)
+#71: Add LICENSE file in jar that is built
+ (reported by puntogil@github)
+#76: Use `InvalidFormatException` for deserialization parse failures
+ (suggested by Mike W)
+
+2.7.3 (16-Mar-2016)
+
+#63: Should not leak `DateTimeException`s to caller
+ (reported by Devin S)
+- Change nano-second serializations to use `BigDecimal`-based write method
+  (instead of `JsonGenerator.writeNumber(String)`, to support data formats
+  that do not allow "numbers as Text" (like Avro, protobuf)
+
+2.7.2 (27-Feb-2016)
+
+No changes since 2.7.1
+
+2.7.1 (02-Feb-2016)
+
+#56: Handle JSON serialized Dates from JavaScript in LocalDateDeserializer 
+  (note: follow up for #28)
+ (contributed by Sander M)
+#57: Add support for `@JsonFormat` for `MonthDay`
+ (suggested by StasKolodyuk@github)
+
+2.7.0 (10-Jan-2016)
+
+#54: LocalDateTimeSerializer default constructor should use the same formatter as LocalDateTimeDeserializer
+
+2.6.6 (05-Apr-2016)
+
+#16: Instant is serialized as String by some dataformats/libs but can't be
+  deserialized (unless manually converted to float)
+ (reported by Andreas L)
+#69: Serialization of Instant seems to throw exceptions when when @JsonFormat is used
+ (reported and fixed by Krešimir N)
+
+2.6.5 (19-Jan-2016)
+
+No changes since 2.6.4.
+
+2.6.4 (07-Dec-2015)
+
+#50: `Instant` schema representation is incorrect for timestamps serialization
+ (reported by Peter R)
+
+2.6.3 (12-Oct-2015)
+
+#44: Allows users to pass a custom DateTimeFormatter for the ZonedDateTimeSerializer
+ (contributed by tinnou@github)
+#45: Problem Deserializing `java.time.OffsetTime` from JSON Array
+ (reported by Ken S)
+
+2.6.2 (15-Sep-2015)
+
+No changes since 2.6.1
+
+2.6.1 (09-Aug-2015)
+
+#34: Allow direct instantiation of standards deserializers, with explicit `DateTimeFormatter`
+  to use, to allow for registering custom-formatter variants (related to #17)
+ (contributed by Iain D, iain-davis@github)
+#35: LocalTimeDeserializer does not use configured formatter
+ (reported by James R, time4tea@github)
+#37: Cannot parse Javascript date using `LocalDateDeserializer`
+ (reported by jukkasi@github)
+
+2.6.0 (19-Jul-2015)
+
+#18: Support serializing and deserializing Maps with jsr310 types as keys
+ (contributed by Zoltan K)
+#26: ISO strings with time-component cause exception when deserializing to LocalDate
+ (contributed by Sander M)
+#29: Add support for `@JsonFormat` for `Instant`
+#30: Make `ZonedDateTime` serializer support `SerializationFeature.WRITE_DATES_WITH_ZONE_ID`
+ (contributed by Zoltan K)
+
+2.5.4 (09-Jun-2015)
+
+#24: ZoneId type information improperly handled when default typing enabled
+ (reported by Jon E, jedvardsson@github)
+
+2.5.3 (24-Apr-2015)
+
+#21: ClassNotFoundException in OSGi
+ (reported by dukeyin@github)
+
+2.5.2 (29-Mar-2015)
+
+#20: Enhance YearMonth Serialization/Deserialization to allow custom
+  formatting with `@JsonFormat`
+ (contributed by Chuck M)
+
+2.5.1 (06-Feb-2015)
+
+No changes since 2.5.0
+
+2.5.0 (01-Jan-2015)
+
+#14: Support use of `@JsonFormat(pattern=...)` for LocalDateTime
+ (requeted by jukkasi@github)
+
+2.4.4 (24-Nov-2014)
+2.4.3 (04-Oct-2014)
+2.4.2 (15-Aug-2014)
+2.4.0 (03-Jun-2014)
+
+No functional changes since 2.3.
+
+2.3.3 (10-Apr-2014)
+2.3.2 (01-Mar-2014)
+2.3.1 (28-Dec-2013)
+2.3.0-rc1 (26-Oct-2013)
+
+No functional changes.
+
+2.2.2-beta4 (20-Aug-2013)
+
+- Re-built with 1.8.0-b102
+
+2.2.1-beta2 (03-May-2013)
+
+#2: ZonedDateTime tests fail with latest JDK 8 (1.8.0-ea-b88)
+#3: Service registration file mislocated
+
+2.2.0-beta1 (24-Apr-2013)
+
+First public beta version.
