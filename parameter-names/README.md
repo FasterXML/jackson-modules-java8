@@ -1,4 +1,4 @@
-[Jackson](../../../jackson) module
+Jackson module
 that adds support for accessing parameter names; a feature added in JDK 8.
 
 ## Usage

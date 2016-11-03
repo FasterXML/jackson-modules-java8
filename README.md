@@ -18,6 +18,20 @@ All modules are licensed under [Apache License 2.0](http://www.apache.org/licens
 
 [![Build Status](https://travis-ci.org/FasterXML/jackson-base-java8.svg)](https://travis-ci.org/FasterXML/jackson-base-java8)
 
+## Usage
+
+### Registering modules
+
+```java
+ObjectMapper mapper = new ObjectMapper()
+   .registerModule(new ParameterNamesModule())
+   .registerModule(new Jdk8Module())
+;
+```
+
+after which functionality is available for all normal Jackson operations.
+
+
 ## More
 
 See [Wiki](../../wiki) for more information (javadocs).
