@@ -1,0 +1,13 @@
+Project: jackson-modules-java8
+Modules:
+  jackson-module-parameter-names
+  jackson-datatype-jdk8
+  jackson-datatype-jsr310
+
+------------------------------------------------------------------------
+=== Releases ===
+------------------------------------------------------------------------
+
+2.8.5 (not yet released)
+
+The very first release from this repository!
