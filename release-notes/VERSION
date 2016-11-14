@@ -8,10 +8,10 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
-2.8.5 (not yet released)
+2.8.5 (14-Nov-2016)
 
 The very first release from this repository!
 
-#89: If the JsonFormat pattern is all numeric, the InstantDeserializer will
+#89: If the JsonFormat pattern is all numeric, the `InstantDeserializer` will
   do the wrong thing
  (reported, contributed fix, by ubik2@github)
