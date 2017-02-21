@@ -34,7 +34,7 @@ All modules are licensed under [Apache License 2.0](http://www.apache.org/licens
 <dependency>
     <groupId>com.fasterxml.jackson.datatype</groupId>
     <artifactId>jackson-datatype-jsr310</artifactId>
-    <version>2.6.1</version>
+    <version>2.8.6</version>
 </dependency>
 
 ```
