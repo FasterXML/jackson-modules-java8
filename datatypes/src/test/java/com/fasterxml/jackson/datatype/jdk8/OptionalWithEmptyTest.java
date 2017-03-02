@@ -1,10 +1,9 @@
-package com.fasterxml.jackson.failing;
+package com.fasterxml.jackson.datatype.jdk8;
 
 import java.util.Optional;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jdk8.ModuleTestBase;
 
 public class OptionalWithEmptyTest extends ModuleTestBase
 {
