@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.introspect.*;
  * @see AnnotationIntrospector
  * @see Parameter
  */
-class ParameterNamesAnnotationIntrospector extends NopAnnotationIntrospector {
+public class ParameterNamesAnnotationIntrospector extends NopAnnotationIntrospector {
     private static final long serialVersionUID = 1L;
 
     private final JsonCreator.Mode creatorBinding;
