@@ -1,8 +1,10 @@
-package com.fasterxml.jackson.module.paramnames;
+package com.fasterxml.jackson.module.paramnames.failing;
 
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.core.type.*;
 import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+
 import org.junit.*;
 
 import java.io.*;
