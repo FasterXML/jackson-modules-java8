@@ -1,12 +1,12 @@
 package com.fasterxml.jackson.module.paramnames;
 
+import java.lang.reflect.MalformedParametersException;
+import java.lang.reflect.Parameter;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.AnnotationIntrospector;
 import com.fasterxml.jackson.databind.cfg.MapperConfig;
 import com.fasterxml.jackson.databind.introspect.*;
-
-import java.lang.reflect.MalformedParametersException;
-import java.lang.reflect.Parameter;
 
 /**
  * Introspector that uses parameter name information provided by the Java Reflection API additions in Java 8 to
@@ -36,25 +36,6 @@ class ParameterNamesAnnotationIntrospector extends NopAnnotationIntrospector {
         return null;
     }
 
-    @Override
-    public JsonCreator.Mode findCreatorAnnotation(MapperConfig<?> config, Annotated a) {
-        JsonCreator ann = _findAnnotation(a, JsonCreator.class);
-        if (ann != null) {
-            return ann.mode();
-        }
-        return creatorBinding;
-    }
-    
-    @Override
-    @Deprecated // remove AFTER 2.9
-    public JsonCreator.Mode findCreatorBinding(Annotated a) {
-        JsonCreator ann = _findAnnotation(a, JsonCreator.class);
-        if (ann != null) {
-            return ann.mode();
-        }
-        return creatorBinding;
-    }
-
     private String findParameterName(AnnotatedParameter annotatedParameter) {
 
         Parameter[] params;
@@ -78,5 +59,50 @@ class ParameterNamesAnnotationIntrospector extends NopAnnotationIntrospector {
         }
 
         return null;
+    }
+
+    /*
+    /**********************************************************
+    /* Creator information handling
+    /**********************************************************
+     */
+
+    @Override
+    public JsonCreator.Mode findCreatorAnnotation(MapperConfig<?> config, Annotated a) {
+        JsonCreator ann = _findAnnotation(a, JsonCreator.class);
+        if (ann != null) {
+            JsonCreator.Mode mode = ann.mode();
+            if (mode == JsonCreator.Mode.DEFAULT) {
+                mode = creatorBinding;
+            }
+            return mode;
+        }
+        return null;
+    }
+
+    @Override
+    @Deprecated // remove AFTER 2.9
+    public JsonCreator.Mode findCreatorBinding(Annotated a) {
+        JsonCreator ann = _findAnnotation(a, JsonCreator.class);
+        if (ann != null) {
+            JsonCreator.Mode mode = ann.mode();
+            if (mode == JsonCreator.Mode.DEFAULT) {
+                mode = creatorBinding;
+            }
+            return mode;
+        }
+        return creatorBinding;
+    }
+
+    @Override
+    @Deprecated // since 2.9
+    public boolean hasCreatorAnnotation(Annotated a)
+    {
+        // 02-Mar-2017, tatu: Copied from base AnnotationIntrospector
+        JsonCreator ann = _findAnnotation(a, JsonCreator.class);
+        if (ann != null) {
+            return (ann.mode() != JsonCreator.Mode.DISABLED);
+        }
+        return false;
     }
 }
