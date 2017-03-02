@@ -2,6 +2,7 @@ package com.fasterxml.jackson.module.paramnames;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.AnnotationIntrospector;
+import com.fasterxml.jackson.databind.cfg.MapperConfig;
 import com.fasterxml.jackson.databind.introspect.*;
 
 import java.lang.reflect.MalformedParametersException;
@@ -21,8 +22,8 @@ class ParameterNamesAnnotationIntrospector extends NopAnnotationIntrospector {
     private final JsonCreator.Mode creatorBinding;
     private final ParameterExtractor parameterExtractor;
 
-    ParameterNamesAnnotationIntrospector(JsonCreator.Mode creatorBinding, ParameterExtractor parameterExtractor) {
-
+    ParameterNamesAnnotationIntrospector(JsonCreator.Mode creatorBinding, ParameterExtractor parameterExtractor)
+    {
         this.creatorBinding = creatorBinding;
         this.parameterExtractor = parameterExtractor;
     }
@@ -36,13 +37,21 @@ class ParameterNamesAnnotationIntrospector extends NopAnnotationIntrospector {
     }
 
     @Override
-    public JsonCreator.Mode findCreatorBinding(Annotated a) {
-
-        JsonCreator ann = a.getAnnotation(JsonCreator.class);
+    public JsonCreator.Mode findCreatorAnnotation(MapperConfig<?> config, Annotated a) {
+        JsonCreator ann = _findAnnotation(a, JsonCreator.class);
         if (ann != null) {
             return ann.mode();
         }
-
+        return creatorBinding;
+    }
+    
+    @Override
+    @Deprecated // remove AFTER 2.9
+    public JsonCreator.Mode findCreatorBinding(Annotated a) {
+        JsonCreator ann = _findAnnotation(a, JsonCreator.class);
+        if (ann != null) {
+            return ann.mode();
+        }
         return creatorBinding;
     }
 

@@ -104,7 +104,8 @@ public class LocalDateTimeDeserializer
             			partialSecond *= 1_000_000; // value is milliseconds, convert it to nanoseconds
 
             		if(parser.nextToken() != JsonToken.END_ARRAY) {
-            			throw context.wrongTokenException(parser, JsonToken.END_ARRAY, "Expected array to end.");
+            			throw context.wrongTokenException(parser, handledType(), JsonToken.END_ARRAY,
+            			        "Expected array to end.");
             		}
             		return LocalDateTime.of(year, month, day, hour, minute, second, partialSecond);
             	}
@@ -115,6 +116,7 @@ public class LocalDateTimeDeserializer
         if (parser.hasToken(JsonToken.VALUE_EMBEDDED_OBJECT)) {
             return (LocalDateTime) parser.getEmbeddedObject();
         }
-        throw context.wrongTokenException(parser, JsonToken.VALUE_STRING, "Expected array or string.");
+        throw context.wrongTokenException(parser, handledType(), JsonToken.VALUE_STRING,
+                "Expected array or string.");
     }
 }

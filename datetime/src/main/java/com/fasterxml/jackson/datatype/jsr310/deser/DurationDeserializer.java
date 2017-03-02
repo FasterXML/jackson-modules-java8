@@ -17,6 +17,7 @@
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.JsonTokenId;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -76,6 +77,7 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
                 //    values quite easily
                 return (Duration) parser.getEmbeddedObject();
         }
-        throw context.mappingException("Expected type float, integer, or string.");
+        return _reportWrongToken(parser, context, JsonToken.VALUE_STRING,
+                JsonToken.VALUE_NUMBER_INT, JsonToken.VALUE_NUMBER_FLOAT);
     }
 }

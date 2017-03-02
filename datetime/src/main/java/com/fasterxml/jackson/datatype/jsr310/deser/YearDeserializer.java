@@ -70,7 +70,6 @@ public class YearDeserializer extends JSR310DeserializerBase<Year>
         if (t == JsonToken.VALUE_EMBEDDED_OBJECT) {
             return (Year) parser.getEmbeddedObject();
         }
-        throw context.mappingException("Unexpected token (%s), expected VALUE_STRING or VALUE_NUMBER_INT",
-                parser.getCurrentToken());
+        return _reportWrongToken(parser, context, JsonToken.VALUE_STRING, JsonToken.VALUE_NUMBER_INT);
     }
 }

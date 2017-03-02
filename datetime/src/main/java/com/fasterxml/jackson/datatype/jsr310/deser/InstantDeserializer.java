@@ -18,6 +18,7 @@ package com.fasterxml.jackson.datatype.jsr310.deser;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.JsonTokenId;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -215,13 +216,14 @@ public class InstantDeserializer<T extends Temporal>
                 //    values quite easily
                 return (T) parser.getEmbeddedObject();
         }
-        throw context.mappingException("Expected type float, integer, or string.");
+        return _reportWrongToken(parser, context, JsonToken.VALUE_STRING,
+                JsonToken.VALUE_NUMBER_INT, JsonToken.VALUE_NUMBER_FLOAT);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public JsonDeserializer<T> createContextual(DeserializationContext ctxt,
-                                                BeanProperty property) throws JsonMappingException
+            BeanProperty property) throws JsonMappingException
     {
         InstantDeserializer<T> deserializer =
                 (InstantDeserializer<T>)super.createContextual(ctxt, property);

@@ -97,7 +97,7 @@ public class JSR310StringParsableDeserializer
             //    values quite easily
             return parser.getEmbeddedObject();
         }
-        throw context.wrongTokenException(parser, JsonToken.VALUE_STRING, null);
+        return context.wrongTokenException(parser, handledType(), JsonToken.VALUE_STRING, null);
     }
 
     @Override

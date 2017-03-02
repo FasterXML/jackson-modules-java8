@@ -24,6 +24,7 @@ import java.util.Arrays;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.deser.std.StdScalarDeserializer;
 import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
@@ -51,12 +52,13 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
         return typeDeserializer.deserializeTypedFromAny(parser, context);
     }
 
-    protected <BOGUS> BOGUS _reportWrongToken(JsonParser parser, DeserializationContext context,
+    protected <BOGUS> BOGUS _reportWrongToken(DeserializationContext context,
             JsonToken exp, String unit) throws IOException
     {
-        throw context.wrongTokenException(parser, exp,
-                String.format("Expected %s for '%s' of %s value",
-                        exp.name(), unit, handledType().getName()));
+        context.reportWrongTokenException((JsonDeserializer<?>)this, exp,
+                "Expected %s for '%s' of %s value",
+                        exp.name(), unit, handledType().getName());
+        return null;
     }
 
     protected <BOGUS> BOGUS _reportWrongToken(JsonParser parser, DeserializationContext context,

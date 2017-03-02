@@ -91,13 +91,15 @@ public class LocalDateDeserializer extends JSR310DateTimeDeserializerBase<LocalD
     		    int day = parser.nextIntValue(-1);
 
     		    if (parser.nextToken() != JsonToken.END_ARRAY) {
-    		        throw context.wrongTokenException(parser, JsonToken.END_ARRAY, "Expected array to end.");
+    		        throw context.wrongTokenException(parser, handledType(), JsonToken.END_ARRAY,
+    		                "Expected array to end.");
     		    }
     		    return LocalDate.of(year, month, day);
         }
         if (parser.hasToken(JsonToken.VALUE_EMBEDDED_OBJECT)) {
             return (LocalDate) parser.getEmbeddedObject();
         }
-        throw context.wrongTokenException(parser, JsonToken.VALUE_STRING, "Expected array or string.");
+        throw context.wrongTokenException(parser, handledType(), JsonToken.VALUE_STRING,
+                "Expected array or string.");
     }
 }

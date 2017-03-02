@@ -72,7 +72,7 @@ public class OptionalnclusionTest extends ModuleTestBase
     {
         JsonInclude.Value incl =
                 JsonInclude.Value.construct(JsonInclude.Include.NON_ABSENT, JsonInclude.Include.ALWAYS);
-        ObjectMapper mapper = mapperWithModule().setPropertyInclusion(incl);
+        ObjectMapper mapper = mapperWithModule().setDefaultPropertyInclusion(incl);
         assertEquals("{\"myData\":true}",
                 mapper.writeValueAsString(OptionalGenericData.construct(Boolean.TRUE)));
     }
@@ -81,7 +81,7 @@ public class OptionalnclusionTest extends ModuleTestBase
     {
         JsonInclude.Value incl =
                 JsonInclude.Value.construct(JsonInclude.Include.NON_ABSENT, JsonInclude.Include.NON_NULL);
-        ObjectMapper mapper = mapperWithModule().setPropertyInclusion(incl);
+        ObjectMapper mapper = mapperWithModule().setDefaultPropertyInclusion(incl);
         assertEquals("{\"myData\":true}",
                 mapper.writeValueAsString(OptionalGenericData.construct(Boolean.TRUE)));
     }
@@ -90,7 +90,7 @@ public class OptionalnclusionTest extends ModuleTestBase
     {
         JsonInclude.Value incl =
                 JsonInclude.Value.construct(JsonInclude.Include.NON_ABSENT, JsonInclude.Include.NON_ABSENT);
-        ObjectMapper mapper = mapperWithModule().setPropertyInclusion(incl);
+        ObjectMapper mapper = mapperWithModule().setDefaultPropertyInclusion(incl);
         assertEquals("{\"myData\":true}",
                 mapper.writeValueAsString(OptionalGenericData.construct(Boolean.TRUE)));
     }
@@ -99,7 +99,7 @@ public class OptionalnclusionTest extends ModuleTestBase
     {
         JsonInclude.Value incl =
                 JsonInclude.Value.construct(JsonInclude.Include.NON_ABSENT, JsonInclude.Include.NON_EMPTY);
-        ObjectMapper mapper = mapperWithModule().setPropertyInclusion(incl);
+        ObjectMapper mapper = mapperWithModule().setDefaultPropertyInclusion(incl);
         assertEquals("{\"myData\":true}",
                 mapper.writeValueAsString(OptionalGenericData.construct(Boolean.TRUE)));
     }

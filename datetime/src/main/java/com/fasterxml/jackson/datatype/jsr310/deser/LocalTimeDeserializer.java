@@ -95,7 +95,8 @@ public class LocalTimeDeserializer extends JSR310DateTimeDeserializerBase<LocalT
                         partialSecond *= 1_000_000; // value is milliseconds, convert it to nanoseconds
 
                     if(parser.nextToken() != JsonToken.END_ARRAY)
-                        throw context.wrongTokenException(parser, JsonToken.END_ARRAY, "Expected array to end.");
+                        throw context.wrongTokenException(parser, handledType(), JsonToken.END_ARRAY,
+                                "Expected array to end.");
 
                     return LocalTime.of(hour, minute, second, partialSecond);
                 }
@@ -107,6 +108,7 @@ public class LocalTimeDeserializer extends JSR310DateTimeDeserializerBase<LocalT
         if (parser.hasToken(JsonToken.VALUE_EMBEDDED_OBJECT)) {
             return (LocalTime) parser.getEmbeddedObject();
         }
-        throw context.wrongTokenException(parser, JsonToken.START_ARRAY, "Expected array or string.");
+        throw context.wrongTokenException(parser, handledType(), JsonToken.START_ARRAY,
+                "Expected array or string.");
     }
 }

@@ -75,19 +75,19 @@ public class YearMonthDeserializer extends JSR310DateTimeDeserializerBase<YearMo
                     return null;
                 }
                 if (!parser.hasToken(JsonToken.VALUE_NUMBER_INT)) {
-                    _reportWrongToken(parser, context, JsonToken.VALUE_NUMBER_INT, "years");
+                    _reportWrongToken(context, JsonToken.VALUE_NUMBER_INT, "years");
                 }
                 year = parser.getIntValue();
             }
             int month = parser.nextIntValue(-1);
             if (month == -1) {
                 if (!parser.hasToken(JsonToken.VALUE_NUMBER_INT)) {
-                    _reportWrongToken(parser, context, JsonToken.VALUE_NUMBER_INT, "months");
+                    _reportWrongToken(context, JsonToken.VALUE_NUMBER_INT, "months");
                 }
                 month = parser.getIntValue();
             }
             if (parser.nextToken() != JsonToken.END_ARRAY) {
-                throw context.wrongTokenException(parser, JsonToken.END_ARRAY,
+                throw context.wrongTokenException(parser, handledType(), JsonToken.END_ARRAY,
                         "Expected array to end.");
             }
             return YearMonth.of(year, month);
