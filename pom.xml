@@ -37,6 +37,16 @@
   <!-- NOTE: `dependencyManagement` comes from jackson-bom since 2.8.5 -->
 
   <dependencies>
+    <!-- Extends Jackson mapper -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
+
     <dependency> <!-- all modules use junit for testing -->
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
