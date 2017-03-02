@@ -103,4 +103,13 @@ public class OptionalnclusionTest extends ModuleTestBase
         assertEquals("{\"myData\":true}",
                 mapper.writeValueAsString(OptionalGenericData.construct(Boolean.TRUE)));
     }
+
+    public void testSerOptNonDefault() throws Exception
+    {
+        OptionalData data = new OptionalData();
+        data.myString = null;
+        String value = mapperWithModule().setSerializationInclusion(
+                JsonInclude.Include.NON_DEFAULT).writeValueAsString(data);
+        assertEquals("{}", value);
+    }
 }

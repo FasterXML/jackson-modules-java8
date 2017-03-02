@@ -241,11 +241,6 @@ public class OptionalBasicTest extends ModuleTestBase
 		}
 	}
 
-	public void testDeserNull() throws Exception {
-	    Optional<?> value = MAPPER.readValue("\"\"", new TypeReference<Optional<Integer>>() {});
-	    assertFalse(value.isPresent());
-	}
-
 	public void testPolymorphic() throws Exception
 	{
 	    final Container dto = new Container();
