@@ -10,9 +10,9 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonNumberFormatVisitor;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer;
 
-public class OptionalDoubleSerializer extends StdSerializer<OptionalDouble>
+public class OptionalDoubleSerializer extends StdScalarSerializer<OptionalDouble>
 {
     private static final long serialVersionUID = 1L;
 

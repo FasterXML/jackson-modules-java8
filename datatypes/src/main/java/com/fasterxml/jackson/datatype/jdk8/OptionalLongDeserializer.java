@@ -5,9 +5,9 @@ import java.util.OptionalLong;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.fasterxml.jackson.databind.deser.std.StdScalarDeserializer;
 
-public class OptionalLongDeserializer extends StdDeserializer<OptionalLong>
+public class OptionalLongDeserializer extends StdScalarDeserializer<OptionalLong>
 {
     private static final long serialVersionUID = 1L;
 
@@ -23,7 +23,7 @@ public class OptionalLongDeserializer extends StdDeserializer<OptionalLong>
     }
 
     @Override
-    public OptionalLong deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
-        return OptionalLong.of(jp.getLongValue());
+    public OptionalLong deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+        return OptionalLong.of(p.getLongValue());
     }
 }

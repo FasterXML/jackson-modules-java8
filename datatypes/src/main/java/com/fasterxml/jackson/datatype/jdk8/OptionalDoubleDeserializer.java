@@ -5,9 +5,9 @@ import java.util.OptionalDouble;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.fasterxml.jackson.databind.deser.std.StdScalarDeserializer;
 
-final class OptionalDoubleDeserializer extends StdDeserializer<OptionalDouble>
+final class OptionalDoubleDeserializer extends StdScalarDeserializer<OptionalDouble>
 {
     private static final long serialVersionUID = 1L;
 
@@ -23,7 +23,7 @@ final class OptionalDoubleDeserializer extends StdDeserializer<OptionalDouble>
     }
 
     @Override
-    public OptionalDouble deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
-        return OptionalDouble.of(jp.getValueAsDouble());
+    public OptionalDouble deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+        return OptionalDouble.of(p.getValueAsDouble());
     }
 }

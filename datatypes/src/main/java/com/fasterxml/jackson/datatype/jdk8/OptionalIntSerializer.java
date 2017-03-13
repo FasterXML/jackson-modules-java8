@@ -10,9 +10,9 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonIntegerFormatVisitor;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer;
 
-final class OptionalIntSerializer extends StdSerializer<OptionalInt>
+final class OptionalIntSerializer extends StdScalarSerializer<OptionalInt>
 {
     private static final long serialVersionUID = 1L;
 
@@ -22,7 +22,6 @@ final class OptionalIntSerializer extends StdSerializer<OptionalInt>
         super(OptionalInt.class);
     }
 
-    // @since 2.6
     @Override
     public boolean isEmpty(SerializerProvider provider, OptionalInt value) {
         return (value == null) || !value.isPresent();

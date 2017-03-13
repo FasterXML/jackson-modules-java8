@@ -19,7 +19,10 @@ class Jdk8Serializers extends Serializers.Base
     {
         final Class<?> raw = refType.getRawClass();
         if (Optional.class.isAssignableFrom(raw)) {
-            return new OptionalSerializer(refType, contentTypeSerializer, contentValueSerializer);
+            boolean staticTyping = (contentTypeSerializer == null)
+                    && config.isEnabled(MapperFeature.USE_STATIC_TYPING);
+            return new OptionalSerializer(refType, staticTyping,
+                    contentTypeSerializer, contentValueSerializer);
         }
         if (OptionalInt.class.isAssignableFrom(raw)) {
             return OptionalIntSerializer.INSTANCE;
