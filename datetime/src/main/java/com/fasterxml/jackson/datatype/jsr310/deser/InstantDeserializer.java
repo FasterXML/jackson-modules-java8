@@ -51,6 +51,14 @@ public class InstantDeserializer<T extends Temporal>
 {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Constants used to check if the time offset is zero
+     *
+     * @since 2.9.0
+     */
+    private static final String ISO8601_UTC_ZERO_OFFSET_SUFFIX_REGEX = "\\+00:?(00)?$";
+    private static final String ISO8601_UTC_ZERO_OFFSET_REGEX = "[^\\+]+" + ISO8601_UTC_ZERO_OFFSET_SUFFIX_REGEX;
+
     public static final InstantDeserializer<Instant> INSTANT = new InstantDeserializer<>(
             Instant.class, DateTimeFormatter.ISO_INSTANT,
             Instant::from,
@@ -87,13 +95,13 @@ public class InstantDeserializer<T extends Temporal>
     protected final BiFunction<T, ZoneId, T> adjust;
 
     /**
-     * In case of vanilla `Instant` we seem to need to translate "+0000"
+     * In case of vanilla `Instant` we seem to need to translate "+0000 | +00:00 | +00"
      * timezone designator into plain "Z" for some reason; see
      * [datatype-jsr310#79] for more info
      *
-     * @since 2.7.5
+     * @since 2.9.0
      */
-    protected final boolean replace0000AsZ;
+    protected final boolean replaceZeroOffsetAsZ;
 
     /**
      * Flag for <code>JsonFormat.Feature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE</code>
@@ -108,14 +116,14 @@ public class InstantDeserializer<T extends Temporal>
             Function<FromIntegerArguments, T> fromMilliseconds,
             Function<FromDecimalArguments, T> fromNanoseconds,
             BiFunction<T, ZoneId, T> adjust,
-            boolean replace0000AsZ)
+            boolean replaceZeroOffsetAsZ)
     {
         super(supportedType, formatter);
         this.parsedToValue = parsedToValue;
         this.fromMilliseconds = fromMilliseconds;
         this.fromNanoseconds = fromNanoseconds;
         this.adjust = adjust == null ? ((d, z) -> d) : adjust;
-        this.replace0000AsZ = replace0000AsZ;
+        this.replaceZeroOffsetAsZ = replaceZeroOffsetAsZ;
         _adjustToContextTZOverride = null;
     }
 
@@ -127,7 +135,7 @@ public class InstantDeserializer<T extends Temporal>
         fromMilliseconds = base.fromMilliseconds;
         fromNanoseconds = base.fromNanoseconds;
         adjust = base.adjust;
-        replace0000AsZ = (_formatter == DateTimeFormatter.ISO_INSTANT);
+        replaceZeroOffsetAsZ = (_formatter == DateTimeFormatter.ISO_INSTANT);
         _adjustToContextTZOverride = base._adjustToContextTZOverride;
     }
 
@@ -139,7 +147,7 @@ public class InstantDeserializer<T extends Temporal>
         fromMilliseconds = base.fromMilliseconds;
         fromNanoseconds = base.fromNanoseconds;
         adjust = base.adjust;
-        replace0000AsZ = base.replace0000AsZ;
+        replaceZeroOffsetAsZ = base.replaceZeroOffsetAsZ;
         _adjustToContextTZOverride = adjustToContextTimezoneOverride;
     }
     
@@ -189,13 +197,8 @@ public class InstantDeserializer<T extends Temporal>
                             // fall through to default handling, to get error there
                         }
                     }
-                    // 24-May-2016, tatu: as per [datatype-jsr310#79] seems like we need
-                    //   some massaging in some cases...
-                    if (replace0000AsZ) {
-                        if (string.endsWith("+0000")) {
-                            string = string.substring(0, string.length() - 5) + "Z";
-                        }
-                    }
+
+                    string = replaceZeroOffsetAsZIfNecessary(string);
                 }
 
                 T value;
@@ -283,6 +286,20 @@ public class InstantDeserializer<T extends Temporal>
     {
         // Instants are always in UTC, so don't waste compute cycles
         return (_valueClass == Instant.class) ? null : context.getTimeZone().toZoneId();
+    }
+
+    private String replaceZeroOffsetAsZIfNecessary(String text)
+    {
+        if (replaceZeroOffsetAsZ && endsWithZeroOffset(text)) {
+            return text.replaceFirst(ISO8601_UTC_ZERO_OFFSET_SUFFIX_REGEX, "Z");
+        }
+
+        return text;
+    }
+
+    private boolean endsWithZeroOffset(String text)
+    {
+        return text.matches(ISO8601_UTC_ZERO_OFFSET_REGEX);
     }
 
     public static class FromIntegerArguments // since 2.8.3
