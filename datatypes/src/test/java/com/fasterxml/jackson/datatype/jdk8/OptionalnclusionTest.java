@@ -38,6 +38,12 @@ public class OptionalnclusionTest extends ModuleTestBase
         }
     }
 
+    /*
+    /**********************************************************
+    /* Test methods
+    /**********************************************************
+     */
+
     private final ObjectMapper MAPPER = mapperWithModule();
 
     public void testSerOptNonEmpty() throws Exception
@@ -49,6 +55,15 @@ public class OptionalnclusionTest extends ModuleTestBase
         assertEquals("{}", value);
     }
 
+    public void testSerOptNonDefault() throws Exception
+    {
+        OptionalData data = new OptionalData();
+        data.myString = null;
+        String value = mapperWithModule().setSerializationInclusion(
+                JsonInclude.Include.NON_DEFAULT).writeValueAsString(data);
+        assertEquals("{}", value);
+    }
+    
     public void testSerOptNonAbsent() throws Exception
     {
         OptionalData data = new OptionalData();

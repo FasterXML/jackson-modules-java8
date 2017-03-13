@@ -339,8 +339,8 @@ public class OptionalSerializer
         if (property != null) {
             // First: if we have a property, may have property-annotation overrides
             AnnotatedMember m = property.getMember();
-            final AnnotationIntrospector intr = serializers.getAnnotationIntrospector();
             if (m != null) {
+                final AnnotationIntrospector intr = serializers.getAnnotationIntrospector();
                 Object serDef = intr.findContentSerializer(m);
                 if (serDef != null) {
                     return serializers.serializerInstance(m, serDef);
