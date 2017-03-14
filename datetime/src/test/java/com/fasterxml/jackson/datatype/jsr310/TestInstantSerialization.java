@@ -16,9 +16,11 @@
 
 package com.fasterxml.jackson.datatype.jsr310;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import org.junit.Test;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -29,10 +31,9 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.*;
-
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class TestInstantSerialization extends ModuleTestBase
 {
@@ -442,5 +443,34 @@ public class TestInstantSerialization extends ModuleTestBase
         Instant actual = mapper.readValue(json, Instant.class);
 
         assertEquals(givenInstant, actual);
+    }
+
+    // [jackson-modules-java8#18]
+    @Test
+    public void testDeserializationFromStringWithZeroZoneOffset01() throws Exception {
+        Instant date = Instant.now();
+        String json = formatWithZeroZoneOffset(date, "+00:00");
+        Instant result = MAPPER.readValue(json, Instant.class);
+        assertEquals("The value is not correct.", date, result);
+    }
+
+    @Test
+    public void testDeserializationFromStringWithZeroZoneOffset02() throws Exception {
+        Instant date = Instant.now();
+        String json = formatWithZeroZoneOffset(date, "+0000");
+        Instant result = MAPPER.readValue(json, Instant.class);
+        assertEquals("The value is not correct.", date, result);
+    }
+
+    @Test
+    public void testDeserializationFromStringWithZeroZoneOffset03() throws Exception {
+        Instant date = Instant.now();
+        String json = formatWithZeroZoneOffset(date, "+00");
+        Instant result = MAPPER.readValue(json, Instant.class);
+        assertEquals("The value is not correct.", date, result);
+    }
+
+    private String formatWithZeroZoneOffset(Instant date, String offset){
+        return '"' + FORMATTER.format(date).replaceFirst("Z$", offset) + '"';
     }
 }

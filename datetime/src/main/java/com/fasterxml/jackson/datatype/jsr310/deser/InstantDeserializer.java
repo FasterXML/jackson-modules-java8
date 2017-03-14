@@ -52,7 +52,7 @@ public class InstantDeserializer<T extends Temporal>
     private static final long serialVersionUID = 1L;
 
     /**
-     * Constants used to check if the time offset is zero
+     * Constants used to check if the time offset is zero. See [jackson-modules-java8#18]
      *
      * @since 2.9.0
      */
@@ -65,7 +65,7 @@ public class InstantDeserializer<T extends Temporal>
             a -> Instant.ofEpochMilli(a.value),
             a -> Instant.ofEpochSecond(a.integer, a.fraction),
             null,
-            true // yes, replace +0000 with Z
+            true // yes, replace zero offset with Z
     );
 
     public static final InstantDeserializer<OffsetDateTime> OFFSET_DATE_TIME = new InstantDeserializer<>(
@@ -74,7 +74,7 @@ public class InstantDeserializer<T extends Temporal>
             a -> OffsetDateTime.ofInstant(Instant.ofEpochMilli(a.value), a.zoneId),
             a -> OffsetDateTime.ofInstant(Instant.ofEpochSecond(a.integer, a.fraction), a.zoneId),
             (d, z) -> d.withOffsetSameInstant(z.getRules().getOffset(d.toLocalDateTime())),
-            true // yes, replace +0000 with Z
+            true // yes, replace zero offset with Z
     );
 
     public static final InstantDeserializer<ZonedDateTime> ZONED_DATE_TIME = new InstantDeserializer<>(
@@ -83,7 +83,7 @@ public class InstantDeserializer<T extends Temporal>
             a -> ZonedDateTime.ofInstant(Instant.ofEpochMilli(a.value), a.zoneId),
             a -> ZonedDateTime.ofInstant(Instant.ofEpochSecond(a.integer, a.fraction), a.zoneId),
             ZonedDateTime::withZoneSameInstant,
-            false // keep +0000 and Z separate since zones explicitly supported
+            false // keep zero offset and Z separate since zones explicitly supported
     );
 
     protected final Function<FromIntegerArguments, T> fromMilliseconds;
@@ -97,7 +97,7 @@ public class InstantDeserializer<T extends Temporal>
     /**
      * In case of vanilla `Instant` we seem to need to translate "+0000 | +00:00 | +00"
      * timezone designator into plain "Z" for some reason; see
-     * [datatype-jsr310#79] for more info
+     * [jackson-modules-java8#18] for more info
      *
      * @since 2.9.0
      */
