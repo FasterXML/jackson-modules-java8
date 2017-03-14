@@ -42,5 +42,11 @@ public class OptionalBooleanTest extends ModuleTestBase
         assertNotNull(b.value);
         assertTrue(b.value.isPresent());
         assertTrue(b.value.get().booleanValue());
+
+        // and looks like a special, somewhat non-conforming case is what a user had
+        // issues with
+        b = MAPPER.readValue(aposToQuotes("{'value':''}"), BooleanBean.class);
+        assertNotNull(b.value);
+        assertFalse(b.value.isPresent());
     }
 }

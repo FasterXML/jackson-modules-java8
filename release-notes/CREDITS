@@ -1,0 +1,9 @@
+Here are people who have contributed to the development of Jackson JSON processor
+Java 8 module
+(version numbers in brackets indicate release in which the problem was fixed)
+
+Louis-Rémi Paquet (lrpg@github)
+
+* Reported #15: Optional<Long> and OptionalLong deserialization
+  not consistent when deserializing from String
+ (2.8.8)

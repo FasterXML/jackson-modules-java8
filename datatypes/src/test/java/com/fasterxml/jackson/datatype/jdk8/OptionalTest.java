@@ -59,16 +59,7 @@ public class OptionalTest extends ModuleTestBase
             value = Optional.ofNullable(str);
         }
     }
-    
-    static class OptionalLongBean {
-        public OptionalLong value;
 
-        public OptionalLongBean() { value = OptionalLong.empty(); }
-        OptionalLongBean(long v) {
-            value = OptionalLong.of(v);
-        }
-    }
-    
     // [datatype-jdk8#4]
     static class Issue4Entity {
         private final Optional<String> data;
@@ -152,36 +143,6 @@ public class OptionalTest extends ModuleTestBase
         assertEquals("test", roundtrip(Optional.of("test"), OPTIONAL_STRING_TYPE).get());
     }
 
-    public void testIntAbsent() throws Exception
-    {
-        assertFalse(MAPPER.readValue(MAPPER.writeValueAsBytes(OptionalInt.empty()), OptionalInt.class).isPresent());
-    }
-
-    public void testIntPresent() throws Exception
-    {
-        assertEquals(5, MAPPER.readValue(MAPPER.writeValueAsBytes(OptionalInt.of(5)), OptionalInt.class).getAsInt());
-    }
-
-    public void testLongAbsent() throws Exception
-    {
-        assertFalse(MAPPER.readValue(MAPPER.writeValueAsBytes(OptionalLong.empty()), OptionalLong.class).isPresent());
-    }
-
-    public void testLongPresent() throws Exception
-    {
-        assertEquals(Long.MAX_VALUE, MAPPER.readValue(MAPPER.writeValueAsBytes(OptionalLong.of(Long.MAX_VALUE)), OptionalLong.class).getAsLong());
-    }
-
-    public void testDoubleAbsent() throws Exception
-    {
-        assertFalse(MAPPER.readValue(MAPPER.writeValueAsBytes(OptionalInt.empty()), OptionalInt.class).isPresent());
-    }
-
-    public void testDoublePresent() throws Exception
-    {
-        assertEquals(Double.MIN_VALUE, MAPPER.readValue(MAPPER.writeValueAsBytes(OptionalDouble.of(Double.MIN_VALUE)), OptionalDouble.class).getAsDouble());
-    }
-
     public void testBeanAbsent() throws Exception
     {
         assertFalse(roundtrip(Optional.empty(), OPTIONAL_BEAN_TYPE).isPresent());
@@ -231,25 +192,6 @@ public class OptionalTest extends ModuleTestBase
                 mapper.writeValueAsString(new OptionalStringBean("foo")));
         assertEquals(aposToQuotes("{}"),
                 mapper.writeValueAsString(new OptionalStringBean(null)));
-    }
-
-    public void testExcludeIfOptionalLongAbsent() throws Exception
-    {
-        ObjectMapper mapper = mapperWithModule()
-                .setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        assertEquals(aposToQuotes("{'value':123}"),
-                mapper.writeValueAsString(new OptionalLongBean(123L)));
-        // absent is not strictly null so
-        assertEquals(aposToQuotes("{'value':null}"),
-                mapper.writeValueAsString(new OptionalLongBean()));
-
-        // however:
-        mapper = mapperWithModule()
-                .setSerializationInclusion(JsonInclude.Include.NON_ABSENT);
-        assertEquals(aposToQuotes("{'value':456}"),
-                mapper.writeValueAsString(new OptionalLongBean(456L)));
-        assertEquals(aposToQuotes("{}"),
-                mapper.writeValueAsString(new OptionalLongBean()));
     }
 
     public void testWithCustomDeserializer() throws Exception

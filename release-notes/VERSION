@@ -10,6 +10,9 @@ Modules:
 
 2.8.8 (not yet released)
 
+#15: Optional<Long> and OptionalLong deserialization are not consistent when
+  deserializing from String
+ (reported by Louis-Rémi P)
 #17: Cached `Optional` serializer does not apply annotations for POJO properties
  (reported by codicusmaximus@github)
 
