@@ -1,7 +1,10 @@
 package com.fasterxml.jackson.failing;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -11,13 +14,15 @@ import com.fasterxml.jackson.datatype.jdk8.ModuleTestBase;
 public class ContextualOptional17Test extends ModuleTestBase
 {
     // [datatypes-java8#17]
-    @JsonPropertyOrder({ "date1", "date2" })
+    @JsonPropertyOrder({ "date", "date1", "date2" })
     static class ContextualOptionals
     {
-        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
+        public Optional<Date> date;
+
+        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy+MM+dd")
         public Optional<Date> date1;
 
-        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM")
+        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy*MM*dd")
         public Optional<Date> date2;
     }
 
@@ -27,14 +32,20 @@ public class ContextualOptional17Test extends ModuleTestBase
     /**********************************************************
      */
 
-    private final ObjectMapper MAPPER = mapperWithModule();
-
     public void testContextualOptionals() throws Exception
     {
+        final ObjectMapper mapper = mapperWithModule();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd");
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        mapper.setDateFormat(df);
         ContextualOptionals input = new ContextualOptionals();
+        input.date = Optional.ofNullable(new Date(0L));
         input.date1 = Optional.ofNullable(new Date(0L));
         input.date2 = Optional.ofNullable(new Date(0L));
-        assertEquals(aposToQuotes("{'date1':'1970-01-01','date2':'1970-01'"),
-                MAPPER.writeValueAsString(input));
+        final String json = mapper.writeValueAsString(input);
+//System.err.println("JSON:\n"+json);
+        assertEquals(aposToQuotes(
+                "{'date':'1970/01/01','date1':'1970+01+01','date2':'1970*01*01'"),
+                json);
     }        
 }
