@@ -39,6 +39,7 @@ import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAccessor;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 
 /**
  * Deserializer for Java 8 temporal {@link Instant}s, {@link OffsetDateTime}, and {@link ZonedDateTime}s.
@@ -56,8 +57,7 @@ public class InstantDeserializer<T extends Temporal>
      *
      * @since 2.9.0
      */
-    private static final String ISO8601_UTC_ZERO_OFFSET_SUFFIX_REGEX = "\\+00:?(00)?$";
-    private static final String ISO8601_UTC_ZERO_OFFSET_REGEX = "[^\\+]+" + ISO8601_UTC_ZERO_OFFSET_SUFFIX_REGEX;
+    private static final Pattern ISO8601_UTC_ZERO_OFFSET_SUFFIX_REGEX = Pattern.compile("\\+00:?(00)?$");
 
     public static final InstantDeserializer<Instant> INSTANT = new InstantDeserializer<>(
             Instant.class, DateTimeFormatter.ISO_INSTANT,
@@ -290,16 +290,11 @@ public class InstantDeserializer<T extends Temporal>
 
     private String replaceZeroOffsetAsZIfNecessary(String text)
     {
-        if (replaceZeroOffsetAsZ && endsWithZeroOffset(text)) {
-            return text.replaceFirst(ISO8601_UTC_ZERO_OFFSET_SUFFIX_REGEX, "Z");
+        if (replaceZeroOffsetAsZ) {
+            return ISO8601_UTC_ZERO_OFFSET_SUFFIX_REGEX.matcher(text).replaceFirst("Z");
         }
 
         return text;
-    }
-
-    private boolean endsWithZeroOffset(String text)
-    {
-        return text.matches(ISO8601_UTC_ZERO_OFFSET_REGEX);
     }
 
     public static class FromIntegerArguments // since 2.8.3
