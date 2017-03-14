@@ -8,6 +8,11 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
+2.8.8 (not yet released)
+
+#17: Cached `Optional` serializer does not apply annotations for POJO properties
+ (reported by codicusmaximus@github)
+
 2.8.7 (21-Feb-2017)
 2.8.6 (12-Jan-2017)
 

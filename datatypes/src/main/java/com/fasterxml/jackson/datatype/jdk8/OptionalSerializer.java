@@ -321,13 +321,15 @@ public class OptionalSerializer
     private final JsonSerializer<Object> _findSerializer(SerializerProvider provider,
             Class<?> type, BeanProperty prop) throws JsonMappingException
     {
-        return provider.findTypedValueSerializer(type, true, prop);
+        // 13-Mar-2017, tatu: To fix [modules-java8#17] change `findTypedValueSerializer()` int `findValueSerializer()`
+        return provider.findValueSerializer(type, prop);
     }
 
     private final JsonSerializer<Object> _findSerializer(SerializerProvider provider,
         JavaType type, BeanProperty prop) throws JsonMappingException
     {
-        return provider.findTypedValueSerializer(type, true, prop);
+        // 13-Mar-2017, tatu: To fix [modules-java8#17] change `findTypedValueSerializer()` int `findValueSerializer()`
+        return provider.findValueSerializer(type, prop);
     }
 
     // !!! 22-Mar-2016, tatu: Method added in jackson-databind 2.7.4; may be used
