@@ -1,6 +1,5 @@
-package com.fasterxml.jackson.failing;
+package com.fasterxml.jackson.datatype.jdk8;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
@@ -9,7 +8,6 @@ import java.util.TimeZone;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jdk8.ModuleTestBase;
 
 public class ContextualOptional17Test extends ModuleTestBase
 {
@@ -45,7 +43,7 @@ public class ContextualOptional17Test extends ModuleTestBase
         final String json = mapper.writeValueAsString(input);
 //System.err.println("JSON:\n"+json);
         assertEquals(aposToQuotes(
-                "{'date':'1970/01/01','date1':'1970+01+01','date2':'1970*01*01'"),
+                "{'date':'1970/01/01','date1':'1970+01+01','date2':'1970*01*01'}"),
                 json);
     }        
 }
