@@ -72,7 +72,9 @@ public class ParameterNamesAnnotationIntrospector extends NopAnnotationIntrospec
         JsonCreator ann = _findAnnotation(a, JsonCreator.class);
         if (ann != null) {
             JsonCreator.Mode mode = ann.mode();
-            if (mode == JsonCreator.Mode.DEFAULT) {
+            // but keep in mind that there may be explicit default for this module
+            if ((creatorBinding != null)
+                    && (mode == JsonCreator.Mode.DEFAULT)) {
                 mode = creatorBinding;
             }
             return mode;
@@ -86,7 +88,8 @@ public class ParameterNamesAnnotationIntrospector extends NopAnnotationIntrospec
         JsonCreator ann = _findAnnotation(a, JsonCreator.class);
         if (ann != null) {
             JsonCreator.Mode mode = ann.mode();
-            if (mode == JsonCreator.Mode.DEFAULT) {
+            if ((creatorBinding != null)
+                    && (mode == JsonCreator.Mode.DEFAULT)) {
                 mode = creatorBinding;
             }
             return mode;
