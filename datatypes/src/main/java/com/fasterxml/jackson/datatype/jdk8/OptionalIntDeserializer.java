@@ -23,7 +23,7 @@ public class OptionalIntDeserializer extends StdDeserializer<OptionalInt>
     }
 
     @Override
-    public OptionalInt deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
-        return OptionalInt.of(jp.getValueAsInt());
+    public OptionalInt deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+        return OptionalInt.of(p.getValueAsInt());
     }
 }

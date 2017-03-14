@@ -23,7 +23,7 @@ public class OptionalLongDeserializer extends StdDeserializer<OptionalLong>
     }
 
     @Override
-    public OptionalLong deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
-        return OptionalLong.of(jp.getLongValue());
+    public OptionalLong deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+        return OptionalLong.of(p.getValueAsLong());
     }
 }

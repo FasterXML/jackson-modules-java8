@@ -23,7 +23,7 @@ final class OptionalDoubleDeserializer extends StdDeserializer<OptionalDouble>
     }
 
     @Override
-    public OptionalDouble deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
-        return OptionalDouble.of(jp.getValueAsDouble());
+    public OptionalDouble deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+        return OptionalDouble.of(p.getValueAsDouble());
     }
 }
