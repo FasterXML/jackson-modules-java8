@@ -84,6 +84,24 @@ public class TestOffsetDateTimeDeserialization extends ModuleTestBase
         expectFailure("'notanoffsetdatetime'");
     }
 
+    @Test
+    public void testDeserializationAsWithZeroZoneOffset01() throws Exception
+    {
+        expectSuccess(OffsetDateTime.of(2000, 1, 1, 12, 0, 0, 0, ZoneOffset.UTC), "'2000-01-01T12:00+00:00'");
+    }
+
+    @Test
+    public void testDeserializationAsWithZeroZoneOffset02() throws Exception
+    {
+        expectSuccess(OffsetDateTime.of(2000, 1, 1, 12, 0, 0, 0, ZoneOffset.UTC), "'2000-01-01T12:00+0000'");
+    }
+
+    @Test
+    public void testDeserializationAsWithZeroZoneOffset03() throws Exception
+    {
+        expectSuccess(OffsetDateTime.of(2000, 1, 1, 12, 0, 0, 0, ZoneOffset.UTC), "'2000-01-01T12:00+00'");
+    }
+
     private void expectFailure(String json) throws Exception {
         try {
             read(json);
