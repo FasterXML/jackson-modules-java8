@@ -8,6 +8,9 @@ import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalDouble;
+import java.util.OptionalInt;
+import java.util.OptionalLong;
 
 /**
  * {@link BeanSerializerModifier} needed to sneak in handler to exclude "absent"
@@ -23,9 +26,20 @@ public class Jdk8BeanSerializerModifier extends BeanSerializerModifier
         for (int i = 0; i < beanProperties.size(); ++i) {
             final BeanPropertyWriter writer = beanProperties.get(i);
             JavaType type = writer.getType();
+
+            Object empty;
             if (type.isTypeOrSubTypeOf(Optional.class)) {
-                beanProperties.set(i, new Jdk8OptionalBeanPropertyWriter(writer));
+                empty = Optional.empty();
+            } else if (type.hasRawClass(OptionalLong.class)) {
+                empty = OptionalLong.empty();
+            } else if (type.hasRawClass(OptionalInt.class)) {
+                empty = OptionalInt.empty();
+            } else if (type.hasRawClass(OptionalDouble.class)) {
+                empty = OptionalDouble.empty();
+            } else {
+                continue;
             }
+            beanProperties.set(i, new Jdk8OptionalBeanPropertyWriter(writer, empty));
         }
         return beanProperties;
     }

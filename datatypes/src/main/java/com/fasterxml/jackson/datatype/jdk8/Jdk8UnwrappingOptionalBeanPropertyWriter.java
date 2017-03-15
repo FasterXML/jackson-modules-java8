@@ -1,7 +1,5 @@
 package com.fasterxml.jackson.datatype.jdk8;
 
-import java.util.Optional;
-
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.io.SerializedString;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -13,14 +11,21 @@ public class Jdk8UnwrappingOptionalBeanPropertyWriter extends UnwrappingBeanProp
 {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * @since 2.9
+     */
+    protected final Object _empty;
+
     public Jdk8UnwrappingOptionalBeanPropertyWriter(BeanPropertyWriter base,
-            NameTransformer transformer) {
+            NameTransformer transformer, Object empty) {
         super(base, transformer);
+        _empty = empty;
     }
 
-    protected Jdk8UnwrappingOptionalBeanPropertyWriter(UnwrappingBeanPropertyWriter base,
+    protected Jdk8UnwrappingOptionalBeanPropertyWriter(Jdk8UnwrappingOptionalBeanPropertyWriter base,
             NameTransformer transformer, SerializedString name) {
         super(base, transformer, name);
+        _empty = base._empty;
     }
 
     @Override
@@ -34,7 +39,7 @@ public class Jdk8UnwrappingOptionalBeanPropertyWriter extends UnwrappingBeanProp
     {
         if (_nullSerializer == null) {
             Object value = get(bean);
-            if (value == null || Optional.empty().equals(value)) {
+            if (value == null || value.equals(_empty)) {
                 return;
             }
         }

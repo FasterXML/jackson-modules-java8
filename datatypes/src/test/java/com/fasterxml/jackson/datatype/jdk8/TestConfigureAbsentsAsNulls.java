@@ -1,6 +1,9 @@
 package com.fasterxml.jackson.datatype.jdk8;
 
 import java.util.Optional;
+import java.util.OptionalDouble;
+import java.util.OptionalInt;
+import java.util.OptionalLong;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -14,9 +17,24 @@ public class TestConfigureAbsentsAsNulls extends ModuleTestBase
         public Optional<String> myString = Optional.empty();
     }
 
+    public static final class OptionalIntWrapper {
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        public OptionalInt optional = OptionalInt.empty();
+    }
+
+    public static final class OptionalLongWrapper {
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        public OptionalLong optional = OptionalLong.empty();
+    }
+
+    public static final class OptionalDoubleWrapper {
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        public OptionalDouble optional = OptionalDouble.empty();
+    }
+
     /*
     /**********************************************************************
-    /* Test methods
+    /* Test methods, basic Optional
     /**********************************************************************
      */
 
@@ -53,6 +71,33 @@ public class TestConfigureAbsentsAsNulls extends ModuleTestBase
 
         OptionalData data = new OptionalData();
         String value = mapper.setSerializationInclusion(JsonInclude.Include.NON_ABSENT).writeValueAsString(data);
+        assertEquals("{}", value);
+    }
+
+    /*
+    /**********************************************************************
+    /* Test methods, OptionalXxx scalar variants
+    /**********************************************************************
+     */
+
+    public void testOptionalIntAbsentAsNulls() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new Jdk8Module().configureAbsentsAsNulls(true));
+        String value = mapper.writeValueAsString(new OptionalIntWrapper());
+        assertEquals("{}", value);
+    }
+
+    public void testOptionalLongAbsentAsNulls() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new Jdk8Module().configureAbsentsAsNulls(true));
+        String value = mapper.writeValueAsString(new OptionalLongWrapper());
+        assertEquals("{}", value);
+    }
+
+    public void testOptionalDoubleAbsentAsNulls() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new Jdk8Module().configureAbsentsAsNulls(true));
+        String value = mapper.writeValueAsString(new OptionalDoubleWrapper());
         assertEquals("{}", value);
     }
 }

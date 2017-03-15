@@ -17,6 +17,10 @@ public class Jdk8Module extends Module
      *<p>
      * Note that this setting MUST be changed BEFORE registering the module:
      * changes after registration will have no effect.
+     *<p>
+     * Note that in most cases it makes more sense to just use `NON_ABSENT` inclusion
+     * criteria for filtering out absent optionals; this setting is mostly useful for
+     * legacy use cases that predate version 2.6.
      */
     protected boolean _cfgHandleAbsentAsNull = false;
 
@@ -46,6 +50,11 @@ public class Jdk8Module extends Module
      * Recommended setting for this value is `false`. For compatibility with older versions
      * of other "optional" values (like Guava optionals), it can be set to 'true'. The
      * default is `false` for backwards compatibility.
+     *<p>
+     * Note that in most cases it makes more sense to just use `NON_ABSENT` inclusion
+     * criteria for filtering out absent optionals; this setting is mostly useful for
+     * legacy use cases that predate version 2.6.
+     *
      *
      * @return This module instance, useful for chaining calls
      *

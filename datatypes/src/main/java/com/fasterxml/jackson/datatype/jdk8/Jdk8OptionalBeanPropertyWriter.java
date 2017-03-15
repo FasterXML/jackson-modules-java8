@@ -6,18 +6,26 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
 import com.fasterxml.jackson.databind.util.NameTransformer;
 
-import java.util.Optional;
-
 public class Jdk8OptionalBeanPropertyWriter extends BeanPropertyWriter
 {
     private static final long serialVersionUID = 1L;
 
-    protected Jdk8OptionalBeanPropertyWriter(BeanPropertyWriter base) {
+    /**
+     * @since 2.9
+     */
+    protected final Object _empty;
+    
+    /**
+     * @since 2.9
+     */
+    protected Jdk8OptionalBeanPropertyWriter(BeanPropertyWriter base, Object empty) {
         super(base);
+        _empty = empty;
     }
 
-    protected Jdk8OptionalBeanPropertyWriter(BeanPropertyWriter base, PropertyName newName) {
+    protected Jdk8OptionalBeanPropertyWriter(Jdk8OptionalBeanPropertyWriter base, PropertyName newName) {
         super(base, newName);
+        _empty = base._empty;
     }
 
     @Override
@@ -27,19 +35,19 @@ public class Jdk8OptionalBeanPropertyWriter extends BeanPropertyWriter
 
     @Override
     public BeanPropertyWriter unwrappingWriter(NameTransformer unwrapper) {
-        return new Jdk8UnwrappingOptionalBeanPropertyWriter(this, unwrapper);
+        return new Jdk8UnwrappingOptionalBeanPropertyWriter(this, unwrapper, _empty);
     }
 
     @Override
-    public void serializeAsField(Object bean, JsonGenerator jgen, SerializerProvider prov) throws Exception
+    public void serializeAsField(Object bean, JsonGenerator g, SerializerProvider prov) throws Exception
     {
         if (_nullSerializer == null) {
             Object value = get(bean);
-            if (value == null || Optional.empty().equals(value)) {
+            if (value == null || value.equals(_empty)) {
                 return;
             }
         }
-        super.serializeAsField(bean, jgen, prov);
+        super.serializeAsField(bean, g, prov);
     }
 
 }
