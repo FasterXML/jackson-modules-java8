@@ -67,6 +67,10 @@ public class OptionalNumbersTest extends ModuleTestBase
     {
         OptionalInt opt = MAPPER.readValue(quote("123"), OptionalInt.class);
         assertEquals(123, opt.getAsInt());
+        opt = MAPPER.readValue("\"\"", OptionalInt.class);
+        assertNotNull(opt);
+        assertFalse(opt.isPresent());
+
         OptionalIntBean bean = MAPPER.readValue(aposToQuotes("{'value':null}"),
                 OptionalIntBean.class);
         assertNotNull(bean.value);
@@ -105,6 +109,12 @@ public class OptionalNumbersTest extends ModuleTestBase
     {
         OptionalLong opt = MAPPER.readValue(quote("123"), OptionalLong.class);
         assertEquals(123L, opt.getAsLong());
+
+        // should coerce from empty String too (by default)
+        opt = MAPPER.readValue("\"\"", OptionalLong.class);
+        assertNotNull(opt);
+        assertFalse(opt.isPresent());
+        
         OptionalLongBean bean = MAPPER.readValue(aposToQuotes("{'value':null}"),
                 OptionalLongBean.class);
         assertNotNull(bean.value);
@@ -162,6 +172,12 @@ public class OptionalNumbersTest extends ModuleTestBase
     {
         OptionalDouble opt = MAPPER.readValue(quote("0.25"), OptionalDouble.class);
         assertEquals(0.25, opt.getAsDouble());
+
+        // should coerce from empty String too (by default)
+        opt = MAPPER.readValue("\"\"", OptionalDouble.class);
+        assertNotNull(opt);
+        assertFalse(opt.isPresent());
+        
         OptionalDoubleBean bean = MAPPER.readValue(aposToQuotes("{'value':null}"),
                 OptionalDoubleBean.class);
         assertNotNull(bean.value);

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.OptionalInt;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdScalarDeserializer;
 
@@ -24,6 +25,11 @@ public class OptionalIntDeserializer extends StdScalarDeserializer<OptionalInt>
 
     @Override
     public OptionalInt deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+        // minor optimization, first, for common case
+        if (p.hasToken(JsonToken.VALUE_NUMBER_INT)) {
+            return OptionalInt.of(p.getValueAsInt());
+        }
+        // but aside of that try to use standard handling:
         return OptionalInt.of(p.getValueAsInt());
     }
 }
