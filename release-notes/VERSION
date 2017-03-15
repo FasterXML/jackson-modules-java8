@@ -10,11 +10,16 @@ Modules:
 
 2.8.8 (not yet released)
 
-#15: Optional<Long> and OptionalLong deserialization are not consistent when
-  deserializing from String
+#13: (datatypes) `configureAbsentsAsNulls` not working for primitive optionals
+  like `OptionalInt`
  (reported by Louis-Rémi P)
-#17: Cached `Optional` serializer does not apply annotations for POJO properties
+#15: (datatypes) Optional<Long> and OptionalLong deserialization are not consistent
+  when deserializing from String
+ (reported by Louis-Rémi P)
+#17: (datatypes) Cached `Optional` serializer does not apply annotations for POJO properties
  (reported by codicusmaximus@github)
+#18: (datatypes) `InstantDeserializer` is not working with offset of zero `+00:00` and `+00`
+ (contributed by kevinjom@github)
 
 2.8.7 (21-Feb-2017)
 2.8.6 (12-Jan-2017)
