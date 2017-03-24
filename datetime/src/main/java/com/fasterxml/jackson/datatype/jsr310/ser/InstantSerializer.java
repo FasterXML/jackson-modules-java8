@@ -16,6 +16,7 @@
 
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
@@ -45,7 +46,10 @@ public final class InstantSerializer extends InstantSerializerBase<Instant>
     }
 
     @Override
-    protected JSR310FormattedSerializerBase<Instant> withFormat(Boolean useTimestamp, DateTimeFormatter formatter) {
+    protected JSR310FormattedSerializerBase<Instant> withFormat(
+        Boolean useTimestamp,
+        DateTimeFormatter formatter,
+        JsonFormat.Shape shape) {
         return new InstantSerializer(this, useTimestamp, formatter);
     }
 }

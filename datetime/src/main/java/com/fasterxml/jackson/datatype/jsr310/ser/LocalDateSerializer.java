@@ -16,6 +16,7 @@
 
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -44,8 +45,8 @@ public class LocalDateSerializer extends JSR310FormattedSerializerBase<LocalDate
     }
 
     protected LocalDateSerializer(LocalDateSerializer base,
-            Boolean useTimestamp, DateTimeFormatter dtf) {
-        super(base, useTimestamp, dtf);
+                                  Boolean useTimestamp, DateTimeFormatter dtf, JsonFormat.Shape shape) {
+        super(base, useTimestamp, dtf, shape);
     }
 
     public LocalDateSerializer(DateTimeFormatter formatter) {
@@ -53,19 +54,23 @@ public class LocalDateSerializer extends JSR310FormattedSerializerBase<LocalDate
     }
 
     @Override
-    protected LocalDateSerializer withFormat(Boolean useTimestamp, DateTimeFormatter dtf) {
-        return new LocalDateSerializer(this, useTimestamp, dtf);
+    protected LocalDateSerializer withFormat(Boolean useTimestamp, DateTimeFormatter dtf, JsonFormat.Shape shape) {
+        return new LocalDateSerializer(this, useTimestamp, dtf, shape);
     }
 
     @Override
     public void serialize(LocalDate date, JsonGenerator generator, SerializerProvider provider) throws IOException
     {
         if (useTimestamp(provider)) {
-            generator.writeStartArray();
-            generator.writeNumber(date.getYear());
-            generator.writeNumber(date.getMonthValue());
-            generator.writeNumber(date.getDayOfMonth());
-            generator.writeEndArray();
+            if (_shape == JsonFormat.Shape.NUMBER_INT) {
+                generator.writeNumber(date.toEpochDay());
+            } else {
+                generator.writeStartArray();
+                generator.writeNumber(date.getYear());
+                generator.writeNumber(date.getMonthValue());
+                generator.writeNumber(date.getDayOfMonth());
+                generator.writeEndArray();
+            }
         } else {
             String str = (_formatter == null) ? date.toString() : date.format(_formatter);
             generator.writeString(str);

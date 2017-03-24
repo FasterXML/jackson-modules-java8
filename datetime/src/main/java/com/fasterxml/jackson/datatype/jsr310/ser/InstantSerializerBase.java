@@ -16,6 +16,7 @@
 
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
@@ -64,7 +65,7 @@ public abstract class InstantSerializerBase<T extends Temporal>
     protected InstantSerializerBase(InstantSerializerBase<T> base,
             Boolean useTimestamp, DateTimeFormatter dtf)
     {
-        super(base, useTimestamp, dtf);
+        super(base, useTimestamp, dtf, null);
         defaultFormat = base.defaultFormat;
         getEpochMillis = base.getEpochMillis;
         getEpochSeconds = base.getEpochSeconds;
@@ -72,8 +73,9 @@ public abstract class InstantSerializerBase<T extends Temporal>
     }
 
     @Override
-    protected abstract JSR310FormattedSerializerBase<?> withFormat(Boolean useTimestamp,
-            DateTimeFormatter dtf);
+    protected abstract JSR310FormattedSerializerBase<?> withFormat(
+        Boolean useTimestamp,
+        DateTimeFormatter dtf, JsonFormat.Shape shape);
 
     @Override
     public void serialize(T value, JsonGenerator generator, SerializerProvider provider) throws IOException

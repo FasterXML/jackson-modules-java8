@@ -16,19 +16,18 @@
 
 package com.fasterxml.jackson.datatype.jsr310;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.ZoneOffset;
 import java.time.temporal.Temporal;
-
 import org.junit.Test;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -44,6 +43,14 @@ public class TestLocalDateSerialization
 
         public Wrapper() { }
         public Wrapper(LocalDate v) { value = v; }
+    }
+
+    final static class EpochDayWrapper {
+        @JsonFormat(shape=JsonFormat.Shape.NUMBER_INT)
+        public LocalDate value;
+
+        public EpochDayWrapper() { }
+        public EpochDayWrapper(LocalDate v) { value = v; }
     }
 
     static class VanillaWrapper {
@@ -226,5 +233,34 @@ public class TestLocalDateSerialization
         assertEquals(input.value, output.value);
         LocalDate date2 = mapper.readValue(EXP_DATE, LocalDate.class);
         assertEquals(date, date2);
+    }
+
+    @Test
+    public void testConfigOverridesToEpochDay() throws Exception
+    {
+        ObjectMapper mapper = newMapper();
+        mapper.configOverride(LocalDate.class)
+            .setFormat(JsonFormat.Value.forShape(JsonFormat.Shape.NUMBER_INT));
+        LocalDate date = LocalDate.ofEpochDay(1000);
+        VanillaWrapper input = new VanillaWrapper(date);
+        final String EXP_DATE = "1000";
+        String json = mapper.writeValueAsString(input);
+        assertEquals("{\"value\":"+EXP_DATE+"}", json);
+        assertEquals(EXP_DATE, mapper.writeValueAsString(date));
+
+        // and read back, too
+        VanillaWrapper output = mapper.readValue(json, VanillaWrapper.class);
+        assertEquals(input.value, output.value);
+        LocalDate date2 = mapper.readValue(EXP_DATE, LocalDate.class);
+        assertEquals(date, date2);
+    }
+
+    @Test
+    public void testCustomFormatToEpochDay() throws Exception
+    {
+        EpochDayWrapper w = MAPPER.readValue("{\"value\": 1000}", EpochDayWrapper.class);
+        LocalDate date = w.value;
+        assertNotNull(date);
+        assertEquals(LocalDate.ofEpochDay(1000), date);
     }
 }

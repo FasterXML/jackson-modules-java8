@@ -16,6 +16,7 @@
 
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JavaType;
@@ -49,11 +50,11 @@ public class DurationSerializer extends JSR310FormattedSerializerBase<Duration>
 
     protected DurationSerializer(DurationSerializer base,
             Boolean useTimestamp, DateTimeFormatter dtf) {
-        super(base, useTimestamp, dtf);
+        super(base, useTimestamp, dtf, null);
     }
 
     @Override
-    protected DurationSerializer withFormat(Boolean useTimestamp, DateTimeFormatter dtf) {
+    protected DurationSerializer withFormat(Boolean useTimestamp, DateTimeFormatter dtf, JsonFormat.Shape shape) {
         return new DurationSerializer(this, useTimestamp, dtf);
     }
     

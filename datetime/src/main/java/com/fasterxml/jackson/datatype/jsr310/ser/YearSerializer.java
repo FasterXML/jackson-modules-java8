@@ -16,6 +16,7 @@
 
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JavaType;
@@ -49,11 +50,11 @@ public class YearSerializer extends JSR310FormattedSerializerBase<Year>
     }
 
     protected YearSerializer(YearSerializer base, Boolean useTimestamp, DateTimeFormatter formatter) {
-        super(base, useTimestamp, formatter);
+        super(base, useTimestamp, formatter, null);
     }
 
     @Override
-    protected YearSerializer withFormat(Boolean useTimestamp, DateTimeFormatter formatter) {
+    protected YearSerializer withFormat(Boolean useTimestamp, DateTimeFormatter formatter, JsonFormat.Shape shape) {
         return new YearSerializer(this, useTimestamp, formatter);
     }
 

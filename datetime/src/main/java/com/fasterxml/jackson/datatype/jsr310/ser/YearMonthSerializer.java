@@ -16,6 +16,7 @@
 
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.io.IOException;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
@@ -50,11 +51,11 @@ public class YearMonthSerializer extends JSR310FormattedSerializerBase<YearMonth
     }
 
     private YearMonthSerializer(YearMonthSerializer base, Boolean useTimestamp, DateTimeFormatter formatter) {
-        super(base, useTimestamp, formatter);
+        super(base, useTimestamp, formatter, null);
     }
 
     @Override
-    protected YearMonthSerializer withFormat(Boolean useTimestamp, DateTimeFormatter formatter) {
+    protected YearMonthSerializer withFormat(Boolean useTimestamp, DateTimeFormatter formatter, JsonFormat.Shape shape) {
         return new YearMonthSerializer(this, useTimestamp, formatter);
     }
 
