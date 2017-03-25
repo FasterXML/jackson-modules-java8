@@ -76,6 +76,17 @@ public class OffsetTimeDeserializer extends JSR310DateTimeDeserializerBase<Offse
             if (t == JsonToken.END_ARRAY) {
                 return null;
             }
+            if (context.hasSomeOfFeatures(F_MASK_ACCEPT_ARRAYS)
+            		&& (parser.getCurrentTokenId()==JsonTokenId.ID_STRING || parser.getCurrentTokenId()==JsonTokenId.ID_EMBEDDED_OBJECT)){
+        	    if (context.isEnabled(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)) {
+                    final OffsetTime parsed = deserialize(parser, context);
+                    if (parser.nextToken() != JsonToken.END_ARRAY) {
+                        handleMissingEndArrayForSingle(parser, context);
+                    }
+                    return parsed;            
+                }
+                
+            }
             if (t != JsonToken.VALUE_NUMBER_INT) {
                 _reportWrongToken(context, JsonToken.VALUE_NUMBER_INT, "hours");
             }

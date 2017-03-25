@@ -26,6 +26,7 @@ import java.time.format.DateTimeFormatter;
 
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
 /**
@@ -86,6 +87,17 @@ public class LocalDateDeserializer extends JSR310DateTimeDeserializerBase<LocalD
     		    if (parser.nextToken() == JsonToken.END_ARRAY) {
     		        return null;
     		    }
+    		    if (context.hasSomeOfFeatures(F_MASK_ACCEPT_ARRAYS)
+                		&& (parser.getCurrentTokenId()==JsonTokenId.ID_STRING || parser.getCurrentTokenId()==JsonTokenId.ID_EMBEDDED_OBJECT)){
+            	    if (context.isEnabled(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)) {
+                        final LocalDate parsed = deserialize(parser, context);
+                        if (parser.nextToken() != JsonToken.END_ARRAY) {
+                            handleMissingEndArrayForSingle(parser, context);
+                        }
+                        return parsed;            
+                    }
+                    
+                }
     		    int year = parser.getIntValue();
     		    int month = parser.nextIntValue(-1);
     		    int day = parser.nextIntValue(-1);

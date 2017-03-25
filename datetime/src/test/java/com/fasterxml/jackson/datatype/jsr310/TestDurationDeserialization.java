@@ -4,13 +4,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.temporal.TemporalAmount;
 
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 
@@ -185,5 +188,63 @@ public class TestDurationDeserialization extends ModuleTestBase
         assertNotNull("The value should not be null.", value);
         assertTrue("The value should be a Duration.", value instanceof Duration);
         assertEquals("The value is not correct.", duration, value);
+    }
+    
+    @Test
+    public void testDeserializationAsArrayDisabled() throws Exception {
+    	Duration exp = Duration.ofSeconds(13498L, 8374);
+    	try {
+	        READER.readValue("[\"" + exp.toString() + "\"]");
+	        fail("expected JsonMappingException");
+        } catch (JsonMappingException e) {
+           // OK
+        }
+    }
+    
+    
+    @Test
+    public void testDeserializationAsEmptyArrayDisabled() throws Throwable
+    {
+    	try {
+    		READER.readValue("[]");
+    	    fail("expected JsonMappingException");
+        } catch (JsonMappingException e) {
+           // OK
+        } catch (IOException e) {
+            throw e;
+        }
+    	try {
+    		String json="[]";
+        	newMapper()
+        			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
+        			.readerFor(Duration.class).readValue(aposToQuotes(json));
+    	    fail("expected JsonMappingException");
+        } catch (JsonMappingException e) {
+           // OK
+        } catch (IOException e) {
+            throw e;
+        }
+    }
+    
+    @Test
+    public void testDeserializationAsArrayEnabled() throws Exception {
+    	  Duration exp = Duration.ofSeconds(13498L, 8374);
+          Duration value = newMapper()
+      			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
+      			.readerFor(Duration.class).readValue("[\"" + exp.toString() + "\"]");
+
+          assertNotNull("The value should not be null.", value);
+          assertEquals("The value is not correct.", exp,  value);
+    }
+   
+    @Test
+    public void testDeserializationAsEmptyArrayEnabled() throws Throwable
+    {
+    	String json="[]";
+    	Duration value= newMapper()
+    			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
+    			.configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true)
+    			.readerFor(Duration.class).readValue(aposToQuotes(json));
+    	assertNull(value);
     }
 }

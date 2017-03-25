@@ -1,6 +1,8 @@
 package com.fasterxml.jackson.datatype.jsr310;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectReader;
 import org.junit.Test;
 
@@ -11,6 +13,7 @@ import java.time.format.DateTimeParseException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 public class TestLocalDateTimeDeserialization extends ModuleTestBase
@@ -27,6 +30,49 @@ public class TestLocalDateTimeDeserialization extends ModuleTestBase
     public void testBadDeserializationAsString01() throws Throwable
     {
         expectFailure("'notalocaldatetime'");
+    }
+    
+    @Test
+    public void testDeserializationAsArrayDisabled() throws Throwable
+    {
+    	try {
+    		read("['2000-01-01T12:00']");
+    	    fail("expected JsonParseException");
+        } catch (JsonParseException e) {
+           // OK
+        } catch (IOException e) {
+            throw e;
+        }
+
+    }
+    
+    @Test
+    public void testDeserializationAsEmptyArrayDisabled() throws Throwable
+    {
+    	// works even without the feature enabled
+    	assertNull(read("[]"));
+    }
+    
+    @Test
+    public void testDeserializationAsArrayEnabled() throws Throwable
+    {
+    	String json="['2000-01-01T12:00']";
+    	LocalDateTime value= newMapper()
+    			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
+    			.readerFor(LocalDateTime.class).readValue(aposToQuotes(json));
+    	notNull(value);
+        expect(LocalDateTime.of(2000, 1, 1, 12, 0, 0, 0), value);
+    }
+    
+    @Test
+    public void testDeserializationAsEmptyArrayEnabled() throws Throwable
+    {
+    	String json="[]";
+    	LocalDateTime value= newMapper()
+    			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
+    			.configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true)
+    			.readerFor(LocalDateTime.class).readValue(aposToQuotes(json));
+    	assertNull(value);
     }
 
     private void expectFailure(String json) throws Throwable {

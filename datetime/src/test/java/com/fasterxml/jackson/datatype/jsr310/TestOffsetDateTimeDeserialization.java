@@ -15,6 +15,7 @@ import java.util.TimeZone;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 
@@ -102,6 +103,65 @@ public class TestOffsetDateTimeDeserialization extends ModuleTestBase
         expectSuccess(OffsetDateTime.of(2000, 1, 1, 12, 0, 0, 0, ZoneOffset.UTC), "'2000-01-01T12:00+00'");
     }
 
+    @Test
+    public void testDeserializationAsArrayDisabled() throws Throwable
+    {
+    	try {
+    		read("['2000-01-01T12:00+00']");
+    	    fail("expected JsonMappingException");
+        } catch (JsonMappingException e) {
+           // OK
+        } catch (IOException e) {
+            throw e;
+        }
+    }
+    
+    @Test
+    public void testDeserializationAsEmptyArrayDisabled() throws Throwable
+    {
+    	try {
+    		read("[]");
+    	    fail("expected JsonMappingException");
+        } catch (JsonMappingException e) {
+           // OK
+        } catch (IOException e) {
+            throw e;
+        }
+    	try {
+    		String json="[]";
+        	newMapper()
+        			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
+        			.readerFor(OffsetDateTime.class).readValue(aposToQuotes(json));
+    	    fail("expected JsonMappingException");
+        } catch (JsonMappingException e) {
+           // OK
+        } catch (IOException e) {
+            throw e;
+        }
+    }
+    
+    @Test
+    public void testDeserializationAsArrayEnabled() throws Throwable
+    {
+    	String json="['2000-01-01T12:00+00']";
+    	OffsetDateTime value= newMapper()
+    			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
+    			.readerFor(OffsetDateTime.class).readValue(aposToQuotes(json));
+    	notNull(value);
+        expect(OffsetDateTime.of(2000, 1, 1, 12, 0, 0, 0, ZoneOffset.UTC), value);
+    }
+    
+    @Test
+    public void testDeserializationAsEmptyArrayEnabled() throws Throwable
+    {
+    	String json="[]";
+    	OffsetDateTime value= newMapper()
+    			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
+    			.configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true)
+    			.readerFor(OffsetDateTime.class).readValue(aposToQuotes(json));
+    	assertNull(value);
+    }
+    
     private void expectFailure(String json) throws Exception {
         try {
             read(json);
