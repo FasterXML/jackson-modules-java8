@@ -55,6 +55,8 @@ abstract class JSR310FormattedSerializerBase<T>
      */
     protected final DateTimeFormatter _formatter;
 
+    protected final JsonFormat.Shape _shape;
+
     protected JSR310FormattedSerializerBase(Class<T> supportedType) {
         this(supportedType, null);
     }
@@ -63,19 +65,22 @@ abstract class JSR310FormattedSerializerBase<T>
             DateTimeFormatter formatter) {
         super(supportedType);
         _useTimestamp = null;
+        _shape = null;
         _formatter = formatter;
     }
     
     protected JSR310FormattedSerializerBase(JSR310FormattedSerializerBase<?> base,
-        Boolean useTimestamp, DateTimeFormatter dtf)
+                                            Boolean useTimestamp, DateTimeFormatter dtf, JsonFormat.Shape shape)
     {            
         super(base.handledType());
         _useTimestamp = useTimestamp;
         _formatter = dtf;
+        _shape = shape;
     }
 
     protected abstract JSR310FormattedSerializerBase<?> withFormat(Boolean useTimestamp,
-            DateTimeFormatter dtf);
+                                                                   DateTimeFormatter dtf,
+                                                                   JsonFormat.Shape shape);
 
     /**
      * @since 2.8
@@ -118,8 +123,8 @@ abstract class JSR310FormattedSerializerBase<T>
                 }
             }
             JSR310FormattedSerializerBase<?> ser = this;
-            if ((useTimestamp != _useTimestamp) || (dtf != _formatter)) {
-                ser = ser.withFormat(useTimestamp, dtf);
+            if ((shape != _shape) || (useTimestamp != _useTimestamp) || (dtf != _formatter)) {
+                ser = ser.withFormat(useTimestamp, dtf, shape);
             }
             Boolean writeZoneId = format.getFeature(JsonFormat.Feature.WRITE_DATES_WITH_ZONE_ID);
             if (writeZoneId != null) {

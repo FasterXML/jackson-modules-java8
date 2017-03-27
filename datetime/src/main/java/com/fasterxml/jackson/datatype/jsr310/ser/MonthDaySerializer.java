@@ -16,18 +16,17 @@
 
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
-import java.io.IOException;
-import java.time.MonthDay;
-import java.time.format.DateTimeFormatter;
-
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonGenerator;
-
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonStringFormatVisitor;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonValueFormat;
+import java.io.IOException;
+import java.time.MonthDay;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Serializer for Java 8 temporal {@link MonthDay}s.
@@ -53,11 +52,11 @@ public class MonthDaySerializer extends JSR310FormattedSerializerBase<MonthDay>
     }
 
     private MonthDaySerializer(MonthDaySerializer base, Boolean useTimestamp, DateTimeFormatter formatter) {
-        super(base, useTimestamp, formatter);
+        super(base, useTimestamp, formatter, null);
     }
 
     @Override
-    protected MonthDaySerializer withFormat(Boolean useTimestamp, DateTimeFormatter formatter) {
+    protected MonthDaySerializer withFormat(Boolean useTimestamp, DateTimeFormatter formatter, JsonFormat.Shape shape) {
         return new MonthDaySerializer(this, useTimestamp, formatter);
     }
 

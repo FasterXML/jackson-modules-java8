@@ -16,6 +16,7 @@
 
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -43,11 +44,11 @@ public class OffsetTimeSerializer extends JSR310FormattedSerializerBase<OffsetTi
 
     protected OffsetTimeSerializer(OffsetTimeSerializer base,
             Boolean useTimestamp, DateTimeFormatter dtf) {
-        super(base, useTimestamp, dtf);
+        super(base, useTimestamp, dtf, null);
     }
 
     @Override
-    protected OffsetTimeSerializer withFormat(Boolean useTimestamp, DateTimeFormatter dtf) {
+    protected OffsetTimeSerializer withFormat(Boolean useTimestamp, DateTimeFormatter dtf, JsonFormat.Shape shape) {
         return new OffsetTimeSerializer(this, useTimestamp, dtf);
     }
     

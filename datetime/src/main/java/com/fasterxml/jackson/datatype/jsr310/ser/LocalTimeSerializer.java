@@ -16,6 +16,7 @@
 
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -46,11 +47,11 @@ public class LocalTimeSerializer extends JSR310FormattedSerializerBase<LocalTime
     }
 
     protected LocalTimeSerializer(LocalTimeSerializer base, Boolean useTimestamp, DateTimeFormatter formatter) {
-        super(base, useTimestamp, formatter);
+        super(base, useTimestamp, formatter, null);
     }
 
     @Override
-    protected JSR310FormattedSerializerBase<LocalTime> withFormat(Boolean useTimestamp, DateTimeFormatter dtf) {
+    protected JSR310FormattedSerializerBase<LocalTime> withFormat(Boolean useTimestamp, DateTimeFormatter dtf, JsonFormat.Shape shape) {
         return new LocalTimeSerializer(this, useTimestamp, dtf);
     }
 

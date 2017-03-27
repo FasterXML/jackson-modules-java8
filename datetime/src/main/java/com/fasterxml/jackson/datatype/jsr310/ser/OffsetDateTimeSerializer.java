@@ -1,5 +1,6 @@
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -21,7 +22,10 @@ public class OffsetDateTimeSerializer extends InstantSerializerBase<OffsetDateTi
     }
 
     @Override
-    protected JSR310FormattedSerializerBase<?> withFormat(Boolean useTimestamp, DateTimeFormatter formatter) {
+    protected JSR310FormattedSerializerBase<?> withFormat(
+        Boolean useTimestamp,
+        DateTimeFormatter formatter,
+        JsonFormat.Shape shape) {
         return new OffsetDateTimeSerializer(this, useTimestamp, formatter);
     }
 }

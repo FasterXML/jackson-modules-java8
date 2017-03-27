@@ -1,5 +1,6 @@
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -39,7 +40,10 @@ public class ZonedDateTimeSerializer extends InstantSerializerBase<ZonedDateTime
     }
 
     @Override
-    protected JSR310FormattedSerializerBase<?> withFormat(Boolean useTimestamp, DateTimeFormatter formatter) {
+    protected JSR310FormattedSerializerBase<?> withFormat(
+        Boolean useTimestamp,
+        DateTimeFormatter formatter,
+        JsonFormat.Shape shape) {
         return new ZonedDateTimeSerializer(this, useTimestamp, formatter, _writeZoneId);
     }
 
