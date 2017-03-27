@@ -3,12 +3,14 @@ Java 8 module
 (version numbers in brackets indicate release in which the problem was fixed)
 
 Louis-Rémi Paquet (lrpg@github)
+  * Reported #15: Optional<Long> and OptionalLong deserialization
+    not consistent when deserializing from String
+   (2.8.8)
 
-* Reported #15: Optional<Long> and OptionalLong deserialization
-  not consistent when deserializing from String
- (2.8.8)
+João Cabrita (kewne@github)
+  * Contributed #20: Allow `LocalDate` to be serialized/deserialized as number (epoch day)
+   (2.9.0)
 
 KP Moresmau (JPMoresmau@github)
-
-#21: `DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS` not respected
- (contributed by JP Moresmau)
+  #21: `DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS` not respected
+   (2.9.0)

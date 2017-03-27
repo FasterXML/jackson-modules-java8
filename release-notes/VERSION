@@ -10,6 +10,8 @@ Modules:
 
 2.9.0 (not yet released)
 
+#20: Allow `LocalDate` to be serialized/deserialized as number (epoch day)
+ (contributed by João C)
 #21: `DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS` not respected
  (contributed by JP Moresmau)
 
