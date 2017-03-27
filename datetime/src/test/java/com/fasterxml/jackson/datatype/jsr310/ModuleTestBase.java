@@ -1,5 +1,7 @@
 package com.fasterxml.jackson.datatype.jsr310;
 
+import java.util.Arrays;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ModuleTestBase
@@ -16,5 +18,18 @@ public class ModuleTestBase
 
     protected String aposToQuotes(String json) {
         return json.replace("'", "\"");
+    }
+
+    protected void verifyException(Throwable e, String... matches)
+    {
+        String msg = e.getMessage();
+        String lmsg = (msg == null) ? "" : msg.toLowerCase();
+        for (String match : matches) {
+            String lmatch = match.toLowerCase();
+            if (lmsg.indexOf(lmatch) >= 0) {
+                return;
+            }
+        }
+        throw new Error("Expected an exception with one of substrings ("+Arrays.asList(matches)+"): got one with message \""+msg+"\"");
     }
 }

@@ -1,9 +1,10 @@
 package com.fasterxml.jackson.datatype.jsr310;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+
 import org.junit.Test;
 
 import java.io.IOException;
@@ -34,15 +35,12 @@ public class TestLocalTimeDeserialization extends ModuleTestBase
     @Test
     public void testDeserializationAsArrayDisabled() throws Throwable
     {
-    	try {
-    		read("['12:00']");
-    	    fail("expected JsonParseException");
-        } catch (JsonParseException e) {
-           // OK
-        } catch (IOException e) {
-            throw e;
+        try {
+            read("['12:00']");
+            fail("expected MismatchedInputException");
+        } catch (MismatchedInputException e) {
+            verifyException(e, "Unexpected token (VALUE_STRING) within Array");
         }
-
     }
     
     @Test

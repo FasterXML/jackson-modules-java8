@@ -85,44 +85,52 @@ public class LocalDateTimeDeserializer
             }
         }
         if (parser.isExpectedStartArrayToken()) {
-            if (parser.nextToken() == JsonToken.END_ARRAY) {
+            JsonToken t = parser.nextToken();
+            if (t == JsonToken.END_ARRAY) {
                 return null;
             }
-            if (context.hasSomeOfFeatures(F_MASK_ACCEPT_ARRAYS)
-            		&& (parser.getCurrentTokenId()==JsonTokenId.ID_STRING || parser.getCurrentTokenId()==JsonTokenId.ID_EMBEDDED_OBJECT)){
-        	    if (context.isEnabled(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)) {
-                    final LocalDateTime parsed = deserialize(parser, context);
-                    if (parser.nextToken() != JsonToken.END_ARRAY) {
-                        handleMissingEndArrayForSingle(parser, context);
-                    }
-                    return parsed;            
+            if ((t == JsonToken.VALUE_STRING || t == JsonToken.VALUE_EMBEDDED_OBJECT)
+                    && context.isEnabled(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)) {
+                final LocalDateTime parsed = deserialize(parser, context);
+                if (parser.nextToken() != JsonToken.END_ARRAY) {
+                    handleMissingEndArrayForSingle(parser, context);
                 }
-                
+                return parsed;            
             }
-            int year = parser.getIntValue();
-            int month = parser.nextIntValue(-1);
-            int day = parser.nextIntValue(-1);
-            int hour = parser.nextIntValue(-1);
-            int minute = parser.nextIntValue(-1);
+            if (t == JsonToken.VALUE_NUMBER_INT) {
+                LocalDateTime result;
 
-            if (parser.nextToken() != JsonToken.END_ARRAY) {
-            	int second = parser.getIntValue();
+                int year = parser.getIntValue();
+                int month = parser.nextIntValue(-1);
+                int day = parser.nextIntValue(-1);
+                int hour = parser.nextIntValue(-1);
+                int minute = parser.nextIntValue(-1);
 
-            	if (parser.nextToken() != JsonToken.END_ARRAY) {
-            		int partialSecond = parser.getIntValue();
-            		if(partialSecond < 1_000 &&
-            				!context.isEnabled(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS))
-            			partialSecond *= 1_000_000; // value is milliseconds, convert it to nanoseconds
-
-            		if(parser.nextToken() != JsonToken.END_ARRAY) {
-            			throw context.wrongTokenException(parser, handledType(), JsonToken.END_ARRAY,
-            			        "Expected array to end.");
-            		}
-            		return LocalDateTime.of(year, month, day, hour, minute, second, partialSecond);
-            	}
-            	return LocalDateTime.of(year, month, day, hour, minute, second);
+                t = parser.nextToken();
+                if (t == JsonToken.END_ARRAY) {
+                    result = LocalDateTime.of(year, month, day, hour, minute);
+                } else {
+                    int second = parser.getIntValue();
+                    t = parser.nextToken();
+                    if (t == JsonToken.END_ARRAY) {
+                        result = LocalDateTime.of(year, month, day, hour, minute, second);
+                    } else {
+                        int partialSecond = parser.getIntValue();
+                        if (partialSecond < 1_000 &&
+                                !context.isEnabled(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS))
+                            partialSecond *= 1_000_000; // value is milliseconds, convert it to nanoseconds
+                        if (parser.nextToken() != JsonToken.END_ARRAY) {
+                            throw context.wrongTokenException(parser, handledType(), JsonToken.END_ARRAY,
+                                    "Expected array to end");
+                        }
+                        result = LocalDateTime.of(year, month, day, hour, minute, second, partialSecond);
+                    }
+                }
+                return result;
             }
-            return LocalDateTime.of(year, month, day, hour, minute);
+            context.reportInputMismatch(handledType(),
+                    "Unexpected token (%s) within Array, expected VALUE_NUMBER_INT",
+                    t);
         }
         if (parser.hasToken(JsonToken.VALUE_EMBEDDED_OBJECT)) {
             return (LocalDateTime) parser.getEmbeddedObject();

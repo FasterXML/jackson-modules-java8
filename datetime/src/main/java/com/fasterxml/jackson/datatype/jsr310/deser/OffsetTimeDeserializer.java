@@ -70,31 +70,27 @@ public class OffsetTimeDeserializer extends JSR310DateTimeDeserializerBase<Offse
             throw context.wrongTokenException(parser, handledType(), JsonToken.START_ARRAY,
                     "Expected array or string.");
         }
-        int hour = parser.nextIntValue(-1);
-        if (hour == -1) {
-            JsonToken t = parser.getCurrentToken();
+        JsonToken t = parser.nextToken();
+        if (t != JsonToken.VALUE_NUMBER_INT) {
             if (t == JsonToken.END_ARRAY) {
                 return null;
             }
-            if (context.hasSomeOfFeatures(F_MASK_ACCEPT_ARRAYS)
-            		&& (parser.getCurrentTokenId()==JsonTokenId.ID_STRING || parser.getCurrentTokenId()==JsonTokenId.ID_EMBEDDED_OBJECT)){
-        	    if (context.isEnabled(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)) {
-                    final OffsetTime parsed = deserialize(parser, context);
-                    if (parser.nextToken() != JsonToken.END_ARRAY) {
-                        handleMissingEndArrayForSingle(parser, context);
-                    }
-                    return parsed;            
+            if ((t == JsonToken.VALUE_STRING || t == JsonToken.VALUE_EMBEDDED_OBJECT)
+                    && context.isEnabled(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)) {
+                final OffsetTime parsed = deserialize(parser, context);
+                if (parser.nextToken() != JsonToken.END_ARRAY) {
+                    handleMissingEndArrayForSingle(parser, context);
                 }
-                
+                return parsed;            
             }
-            if (t != JsonToken.VALUE_NUMBER_INT) {
-                _reportWrongToken(context, JsonToken.VALUE_NUMBER_INT, "hours");
-            }
-            hour = parser.getIntValue();
+            context.reportInputMismatch(handledType(),
+                    "Unexpected token (%s) within Array, expected VALUE_NUMBER_INT",
+                    t);
         }
+        int hour = parser.getIntValue();
         int minute = parser.nextIntValue(-1);
         if (minute == -1) {
-            JsonToken t = parser.getCurrentToken();
+            t = parser.getCurrentToken();
             if (t == JsonToken.END_ARRAY) {
                 return null;
             }
@@ -117,11 +113,11 @@ public class OffsetTimeDeserializer extends JSR310DateTimeDeserializerBase<Offse
             }
         }
         if (parser.getCurrentToken() == JsonToken.VALUE_STRING) {
-            OffsetTime t = OffsetTime.of(hour, minute, second, partialSecond, ZoneOffset.of(parser.getText()));
+            OffsetTime result = OffsetTime.of(hour, minute, second, partialSecond, ZoneOffset.of(parser.getText()));
             if (parser.nextToken() != JsonToken.END_ARRAY) {
                 _reportWrongToken(context, JsonToken.END_ARRAY, "timezone");
             }
-            return t;
+            return result;
         }
         throw context.wrongTokenException(parser, handledType(), JsonToken.VALUE_STRING,
                 "Expected string for TimeZone after numeric values");

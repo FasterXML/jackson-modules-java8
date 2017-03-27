@@ -1,20 +1,21 @@
 package com.fasterxml.jackson.datatype.jsr310;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectReader;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.format.DateTimeParseException;
 
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 
 public class TestLocalDateDeserialization extends ModuleTestBase
 {
@@ -35,17 +36,14 @@ public class TestLocalDateDeserialization extends ModuleTestBase
     @Test
     public void testDeserializationAsArrayDisabled() throws Throwable
     {
-    	try {
-    		read("['2000-01-01']");
-    	    fail("expected JsonParseException");
-        } catch (JsonParseException e) {
-           // OK
-        } catch (IOException e) {
-            throw e;
+        try {
+            read("['2000-01-01']");
+            fail("expected MismatchedInputException");
+        } catch (MismatchedInputException e) {
+            verifyException(e, "Unexpected token (VALUE_STRING) within Array");
         }
-
     }
-    
+
     @Test
     public void testDeserializationAsEmptyArrayDisabled() throws Throwable
     {

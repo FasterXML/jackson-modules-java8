@@ -71,8 +71,8 @@ public class YearDeserializer extends JSR310DeserializerBase<Year>
             return (Year) parser.getEmbeddedObject();
         }
         if (parser.hasToken(JsonToken.START_ARRAY)){
-        	return _deserializeFromArray(parser, context);
-    	}
+            return _deserializeFromArray(parser, context);
+        }
         return _reportWrongToken(parser, context, JsonToken.VALUE_STRING, JsonToken.VALUE_NUMBER_INT);
     }
 }

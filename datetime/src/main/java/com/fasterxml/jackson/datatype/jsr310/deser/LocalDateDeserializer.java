@@ -84,29 +84,32 @@ public class LocalDateDeserializer extends JSR310DateTimeDeserializerBase<LocalD
             }
         }
         if (parser.isExpectedStartArrayToken()) {
-    		    if (parser.nextToken() == JsonToken.END_ARRAY) {
-    		        return null;
-    		    }
-    		    if (context.hasSomeOfFeatures(F_MASK_ACCEPT_ARRAYS)
-                		&& (parser.getCurrentTokenId()==JsonTokenId.ID_STRING || parser.getCurrentTokenId()==JsonTokenId.ID_EMBEDDED_OBJECT)){
-            	    if (context.isEnabled(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)) {
-                        final LocalDate parsed = deserialize(parser, context);
-                        if (parser.nextToken() != JsonToken.END_ARRAY) {
-                            handleMissingEndArrayForSingle(parser, context);
-                        }
-                        return parsed;            
-                    }
-                    
+            JsonToken t = parser.nextToken();
+            if (t == JsonToken.END_ARRAY) {
+                return null;
+            }
+            if (context.isEnabled(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
+                    && (t == JsonToken.VALUE_STRING || t==JsonToken.VALUE_EMBEDDED_OBJECT)) {
+                final LocalDate parsed = deserialize(parser, context);
+                if (parser.nextToken() != JsonToken.END_ARRAY) {
+                    handleMissingEndArrayForSingle(parser, context);
                 }
-    		    int year = parser.getIntValue();
-    		    int month = parser.nextIntValue(-1);
-    		    int day = parser.nextIntValue(-1);
-
-    		    if (parser.nextToken() != JsonToken.END_ARRAY) {
-    		        throw context.wrongTokenException(parser, handledType(), JsonToken.END_ARRAY,
-    		                "Expected array to end.");
-    		    }
-    		    return LocalDate.of(year, month, day);
+                return parsed;            
+            }
+            if (t == JsonToken.VALUE_NUMBER_INT) {
+                int year = parser.getIntValue();
+                int month = parser.nextIntValue(-1);
+                int day = parser.nextIntValue(-1);
+                
+                if (parser.nextToken() != JsonToken.END_ARRAY) {
+                    throw context.wrongTokenException(parser, handledType(), JsonToken.END_ARRAY,
+                            "Expected array to end");
+                }
+                return LocalDate.of(year, month, day);
+            }
+            context.reportInputMismatch(handledType(),
+                    "Unexpected token (%s) within Array, expected VALUE_NUMBER_INT",
+                    t);
         }
         if (parser.hasToken(JsonToken.VALUE_EMBEDDED_OBJECT)) {
             return (LocalDate) parser.getEmbeddedObject();

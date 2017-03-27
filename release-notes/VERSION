@@ -8,6 +8,11 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
+2.9.0 (not yet released)
+
+#21: `DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS` not respected
+ (contributed by JP Moresmau)
+
 2.8.8 (not yet released)
 
 #13: (datatypes) `configureAbsentsAsNulls` not working for primitive optionals

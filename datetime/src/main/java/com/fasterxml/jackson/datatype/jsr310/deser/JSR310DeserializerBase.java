@@ -66,13 +66,13 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
     {
         // 20-Apr-2016, tatu: No multiple-expected-types handler yet, construct message
         //    here
-        String msg = String.format("Unexpected token (%s), expected one of %s for %s value",
+        return context.reportInputMismatch(handledType(),
+                "Unexpected token (%s), expected one of %s for %s value",
                 parser.getCurrentToken(),
                 Arrays.asList(expTypes).toString(),
                 handledType().getName());
-        throw JsonMappingException.from(parser, msg);
     }
-    
+
     protected <BOGUS> BOGUS _rethrowDateTimeException(JsonParser p, DeserializationContext context,
             DateTimeException e0, String value) throws JsonMappingException
     {
@@ -80,12 +80,21 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
         if (e0 instanceof DateTimeParseException) {
             e = context.weirdStringException(value, handledType(), e0.getMessage());
             e.initCause(e0);
-        } else {
-            e = JsonMappingException.from(p,
-                String.format("Failed to deserialize %s: (%s) %s",
-                        handledType().getName(), e0.getClass().getName(), e0.getMessage()), e0);
+            throw e;
         }
-        throw e;
+        if (e0 instanceof DateTimeException) {
+            String msg = e0.getMessage();
+            // 26-Mar-2017, tatu: Let's add some more logic to try to find likely format(ting)
+            //   issues
+            if (msg.contains("invalid format")) {
+                e = context.weirdStringException(value, handledType(), e0.getMessage());
+                e.initCause(e0);
+                throw e;
+            }
+        }
+        return context.reportInputMismatch(handledType(),
+                "Failed to deserialize %s: (%s) %s",
+                handledType().getName(), e0.getClass().getName(), e0.getMessage());
     }
 
     /**

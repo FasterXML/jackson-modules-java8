@@ -20,7 +20,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.core.JsonTokenId;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
 import java.io.IOException;
@@ -71,27 +70,22 @@ public class YearMonthDeserializer extends JSR310DateTimeDeserializerBase<YearMo
             }
         }
         if (parser.isExpectedStartArrayToken()) {
-            int year = parser.nextIntValue(-1);
-            if (year == -1) {
-                if (parser.hasToken(JsonToken.END_ARRAY)) {
-                    return null;
-                }
-                if (context.hasSomeOfFeatures(F_MASK_ACCEPT_ARRAYS)
-                		&& (parser.getCurrentTokenId()==JsonTokenId.ID_STRING || parser.getCurrentTokenId()==JsonTokenId.ID_EMBEDDED_OBJECT)){
-            	    if (context.isEnabled(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)) {
-                        final YearMonth parsed = deserialize(parser, context);
-                        if (parser.nextToken() != JsonToken.END_ARRAY) {
-                            handleMissingEndArrayForSingle(parser, context);
-                        }
-                        return parsed;            
-                    }
-                    
-                }
-                if (!parser.hasToken(JsonToken.VALUE_NUMBER_INT)) {
-                    _reportWrongToken(context, JsonToken.VALUE_NUMBER_INT, "years");
-                }
-                year = parser.getIntValue();
+            JsonToken t = parser.nextToken();
+            if (t == JsonToken.END_ARRAY) {
+                return null;
             }
+            if ((t == JsonToken.VALUE_STRING || t == JsonToken.VALUE_EMBEDDED_OBJECT)
+                    && context.isEnabled(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)) {
+                final YearMonth parsed = deserialize(parser, context);
+                if (parser.nextToken() != JsonToken.END_ARRAY) {
+                    handleMissingEndArrayForSingle(parser, context);
+                }
+                return parsed;            
+            }
+            if (t != JsonToken.VALUE_NUMBER_INT) {
+                _reportWrongToken(context, JsonToken.VALUE_NUMBER_INT, "years");
+            }
+            int year = parser.getIntValue();
             int month = parser.nextIntValue(-1);
             if (month == -1) {
                 if (!parser.hasToken(JsonToken.VALUE_NUMBER_INT)) {
@@ -101,7 +95,7 @@ public class YearMonthDeserializer extends JSR310DateTimeDeserializerBase<YearMo
             }
             if (parser.nextToken() != JsonToken.END_ARRAY) {
                 throw context.wrongTokenException(parser, handledType(), JsonToken.END_ARRAY,
-                        "Expected array to end.");
+                        "Expected array to end");
             }
             return YearMonth.of(year, month);
         }

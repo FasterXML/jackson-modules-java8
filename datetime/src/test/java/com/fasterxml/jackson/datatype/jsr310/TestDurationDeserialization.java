@@ -1,21 +1,21 @@
 package com.fasterxml.jackson.datatype.jsr310;
 
+import java.time.Duration;
+import java.time.temporal.TemporalAmount;
+
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.IOException;
-import java.time.Duration;
-import java.time.temporal.TemporalAmount;
-
-import org.junit.Test;
-
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 
 public class TestDurationDeserialization extends ModuleTestBase
 {
@@ -205,24 +205,19 @@ public class TestDurationDeserialization extends ModuleTestBase
     @Test
     public void testDeserializationAsEmptyArrayDisabled() throws Throwable
     {
-    	try {
-    		READER.readValue("[]");
-    	    fail("expected JsonMappingException");
-        } catch (JsonMappingException e) {
-           // OK
-        } catch (IOException e) {
-            throw e;
+        try {
+            READER.readValue("[]");
+            fail("expected MismatchedInputException");
+        } catch (MismatchedInputException e) {
+            verifyException(e, "Can not deserialize instance of java.time.Duration out of START_ARRAY");
         }
-    	try {
-    		String json="[]";
-        	newMapper()
-        			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
-        			.readerFor(Duration.class).readValue(aposToQuotes(json));
-    	    fail("expected JsonMappingException");
-        } catch (JsonMappingException e) {
-           // OK
-        } catch (IOException e) {
-            throw e;
+        try {
+            newMapper()
+                .configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
+        	        .readerFor(Duration.class).readValue(aposToQuotes("[]"));
+            fail("expected MismatchedInputException");
+        } catch (MismatchedInputException e) {
+            verifyException(e, "Unexpected token (END_ARRAY), expected one of");
         }
     }
     

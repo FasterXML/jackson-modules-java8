@@ -1,9 +1,10 @@
 package com.fasterxml.jackson.datatype.jsr310;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+
 import org.junit.Test;
 
 import java.io.IOException;
@@ -35,32 +36,28 @@ public class TestLocalDateTimeDeserialization extends ModuleTestBase
     @Test
     public void testDeserializationAsArrayDisabled() throws Throwable
     {
-    	try {
-    		read("['2000-01-01T12:00']");
-    	    fail("expected JsonParseException");
-        } catch (JsonParseException e) {
-           // OK
-        } catch (IOException e) {
-            throw e;
+        try {
+            read("['2000-01-01T12:00']");
+        } catch (MismatchedInputException e) {
+            verifyException(e, "Unexpected token (VALUE_STRING) within Array");
         }
-
     }
     
     @Test
     public void testDeserializationAsEmptyArrayDisabled() throws Throwable
     {
-    	// works even without the feature enabled
-    	assertNull(read("[]"));
+        // works even without the feature enabled
+        assertNull(read("[]"));
     }
-    
+
     @Test
     public void testDeserializationAsArrayEnabled() throws Throwable
     {
-    	String json="['2000-01-01T12:00']";
-    	LocalDateTime value= newMapper()
-    			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
-    			.readerFor(LocalDateTime.class).readValue(aposToQuotes(json));
-    	notNull(value);
+        String json="['2000-01-01T12:00']";
+        LocalDateTime value= newMapper()
+                .configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
+                .readerFor(LocalDateTime.class).readValue(aposToQuotes(json));
+        notNull(value);
         expect(LocalDateTime.of(2000, 1, 1, 12, 0, 0, 0), value);
     }
     
