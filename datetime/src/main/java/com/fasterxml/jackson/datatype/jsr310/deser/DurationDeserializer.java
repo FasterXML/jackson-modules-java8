@@ -76,6 +76,9 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
                 // 20-Apr-2016, tatu: Related to [databind#1208], can try supporting embedded
                 //    values quite easily
                 return (Duration) parser.getEmbeddedObject();
+                
+            case JsonTokenId.ID_START_ARRAY:
+            	return _deserializeFromArray(parser, context);
         }
         return _reportWrongToken(parser, context, JsonToken.VALUE_STRING,
                 JsonToken.VALUE_NUMBER_INT, JsonToken.VALUE_NUMBER_FLOAT);

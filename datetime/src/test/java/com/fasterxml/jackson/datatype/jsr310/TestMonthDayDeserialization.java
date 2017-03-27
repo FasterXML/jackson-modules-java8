@@ -1,6 +1,8 @@
 package com.fasterxml.jackson.datatype.jsr310;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectReader;
 import org.junit.Test;
 
@@ -11,6 +13,7 @@ import java.time.format.DateTimeParseException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 public class TestMonthDayDeserialization extends ModuleTestBase
@@ -29,6 +32,67 @@ public class TestMonthDayDeserialization extends ModuleTestBase
         expectFailure("'notamonthday'");
     }
 
+    @Test
+    public void testDeserializationAsArrayDisabled() throws Throwable
+    {
+    	try {
+    		read("['--01-01']");
+    	    fail("expected JsonMappingException");
+        } catch (JsonMappingException e) {
+           // OK
+        } catch (IOException e) {
+            throw e;
+        }
+
+    }
+    
+    @Test
+    public void testDeserializationAsEmptyArrayDisabled() throws Throwable
+    {
+    	try {
+    		READER.readValue("[]");
+    	    fail("expected JsonMappingException");
+        } catch (JsonMappingException e) {
+           // OK
+        } catch (IOException e) {
+            throw e;
+        }
+    	try {
+    		String json="[]";
+        	newMapper()
+        			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
+        			.readerFor(MonthDay.class).readValue(aposToQuotes(json));
+    	    fail("expected JsonMappingException");
+        } catch (JsonMappingException e) {
+           // OK
+        } catch (IOException e) {
+            throw e;
+        }
+    }
+    
+    @Test
+    public void testDeserializationAsArrayEnabled() throws Throwable
+    {
+    	String json="['--01-01']";
+    	MonthDay value= newMapper()
+    			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
+    			.readerFor(MonthDay.class).readValue(aposToQuotes(json));
+    	notNull(value);
+        expect(MonthDay.of(Month.JANUARY, 1), value);
+    }
+    
+    @Test
+    public void testDeserializationAsEmptyArrayEnabled() throws Throwable
+    {
+    	String json="[]";
+    	MonthDay value= newMapper()
+    			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
+    			.configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true)
+    			.readerFor(MonthDay.class).readValue(aposToQuotes(json));
+    	assertNull(value);
+    }
+
+    
     private void expectFailure(String aposJson) throws Throwable {
         try {
             read(aposJson);
