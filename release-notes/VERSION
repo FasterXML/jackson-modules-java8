@@ -8,7 +8,7 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
-2.8.8 (not yet released)
+2.8.8 (05-Apr-2017)
 
 #15: Optional<Long> and OptionalLong deserialization are not consistent when
   deserializing from String
