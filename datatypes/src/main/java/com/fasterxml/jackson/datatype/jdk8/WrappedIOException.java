@@ -25,7 +25,8 @@ public class WrappedIOException extends RuntimeException {
      * @return the wrapped {@link IOException}
      */
     @Override
-    public synchronized IOException getCause() {
+    public IOException getCause() {
         return (IOException) super.getCause();
     }
+
 }

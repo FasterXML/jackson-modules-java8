@@ -21,7 +21,7 @@ public class StreamSerializer<T> extends StdSerializer<Stream<T>> implements Con
     /**
      * element specific serializer, if any
      */
-    private transient JsonSerializer<T> elemSerializer = null;
+    private transient final JsonSerializer<T> elemSerializer;
 
     /**
      * Constructor
@@ -30,15 +30,31 @@ public class StreamSerializer<T> extends StdSerializer<Stream<T>> implements Con
      * @param elemType   Stream elements type (matching T)
      */
     public StreamSerializer(JavaType streamType, JavaType elemType) {
+        this(streamType, elemType, null);
+    }
+
+    /**
+     * Constructor with custom serializer
+     *
+     * @param streamType     Stream type
+     * @param elemType       Stream elements type (matching T)
+     * @param elemSerializer Custom serializer to use for element type
+     */
+    public StreamSerializer(JavaType streamType, JavaType elemType, JsonSerializer<T> elemSerializer) {
         super(streamType);
         this.elemType = elemType;
+        this.elemSerializer = elemSerializer;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public JsonSerializer<?> createContextual(SerializerProvider provider, BeanProperty property) throws JsonMappingException {
-        if (!elemType.hasRawClass(Object.class) && (provider.isEnabled(MapperFeature.USE_STATIC_TYPING) || elemType.isFinal())) {
-            elemSerializer = (JsonSerializer<T>) provider.findPrimaryPropertySerializer(elemType, property);
+        if (!elemType.hasRawClass(Object.class)
+                && (provider.isEnabled(MapperFeature.USE_STATIC_TYPING) || elemType.isFinal())) {
+            return new StreamSerializer(
+                    provider.getTypeFactory().constructParametrizedType(Stream.class, Stream.class, elemType),
+                    elemType,
+                    provider.findPrimaryPropertySerializer(elemType, property));
         }
         return this;
     }
