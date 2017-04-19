@@ -29,8 +29,12 @@ public class OptionalLongDeserializer extends BaseScalarOptionarDeserializer<Opt
         switch (p.getCurrentTokenId()) {
         case JsonTokenId.ID_STRING:
             String text = p.getText().trim();
-            if (_isEmptyOrTextualNull(text)) {
-                _verifyPrimitiveNullCoercion(ctxt, text);
+            if ((text.length() == 0)) {
+                _coerceEmptyString(ctxt, false);
+                return _empty;
+            }
+            if (_hasTextualNull(text)) {
+                _coerceTextualNull(ctxt, false);
                 return _empty;
             }
             return OptionalLong.of(_parseLongPrimitive(ctxt, text));
@@ -40,7 +44,6 @@ public class OptionalLongDeserializer extends BaseScalarOptionarDeserializer<Opt
             }
             return OptionalLong.of(p.getValueAsLong());
         case JsonTokenId.ID_NULL:
-            _verifyPrimitiveNull(ctxt);
             return _empty;
         case JsonTokenId.ID_START_ARRAY:
             if (ctxt.isEnabled(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)) {

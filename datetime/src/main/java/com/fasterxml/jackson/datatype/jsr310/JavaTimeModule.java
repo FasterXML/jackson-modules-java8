@@ -38,6 +38,7 @@ import com.fasterxml.jackson.databind.deser.ValueInstantiator;
 import com.fasterxml.jackson.databind.deser.ValueInstantiators;
 import com.fasterxml.jackson.databind.deser.std.StdValueInstantiator;
 import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
+import com.fasterxml.jackson.databind.introspect.AnnotatedClassResolver;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -224,7 +225,8 @@ public final class JavaTimeModule extends SimpleModule
                         } else {
                             // we don't need Annotations, so constructing directly is fine here
                             // even if it's not generally recommended
-                            ac = AnnotatedClass.construct(config.constructType(ZoneId.class), config);
+                            ac = AnnotatedClassResolver.resolve(config,
+                                    config.constructType(ZoneId.class), config);
                         }
                         if (!inst.canCreateFromString()) {
                             AnnotatedMethod factory = _findFactory(ac, "of", String.class);
@@ -245,7 +247,7 @@ public final class JavaTimeModule extends SimpleModule
     protected AnnotatedMethod _findFactory(AnnotatedClass cls, String name, Class<?>... argTypes)
     {
         final int argCount = argTypes.length;
-        for (AnnotatedMethod method : cls.getStaticMethods()) {
+        for (AnnotatedMethod method : cls.getFactoryMethods()) {
             if (!name.equals(method.getName())
                     || (method.getParameterCount() != argCount)) {
                 continue;

@@ -28,15 +28,18 @@ class OptionalDoubleDeserializer extends BaseScalarOptionarDeserializer<Optional
         switch (p.getCurrentTokenId()) {
         case JsonTokenId.ID_STRING:
             String text = p.getText().trim();
-            if (_isEmptyOrTextualNull(text)) {
-                _verifyPrimitiveNullCoercion(ctxt, text);
+            if ((text.length() == 0)) {
+                _coerceEmptyString(ctxt, false);
+                return _empty;
+            }
+            if (_hasTextualNull(text)) {
+                _coerceTextualNull(ctxt, false);
                 return _empty;
             }
             return OptionalDouble.of(_parseDoublePrimitive(ctxt, text));
         case JsonTokenId.ID_NUMBER_INT: // coercion here should be fine
             return OptionalDouble.of(p.getDoubleValue());
         case JsonTokenId.ID_NULL:
-            _verifyPrimitiveNull(ctxt);
             return _empty;
         case JsonTokenId.ID_START_ARRAY:
             if (ctxt.isEnabled(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)) {

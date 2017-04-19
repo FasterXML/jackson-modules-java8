@@ -28,8 +28,12 @@ public class OptionalIntDeserializer extends BaseScalarOptionarDeserializer<Opti
         switch (p.getCurrentTokenId()) {
         case JsonTokenId.ID_STRING:
             String text = p.getText().trim();
-            if (_isEmptyOrTextualNull(text)) {
-                _verifyPrimitiveNullCoercion(ctxt, text);
+            if ((text.length() == 0)) {
+                _coerceEmptyString(ctxt, false);
+                return _empty;
+            }
+            if (_hasTextualNull(text)) {
+                _coerceTextualNull(ctxt, false);
                 return _empty;
             }
             return OptionalInt.of(_parseIntPrimitive(ctxt, text));
@@ -39,7 +43,6 @@ public class OptionalIntDeserializer extends BaseScalarOptionarDeserializer<Opti
             }
             return OptionalInt.of(p.getValueAsInt());
         case JsonTokenId.ID_NULL:
-            _verifyPrimitiveNull(ctxt);
             return _empty;
         case JsonTokenId.ID_START_ARRAY:
             if (ctxt.isEnabled(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)) {

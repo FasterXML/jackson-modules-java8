@@ -43,7 +43,7 @@ public class ParameterNamesAnnotationIntrospectorTest {
         Constructor<?> givenConstructor = ImmutableBean.class.getConstructor(String.class, Integer.class);
         Parameter[] givenParameters = givenConstructor.getParameters();
         AnnotatedConstructor owner = new AnnotatedConstructor(null, givenConstructor, null, null);
-        AnnotatedParameter annotatedParameter = new AnnotatedParameter(owner, null, null, 0);
+        AnnotatedParameter annotatedParameter = new AnnotatedParameter(owner, null, null, null, 0);
         given(parameterExtractor.getParameters(any())).willReturn(givenParameters);
 
         // when
@@ -60,7 +60,7 @@ public class ParameterNamesAnnotationIntrospectorTest {
         Method givenMethod = ImmutableBeanWithStaticFactory.class.getMethod("of", String.class, Integer.class);
         Parameter[] givenParameters = givenMethod.getParameters();
         AnnotatedMethod owner = new AnnotatedMethod(null, givenMethod, null, null);
-        AnnotatedParameter annotatedParameter = new AnnotatedParameter(owner, null, null, 0);
+        AnnotatedParameter annotatedParameter = new AnnotatedParameter(owner, null, null, null, 0);
         given(parameterExtractor.getParameters(any())).willReturn(givenParameters);
 
         // when
@@ -77,7 +77,7 @@ public class ParameterNamesAnnotationIntrospectorTest {
         // given
         Constructor<?> givenConstructor = ImmutableBean.class.getConstructor(String.class, Integer.class);
         AnnotatedConstructor owner = new AnnotatedConstructor(null, givenConstructor, null, null);
-        AnnotatedParameter annotatedParameter = new AnnotatedParameter(owner, null, null, 0);
+        AnnotatedParameter annotatedParameter = new AnnotatedParameter(owner, null, null, null, 0);
         given(parameterExtractor.getParameters(any())).willThrow(new MalformedParametersException());
 
         // when
