@@ -30,19 +30,21 @@ public class StreamIntSerializer extends StdSerializer<IntStream> {
 
     @Override
     public void serialize(IntStream stream, JsonGenerator jgen, SerializerProvider provider) throws IOException {
-        jgen.writeStartArray();
-        try {
-            stream.forEachOrdered(value -> {
+
+        try(IntStream is = stream) {
+            jgen.writeStartArray();
+            
+            is.forEachOrdered(value -> {
                 try {
                     jgen.writeNumber(value);
                 } catch (IOException e) {
                     throw new WrappedIOException(e);
                 }
             });
-            stream.close();
+            
+            jgen.writeEndArray();
         } catch (WrappedIOException e) {
             throw e.getCause();
         }
-        jgen.writeEndArray();
     }
 }

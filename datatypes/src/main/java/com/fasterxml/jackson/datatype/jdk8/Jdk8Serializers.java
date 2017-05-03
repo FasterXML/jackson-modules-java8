@@ -57,7 +57,7 @@ class Jdk8Serializers extends Serializers.Base
         if (Stream.class.isAssignableFrom(raw)) {
             JavaType[] params = config.getTypeFactory().findTypeParameters(type, Stream.class);
             JavaType vt = (params == null || params.length != 1) ? TypeFactory.unknownType() : params[0];
-            return new StreamSerializer<>(config.getTypeFactory().constructParametrizedType(Stream.class, Stream.class, vt), vt);
+            return new StreamSerializer(config.getTypeFactory().constructParametrizedType(Stream.class, Stream.class, vt), vt);
         }
         return super.findSerializer(config, type, beanDesc);
     }
