@@ -11,9 +11,8 @@ import java.util.stream.Stream;
 /**
  * Common typed stream serializer
  *
- * @param <T> type of the stream elements
  */
-public class StreamSerializer<T> extends StdSerializer<Stream<T>> implements ContextualSerializer {
+public class StreamSerializer extends StdSerializer<Stream<?>> implements ContextualSerializer {
     /**
      * Stream elements type (matching T)
      */
@@ -21,7 +20,7 @@ public class StreamSerializer<T> extends StdSerializer<Stream<T>> implements Con
     /**
      * element specific serializer, if any
      */
-    private transient final JsonSerializer<T> elemSerializer;
+    private transient final JsonSerializer<Object> elemSerializer;
 
     /**
      * Constructor
@@ -40,14 +39,13 @@ public class StreamSerializer<T> extends StdSerializer<Stream<T>> implements Con
      * @param elemType       Stream elements type (matching T)
      * @param elemSerializer Custom serializer to use for element type
      */
-    public StreamSerializer(JavaType streamType, JavaType elemType, JsonSerializer<T> elemSerializer) {
+    public StreamSerializer(JavaType streamType, JavaType elemType, JsonSerializer<Object> elemSerializer) {
         super(streamType);
         this.elemType = elemType;
         this.elemSerializer = elemSerializer;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public JsonSerializer<?> createContextual(SerializerProvider provider, BeanProperty property) throws JsonMappingException {
         if (!elemType.hasRawClass(Object.class)
                 && (provider.isEnabled(MapperFeature.USE_STATIC_TYPING) || elemType.isFinal())) {
@@ -60,10 +58,12 @@ public class StreamSerializer<T> extends StdSerializer<Stream<T>> implements Con
     }
 
     @Override
-    public void serialize(Stream<T> stream, JsonGenerator jgen, SerializerProvider provider) throws IOException {
-        jgen.writeStartArray();
-        try {
-            stream.forEachOrdered(elem -> {
+    public void serialize(Stream<?> stream, JsonGenerator jgen, SerializerProvider provider) throws IOException {
+       
+        try(Stream<?> s = stream) {
+            jgen.writeStartArray();
+            
+            s.forEachOrdered(elem -> {
                 try {
                     if (elemSerializer == null) {
                         provider.defaultSerializeValue(elem, jgen);
@@ -74,10 +74,10 @@ public class StreamSerializer<T> extends StdSerializer<Stream<T>> implements Con
                     throw new WrappedIOException(e);
                 }
             });
-            stream.close();
+            
+            jgen.writeEndArray();
         } catch (WrappedIOException e) {
             throw e.getCause();
         }
-        jgen.writeEndArray();
     }
 }

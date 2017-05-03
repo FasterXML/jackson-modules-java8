@@ -29,19 +29,21 @@ public class StreamLongSerializer extends StdSerializer<LongStream> {
 
     @Override
     public void serialize(LongStream stream, JsonGenerator jgen, SerializerProvider provider) throws IOException {
-        jgen.writeStartArray();
-        try {
-            stream.forEachOrdered(value -> {
+
+        try(LongStream ls = stream) {
+            jgen.writeStartArray();
+            
+            ls.forEachOrdered(value -> {
                 try {
                     jgen.writeNumber(value);
                 } catch (IOException e) {
                     throw new WrappedIOException(e);
                 }
             });
-            stream.close();
+            
+            jgen.writeEndArray();
         } catch (WrappedIOException e) {
             throw e.getCause();
         }
-        jgen.writeEndArray();
     }
 }

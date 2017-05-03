@@ -30,19 +30,21 @@ public class StreamDoubleSerializer extends StdSerializer<DoubleStream> {
 
     @Override
     public void serialize(DoubleStream stream, JsonGenerator jgen, SerializerProvider provider) throws IOException {
-        jgen.writeStartArray();
-        try {
-            stream.forEachOrdered(value -> {
+        
+        try(DoubleStream ds = stream) {
+            jgen.writeStartArray();
+            
+            ds.forEachOrdered(value -> {
                 try {
                     jgen.writeNumber(value);
                 } catch (IOException e) {
                     throw new WrappedIOException(e);
                 }
             });
-            stream.close();
+            
+            jgen.writeEndArray();
         } catch (WrappedIOException e) {
             throw e.getCause();
-        }
-        jgen.writeEndArray();
+        } 
     }
 }
