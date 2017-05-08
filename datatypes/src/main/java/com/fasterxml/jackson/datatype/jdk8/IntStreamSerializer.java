@@ -14,17 +14,17 @@ import java.util.stream.IntStream;
  * Unfortunately there to common ancestor between number base stream, so we need to define each in a specific class
  * </p>
  */
-public class StreamIntSerializer extends StdSerializer<IntStream> {
+public class IntStreamSerializer extends StdSerializer<IntStream> {
 
     /**
      * Singleton instance
      */
-    public static final StreamIntSerializer INSTANCE = new StreamIntSerializer();
+    public static final IntStreamSerializer INSTANCE = new IntStreamSerializer();
 
     /**
      * Constructor
      */
-    private StreamIntSerializer() {
+    private IntStreamSerializer() {
         super(IntStream.class);
     }
 

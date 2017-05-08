@@ -13,10 +13,12 @@ import java.util.stream.Stream;
  *
  */
 public class StreamSerializer extends StdSerializer<Stream<?>> implements ContextualSerializer {
+    
     /**
      * Stream elements type (matching T)
      */
     private final JavaType elemType;
+    
     /**
      * element specific serializer, if any
      */
@@ -47,13 +49,16 @@ public class StreamSerializer extends StdSerializer<Stream<?>> implements Contex
 
     @Override
     public JsonSerializer<?> createContextual(SerializerProvider provider, BeanProperty property) throws JsonMappingException {
+        
         if (!elemType.hasRawClass(Object.class)
                 && (provider.isEnabled(MapperFeature.USE_STATIC_TYPING) || elemType.isFinal())) {
+            
             return new StreamSerializer(
                     provider.getTypeFactory().constructParametrizedType(Stream.class, Stream.class, elemType),
                     elemType,
                     provider.findPrimaryPropertySerializer(elemType, property));
         }
+        
         return this;
     }
 
