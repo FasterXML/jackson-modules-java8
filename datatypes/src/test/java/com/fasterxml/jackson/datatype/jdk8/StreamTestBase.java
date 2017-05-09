@@ -24,9 +24,6 @@ public class StreamTestBase {
     @Rule
     public final ExpectedException expectedException = ExpectedException.none();
 
-    /** The should always be true after a serialization attempt closed. */
-    final AtomicBoolean closed = new AtomicBoolean();
-
     ObjectMapper objectMapper;
 
     /**
@@ -51,14 +48,6 @@ public class StreamTestBase {
         throw (T) t;
     }
 
-    /**
-     * Resets closed to false.
-     */
-    @Before
-    public void initClosedToFalse() {
-        closed.set(false);
-    }
-
     @Before
     public void initObjectMapper() {
         ObjectMapper mapper = new ObjectMapper();
@@ -67,9 +56,9 @@ public class StreamTestBase {
     }
 
     <T, S extends BaseStream<T, S>> void assertClosesOnSuccess(S baseStream, Consumer<S> roundTrip) {
-
-        assertFalse(closed.get());
-
+        
+        AtomicBoolean closed = new AtomicBoolean();
+        
         roundTrip.accept(baseStream.onClose(() -> closed.set(true)));
 
         assertTrue(closed.get());
@@ -78,50 +67,47 @@ public class StreamTestBase {
     <T, S extends BaseStream<T, S>> void assertClosesOnRuntimeException(String exceptionMessage, Consumer<S> roundTrip,
             S baseStream) {
 
-        assertFalse(closed.get());
+        AtomicBoolean closed = new AtomicBoolean();
 
-        initExpectedException(RuntimeException.class, exceptionMessage);
+        initExpectedException(RuntimeException.class, exceptionMessage,closed);
 
         roundTrip.accept(baseStream.onClose(() -> closed.set(true)));
 
-        assertTrue(closed.get());
     }
 
     <T, S extends BaseStream<T, S>> void assertClosesOnIoException(String exceptionMessage, Consumer<S> roundTrip,
             S baseStream) {
 
-        assertFalse(closed.get());
+        AtomicBoolean closed = new AtomicBoolean();
 
-        initExpectedExceptionIoException(exceptionMessage);
+        initExpectedExceptionIoException(exceptionMessage,closed);
 
         roundTrip.accept(baseStream.onClose(() -> closed.set(true)));
 
-        assertTrue(closed.get());
     }
 
     <T, S extends BaseStream<T, S>> void assertClosesOnWrappedIoException(String exceptionMessage,
             Consumer<S> roundTrip, S baseStream) {
 
+        AtomicBoolean closed = new AtomicBoolean();
+        
         final String actualMessage = "Unexpected IOException (of type java.io.IOException): " + exceptionMessage;
 
-        assertFalse(closed.get());
-
-        initExpectedExceptionIoException(actualMessage);
+        initExpectedExceptionIoException(actualMessage,closed);
 
         roundTrip.accept(baseStream.onClose(() -> closed.set(true)));
 
-        assertTrue(closed.get());
     }
 
-    void initExpectedExceptionIoException(final String exceptionMessage) {
+    void initExpectedExceptionIoException(final String exceptionMessage, AtomicBoolean closed) {
 
-        this.expectedException.expect(new IsClosedMatcher());
+        this.expectedException.expect(new IsClosedMatcher(closed));
         this.expectedException.expect(Is.isA(IOException.class));
         this.expectedException.expectMessage(exceptionMessage);
     }
 
-    void initExpectedException(Class<? extends Throwable> cause, final String exceptionMessage) {
-        this.expectedException.expect(AllOf.allOf(Is.isA(JsonMappingException.class), new IsClosedMatcher()));
+    void initExpectedException(Class<? extends Throwable> cause, final String exceptionMessage, AtomicBoolean closed) {
+        this.expectedException.expect(AllOf.allOf(Is.isA(JsonMappingException.class), new IsClosedMatcher(closed)));
         this.expectedException.expect(Is.isA(JsonMappingException.class));
         this.expectedException.expectCause(Is.isA(cause));
         this.expectedException.expectMessage(exceptionMessage);
@@ -130,10 +116,13 @@ public class StreamTestBase {
     /**
      * Matcher that matches when the {@link StreamTestBase#closed} value is set to true.
      */
-    class IsClosedMatcher extends CustomMatcher<Object> {
+    static class IsClosedMatcher extends CustomMatcher<Object> {
 
-        public IsClosedMatcher() {
+        final AtomicBoolean closed;
+        
+        public IsClosedMatcher(AtomicBoolean closed) {
             super("Check flag closed");
+            this.closed = closed;
         }
 
         @Override
@@ -144,7 +133,7 @@ public class StreamTestBase {
         @Override
         public boolean matches(Object item) {
 
-            return StreamTestBase.this.closed.get();
+            return closed.get();
         }
 
     }
