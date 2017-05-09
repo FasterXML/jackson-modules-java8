@@ -46,13 +46,13 @@ class Jdk8Serializers extends Serializers.Base
     {
         Class<?> raw = type.getRawClass();
         if (LongStream.class.isAssignableFrom(raw)) {
-            return StreamLongSerializer.INSTANCE;
+            return LongStreamSerializer.INSTANCE;
         }
         if (IntStream.class.isAssignableFrom(raw)) {
-            return StreamIntSerializer.INSTANCE;
+            return IntStreamSerializer.INSTANCE;
         }
         if (DoubleStream.class.isAssignableFrom(raw)) {
-            return StreamDoubleSerializer.INSTANCE;
+            return DoubleStreamSerializer.INSTANCE;
         }
         if (Stream.class.isAssignableFrom(raw)) {
             JavaType[] params = config.getTypeFactory().findTypeParameters(type, Stream.class);

@@ -5,36 +5,35 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 import java.io.IOException;
-import java.util.stream.DoubleStream;
+import java.util.stream.LongStream;
 
 /**
- * {@link DoubleStream} serializer
+ * {@link LongStream} serializer
  * <p>
- * Unfortunately there to common ancestor between number base stream,
- * so we need to define each in a specific class
+ * Unfortunately there to common ancestor between number base stream, so we need to define each in a specific class
  * </p>
  */
-public class StreamDoubleSerializer extends StdSerializer<DoubleStream> {
+public class LongStreamSerializer extends StdSerializer<LongStream> {
 
     /**
      * Singleton instance
      */
-    public static final StreamDoubleSerializer INSTANCE = new StreamDoubleSerializer();
+    public static final LongStreamSerializer INSTANCE = new LongStreamSerializer();
 
     /**
      * Constructor
      */
-    private StreamDoubleSerializer() {
-        super(DoubleStream.class);
+    private LongStreamSerializer() {
+        super(LongStream.class);
     }
 
     @Override
-    public void serialize(DoubleStream stream, JsonGenerator jgen, SerializerProvider provider) throws IOException {
-        
-        try(DoubleStream ds = stream) {
+    public void serialize(LongStream stream, JsonGenerator jgen, SerializerProvider provider) throws IOException {
+
+        try(LongStream ls = stream) {
             jgen.writeStartArray();
             
-            ds.forEachOrdered(value -> {
+            ls.forEachOrdered(value -> {
                 try {
                     jgen.writeNumber(value);
                 } catch (IOException e) {
@@ -45,6 +44,6 @@ public class StreamDoubleSerializer extends StdSerializer<DoubleStream> {
             jgen.writeEndArray();
         } catch (WrappedIOException e) {
             throw e.getCause();
-        } 
+        }
     }
 }
