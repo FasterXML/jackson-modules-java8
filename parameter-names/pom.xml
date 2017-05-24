@@ -21,7 +21,7 @@ introspection of method/constructor parameter names, without having to add expli
     <packageVersion.dir>com/fasterxml/jackson/module/paramnames</packageVersion.dir>
     <packageVersion.package>${project.groupId}.paramnames</packageVersion.package>
 
-    <assertj-core.version>3.4.0</assertj-core.version>
+    <assertj-core.version>3.8.0</assertj-core.version>
     <mockito-core.version>1.10.19</mockito-core.version>
   </properties>
 
