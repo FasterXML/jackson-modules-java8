@@ -10,7 +10,6 @@ import static org.assertj.core.api.BDDAssertions.*;
 
 public class JsonCreatorTest
 {
-
 	@Test
 	public void shouldDeserializeClassWithJsonCreatorOnStaticMethod() throws Exception {
 
@@ -30,7 +29,7 @@ public class JsonCreatorTest
 		// given
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.registerModule(new ParameterNamesModule());
-		objectMapper.configure(MapperFeature.SET_PROPERTY_CREATOR_AS_DEFAULT, true);
+		objectMapper.enable(MapperFeature.CREATOR_MODE_DEFAULT_PROPERTIES);
 		int givenValue = 1;
 
 		// when
