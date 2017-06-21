@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.deser.Deserializers;
 import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
 import com.fasterxml.jackson.databind.type.ReferenceType;
 
-class Jdk8Deserializers extends Deserializers.Base
+public class Jdk8Deserializers extends Deserializers.Base
 {
     @Override // since 2.7
     public JsonDeserializer<?> findReferenceDeserializer(ReferenceType refType,

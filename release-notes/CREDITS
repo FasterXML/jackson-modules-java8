@@ -7,6 +7,15 @@ Louis-Rémi Paquet (lrpg@github)
      deserializing from String
    (2.8.8)
 
+* Reported #15: Optional<Long> and OptionalLong deserialization
+  not consistent when deserializing from String
+   (2.8.8)
+
+Mikko Tiihonen (gmokki@github)
+* Reported #33: `Jdk8Serializer.findReferenceSerializer()` leads to `StackOverflowError`
+  in 2.8.9
+   (2.8.10)
+
 João Cabrita (kewne@github)
   #20: Allow `LocalDate` to be serialized/deserialized as number (epoch day)
    (2.9.0)

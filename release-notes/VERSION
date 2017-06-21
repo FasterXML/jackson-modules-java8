@@ -17,6 +17,15 @@ Modules:
 #21: (datetime) `DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS` not respected
  (contributed by JP Moresmau)
 
+2.8.10 (not yet released)
+
+#33: `Jdk8Serializer.findReferenceSerializer()` leads to `StackOverflowError` in 2.8.9
+ (reported by Mikko T)
+
+2.8.9 (12-Jun-2017)
+
+No changes since 2.8.8
+
 2.8.8 (05-Apr-2017)
 
 #13: (datatype) `configureAbsentsAsNulls` not working for primitive optionals
