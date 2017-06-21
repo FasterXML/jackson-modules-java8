@@ -1,6 +1,7 @@
 package com.fasterxml.jackson.datatype.jdk8;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;

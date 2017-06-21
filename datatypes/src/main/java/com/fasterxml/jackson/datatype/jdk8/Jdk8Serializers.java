@@ -18,7 +18,7 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
-class Jdk8Serializers extends Serializers.Base
+public class Jdk8Serializers extends Serializers.Base
 {
     @Override
     public JsonSerializer<?> findReferenceSerializer(SerializationConfig config,
@@ -38,7 +38,7 @@ class Jdk8Serializers extends Serializers.Base
         if (OptionalDouble.class.isAssignableFrom(raw)) {
             return OptionalDoubleSerializer.INSTANCE;
         }
-        return findReferenceSerializer(config, refType, beanDesc, contentTypeSerializer, contentValueSerializer);
+        return null;
     }
 
     @Override
@@ -59,6 +59,6 @@ class Jdk8Serializers extends Serializers.Base
             JavaType vt = (params == null || params.length != 1) ? TypeFactory.unknownType() : params[0];
             return new StreamSerializer(config.getTypeFactory().constructParametrizedType(Stream.class, Stream.class, vt), vt);
         }
-        return super.findSerializer(config, type, beanDesc);
+        return null;
     }
 }

@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.deser.Deserializers;
 import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
 import com.fasterxml.jackson.databind.type.ReferenceType;
 
-class Jdk8Deserializers extends Deserializers.Base
+public class Jdk8Deserializers extends Deserializers.Base
 {
     // 21-Oct-2015, tatu: Code much simplified with 2.7 where we should be getting much
     //    of boilerplate handling automatically

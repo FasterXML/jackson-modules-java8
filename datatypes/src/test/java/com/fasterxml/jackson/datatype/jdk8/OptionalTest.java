@@ -2,6 +2,7 @@ package com.fasterxml.jackson.datatype.jdk8;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.fasterxml.jackson.annotation.*;
 
@@ -11,6 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -248,6 +250,13 @@ public class OptionalTest extends ModuleTestBase
         final String VALUE = "fooBAR";
         String json = MAPPER.writeValueAsString(new CaseChangingStringWrapper(VALUE));
         assertEquals(json, aposToQuotes("{'value':'FOOBAR'}"));
+    }
+
+    // [modules-java8#33]: Verify against regression...
+    public void testOtherRefSerializers() throws Exception
+    {
+        String json = MAPPER.writeValueAsString(new AtomicReference<String>("foo"));
+        assertEquals(quote("foo"), json);
     }
 
     /*

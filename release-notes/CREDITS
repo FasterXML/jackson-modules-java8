@@ -7,3 +7,8 @@ Louis-Rémi Paquet (lrpg@github)
 * Reported #15: Optional<Long> and OptionalLong deserialization
   not consistent when deserializing from String
  (2.8.8)
+
+Mikko Tiihonen (gmokki@github)
+* Reported #33: `Jdk8Serializer.findReferenceSerializer()` leads to `StackOverflowError`
+  in 2.8.9
+ (2.8.10)
