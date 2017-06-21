@@ -12,8 +12,10 @@ import java.util.stream.Stream;
  * Common typed stream serializer
  *
  */
-public class StreamSerializer extends StdSerializer<Stream<?>> implements ContextualSerializer {
-    
+public class StreamSerializer extends StdSerializer<Stream<?>> implements ContextualSerializer
+{
+    private static final long serialVersionUID = 1L;
+
     /**
      * Stream elements type (matching T)
      */
@@ -48,23 +50,21 @@ public class StreamSerializer extends StdSerializer<Stream<?>> implements Contex
     }
 
     @Override
-    public JsonSerializer<?> createContextual(SerializerProvider provider, BeanProperty property) throws JsonMappingException {
-        
+    public JsonSerializer<?> createContextual(SerializerProvider provider, BeanProperty property) throws JsonMappingException
+    {
         if (!elemType.hasRawClass(Object.class)
                 && (provider.isEnabled(MapperFeature.USE_STATIC_TYPING) || elemType.isFinal())) {
-            
             return new StreamSerializer(
-                    provider.getTypeFactory().constructParametrizedType(Stream.class, Stream.class, elemType),
+                    provider.getTypeFactory().constructParametricType(Stream.class, elemType),
                     elemType,
                     provider.findPrimaryPropertySerializer(elemType, property));
         }
-        
         return this;
     }
 
     @Override
-    public void serialize(Stream<?> stream, JsonGenerator jgen, SerializerProvider provider) throws IOException {
-       
+    public void serialize(Stream<?> stream, JsonGenerator jgen, SerializerProvider provider) throws IOException
+    {
         try(Stream<?> s = stream) {
             jgen.writeStartArray();
             

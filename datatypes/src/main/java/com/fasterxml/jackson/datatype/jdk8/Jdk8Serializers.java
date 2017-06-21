@@ -1,9 +1,6 @@
 package com.fasterxml.jackson.datatype.jdk8;
 
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializationConfig;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.Serializers;
 import com.fasterxml.jackson.databind.type.ReferenceType;
@@ -45,7 +42,8 @@ public class Jdk8Serializers extends Serializers.Base
     }
 
     @Override
-    public JsonSerializer<?> findSerializer(SerializationConfig config, JavaType type, BeanDescription beanDesc)
+    public JsonSerializer<?> findSerializer(SerializationConfig config, JavaType type,
+            BeanDescription beanDesc)
     {
         Class<?> raw = type.getRawClass();
         if (LongStream.class.isAssignableFrom(raw)) {
@@ -60,7 +58,7 @@ public class Jdk8Serializers extends Serializers.Base
         if (Stream.class.isAssignableFrom(raw)) {
             JavaType[] params = config.getTypeFactory().findTypeParameters(type, Stream.class);
             JavaType vt = (params == null || params.length != 1) ? TypeFactory.unknownType() : params[0];
-            return new StreamSerializer(config.getTypeFactory().constructParametrizedType(Stream.class, Stream.class, vt), vt);
+            return new StreamSerializer(config.getTypeFactory().constructParametricType(Stream.class, vt), vt);
         }
         return null;
     }

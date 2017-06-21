@@ -13,7 +13,9 @@ import java.util.stream.LongStream;
  * Unfortunately there to common ancestor between number base stream, so we need to define each in a specific class
  * </p>
  */
-public class LongStreamSerializer extends StdSerializer<LongStream> {
+public class LongStreamSerializer extends StdSerializer<LongStream>
+{
+    private static final long serialVersionUID = 1L;
 
     /**
      * Singleton instance
