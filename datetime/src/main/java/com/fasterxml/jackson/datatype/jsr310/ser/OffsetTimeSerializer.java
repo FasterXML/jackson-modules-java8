@@ -19,8 +19,10 @@ package com.fasterxml.jackson.datatype.jsr310.ser;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.type.WritableTypeId;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 
 import java.io.IOException;
 import java.time.OffsetTime;
@@ -52,38 +54,58 @@ public class OffsetTimeSerializer extends JSR310FormattedSerializerBase<OffsetTi
     protected OffsetTimeSerializer withFormat(Boolean useTimestamp, DateTimeFormatter dtf, JsonFormat.Shape shape) {
         return new OffsetTimeSerializer(this, useTimestamp, dtf);
     }
-    
+
     @Override
-    public void serialize(OffsetTime time, JsonGenerator gen, SerializerProvider provider) throws IOException
+    public void serialize(OffsetTime time, JsonGenerator g, SerializerProvider provider) throws IOException
     {
         if (useTimestamp(provider)) {
-            gen.writeStartArray();
-            gen.writeNumber(time.getHour());
-            gen.writeNumber(time.getMinute());
-            final int secs = time.getSecond();
-            final int nanos = time.getNano();
-            if ((secs > 0) || (nanos > 0)) {
-                gen.writeNumber(secs);
-                if (nanos > 0) {
-                    if(provider.isEnabled(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)) {
-                        gen.writeNumber(nanos);
-                    } else {
-                        gen.writeNumber(time.get(ChronoField.MILLI_OF_SECOND));
-                    }
-                }
-            }
-            gen.writeString(time.getOffset().toString());
-            gen.writeEndArray();
+            g.writeStartArray();
+            _serializeAsArrayContents(time, g, provider);
+            g.writeEndArray();
         } else {
             String str = (_formatter == null) ? time.toString() : time.format(_formatter);
-            gen.writeString(str);
+            g.writeString(str);
         }
     }
 
+    @Override
+    public void serializeWithType(OffsetTime value, JsonGenerator g, SerializerProvider provider,
+            TypeSerializer typeSer) throws IOException
+    {
+        WritableTypeId typeIdDef = typeSer.writeTypePrefix(g,
+                typeSer.typeId(value, serializationShape(provider)));
+        // need to write out to avoid double-writing array markers
+        if (typeIdDef.valueShape == JsonToken.START_ARRAY) {
+            _serializeAsArrayContents(value, g, provider);
+        } else {
+            String str = (_formatter == null) ? value.toString() : value.format(_formatter);
+            g.writeString(str);
+        }
+        typeSer.writeTypeSuffix(g, typeIdDef);
+    }
+
+    private final void _serializeAsArrayContents(OffsetTime value, JsonGenerator g,
+            SerializerProvider provider) throws IOException
+    {
+        g.writeNumber(value.getHour());
+        g.writeNumber(value.getMinute());
+        final int secs = value.getSecond();
+        final int nanos = value.getNano();
+        if ((secs > 0) || (nanos > 0)) {
+            g.writeNumber(secs);
+            if (nanos > 0) {
+                if(provider.isEnabled(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)) {
+                    g.writeNumber(nanos);
+                } else {
+                    g.writeNumber(value.get(ChronoField.MILLI_OF_SECOND));
+                }
+            }
+        }
+        g.writeString(value.getOffset().toString());
+    }
+    
     @Override // since 2.9
     protected JsonToken serializationShape(SerializerProvider provider) {
-        // !!! Fix for 2.9
-        return JsonToken.VALUE_STRING;
-//        return useTimestamp(provider) ? JsonToken.START_ARRAY : JsonToken.VALUE_STRING;
+        return useTimestamp(provider) ? JsonToken.START_ARRAY : JsonToken.VALUE_STRING;
     }
 }

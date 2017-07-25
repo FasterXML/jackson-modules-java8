@@ -115,7 +115,8 @@ public class TestOffsetDateTimeDeserialization extends ModuleTestBase
     		    read("['2000-01-01T12:00+00']");
     		    fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
-            // OK
+            verifyException(e, "Cannot deserialize");
+            verifyException(e, "START_ARRAY token");
         }
     }
     
@@ -126,7 +127,8 @@ public class TestOffsetDateTimeDeserialization extends ModuleTestBase
             read("[]");
             fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
-            // OK
+            verifyException(e, "Cannot deserialize");
+            verifyException(e, "START_ARRAY token");
         }
         try {
     		    newMapper()
@@ -135,10 +137,11 @@ public class TestOffsetDateTimeDeserialization extends ModuleTestBase
     		        .readValue("[]");
     		    fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
-           // OK
+            // 25-Jul-2017, tatu: Ideally should note it's really missing value but...
+            verifyException(e, "Unexpected token (END_ARRAY)");
         }
     }
-    
+
     @Test
     public void testDeserializationAsArrayEnabled() throws Throwable
     {

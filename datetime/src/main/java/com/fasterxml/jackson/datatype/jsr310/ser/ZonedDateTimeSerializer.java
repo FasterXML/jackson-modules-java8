@@ -54,17 +54,17 @@ public class ZonedDateTimeSerializer extends InstantSerializerBase<ZonedDateTime
     }
 
     @Override
-    public void serialize(ZonedDateTime value, JsonGenerator generator, SerializerProvider provider)
+    public void serialize(ZonedDateTime value, JsonGenerator g, SerializerProvider provider)
         throws IOException
     {
         if (!useTimestamp(provider)) {
             if (shouldWriteWithZoneId(provider)) {
                 // write with zone
-                generator.writeString(DateTimeFormatter.ISO_ZONED_DATE_TIME.format(value));
+                g.writeString(DateTimeFormatter.ISO_ZONED_DATE_TIME.format(value));
                 return;
             }
         }
-        super.serialize(value, generator, provider);
+        super.serialize(value, g, provider);
     }
 
     /**
