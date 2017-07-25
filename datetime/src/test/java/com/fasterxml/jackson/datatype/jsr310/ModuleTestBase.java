@@ -16,6 +16,10 @@ public class ModuleTestBase
                 .registerModule(new JavaTimeModule());
     }
 
+    protected String quote(String value) {
+        return "\"" + value + "\"";
+    }
+
     protected String aposToQuotes(String json) {
         return json.replace("'", "\"");
     }
