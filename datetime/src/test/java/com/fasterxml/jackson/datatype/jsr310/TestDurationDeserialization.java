@@ -209,7 +209,7 @@ public class TestDurationDeserialization extends ModuleTestBase
             READER.readValue("[]");
             fail("expected MismatchedInputException");
         } catch (MismatchedInputException e) {
-            verifyException(e, "Can not deserialize instance of java.time.Duration out of START_ARRAY");
+            verifyException(e, "Cannot deserialize instance of java.time.Duration out of START_ARRAY");
         }
         try {
             newMapper()
@@ -220,7 +220,7 @@ public class TestDurationDeserialization extends ModuleTestBase
             verifyException(e, "Unexpected token (END_ARRAY), expected one of");
         }
     }
-    
+
     @Test
     public void testDeserializationAsArrayEnabled() throws Exception {
     	  Duration exp = Duration.ofSeconds(13498L, 8374);
