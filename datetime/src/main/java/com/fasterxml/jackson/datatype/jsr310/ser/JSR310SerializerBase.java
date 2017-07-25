@@ -1,6 +1,8 @@
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.type.WritableTypeId;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
@@ -11,7 +13,6 @@ import java.io.IOException;
  * Base class that indicates that all JSR310 datatypes are serialized as scalar JSON types.
  *
  * @author Nick Williams
- * @since 2.2.0
  */
 abstract class JSR310SerializerBase<T> extends StdSerializer<T>
 {
@@ -22,11 +23,21 @@ abstract class JSR310SerializerBase<T> extends StdSerializer<T>
     }
 
     @Override
-    public void serializeWithType(T value, JsonGenerator generator, SerializerProvider provider,
-                                  TypeSerializer serializer) throws IOException
+    public void serializeWithType(T value, JsonGenerator g, SerializerProvider provider,
+            TypeSerializer typeSer) throws IOException
     {
-        serializer.writeTypePrefixForScalar(value, generator);
-        this.serialize(value, generator, provider);
-        serializer.writeTypeSuffixForScalar(value, generator);
+        WritableTypeId typeIdDef = typeSer.writeTypePrefix(g,
+                typeSer.typeId(value, serializationShape(provider)));
+        serialize(value, g, provider);
+        typeSer.writeTypeSuffix(g, typeIdDef);
     }
+
+    /**
+     * Overridable helper method used from {@link #serializeWithType}, to indicate
+     * shape of value during serialization; needed to know how type id is to be
+     * serialized.
+     *
+     * @since 2.9
+     */
+    protected abstract JsonToken serializationShape(SerializerProvider provider);
 }

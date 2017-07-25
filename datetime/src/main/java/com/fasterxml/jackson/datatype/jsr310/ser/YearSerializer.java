@@ -19,6 +19,7 @@ package com.fasterxml.jackson.datatype.jsr310.ser;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -76,5 +77,10 @@ public class YearSerializer extends JSR310FormattedSerializerBase<Year>
         if (v2 != null) {
             v2.numberType(JsonParser.NumberType.LONG);
         }
+    }
+
+    @Override // since 2.9
+    protected JsonToken serializationShape(SerializerProvider provider) {
+        return useTimestamp(provider) ? JsonToken.VALUE_NUMBER_INT : JsonToken.VALUE_STRING;
     }
 }

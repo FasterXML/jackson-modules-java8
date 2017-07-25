@@ -6,6 +6,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
@@ -53,7 +54,9 @@ public class ZonedDateTimeSerializer extends InstantSerializerBase<ZonedDateTime
     }
 
     @Override
-    public void serialize(ZonedDateTime value, JsonGenerator generator, SerializerProvider provider) throws IOException {
+    public void serialize(ZonedDateTime value, JsonGenerator generator, SerializerProvider provider)
+        throws IOException
+    {
         if (!useTimestamp(provider)) {
             if (shouldWriteWithZoneId(provider)) {
                 // write with zone
@@ -70,5 +73,13 @@ public class ZonedDateTimeSerializer extends InstantSerializerBase<ZonedDateTime
     public boolean shouldWriteWithZoneId(SerializerProvider ctxt) {
         return (_writeZoneId != null) ? _writeZoneId :
             ctxt.isEnabled(SerializationFeature.WRITE_DATES_WITH_ZONE_ID);
+    }
+
+    @Override // since 2.9
+    protected JsonToken serializationShape(SerializerProvider provider) {
+        if (!useTimestamp(provider) && shouldWriteWithZoneId(provider)) {
+            return JsonToken.VALUE_STRING;
+        }
+        return super.serializationShape(provider);
     }
 }

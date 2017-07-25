@@ -22,7 +22,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonStringFormatVisitor;
@@ -90,5 +90,16 @@ public class LocalDateSerializer extends JSR310FormattedSerializerBase<LocalDate
                 v2.format(JsonValueFormat.DATE);
             }
         }
+    }
+
+    @Override // since 2.9
+    protected JsonToken serializationShape(SerializerProvider provider) {
+        if (useTimestamp(provider)) {
+            if (_shape == JsonFormat.Shape.NUMBER_INT) {
+                return JsonToken.VALUE_NUMBER_INT;
+            }
+            return JsonToken.START_ARRAY;
+        }
+        return JsonToken.VALUE_STRING;
     }
 }

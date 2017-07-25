@@ -22,10 +22,9 @@ public class OffsetDateTimeSerializer extends InstantSerializerBase<OffsetDateTi
     }
 
     @Override
-    protected JSR310FormattedSerializerBase<?> withFormat(
-        Boolean useTimestamp,
-        DateTimeFormatter formatter,
-        JsonFormat.Shape shape) {
+    protected JSR310FormattedSerializerBase<?> withFormat(Boolean useTimestamp,
+        DateTimeFormatter formatter, JsonFormat.Shape shape)
+    {
         return new OffsetDateTimeSerializer(this, useTimestamp, formatter);
     }
 }

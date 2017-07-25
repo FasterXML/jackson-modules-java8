@@ -19,6 +19,7 @@ package com.fasterxml.jackson.datatype.jsr310.ser;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -88,5 +89,16 @@ public class DurationSerializer extends JSR310FormattedSerializerBase<Duration>
                 v2.format(JsonValueFormat.UTC_MILLISEC);
             }
         }
+    }
+
+    @Override // since 2.9
+    protected JsonToken serializationShape(SerializerProvider provider) {
+        if (useTimestamp(provider)) {
+            if (provider.isEnabled(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)) {
+                return JsonToken.VALUE_NUMBER_FLOAT;
+            }
+            return JsonToken.VALUE_NUMBER_INT;
+        }
+        return JsonToken.VALUE_STRING;
     }
 }

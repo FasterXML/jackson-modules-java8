@@ -24,6 +24,7 @@ import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.JsonParser.NumberType;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -120,5 +121,16 @@ public abstract class InstantSerializerBase<T extends Temporal>
                 v2.numberType(NumberType.LONG);
             }
         }
+    }
+
+    @Override // since 2.9
+    protected JsonToken serializationShape(SerializerProvider provider) {
+        if (useTimestamp(provider)) {
+            if (provider.isEnabled(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)) {
+                return JsonToken.VALUE_NUMBER_FLOAT;
+            }
+            return JsonToken.VALUE_NUMBER_INT;
+        }
+        return JsonToken.VALUE_STRING;
     }
 }

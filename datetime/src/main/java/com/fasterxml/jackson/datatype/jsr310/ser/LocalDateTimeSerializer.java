@@ -18,6 +18,7 @@ package com.fasterxml.jackson.datatype.jsr310.ser;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
@@ -88,5 +89,12 @@ public class LocalDateTimeSerializer extends JSR310FormattedSerializerBase<Local
     // since 2.7: TODO in 2.8; change to use per-type defaulting
     protected DateTimeFormatter _defaultFormatter() {
         return DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+    }
+
+    @Override // since 2.9
+    protected JsonToken serializationShape(SerializerProvider provider) {
+        // !!! Fix for 2.9
+        return JsonToken.VALUE_STRING;
+//        return useTimestamp(provider) ? JsonToken.START_ARRAY : JsonToken.VALUE_STRING;
     }
 }

@@ -18,6 +18,7 @@ package com.fasterxml.jackson.datatype.jsr310.ser;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
@@ -62,15 +63,17 @@ public class LocalTimeSerializer extends JSR310FormattedSerializerBase<LocalTime
             g.writeStartArray();
             g.writeNumber(value.getHour());
             g.writeNumber(value.getMinute());
-            if(value.getSecond() > 0 || value.getNano() > 0)
+            int secs = value.getSecond();
+            int nanos = value.getNano();
+            if ((secs > 0) || (nanos > 0))
             {
-                g.writeNumber(value.getSecond());
-                if(value.getNano() > 0)
-                {
-                    if(provider.isEnabled(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS))
-                        g.writeNumber(value.getNano());
-                    else
+                g.writeNumber(secs);
+                if (nanos > 0) {
+                    if (provider.isEnabled(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)) {
+                        g.writeNumber(nanos);
+                    } else {
                         g.writeNumber(value.get(ChronoField.MILLI_OF_SECOND));
+                    }
                 }
             }
             g.writeEndArray();
@@ -86,5 +89,12 @@ public class LocalTimeSerializer extends JSR310FormattedSerializerBase<LocalTime
     // since 2.7: TODO in 2.8; change to use per-type defaulting
     protected DateTimeFormatter _defaultFormatter() {
         return DateTimeFormatter.ISO_LOCAL_TIME;
+    }
+
+    @Override // since 2.9
+    protected JsonToken serializationShape(SerializerProvider provider) {
+        // !!! Fix for 2.9
+        return JsonToken.VALUE_STRING;
+//        return useTimestamp(provider) ? JsonToken.START_ARRAY : JsonToken.VALUE_STRING;
     }
 }

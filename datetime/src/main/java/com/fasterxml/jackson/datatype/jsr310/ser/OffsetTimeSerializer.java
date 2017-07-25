@@ -18,6 +18,7 @@ package com.fasterxml.jackson.datatype.jsr310.ser;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
@@ -61,15 +62,14 @@ public class OffsetTimeSerializer extends JSR310FormattedSerializerBase<OffsetTi
             gen.writeNumber(time.getMinute());
             final int secs = time.getSecond();
             final int nanos = time.getNano();
-            if (secs > 0 || nanos > 0)
-            {
+            if ((secs > 0) || (nanos > 0)) {
                 gen.writeNumber(secs);
-                if (nanos > 0)
-                {
-                    if(provider.isEnabled(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS))
+                if (nanos > 0) {
+                    if(provider.isEnabled(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)) {
                         gen.writeNumber(nanos);
-                    else
+                    } else {
                         gen.writeNumber(time.get(ChronoField.MILLI_OF_SECOND));
+                    }
                 }
             }
             gen.writeString(time.getOffset().toString());
@@ -78,5 +78,12 @@ public class OffsetTimeSerializer extends JSR310FormattedSerializerBase<OffsetTi
             String str = (_formatter == null) ? time.toString() : time.format(_formatter);
             gen.writeString(str);
         }
+    }
+
+    @Override // since 2.9
+    protected JsonToken serializationShape(SerializerProvider provider) {
+        // !!! Fix for 2.9
+        return JsonToken.VALUE_STRING;
+//        return useTimestamp(provider) ? JsonToken.START_ARRAY : JsonToken.VALUE_STRING;
     }
 }

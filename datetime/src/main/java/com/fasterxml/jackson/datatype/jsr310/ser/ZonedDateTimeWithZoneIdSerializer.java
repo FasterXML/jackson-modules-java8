@@ -31,8 +31,7 @@ public class ZonedDateTimeWithZoneIdSerializer extends InstantSerializerBase<Zon
     }
 
     @Override
-    protected JSR310FormattedSerializerBase<?> withFormat(
-        Boolean useTimestamp,
+    protected JSR310FormattedSerializerBase<?> withFormat(Boolean useTimestamp,
         DateTimeFormatter formatter,
         JsonFormat.Shape shape) {
         return new ZonedDateTimeWithZoneIdSerializer(this, useTimestamp, formatter);

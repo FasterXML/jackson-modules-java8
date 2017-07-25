@@ -21,6 +21,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonArrayFormatVisitor;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
@@ -70,7 +71,7 @@ abstract class JSR310FormattedSerializerBase<T>
     }
     
     protected JSR310FormattedSerializerBase(JSR310FormattedSerializerBase<?> base,
-                                            Boolean useTimestamp, DateTimeFormatter dtf, JsonFormat.Shape shape)
+            Boolean useTimestamp, DateTimeFormatter dtf, JsonFormat.Shape shape)
     {            
         super(base.handledType());
         _useTimestamp = useTimestamp;
@@ -79,8 +80,7 @@ abstract class JSR310FormattedSerializerBase<T>
     }
 
     protected abstract JSR310FormattedSerializerBase<?> withFormat(Boolean useTimestamp,
-                                                                   DateTimeFormatter dtf,
-                                                                   JsonFormat.Shape shape);
+            DateTimeFormatter dtf, JsonFormat.Shape shape);
 
     /**
      * @since 2.8

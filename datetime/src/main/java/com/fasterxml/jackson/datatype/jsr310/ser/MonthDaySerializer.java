@@ -18,6 +18,7 @@ package com.fasterxml.jackson.datatype.jsr310.ser;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -61,7 +62,8 @@ public class MonthDaySerializer extends JSR310FormattedSerializerBase<MonthDay>
     }
 
     @Override
-    public void serialize(MonthDay value, JsonGenerator generator, SerializerProvider provider) throws IOException
+    public void serialize(MonthDay value, JsonGenerator generator, SerializerProvider provider)
+        throws IOException
     {
         if (_useTimestampExplicitOnly(provider)) {
             generator.writeStartArray();
@@ -87,5 +89,10 @@ public class MonthDaySerializer extends JSR310FormattedSerializerBase<MonthDay>
                 v2.format(JsonValueFormat.DATE_TIME);
             }
         }
+    }
+
+    @Override // since 2.9
+    protected JsonToken serializationShape(SerializerProvider provider) {
+        return _useTimestampExplicitOnly(provider) ? JsonToken.START_ARRAY : JsonToken.VALUE_STRING;
     }
 }
