@@ -2,13 +2,17 @@
 
 This is a multi-module umbrella project for [Jackson](../../../jackson)
 modules needed to support Java 8 features when core Jackson modules do not
-(yet) require Java 8 runtime.
+(yet) require Java 8 runtime (note: Jackson 3.0 will likely increase baseline
+and allow including some or all of this functionality)
 
-This includes:
+This includes 3 modules:
 
-* [Parameter names](parameter-names/)
-* [Java 8 Datatypes](datatypes)
-* [Java 8 Date/time](datetime)
+* [Parameter names](parameter-names/): support for detecting constructor and factory method ("creator") parameters without having to use `@JsonProperty` annotation
+* [Java 8 Date/time](datetime): support for Java 8 date/time types (specified in JSR-310 specification)
+* [Java 8 Datatypes](datatypes): support for other new Java 8 datatypes outside of date/time: most notably `Optional`, `OptionalLong`, `OptionalDouble`
+
+all of which are built from this repository, and accessed and used as separate Jackson modules
+(with separate Maven artifacts).
 
 ## License
 
@@ -22,6 +26,8 @@ All modules are licensed under [Apache License 2.0](http://www.apache.org/licens
 
 ### Maven dependencies
 
+To include modules, you use some or all of:
+
 ```xml
 <dependency>
     <groupId>com.fasterxml.jackson.module</groupId>
@@ -34,10 +40,11 @@ All modules are licensed under [Apache License 2.0](http://www.apache.org/licens
 <dependency>
     <groupId>com.fasterxml.jackson.datatype</groupId>
     <artifactId>jackson-datatype-jsr310</artifactId>
-    <version>2.8.6</version>
 </dependency>
-
 ```
+
+and either include versions directly, OR, preferably, import
+[Jackson BOM](../../../jackson-bom) that will specify consistent version set.
 
 ### Registering modules
 
