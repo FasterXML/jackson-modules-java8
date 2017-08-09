@@ -202,11 +202,39 @@ public class OptionalTest extends ModuleTestBase
         assertEquals("foobar", w.value.get());
     }
 
+    public void testWithCustomDeserializerIfOptionalAbsent() throws Exception
+    {
+        assertEquals(Optional.empty(), MAPPER.readValue("{}",
+                CaseChangingStringWrapper.class).value);
+
+        assertEquals(Optional.empty(), MAPPER.readValue(aposToQuotes("{'value':null}"),
+                CaseChangingStringWrapper.class).value);
+    }
+
     public void testCustomSerializer() throws Exception
     {
         final String VALUE = "fooBAR";
         String json = MAPPER.writeValueAsString(new CaseChangingStringWrapper(VALUE));
         assertEquals(json, aposToQuotes("{'value':'FOOBAR'}"));
+    }
+
+    public void testCustomSerializerIfOptionalAbsent() throws Exception
+    {
+        ObjectMapper mapper = mapperWithModule()
+                .setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        assertEquals(aposToQuotes("{'value':'FOO'}"),
+                mapper.writeValueAsString(new CaseChangingStringWrapper("foo")));
+        // absent is not strictly null so
+        assertEquals(aposToQuotes("{'value':null}"),
+                mapper.writeValueAsString(new CaseChangingStringWrapper(null)));
+
+        // however:
+        mapper = mapperWithModule()
+                .setSerializationInclusion(JsonInclude.Include.NON_ABSENT);
+        assertEquals(aposToQuotes("{'value':'FOO'}"),
+                mapper.writeValueAsString(new CaseChangingStringWrapper("foo")));
+        assertEquals(aposToQuotes("{}"),
+                mapper.writeValueAsString(new CaseChangingStringWrapper(null)));
     }
 
     // [modules-java8#33]: Verify against regression...
