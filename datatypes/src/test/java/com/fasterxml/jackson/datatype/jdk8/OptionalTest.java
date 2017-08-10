@@ -202,10 +202,15 @@ public class OptionalTest extends ModuleTestBase
         assertEquals("foobar", w.value.get());
     }
 
+    // [modules-java8#36]
     public void testWithCustomDeserializerIfOptionalAbsent() throws Exception
     {
+        // 10-Aug-2017, tatu: Actually this is not true: missing value does not trigger
+        //    specific handling
+        /*
         assertEquals(Optional.empty(), MAPPER.readValue("{}",
                 CaseChangingStringWrapper.class).value);
+                */
 
         assertEquals(Optional.empty(), MAPPER.readValue(aposToQuotes("{'value':null}"),
                 CaseChangingStringWrapper.class).value);
