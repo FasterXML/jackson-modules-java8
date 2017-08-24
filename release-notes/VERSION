@@ -8,7 +8,7 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
-2.8.10 (not yet released)
+2.8.10 (24-Aug-2017)
 
 #33: `Jdk8Serializer.findReferenceSerializer()` leads to `StackOverflowError` in 2.8.9
  (reported by Mikko T)
