@@ -1,0 +1,10 @@
+language: java
+
+jdk:
+  - openjdk8
+
+# whitelist
+branches:
+  only:
+    - master
+    - "2.8"
