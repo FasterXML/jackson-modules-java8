@@ -53,7 +53,6 @@ public class ParameterNamesAnnotationIntrospector extends NopAnnotationIntrospec
         if (owner instanceof AnnotatedConstructor) {
             return parameterExtractor.getParameters(((AnnotatedConstructor) owner).getAnnotated());
         }
-
         if (owner instanceof AnnotatedMethod) {
             return parameterExtractor.getParameters(((AnnotatedMethod) owner).getAnnotated());
         }

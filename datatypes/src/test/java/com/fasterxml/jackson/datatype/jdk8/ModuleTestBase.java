@@ -5,13 +5,12 @@ import java.util.Arrays;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
-@SuppressWarnings("javadoc")
 public abstract class ModuleTestBase extends junit.framework.TestCase {
    
     /*
-     * /**********************************************************************
-     * /* Helper methods, setup
-     * /**********************************************************************
+    /**********************************************************************
+    /* Helper methods, setup
+    /**********************************************************************
      */
 
     static ObjectMapper mapperWithModule() {
@@ -29,9 +28,9 @@ public abstract class ModuleTestBase extends junit.framework.TestCase {
     }
 
     /*
-     * /**********************************************************************
-     * /* Helper methods, setup
-     * /**********************************************************************
+    /**********************************************************************
+    /* Helper methods, other
+    /**********************************************************************
      */
 
     protected void verifyException(Throwable e, String... matches) {

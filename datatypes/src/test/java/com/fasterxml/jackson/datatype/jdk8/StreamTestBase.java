@@ -18,7 +18,6 @@ import org.junit.rules.ExpectedException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@SuppressWarnings({ "unqualified-field-access", "javadoc" })
 public class StreamTestBase {
 
     @Rule

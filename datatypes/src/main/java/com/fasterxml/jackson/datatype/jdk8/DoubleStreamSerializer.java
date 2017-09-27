@@ -14,7 +14,9 @@ import java.util.stream.DoubleStream;
  * so we need to define each in a specific class
  * </p>
  */
-public class DoubleStreamSerializer extends StdSerializer<DoubleStream> {
+public class DoubleStreamSerializer extends StdSerializer<DoubleStream>
+{
+    private static final long serialVersionUID = 1L;
 
     /**
      * Singleton instance

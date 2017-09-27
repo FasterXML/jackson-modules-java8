@@ -9,7 +9,7 @@ import com.fasterxml.jackson.core.JsonTokenId;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 
-public class OptionalLongDeserializer extends BaseScalarOptionarDeserializer<OptionalLong>
+public class OptionalLongDeserializer extends BaseScalarOptionalDeserializer<OptionalLong>
 {
     private static final long serialVersionUID = 1L;
 
