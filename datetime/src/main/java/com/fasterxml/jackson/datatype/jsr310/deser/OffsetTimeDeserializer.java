@@ -90,7 +90,7 @@ public class OffsetTimeDeserializer extends JSR310DateTimeDeserializerBase<Offse
         int hour = parser.getIntValue();
         int minute = parser.nextIntValue(-1);
         if (minute == -1) {
-            t = parser.getCurrentToken();
+            t = parser.currentToken();
             if (t == JsonToken.END_ARRAY) {
                 return null;
             }
@@ -112,7 +112,7 @@ public class OffsetTimeDeserializer extends JSR310DateTimeDeserializerBase<Offse
                 parser.nextToken();
             }
         }
-        if (parser.getCurrentToken() == JsonToken.VALUE_STRING) {
+        if (parser.currentToken() == JsonToken.VALUE_STRING) {
             OffsetTime result = OffsetTime.of(hour, minute, second, partialSecond, ZoneOffset.of(parser.getText()));
             if (parser.nextToken() != JsonToken.END_ARRAY) {
                 _reportWrongToken(context, JsonToken.END_ARRAY, "timezone");

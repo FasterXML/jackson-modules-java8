@@ -112,7 +112,7 @@ public class JSR310StringParsableDeserializer
         /* This is a nasty kludge right here, working around issues like
          * [datatype-jsr310#24]. But should work better than not having the work-around.
          */
-        JsonToken t = parser.getCurrentToken();
+        JsonToken t = parser.currentToken();
         if ((t != null) && t.isScalarValue()) {
             return deserialize(parser, context);
         }

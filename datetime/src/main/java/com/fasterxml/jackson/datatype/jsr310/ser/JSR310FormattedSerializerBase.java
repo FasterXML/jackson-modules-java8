@@ -16,7 +16,6 @@
 
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
-import java.lang.reflect.Type;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
@@ -133,14 +132,6 @@ abstract class JSR310FormattedSerializerBase<T>
             return ser;
         }
         return this;
-    }
-
-    @Override
-    public JsonNode getSchema(SerializerProvider provider, Type typeHint)
-    {
-        return createSchemaNode(
-                provider.isEnabled(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS) ? "array" : "string", true
-        );
     }
 
     @Override

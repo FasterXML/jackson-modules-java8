@@ -68,7 +68,7 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
         //    here
         return context.reportInputMismatch(handledType(),
                 "Unexpected token (%s), expected one of %s for %s value",
-                parser.getCurrentToken(),
+                parser.currentToken(),
                 Arrays.asList(expTypes).toString(),
                 handledType().getName());
     }

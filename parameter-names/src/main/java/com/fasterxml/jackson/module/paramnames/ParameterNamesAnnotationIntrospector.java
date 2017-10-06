@@ -4,7 +4,6 @@ import java.lang.reflect.MalformedParametersException;
 import java.lang.reflect.Parameter;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.databind.AnnotationIntrospector;
 import com.fasterxml.jackson.databind.cfg.MapperConfig;
 import com.fasterxml.jackson.databind.introspect.*;
 
@@ -12,10 +11,9 @@ import com.fasterxml.jackson.databind.introspect.*;
  * Introspector that uses parameter name information provided by the Java Reflection API additions in Java 8 to
  * determine the parameter name for methods and constructors.
  *
- * @author Lovro Pandzic
- * @see AnnotationIntrospector
- * @see Parameter
+ * @deprecated Since 3.0 functionality included in core databind directly
  */
+@Deprecated
 public class ParameterNamesAnnotationIntrospector extends NopAnnotationIntrospector {
     private static final long serialVersionUID = 1L;
 
@@ -79,32 +77,5 @@ public class ParameterNamesAnnotationIntrospector extends NopAnnotationIntrospec
             return mode;
         }
         return null;
-    }
-
-    @Override
-    @Deprecated // remove AFTER 2.9
-    public JsonCreator.Mode findCreatorBinding(Annotated a) {
-        JsonCreator ann = _findAnnotation(a, JsonCreator.class);
-        if (ann != null) {
-            JsonCreator.Mode mode = ann.mode();
-            if ((creatorBinding != null)
-                    && (mode == JsonCreator.Mode.DEFAULT)) {
-                mode = creatorBinding;
-            }
-            return mode;
-        }
-        return creatorBinding;
-    }
-
-    @Override
-    @Deprecated // since 2.9
-    public boolean hasCreatorAnnotation(Annotated a)
-    {
-        // 02-Mar-2017, tatu: Copied from base AnnotationIntrospector
-        JsonCreator ann = _findAnnotation(a, JsonCreator.class);
-        if (ann != null) {
-            return (ann.mode() != JsonCreator.Mode.DISABLED);
-        }
-        return false;
     }
 }

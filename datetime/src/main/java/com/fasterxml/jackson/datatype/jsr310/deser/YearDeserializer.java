@@ -52,7 +52,7 @@ public class YearDeserializer extends JSR310DeserializerBase<Year>
     @Override
     public Year deserialize(JsonParser parser, DeserializationContext context) throws IOException
     {
-        JsonToken t = parser.getCurrentToken();
+        JsonToken t = parser.currentToken();
         if (t == JsonToken.VALUE_STRING) {
             String string = parser.getValueAsString().trim();
             try {

@@ -2,13 +2,13 @@
   <modelVersion>4.0.0</modelVersion> 
   <parent>
     <groupId>com.fasterxml.jackson</groupId>
-    <artifactId>jackson-bom</artifactId>
-    <version>2.9.2-SNAPSHOT</version>
+    <artifactId>jackson-base</artifactId>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
   <groupId>com.fasterxml.jackson.module</groupId>
   <artifactId>jackson-modules-java8</artifactId>
   <name>Jackson modules: Java 8</name>
-  <version>2.9.2-SNAPSHOT</version>
+  <version>3.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <description>Parent pom for Jackson modules needed to support Java 8 features and types
   </description>
@@ -30,11 +30,7 @@
     <url>https://github.com/FasterXML/jackson-modules-java8/issues</url>
   </issueManagement>
 
-  <properties>
-    <version.asm>5.1</version.asm>
-  </properties>
-
-  <!-- NOTE: `dependencyManagement` comes from jackson-bom since 2.8.5 -->
+  <!-- NOTE: `dependencyManagement` comes from jackson-bom -->
 
   <dependencies>
     <!-- Extends Jackson mapper -->
@@ -46,27 +42,14 @@
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
     </dependency>
-
-    <dependency> <!-- all modules use junit for testing -->
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <build>
     <pluginManagement>
       <plugins>
-	<plugin>
-	  <!-- Inherited from oss-base. Generate PackageVersion.java.-->
+	<plugin> <!-- default settings are fine, just need to enable here -->
           <groupId>com.google.code.maven-replacer-plugin</groupId>
           <artifactId>replacer</artifactId>
-	  <executions>
-            <execution>
-              <id>process-packageVersion</id>
-              <phase>generate-sources</phase>
-            </execution>
-          </executions>
 	</plugin>
 
 	<plugin>
