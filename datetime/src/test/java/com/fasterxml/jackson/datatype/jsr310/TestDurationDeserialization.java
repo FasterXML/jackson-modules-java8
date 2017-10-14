@@ -209,7 +209,7 @@ public class TestDurationDeserialization extends ModuleTestBase
             READER.readValue("[]");
             fail("expected MismatchedInputException");
         } catch (MismatchedInputException e) {
-            verifyException(e, "Cannot deserialize instance of java.time.Duration out of START_ARRAY");
+            verifyException(e, "Cannot deserialize instance of `java.time.Duration` out of START_ARRAY");
         }
         try {
             newMapper()
