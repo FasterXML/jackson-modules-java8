@@ -16,18 +16,18 @@
 
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
-import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonStringFormatVisitor;
-import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonValueFormat;
 import java.io.IOException;
 import java.time.MonthDay;
 import java.time.format.DateTimeFormatter;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.type.WritableTypeId;
+
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 
 /**
  * Serializer for Java 8 temporal {@link MonthDay}s.
@@ -62,33 +62,38 @@ public class MonthDaySerializer extends JSR310FormattedSerializerBase<MonthDay>
     }
 
     @Override
-    public void serialize(MonthDay value, JsonGenerator generator, SerializerProvider provider)
+    public void serialize(MonthDay value, JsonGenerator g, SerializerProvider provider)
         throws IOException
     {
         if (_useTimestampExplicitOnly(provider)) {
-            generator.writeStartArray();
-            generator.writeNumber(value.getMonthValue());
-            generator.writeNumber(value.getDayOfMonth());
-            generator.writeEndArray();
+            g.writeStartArray();
+            _serializeAsArrayContents(value, g, provider);
+            g.writeEndArray();
         } else {
-            String str = (_formatter == null) ? value.toString() : value.format(_formatter);
-            generator.writeString(str);
+            g.writeString((_formatter == null) ? value.toString() : value.format(_formatter));
         }
     }
 
     @Override
-    protected void _acceptTimestampVisitor(JsonFormatVisitorWrapper visitor, JavaType typeHint) throws JsonMappingException
+    public void serializeWithType(MonthDay value, JsonGenerator g,
+            SerializerProvider provider, TypeSerializer typeSer) throws IOException
     {
-        SerializerProvider provider = visitor.getProvider();
-        boolean useTimestamp = (provider != null) && _useTimestampExplicitOnly(provider);
-        if (useTimestamp) {
-            _acceptTimestampVisitor(visitor, typeHint);
+        WritableTypeId typeIdDef = typeSer.writeTypePrefix(g,
+                typeSer.typeId(value, serializationShape(provider)));
+        // need to write out to avoid double-writing array markers
+        if (typeIdDef.valueShape == JsonToken.START_ARRAY) {
+            _serializeAsArrayContents(value, g, provider);
         } else {
-            JsonStringFormatVisitor v2 = visitor.expectStringFormat(typeHint);
-            if (v2 != null) {
-                v2.format(JsonValueFormat.DATE_TIME);
-            }
+            g.writeString((_formatter == null) ? value.toString() : value.format(_formatter));
         }
+        typeSer.writeTypeSuffix(g, typeIdDef);
+    }
+    
+    protected void _serializeAsArrayContents(MonthDay value, JsonGenerator g,
+            SerializerProvider provider) throws IOException
+    {
+        g.writeNumber(value.getMonthValue());
+        g.writeNumber(value.getDayOfMonth());
     }
 
     @Override // since 2.9

@@ -17,9 +17,11 @@
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -70,8 +72,10 @@ public class YearSerializer extends JSR310FormattedSerializerBase<Year>
         }
     }
 
+    // Override because we have String/Int, NOT String/Array
     @Override
-    protected void _acceptTimestampVisitor(JsonFormatVisitorWrapper visitor, JavaType typeHint) throws JsonMappingException
+    protected void _acceptTimestampVisitor(JsonFormatVisitorWrapper visitor, JavaType typeHint)
+            throws JsonMappingException
     {
         JsonIntegerFormatVisitor v2 = visitor.expectIntegerFormat(typeHint);
         if (v2 != null) {

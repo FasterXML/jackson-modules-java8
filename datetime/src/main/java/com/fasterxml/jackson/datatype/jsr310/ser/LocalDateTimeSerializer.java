@@ -58,7 +58,6 @@ public class LocalDateTimeSerializer extends JSR310FormattedSerializerBase<Local
         return new LocalDateTimeSerializer(this, useTimestamp, f);
     }
 
-    // since 2.7: TODO in 2.8; change to use per-type defaulting
     protected DateTimeFormatter _defaultFormatter() {
         return DateTimeFormatter.ISO_LOCAL_DATE_TIME;
     }

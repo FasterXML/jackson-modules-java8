@@ -18,10 +18,10 @@ package com.fasterxml.jackson.datatype.jsr310.ser;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.jsontype.impl.StdTypeResolverBuilder;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
@@ -66,10 +66,10 @@ public class LocalDateSerTest
     }
 
     // [modules-java8#46]
-    @JsonTypeInfo(use = JsonTypeInfo.Id.NONE)
     static class Holder46 {
         public LocalDate localDate;
 
+        @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.WRAPPER_OBJECT)
         public Object object;
 
         public Holder46(LocalDate localDate, Object object) {
@@ -283,19 +283,13 @@ public class LocalDateSerTest
     }
 
     // [modules-java8#46]
+    @Test
     public void testPolymorphicSerialization() throws Exception
     {
         ObjectMapper mapper = newMapper();
-        StdTypeResolverBuilder typeResolverBuilder =
-                new ObjectMapper.DefaultTypeResolverBuilder(ObjectMapper.DefaultTyping.NON_FINAL)
-                        .init(JsonTypeInfo.Id.CLASS, null)
-                        .inclusion(JsonTypeInfo.As.WRAPPER_OBJECT);
-
-        mapper = new ObjectMapper();
-        mapper.setDefaultTyping(typeResolverBuilder);
         final LocalDate localDate = LocalDate.of(2017, 12, 5);
-        String dateHolderStr = mapper.writeValueAsString(new Holder46(localDate, localDate));
+        String json = mapper.writeValueAsString(new Holder46(localDate, localDate));
         assertEquals(aposToQuotes("{\"localDate\":[2017,12,5],\"object\":{\"java.time.LocalDate\":[2017,12,5]}}"),
-                dateHolderStr);
+                json);
     }
 }

@@ -21,6 +21,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonArrayFormatVisitor;
@@ -170,6 +171,14 @@ abstract class JSR310FormattedSerializerBase<T>
     protected boolean useTimestamp(SerializerProvider provider) {
         if (_useTimestamp != null) {
             return _useTimestamp.booleanValue();
+        }
+        if (_shape != null) {
+            if (_shape == Shape.STRING) {
+                return false;
+            }
+            if (_shape == Shape.NUMBER_INT) {
+                return true;
+            }
         }
         // assume that explicit formatter definition implies use of textual format
         if (_formatter != null) { 
