@@ -28,7 +28,7 @@ import java.time.format.DateTimeFormatter;
  * @author Nick Williams
  * @since 2.2
  */
-public final class InstantSerializer extends InstantSerializerBase<Instant>
+public class InstantSerializer extends InstantSerializerBase<Instant>
 {
     private static final long serialVersionUID = 1L;
 

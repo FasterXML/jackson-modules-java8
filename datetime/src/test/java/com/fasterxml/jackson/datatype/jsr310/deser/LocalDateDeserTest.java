@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.datatype.jsr310;
+package com.fasterxml.jackson.datatype.jsr310.deser;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -16,8 +16,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-public class TestLocalDateDeserialization extends ModuleTestBase
+public class LocalDateDeserTest extends ModuleTestBase
 {
     private final ObjectReader READER = newMapper().readerFor(LocalDate.class);
 
@@ -47,30 +48,30 @@ public class TestLocalDateDeserialization extends ModuleTestBase
     @Test
     public void testDeserializationAsEmptyArrayDisabled() throws Throwable
     {
-    	// works even without the feature enabled
-    	assertNull(read("[]"));
+        // works even without the feature enabled
+        assertNull(read("[]"));
     }
-    
+
     @Test
     public void testDeserializationAsArrayEnabled() throws Throwable
     {
-    	String json="['2000-01-01']";
-    	LocalDate value= newMapper()
-    			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
-    			.readerFor(LocalDate.class).readValue(aposToQuotes(json));
-    	notNull(value);
+        String json="['2000-01-01']";
+        LocalDate value= newMapper()
+                .configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
+                .readerFor(LocalDate.class).readValue(aposToQuotes(json));
+        notNull(value);
         expect(LocalDate.of(2000, 1, 1), value);
     }
     
     @Test
     public void testDeserializationAsEmptyArrayEnabled() throws Throwable
     {
-    	String json="[]";
-    	LocalDate value= newMapper()
-    			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
-    			.configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true)
-    			.readerFor(LocalDate.class).readValue(aposToQuotes(json));
-    	assertNull(value);
+        String json="[]";
+        LocalDate value= newMapper()
+                .configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
+                .configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true)
+                .readerFor(LocalDate.class).readValue(aposToQuotes(json));
+        assertNull(value);
     }
 
     private void expectFailure(String json) throws Throwable {

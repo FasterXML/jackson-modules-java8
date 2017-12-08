@@ -11,7 +11,7 @@ public class ModuleTestBase
     final static String NO_NANOSECS_SER = "0.0";
     final static String NO_NANOSECS_SUFFIX = ".000000000";
     
-    protected ObjectMapper newMapper() {
+    protected static ObjectMapper newMapper() {
         return new ObjectMapper()
                 .registerModule(new JavaTimeModule());
     }

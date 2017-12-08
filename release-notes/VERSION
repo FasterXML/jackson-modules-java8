@@ -13,6 +13,12 @@ Modules:
 - Deprecate "paramater names" and "datatypes" modules as functionality
   now included directly in `jackson-databind`
 
+2.9.3 (08-Dec-2017)
+
+#46: Double array serialization of `LocalDate` stored as an object with
+  wrapper object typing enabled
+ (reported by unintended@github)
+
 2.9.2 (14-Oct-2017)
 2.9.1 (07-Sep-2017)
 

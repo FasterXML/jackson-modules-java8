@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.datatype.jsr310;
+package com.fasterxml.jackson.datatype.jsr310.deser;
 
 import java.time.ZoneId;
 
@@ -7,8 +7,9 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-public class PolymorphicTest extends ModuleTestBase
+public class DefaultTypingTest extends ModuleTestBase
 {
     private final ObjectMapper TYPING_MAPPER = newMapper();
     {
