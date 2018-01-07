@@ -135,6 +135,9 @@ public class LocalDateTimeDeserializer
         if (parser.hasToken(JsonToken.VALUE_EMBEDDED_OBJECT)) {
             return (LocalDateTime) parser.getEmbeddedObject();
         }
+        if (parser.hasToken(JsonToken.VALUE_NUMBER_INT)) {
+            _throwNoNumericTimestampNeedTimeZone(parser, context);
+        }
         throw context.wrongTokenException(parser, handledType(), JsonToken.VALUE_STRING,
                 "Expected array or string.");
     }
