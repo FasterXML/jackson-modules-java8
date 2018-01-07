@@ -19,6 +19,8 @@ Modules:
 #46: Double array serialization of `LocalDate` stored as an object with
   wrapper object typing enabled
  (reported by unintended@github)
+- Improve error reporting for `LocalDateTime`, `LocalTime`, `OffsetTime` for
+  timestamp input (JSON integer value)
 
 2.9.2 (14-Oct-2017)
 2.9.1 (07-Sep-2017)

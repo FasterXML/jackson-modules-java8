@@ -114,6 +114,7 @@ public class LocalDateDeserializer extends JSR310DateTimeDeserializerBase<LocalD
         if (parser.hasToken(JsonToken.VALUE_EMBEDDED_OBJECT)) {
             return (LocalDate) parser.getEmbeddedObject();
         }
+        // 06-Jan-2018, tatu: Is this actually safe? Do users expect such coercion?
         if (parser.hasToken(JsonToken.VALUE_NUMBER_INT)) {
             return LocalDate.ofEpochDay(parser.getLongValue());
         }

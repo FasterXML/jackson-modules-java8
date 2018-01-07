@@ -29,6 +29,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
@@ -41,6 +42,12 @@ public class LocalDateTimeDeserTest
 {
     private final ObjectMapper mapper = newMapper();
 
+    /*
+    /**********************************************************
+    /* Tests for deserializing from int array
+    /**********************************************************
+     */
+    
     @Test
     public void testDeserializationAsTimestamp01() throws Exception
     {
@@ -108,6 +115,12 @@ public class LocalDateTimeDeserTest
         assertEquals("The value is not correct.", time, value);
     }
 
+    /*
+    /**********************************************************
+    /* Tests for deserializing from textual representation
+    /**********************************************************
+     */
+    
     @Test
     public void testDeserializationAsString01() throws Exception
     {
@@ -140,6 +153,12 @@ public class LocalDateTimeDeserTest
         assertEquals("The value is not correct.", LocalDateTime.ofInstant(instant, ZoneOffset.UTC), value);
     }
 
+    /*
+    /**********************************************************
+    /* Tests for polymorphic handling
+    /**********************************************************
+     */
+    
     @Test
     public void testDeserializationWithTypeInfo01() throws Exception
     {
@@ -203,5 +222,19 @@ public class LocalDateTimeDeserTest
         assertEquals(13, cal.get(Calendar.HOUR_OF_DAY));
         assertEquals(45, cal.get(Calendar.MINUTE));
         assertEquals(5, cal.get(Calendar.SECOND));
+    }
+
+    // [modules-java8#47]: should indicate why timestamp won't work
+    @Test
+    public void testDeserilizeFromSimpleTimestamp() throws Exception
+    {
+        ObjectReader r = mapper.readerFor(LocalDateTime.class);
+        LocalDateTime value;
+        try {
+            value = r.readValue("1235");
+            fail("Should not succeed, instead got: "+value);
+        } catch (MismatchedInputException e) {
+            verifyException(e, "raw timestamp (1235) not allowed for `java.time.LocalDateTime`");
+        }
     }
 }
