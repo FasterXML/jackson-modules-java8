@@ -87,8 +87,8 @@ import com.fasterxml.jackson.datatype.jsr310.ser.key.ZonedDateTimeKeySerializer;
  * mapper.registerModule(new JavaTimeModule());
  * </pre>
  *<p>
- * Note that as of 2.6, this module does NOT support auto-registration, because of existence
- * of legacy version, {@link JSR310Module}.
+ * Note that as of 2.x, if auto-registering modules, this package will register
+ * legacy version, {@link JSR310Module}, and NOT this module. 3.x will change the efaults.
  * Legacy version has the same functionality, but slightly different default configuration:
  * see {@link com.fasterxml.jackson.datatype.jsr310.JSR310Module} for details.
  *<p>
@@ -121,7 +121,9 @@ import com.fasterxml.jackson.datatype.jsr310.ser.key.ZonedDateTimeKeySerializer;
  *
  * @author Nick Williams
  * @author Zoltan Kiss
- * @since 2.6.0
+ *
+ * @since 2.6
+ *
  * @see com.fasterxml.jackson.datatype.jsr310.ser.key.Jsr310NullKeySerializer
  */
 @SuppressWarnings("javadoc")
