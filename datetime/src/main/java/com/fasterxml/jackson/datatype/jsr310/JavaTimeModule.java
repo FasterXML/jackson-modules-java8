@@ -87,11 +87,6 @@ import com.fasterxml.jackson.datatype.jsr310.ser.key.ZonedDateTimeKeySerializer;
  * mapper.registerModule(new JavaTimeModule());
  * </pre>
  *<p>
- * Note that as of 2.x, if auto-registering modules, this package will register
- * legacy version, {@link JSR310Module}, and NOT this module. 3.x will change the efaults.
- * Legacy version has the same functionality, but slightly different default configuration:
- * see {@link com.fasterxml.jackson.datatype.jsr310.JSR310Module} for details.
- *<p>
  * Most {@code java.time} types are serialized as numbers (integers or decimals as appropriate) if the
  * {@link com.fasterxml.jackson.databind.SerializationFeature#WRITE_DATES_AS_TIMESTAMPS} feature is enabled, and otherwise are serialized in
  * standard <a href="http://en.wikipedia.org/wiki/ISO_8601" target="_blank">ISO-8601</a> string representation. ISO-8601 specifies formats
@@ -126,7 +121,6 @@ import com.fasterxml.jackson.datatype.jsr310.ser.key.ZonedDateTimeKeySerializer;
  *
  * @see com.fasterxml.jackson.datatype.jsr310.ser.key.Jsr310NullKeySerializer
  */
-@SuppressWarnings("javadoc")
 public final class JavaTimeModule extends SimpleModule
 {
     private static final long serialVersionUID = 1L;
@@ -245,7 +239,6 @@ public final class JavaTimeModule extends SimpleModule
         });
     }
 
-    // For
     protected AnnotatedMethod _findFactory(AnnotatedClass cls, String name, Class<?>... argTypes)
     {
         final int argCount = argTypes.length;
