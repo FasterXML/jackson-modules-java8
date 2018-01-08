@@ -1,9 +1,8 @@
 ## Overview
 
 This is a multi-module umbrella project for [Jackson](../../../jackson)
-modules needed to support Java 8 features when core Jackson modules do not
-(yet) require Java 8 runtime (note: Jackson 3.0 will likely increase baseline
-and allow including some or all of this functionality)
+modules needed to support Java 8 features, especially with Jackson 2.x that only
+requires Java 7 for running (and until 2.7 only Java 6).
 
 For Jackson 2.x this includes 3 modules:
 
@@ -19,7 +18,8 @@ For Jackson 2.x this includes 3 modules:
 all of which are built from this repository, and accessed and used as separate Jackson modules
 (with separate Maven artifacts).
 
-Jackson 3.x changes things so that `parameter-names` and `datatypes` modules are merged into `jackson-databind`
+Jackson 3.x changes things as it requires Java 8 to work and can thereby directly supported features.
+Because of this `parameter-names` and `datatypes` modules are merged into `jackson-databind`
 and need not be registered; `datetime` module (`JavaTimeModule`) remains separate module due to its size
 and configurability options.
 
