@@ -29,7 +29,7 @@ All modules are licensed under [Apache License 2.0](http://www.apache.org/licens
 
 ## Status
 
-[![Build Status](https://travis-ci.org/FasterXML/jackson-base-java8.svg)](https://travis-ci.org/FasterXML/jackson-base-java8)
+[![Build Status](https://travis-ci.org/FasterXML/jackson-modules-java8.svg)](https://travis-ci.org/FasterXML/jackson-modules-java8)
 
 ## Usage
 
