@@ -61,8 +61,7 @@ and either include versions directly, OR, preferably, import
 ObjectMapper mapper = new ObjectMapper()
    .registerModule(new ParameterNamesModule())
    .registerModule(new Jdk8Module())
-   .registerModule(new JavaTimeModule()) // new module, NOT JSR310Module
-;
+   .registerModule(new JavaTimeModule()); // new module, NOT JSR310Module
 ```
 
 or, alternatively, you can also auto-discover these modules with:
