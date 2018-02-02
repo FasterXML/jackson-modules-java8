@@ -10,12 +10,10 @@ import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
 
 @SuppressWarnings("serial")
 public abstract class JSR310DateTimeDeserializerBase<T>
     extends JSR310DeserializerBase<T>
-    implements ContextualDeserializer
 {
     protected final DateTimeFormatter _formatter;
 

@@ -63,7 +63,7 @@ public class TestOffsetDateTimeDeserialization extends ModuleTestBase
     public void testDeserializationWithContextTimezoneFeatureOverride() throws Exception
     {
         String inputStr = "{\"date\":\"2016-05-13T17:24:40.545+03\"}";
-        WithContextTimezoneDateFieldBean result = newMapper().setTimeZone(TimeZone.getTimeZone("UTC")).
+        WithContextTimezoneDateFieldBean result = newMapper(TimeZone.getTimeZone("UTC")).
                 disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE).readValue(inputStr, WithContextTimezoneDateFieldBean.class);
         expect(OffsetDateTime.of(2016, 5, 13, 14, 24, 40, 545000000, ZoneOffset.UTC), result.date);
     }
@@ -78,7 +78,7 @@ public class TestOffsetDateTimeDeserialization extends ModuleTestBase
     public void testDeserializationWithoutContextTimezoneFeatureOverride() throws Exception
     {
         String inputStr = "{\"date\":\"2016-05-13T17:24:40.545+03\"}";
-        WithoutContextTimezoneDateFieldBean result = newMapper().setTimeZone(TimeZone.getTimeZone("UTC")).
+        WithoutContextTimezoneDateFieldBean result = newMapper(TimeZone.getTimeZone("UTC")).
                 enable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE).readValue(inputStr, WithoutContextTimezoneDateFieldBean.class);
         notNull(result);
         expect(OffsetDateTime.of(2016, 5, 13, 17, 24, 40, 545000000, ZoneOffset.ofHours(3)), result.date);

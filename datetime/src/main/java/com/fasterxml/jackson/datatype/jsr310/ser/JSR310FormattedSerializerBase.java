@@ -23,12 +23,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 
 import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonArrayFormatVisitor;
-import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
-import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
-import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonStringFormatVisitor;
-import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonValueFormat;
-import com.fasterxml.jackson.databind.ser.ContextualSerializer;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.*;
 
 /**
  * Base class that provides an array schema instead of scalar schema if
@@ -39,7 +34,6 @@ import com.fasterxml.jackson.databind.ser.ContextualSerializer;
  */
 abstract class JSR310FormattedSerializerBase<T>
     extends JSR310SerializerBase<T>
-    implements ContextualSerializer
 {
     private static final long serialVersionUID = 1L;
 

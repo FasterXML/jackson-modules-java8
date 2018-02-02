@@ -65,8 +65,7 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsFloat01WithTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(0L), Z1);
-        ObjectMapper m = newMapper()
-            .setTimeZone(TimeZone.getDefault());
+        ObjectMapper m = newMapper(TimeZone.getDefault());
         OffsetDateTime value = m.readValue("0.000000000", OffsetDateTime.class);
 
         assertNotNull("The value should not be null.", value);
@@ -119,8 +118,7 @@ public class OffsetDateTimeDeserTest
     {
         OffsetDateTime date = OffsetDateTime.now(Z3);
 
-        ObjectMapper m = newMapper()
-                .setTimeZone(TimeZone.getDefault());
+        ObjectMapper m = newMapper(TimeZone.getDefault());
         OffsetDateTime value = m.readValue(
                 DecimalUtils.toDecimal(date.toEpochSecond(), date.getNano()), OffsetDateTime.class
         );
@@ -147,9 +145,8 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsInt01NanosecondsWithTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(0L), Z1);
-        ObjectMapper m = newMapper()
-                .configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, true)
-                .setTimeZone(TimeZone.getDefault());
+        ObjectMapper m = newMapper(TimeZone.getDefault())
+                .configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
         OffsetDateTime value = m.readValue("0", OffsetDateTime.class);
 
         assertNotNull("The value should not be null.", value);
@@ -174,9 +171,8 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsInt01MillisecondsWithTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(0L), Z1);
-        ObjectMapper m = newMapper()
-                .configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false)
-                .setTimeZone(TimeZone.getDefault());
+        ObjectMapper m = newMapper(TimeZone.getDefault())
+                .configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
         OffsetDateTime value = m.readValue("0", OffsetDateTime.class);
 
         assertNotNull("The value should not be null.", value);
@@ -202,9 +198,8 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsInt02NanosecondsWithTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 0), Z2);
-        ObjectMapper m = newMapper()
-                .configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, true)
-                .setTimeZone(TimeZone.getDefault());
+        ObjectMapper m = newMapper(TimeZone.getDefault())
+                .configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
         OffsetDateTime value = m.readValue("123456789", OffsetDateTime.class);
 
         assertNotNull("The value should not be null.", value);
@@ -229,9 +224,8 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsInt02MillisecondsWithTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 422000000), Z2);
-        ObjectMapper m = newMapper()
-            .configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false)
-            .setTimeZone(TimeZone.getDefault());
+        ObjectMapper m = newMapper(TimeZone.getDefault())
+            .configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
         OffsetDateTime value = m.readValue("123456789422", OffsetDateTime.class);
 
         assertNotNull("The value should not be null.", value);
@@ -260,9 +254,8 @@ public class OffsetDateTimeDeserTest
         OffsetDateTime date = OffsetDateTime.now(Z3);
         date = date.minus(date.getNano(), ChronoUnit.NANOS);
 
-        ObjectMapper m = newMapper()
-                .configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, true)
-                .setTimeZone(TimeZone.getDefault());
+        ObjectMapper m = newMapper(TimeZone.getDefault())
+                .configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
         OffsetDateTime value = m.readValue(Long.toString(date.toEpochSecond()), OffsetDateTime.class);
 
         assertNotNull("The value should not be null.", value);
@@ -292,9 +285,8 @@ public class OffsetDateTimeDeserTest
         OffsetDateTime date = OffsetDateTime.now(Z3);
         date = date.minus(date.getNano() - (date.get(ChronoField.MILLI_OF_SECOND) * 1_000_000L), ChronoUnit.NANOS);
 
-        ObjectMapper m = newMapper()
-                .configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false)
-                .setTimeZone(TimeZone.getDefault());
+        ObjectMapper m = newMapper(TimeZone.getDefault())
+                .configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
         OffsetDateTime value =
                 m.readValue(Long.toString(date.toInstant().toEpochMilli()), OffsetDateTime.class);
 
@@ -321,9 +313,8 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsString01WithTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(0L), Z1);
-        ObjectMapper m = newMapper()
-            .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, true)
-            .setTimeZone(TimeZone.getDefault());
+        ObjectMapper m = newMapper(TimeZone.getDefault())
+            .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, true);
         OffsetDateTime value = m.readValue('"' + FORMATTER.format(date) + '"', OffsetDateTime.class);
 
         assertNotNull("The value should not be null.", value);
@@ -335,9 +326,8 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsString01WithTimeZoneTurnedOff() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(0L), Z1);
-        ObjectMapper m = newMapper()
-            .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false)
-            .setTimeZone(TimeZone.getDefault());
+        ObjectMapper m = newMapper(TimeZone.getDefault())
+            .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false);
         OffsetDateTime value = m.readValue('"' + FORMATTER.format(date) + '"', OffsetDateTime.class);
 
         assertNotNull("The value should not be null.", value);
@@ -362,9 +352,8 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsString02WithTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 183917322), Z2);
-        ObjectMapper m = newMapper()
-            .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, true)
-            .setTimeZone(TimeZone.getDefault());
+        ObjectMapper m = newMapper(TimeZone.getDefault())
+            .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, true);
         OffsetDateTime value = m.readValue('"' + FORMATTER.format(date) + '"', OffsetDateTime.class);
 
         assertNotNull("The value should not be null.", value);
@@ -376,9 +365,8 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsString02WithTimeZoneTurnedOff() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 183917322), Z2);
-        ObjectMapper m = newMapper()
-            .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false)
-            .setTimeZone(TimeZone.getDefault());
+        ObjectMapper m = newMapper(TimeZone.getDefault())
+            .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false);
         OffsetDateTime value = m.readValue('"' + FORMATTER.format(date) + '"', OffsetDateTime.class);
 
         assertNotNull("The value should not be null.", value);
@@ -403,9 +391,8 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsString03WithTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.now(Z3);
-        ObjectMapper m = newMapper()
-            .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, true)
-            .setTimeZone(TimeZone.getDefault());
+        ObjectMapper m = newMapper(TimeZone.getDefault())
+            .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, true);
         OffsetDateTime value = m.readValue('"' + FORMATTER.format(date) + '"', OffsetDateTime.class);
 
         assertNotNull("The value should not be null.", value);
@@ -417,9 +404,8 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsString03WithTimeZoneTurnedOff() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.now(Z3);
-        ObjectMapper m = newMapper()
-            .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false)
-            .setTimeZone(TimeZone.getDefault());
+        ObjectMapper m = newMapper(TimeZone.getDefault())
+            .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false);
         OffsetDateTime value = m.readValue('"' + FORMATTER.format(date) + '"', OffsetDateTime.class);
 
         assertNotNull("The value should not be null.", value);
@@ -447,8 +433,7 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationWithTypeInfo01WithTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 183917322), Z2);
-        ObjectMapper m = newMapper()
-            .setTimeZone(TimeZone.getDefault())
+        ObjectMapper m = newMapper(TimeZone.getDefault())
             .addMixIn(Temporal.class, MockObjectConfiguration.class);
         Temporal value = m.readValue(
                 "[\"" + OffsetDateTime.class.getName() + "\",123456789.183917322]", Temporal.class
@@ -481,9 +466,8 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationWithTypeInfo02WithTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 0), Z2);
-        ObjectMapper m = newMapper()
+        ObjectMapper m = newMapper(TimeZone.getDefault())
             .configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, true)
-            .setTimeZone(TimeZone.getDefault())
             .addMixIn(Temporal.class, MockObjectConfiguration.class);
         Temporal value = m.readValue(
                 "[\"" + OffsetDateTime.class.getName() + "\",123456789]", Temporal.class
@@ -516,9 +500,8 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationWithTypeInfo03WithTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 422000000), Z2);
-        ObjectMapper m = newMapper()
+        ObjectMapper m = newMapper(TimeZone.getDefault())
             .configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false)
-            .setTimeZone(TimeZone.getDefault())
             .addMixIn(Temporal.class, MockObjectConfiguration.class);
         Temporal value = m.readValue(
                 "[\"" + OffsetDateTime.class.getName() + "\",123456789422]", Temporal.class
@@ -551,9 +534,8 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationWithTypeInfo04WithTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.now(Z3);
-        ObjectMapper m = newMapper()
+        ObjectMapper m = newMapper(TimeZone.getDefault())
             .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, true)
-            .setTimeZone(TimeZone.getDefault())
             .addMixIn(Temporal.class, MockObjectConfiguration.class);
         Temporal value = m.readValue(
                 "[\"" + OffsetDateTime.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", Temporal.class
@@ -570,9 +552,8 @@ public class OffsetDateTimeDeserTest
     {
         OffsetDateTime date = OffsetDateTime.now(Z3);
 
-        ObjectMapper m = newMapper()
+        ObjectMapper m = newMapper(TimeZone.getDefault())
             .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false)
-            .setTimeZone(TimeZone.getDefault())
             .addMixIn(Temporal.class, MockObjectConfiguration.class);
         Temporal value = m.readValue(
                 "[\"" + OffsetDateTime.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", Temporal.class
