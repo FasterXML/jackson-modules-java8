@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
@@ -69,7 +68,7 @@ public class TestZoneOffsetDeserialization extends ModuleTestBase
     @Test
     public void testDeserializationAsArrayEnabled() throws Throwable
     {
-        ZoneOffset value= READER
+        ZoneOffset value = READER
                 .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
     			.readValue(aposToQuotes("['+0300']"));
         expect(ZoneOffset.of("+0300"), value);
@@ -78,11 +77,10 @@ public class TestZoneOffsetDeserialization extends ModuleTestBase
     @Test
     public void testDeserializationAsEmptyArrayEnabled() throws Throwable
     {
-        String json="[]";
         ZoneOffset value = READER
     			.with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS,
     			        DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT)
-    			.readValue(aposToQuotes(json));
+    			.readValue("[]");
         assertNull(value);
     }
 
@@ -93,10 +91,6 @@ public class TestZoneOffsetDeserialization extends ModuleTestBase
 
     private ZoneOffset read(final String json) throws IOException {
         return READER.readValue(aposToQuotes(json));
-    }
-
-    private static void notNull(Object value) {
-        assertNotNull("The value should not be null.", value);
     }
 
     private static void expect(Object exp, Object value) {
