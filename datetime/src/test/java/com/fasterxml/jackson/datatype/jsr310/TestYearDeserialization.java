@@ -3,6 +3,7 @@ package com.fasterxml.jackson.datatype.jsr310;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import org.junit.Test;
 
@@ -57,9 +58,10 @@ public class TestYearDeserialization extends ModuleTestBase
         }
     	try {
     		String json="[]";
-        	newMapper()
-        			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
-        			.readerFor(Year.class).readValue(aposToQuotes(json));
+    		ObjectMapper.builder()
+    		    .configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
+              .build()
+    		    .readerFor(Year.class).readValue(aposToQuotes(json));
     	    fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
            // OK
@@ -71,25 +73,21 @@ public class TestYearDeserialization extends ModuleTestBase
     @Test
     public void testDeserializationAsArrayEnabled() throws Throwable
     {
-    	String json="['2000']";
-    	Year value= newMapper()
-    			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
-    			.readerFor(Year.class).readValue(aposToQuotes(json));
-    	notNull(value);
+        Year value = READER.with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
+                .readValue(aposToQuotes("['2000']"));
         expect(Year.of(2000), value);
     }
-    
+
     @Test
     public void testDeserializationAsEmptyArrayEnabled() throws Throwable
     {
-    	String json="[]";
-    	Year value= newMapper()
-    			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
-    			.configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true)
-    			.readerFor(Year.class).readValue(aposToQuotes(json));
-    	assertNull(value);
+        Year value = READER
+    			.with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS,
+    			        DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT)
+    			.readValue("[]");
+        assertNull(value);
     }
-    
+
     private void expectFailure(String json) throws Throwable {
         try {
             read(json);
@@ -101,8 +99,6 @@ public class TestYearDeserialization extends ModuleTestBase
             if (!(e.getCause() instanceof DateTimeParseException)) {
                 throw e.getCause();
             }
-        } catch (IOException e) {
-            throw e;
         }
     }
 

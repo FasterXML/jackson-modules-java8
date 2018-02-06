@@ -338,8 +338,7 @@ public class TestInstantSerialization extends ModuleTestBase
     public void testDeserializationWithTypeInfo02() throws Exception
     {
         Instant date = Instant.ofEpochSecond(123456789L, 0);
-        ObjectMapper m = newMapper()
-                .enable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+        ObjectMapper m = newMapperWith(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .addMixIn(Temporal.class, MockObjectConfiguration.class);
         Temporal value = m.readValue(
                 "[\"" + Instant.class.getName() + "\",123456789]", Temporal.class
@@ -352,8 +351,7 @@ public class TestInstantSerialization extends ModuleTestBase
     public void testDeserializationWithTypeInfo03() throws Exception
     {
         Instant date = Instant.ofEpochSecond(123456789L, 422000000);
-        ObjectMapper m = newMapper()
-                .disable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+        ObjectMapper m = newMapperWithout(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .addMixIn(Temporal.class, MockObjectConfiguration.class);
         Temporal value = m.readValue(
                 "[\"" + Instant.class.getName() + "\",123456789422]", Temporal.class
@@ -433,15 +431,14 @@ public class TestInstantSerialization extends ModuleTestBase
     @Test
     public void testRoundTripOfInstantAndJavaUtilDate() throws Exception
     {
-        ObjectMapper mapper = newMapper();
-        mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        mapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
-
         Instant givenInstant = LocalDate.of(2016, 1, 1).atStartOfDay().atZone(ZoneOffset.UTC).toInstant();
-        String json = mapper.writeValueAsString(java.util.Date.from(givenInstant));
-        Instant actual = mapper.readValue(json, Instant.class);
-
+        String json = MAPPER.writer()
+                .without(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS,
+                        SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .writeValueAsString(java.util.Date.from(givenInstant));
+        Instant actual = MAPPER.readerFor(Instant.class)
+                .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .readValue(json);
         assertEquals(givenInstant, actual);
     }
 

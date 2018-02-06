@@ -60,8 +60,9 @@ public class TestZonedDateTimeDeserialization extends ModuleTestBase
     	try {
     		String json="[]";
         	newMapper()
-        			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
-        			.readerFor(ZonedDateTime.class).readValue(aposToQuotes(json));
+            	.readerFor(ZonedDateTime.class)
+            	.with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
+            	.readValue(aposToQuotes(json));
     	    fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
            // OK
@@ -73,10 +74,11 @@ public class TestZonedDateTimeDeserialization extends ModuleTestBase
     @Test
     public void testDeserializationAsArrayEnabled() throws Throwable
     {
-    	String json="['2000-01-01T12:00Z']";
-    	ZonedDateTime value= newMapper()
-    			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
-    			.readerFor(ZonedDateTime.class).readValue(aposToQuotes(json));
+        String json="['2000-01-01T12:00Z']";
+        ZonedDateTime value = newMapper()
+    			.readerFor(ZonedDateTime.class)
+               .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
+    			.readValue(aposToQuotes(json));
     	notNull(value);
         expect(ZonedDateTime.of(2000, 1, 1, 12, 0, 0, 0, ZoneId.of("UTC")), value);
     }
@@ -84,12 +86,13 @@ public class TestZonedDateTimeDeserialization extends ModuleTestBase
     @Test
     public void testDeserializationAsEmptyArrayEnabled() throws Throwable
     {
-    	String json="[]";
-    	ZonedDateTime value= newMapper()
-    			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
-    			.configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true)
-    			.readerFor(ZonedDateTime.class).readValue(aposToQuotes(json));
-    	assertNull(value);
+        String json="[]";
+        ZonedDateTime value = newMapper()
+                .readerFor(ZonedDateTime.class)
+                .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS,
+                        DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT)
+                .readValue(aposToQuotes(json));
+        assertNull(value);
     }
 
     private void expectFailure(String json) throws Throwable {

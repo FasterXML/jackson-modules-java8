@@ -2,6 +2,7 @@ package com.fasterxml.jackson.datatype.jsr310;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 
@@ -53,10 +54,9 @@ public class TestLocalDateTimeDeserialization extends ModuleTestBase
     @Test
     public void testDeserializationAsArrayEnabled() throws Throwable
     {
-        String json="['2000-01-01T12:00']";
-        LocalDateTime value= newMapper()
-                .configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
-                .readerFor(LocalDateTime.class).readValue(aposToQuotes(json));
+        LocalDateTime value = READER
+                .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
+                .readValue(aposToQuotes("['2000-01-01T12:00']"));
         notNull(value);
         expect(LocalDateTime.of(2000, 1, 1, 12, 0, 0, 0), value);
     }
@@ -64,12 +64,13 @@ public class TestLocalDateTimeDeserialization extends ModuleTestBase
     @Test
     public void testDeserializationAsEmptyArrayEnabled() throws Throwable
     {
-    	String json="[]";
-    	LocalDateTime value= newMapper()
-    			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
-    			.configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true)
-    			.readerFor(LocalDateTime.class).readValue(aposToQuotes(json));
-    	assertNull(value);
+        String json="[]";
+    	    LocalDateTime value = ObjectMapper.builder()
+    	            .enable(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS,
+    	                    DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT)
+    	            .build()
+    	            .readerFor(LocalDateTime.class).readValue(aposToQuotes(json));
+    	    assertNull(value);
     }
 
     private void expectFailure(String json) throws Throwable {
