@@ -49,14 +49,13 @@ public class OffsetDateTimeDeserTest
     }
 
     private ObjectMapper MAPPER = newMapper();
+    private ObjectMapper MAPPER_DEFAULT_TZ = newMapper(TimeZone.getDefault());
 
     @Test
     public void testDeserializationAsFloat01WithoutTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(0L), Z1);
         OffsetDateTime value = MAPPER.readValue("0.000000000", OffsetDateTime.class);
-
-        assertNotNull("The value should not be null.", value);
         assertIsEqual(date, value);
         assertEquals("The time zone is not correct.", ZoneOffset.UTC, value.getOffset());
     }
@@ -65,10 +64,7 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsFloat01WithTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(0L), Z1);
-        ObjectMapper m = newMapper(TimeZone.getDefault());
-        OffsetDateTime value = m.readValue("0.000000000", OffsetDateTime.class);
-
-        assertNotNull("The value should not be null.", value);
+        OffsetDateTime value = MAPPER_DEFAULT_TZ.readValue("0.000000000", OffsetDateTime.class);
         assertIsEqual(date, value);
         assertEquals("The time zone is not correct.", getDefaultOffset(date), value.getOffset());
     }
@@ -77,10 +73,7 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsFloat02WithoutTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 183917322), Z2);
-
         OffsetDateTime value = MAPPER.readValue("123456789.183917322", OffsetDateTime.class);
-
-        assertNotNull("The value should not be null.", value);
         assertIsEqual(date, value);
         assertEquals("The time zone is not correct.", ZoneOffset.UTC, value.getOffset());
     }
@@ -89,12 +82,9 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsFloat02WithTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 183917322), Z2);
-
         OffsetDateTime value = MAPPER.readerFor(OffsetDateTime.class)
                 .with(TimeZone.getDefault())
                 .readValue("123456789.183917322");
-
-        assertNotNull("The value should not be null.", value);
         assertIsEqual(date, value);
         assertEquals("The time zone is not correct.", getDefaultOffset(date), value.getOffset());
     }
@@ -104,11 +94,9 @@ public class OffsetDateTimeDeserTest
     {
         OffsetDateTime date = OffsetDateTime.now(Z3);
 
-        OffsetDateTime value = MAPPER.readValue(
-                DecimalUtils.toDecimal(date.toEpochSecond(), date.getNano()), OffsetDateTime.class
-                );
-
-        assertNotNull("The value should not be null.", value);
+        OffsetDateTime value = MAPPER
+                .readerFor(OffsetDateTime.class)
+                .readValue(DecimalUtils.toDecimal(date.toEpochSecond(), date.getNano()));
         assertIsEqual(date, value);
         assertEquals("The time zone is not correct.", ZoneOffset.UTC, value.getOffset());
     }
@@ -117,13 +105,8 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsFloat03WithTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.now(Z3);
-
-        ObjectMapper m = newMapper(TimeZone.getDefault());
-        OffsetDateTime value = m.readValue(
-                DecimalUtils.toDecimal(date.toEpochSecond(), date.getNano()), OffsetDateTime.class
-        );
-
-        assertNotNull("The value should not be null.", value);
+        OffsetDateTime value = MAPPER_DEFAULT_TZ.readerFor(OffsetDateTime.class)
+                .readValue(DecimalUtils.toDecimal(date.toEpochSecond(), date.getNano()));
         assertIsEqual(date, value);
         assertEquals("The time zone is not correct.", getDefaultOffset(date), value.getOffset());
     }
@@ -132,11 +115,9 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsInt01NanosecondsWithoutTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(0L), Z1);
-        ObjectMapper m = newMapper()
-                .enable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
-        OffsetDateTime value = m.readValue("0", OffsetDateTime.class);
-
-        assertNotNull("The value should not be null.", value);
+        OffsetDateTime value = MAPPER.readerFor(OffsetDateTime.class)
+                .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .readValue("0");
         assertIsEqual(date, value);
         assertEquals("The time zone is not correct.", ZoneOffset.UTC, value.getOffset());
     }
@@ -145,11 +126,10 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsInt01NanosecondsWithTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(0L), Z1);
-        ObjectMapper m = newMapper(TimeZone.getDefault())
-                .enable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
-        OffsetDateTime value = m.readValue("0", OffsetDateTime.class);
-
-        assertNotNull("The value should not be null.", value);
+        OffsetDateTime value = MAPPER.readerFor(OffsetDateTime.class)
+                .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .with(TimeZone.getDefault())
+                .readValue("0");
         assertIsEqual(date, value);
         assertEquals("The time zone is not correct.", getDefaultOffset(date), value.getOffset());
     }
@@ -158,11 +138,9 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsInt01MillisecondsWithoutTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(0L), Z1);
-        ObjectMapper m = newMapper()
-                .disable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
-        OffsetDateTime value = m.readValue("0", OffsetDateTime.class);
-
-        assertNotNull("The value should not be null.", value);
+        OffsetDateTime value = MAPPER.readerFor(OffsetDateTime.class)
+                .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .readValue("0");
         assertIsEqual(date, value);
         assertEquals("The time zone is not correct.", ZoneOffset.UTC, value.getOffset());
     }
@@ -171,11 +149,9 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsInt01MillisecondsWithTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(0L), Z1);
-        ObjectMapper m = newMapper(TimeZone.getDefault())
-                .disable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
-        OffsetDateTime value = m.readValue("0", OffsetDateTime.class);
-
-        assertNotNull("The value should not be null.", value);
+        OffsetDateTime value = MAPPER_DEFAULT_TZ.readerFor(OffsetDateTime.class)
+                .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .readValue("0");
         assertIsEqual(date, value);
         assertEquals("The time zone is not correct.", getDefaultOffset(date), value.getOffset());
     }
@@ -184,12 +160,9 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsInt02NanosecondsWithoutTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 0), Z2);
-
-        ObjectMapper m = newMapper()
-                .enable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
-        OffsetDateTime value = m.readValue("123456789", OffsetDateTime.class);
-
-        assertNotNull("The value should not be null.", value);
+        OffsetDateTime value = MAPPER.readerFor(OffsetDateTime.class)
+                .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .readValue("123456789");
         assertIsEqual(date, value);
         assertEquals("The time zone is not correct.", ZoneOffset.UTC, value.getOffset());
     }
@@ -198,11 +171,9 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsInt02NanosecondsWithTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 0), Z2);
-        ObjectMapper m = newMapper(TimeZone.getDefault())
-                .enable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
-        OffsetDateTime value = m.readValue("123456789", OffsetDateTime.class);
-
-        assertNotNull("The value should not be null.", value);
+        OffsetDateTime value = MAPPER_DEFAULT_TZ.readerFor(OffsetDateTime.class)
+                .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .readValue("123456789");
         assertIsEqual(date, value);
         assertEquals("The time zone is not correct.", getDefaultOffset(date), value.getOffset());
     }
@@ -211,11 +182,9 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsInt02MillisecondsWithoutTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 422000000), Z2);
-        ObjectMapper m = newMapper()
-                .disable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
-        OffsetDateTime value = m.readValue("123456789422", OffsetDateTime.class);
-
-        assertNotNull("The value should not be null.", value);
+        OffsetDateTime value = MAPPER.readerFor(OffsetDateTime.class)
+                .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .readValue("123456789422");
         assertIsEqual(date, value);
         assertEquals("The time zone is not correct.", ZoneOffset.UTC, value.getOffset());
     }
@@ -224,11 +193,9 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsInt02MillisecondsWithTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 422000000), Z2);
-        ObjectMapper m = newMapper(TimeZone.getDefault())
-            .disable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
-        OffsetDateTime value = m.readValue("123456789422", OffsetDateTime.class);
-
-        assertNotNull("The value should not be null.", value);
+        OffsetDateTime value = MAPPER_DEFAULT_TZ.readerFor(OffsetDateTime.class)
+                .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .readValue("123456789422");
         assertIsEqual(date, value);
         assertEquals("The time zone is not correct.", getDefaultOffset(date), value.getOffset());
     }
@@ -238,12 +205,9 @@ public class OffsetDateTimeDeserTest
     {
         OffsetDateTime date = OffsetDateTime.now(Z3);
         date = date.minus(date.getNano(), ChronoUnit.NANOS);
-
-        ObjectMapper m = newMapper()
-                .enable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
-        OffsetDateTime value = m.readValue(Long.toString(date.toEpochSecond()), OffsetDateTime.class);
-
-        assertNotNull("The value should not be null.", value);
+        OffsetDateTime value = MAPPER.readerFor(OffsetDateTime.class)
+                .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .readValue(Long.toString(date.toEpochSecond()));
         assertIsEqual(date, value);
         assertEquals("The time zone is not correct.", ZoneOffset.UTC, value.getOffset());
     }
@@ -253,12 +217,9 @@ public class OffsetDateTimeDeserTest
     {
         OffsetDateTime date = OffsetDateTime.now(Z3);
         date = date.minus(date.getNano(), ChronoUnit.NANOS);
-
-        ObjectMapper m = newMapper(TimeZone.getDefault())
-                .enable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
-        OffsetDateTime value = m.readValue(Long.toString(date.toEpochSecond()), OffsetDateTime.class);
-
-        assertNotNull("The value should not be null.", value);
+        OffsetDateTime value = MAPPER_DEFAULT_TZ.readerFor(OffsetDateTime.class)
+                .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .readValue(Long.toString(date.toEpochSecond()));
         assertIsEqual(date, value);
         assertEquals("The time zone is not correct.", getDefaultOffset(date), value.getOffset());
     }
@@ -268,13 +229,9 @@ public class OffsetDateTimeDeserTest
     {
         OffsetDateTime date = OffsetDateTime.now(Z3);
         date = date.minus(date.getNano() - (date.get(ChronoField.MILLI_OF_SECOND) * 1_000_000L), ChronoUnit.NANOS);
-
-        ObjectMapper m = newMapper()
-                .disable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
-        OffsetDateTime value =
-                m.readValue(Long.toString(date.toInstant().toEpochMilli()), OffsetDateTime.class);
-
-        assertNotNull("The value should not be null.", value);
+        OffsetDateTime value = MAPPER.readerFor(OffsetDateTime.class)
+                .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .readValue(Long.toString(date.toInstant().toEpochMilli()));
         assertIsEqual(date, value);
         assertEquals("The time zone is not correct.", ZoneOffset.UTC, value.getOffset());
     }
@@ -284,13 +241,9 @@ public class OffsetDateTimeDeserTest
     {
         OffsetDateTime date = OffsetDateTime.now(Z3);
         date = date.minus(date.getNano() - (date.get(ChronoField.MILLI_OF_SECOND) * 1_000_000L), ChronoUnit.NANOS);
-
-        ObjectMapper m = newMapper(TimeZone.getDefault())
-                .disable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
-        OffsetDateTime value =
-                m.readValue(Long.toString(date.toInstant().toEpochMilli()), OffsetDateTime.class);
-
-        assertNotNull("The value should not be null.", value);
+        OffsetDateTime value = MAPPER_DEFAULT_TZ.readerFor(OffsetDateTime.class)
+                .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .readValue(Long.toString(date.toInstant().toEpochMilli()));
         assertIsEqual(date, value);
         assertEquals("The time zone is not correct.", getDefaultOffset(date), value.getOffset());
     }
@@ -299,12 +252,9 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsString01WithoutTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(0L), Z1);
-
-        ObjectMapper m = newMapper()
-                .enable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
-        OffsetDateTime value = m.readValue('"' + FORMATTER.format(date) + '"', OffsetDateTime.class);
-
-        assertNotNull("The value should not be null.", value);
+        OffsetDateTime value = MAPPER.readerFor(OffsetDateTime.class)
+                .with(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+                .readValue('"' + FORMATTER.format(date) + '"');
         assertIsEqual(date, value);
         assertEquals("The time zone is not correct.", ZoneOffset.UTC, value.getOffset());
     }
@@ -313,11 +263,9 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsString01WithTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(0L), Z1);
-        ObjectMapper m = newMapper(TimeZone.getDefault())
-            .enable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
-        OffsetDateTime value = m.readValue('"' + FORMATTER.format(date) + '"', OffsetDateTime.class);
-
-        assertNotNull("The value should not be null.", value);
+        OffsetDateTime value = MAPPER_DEFAULT_TZ.readerFor(OffsetDateTime.class)
+                .with(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+                .readValue('"' + FORMATTER.format(date) + '"');
         assertIsEqual(date, value);
         assertEquals("The time zone is not correct.", getDefaultOffset(date), value.getOffset());
     }
@@ -326,11 +274,9 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsString01WithTimeZoneTurnedOff() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(0L), Z1);
-        ObjectMapper m = newMapper(TimeZone.getDefault())
-            .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
-        OffsetDateTime value = m.readValue('"' + FORMATTER.format(date) + '"', OffsetDateTime.class);
-
-        assertNotNull("The value should not be null.", value);
+        OffsetDateTime value = MAPPER_DEFAULT_TZ.readerFor(OffsetDateTime.class)
+                .without(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+                .readValue('"' + FORMATTER.format(date) + '"');
         assertIsEqual(date, value);
         assertEquals("The time zone is not correct.", getOffset(value, Z1), value.getOffset());
     }
@@ -339,11 +285,9 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsString02WithoutTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 183917322), Z2);
-        ObjectMapper m = newMapper()
-                .enable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
-        OffsetDateTime value = m.readValue('"' + FORMATTER.format(date) + '"', OffsetDateTime.class);
-
-        assertNotNull("The value should not be null.", value);
+        OffsetDateTime value = MAPPER.readerFor(OffsetDateTime.class)
+                .with(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+                .readValue('"' + FORMATTER.format(date) + '"');
         assertIsEqual(date, value);
         assertEquals("The time zone is not correct.", ZoneOffset.UTC, value.getOffset());
     }
@@ -352,11 +296,9 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsString02WithTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 183917322), Z2);
-        ObjectMapper m = newMapper(TimeZone.getDefault())
-            .enable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
-        OffsetDateTime value = m.readValue('"' + FORMATTER.format(date) + '"', OffsetDateTime.class);
-
-        assertNotNull("The value should not be null.", value);
+        OffsetDateTime value = MAPPER_DEFAULT_TZ.readerFor(OffsetDateTime.class)
+                .with(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+                .readValue('"' + FORMATTER.format(date) + '"');
         assertIsEqual(date, value);
         assertEquals("The time zone is not correct.", getDefaultOffset(date), value.getOffset());
     }
@@ -365,11 +307,9 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsString02WithTimeZoneTurnedOff() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 183917322), Z2);
-        ObjectMapper m = newMapper(TimeZone.getDefault())
-            .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
-        OffsetDateTime value = m.readValue('"' + FORMATTER.format(date) + '"', OffsetDateTime.class);
-
-        assertNotNull("The value should not be null.", value);
+        OffsetDateTime value = MAPPER_DEFAULT_TZ.readerFor(OffsetDateTime.class)
+                .without(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+                .readValue('"' + FORMATTER.format(date) + '"');
         assertIsEqual(date, value);
         assertEquals("The time zone is not correct.", getOffset(value, Z2), value.getOffset());
     }
@@ -378,11 +318,9 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsString03WithoutTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.now(Z3);
-        ObjectMapper m = newMapper()
-                .enable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
-        OffsetDateTime value = m.readValue('"' + FORMATTER.format(date) + '"', OffsetDateTime.class);
-
-        assertNotNull("The value should not be null.", value);
+        OffsetDateTime value = MAPPER.readerFor(OffsetDateTime.class)
+                .with(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+                .readValue('"' + FORMATTER.format(date) + '"');
         assertIsEqual(date, value);
         assertEquals("The time zone is not correct.", ZoneOffset.UTC, value.getOffset());
     }
@@ -391,11 +329,9 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsString03WithTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.now(Z3);
-        ObjectMapper m = newMapper(TimeZone.getDefault())
-            .enable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
-        OffsetDateTime value = m.readValue('"' + FORMATTER.format(date) + '"', OffsetDateTime.class);
-
-        assertNotNull("The value should not be null.", value);
+        OffsetDateTime value = MAPPER_DEFAULT_TZ.readerFor(OffsetDateTime.class)
+                .with(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+                .readValue('"' + FORMATTER.format(date) + '"');
         assertIsEqual(date, value);
         assertEquals("The time zone is not correct.", getDefaultOffset(date), value.getOffset());
     }
@@ -404,11 +340,9 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationAsString03WithTimeZoneTurnedOff() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.now(Z3);
-        ObjectMapper m = newMapper(TimeZone.getDefault())
-            .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
-        OffsetDateTime value = m.readValue('"' + FORMATTER.format(date) + '"', OffsetDateTime.class);
-
-        assertNotNull("The value should not be null.", value);
+        OffsetDateTime value = MAPPER_DEFAULT_TZ.readerFor(OffsetDateTime.class)
+                .without(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+                .readValue('"' + FORMATTER.format(date) + '"');
         assertIsEqual(date, value);
         assertEquals("The time zone is not correct.", getOffset(value, Z3), value.getOffset());
     }
@@ -422,8 +356,6 @@ public class OffsetDateTimeDeserTest
         Temporal value = m.readValue(
                 "[\"" + OffsetDateTime.class.getName() + "\",123456789.183917322]", Temporal.class
                 );
-
-        assertNotNull("The value should not be null.", value);
         assertTrue("The value should be an OffsetDateTime.", value instanceof OffsetDateTime);
         assertIsEqual(date, (OffsetDateTime) value);
         assertEquals("The time zone is not correct.", ZoneOffset.UTC, ((OffsetDateTime) value).getOffset());
@@ -450,13 +382,11 @@ public class OffsetDateTimeDeserTest
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 0), Z2);
         ObjectMapper m = newMapper()
-            .enable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
             .addMixIn(Temporal.class, MockObjectConfiguration.class);
-        Temporal value = m.readValue(
-                "[\"" + OffsetDateTime.class.getName() + "\",123456789]", Temporal.class
-                );
-
-        assertNotNull("The value should not be null.", value);
+        Temporal value = m.readerFor(Temporal.class)
+                .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .readValue(
+                "[\"" + OffsetDateTime.class.getName() + "\",123456789]");
         assertTrue("The value should be an OffsetDateTime.", value instanceof OffsetDateTime);
         assertIsEqual(date, (OffsetDateTime) value);
         assertEquals("The time zone is not correct.", ZoneOffset.UTC, ((OffsetDateTime) value).getOffset());
@@ -467,13 +397,11 @@ public class OffsetDateTimeDeserTest
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 0), Z2);
         ObjectMapper m = newMapper(TimeZone.getDefault())
-            .enable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
             .addMixIn(Temporal.class, MockObjectConfiguration.class);
-        Temporal value = m.readValue(
-                "[\"" + OffsetDateTime.class.getName() + "\",123456789]", Temporal.class
-                );
-
-        assertNotNull("The value should not be null.", value);
+        Temporal value = m.readerFor(Temporal.class)
+                .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .readValue(
+                "[\"" + OffsetDateTime.class.getName() + "\",123456789]");
         assertTrue("The value should be an OffsetDateTime.", value instanceof OffsetDateTime);
         assertIsEqual(date, (OffsetDateTime) value);
         assertEquals("The time zone is not correct.", getDefaultOffset(date), ((OffsetDateTime) value).getOffset());
@@ -484,13 +412,11 @@ public class OffsetDateTimeDeserTest
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 422000000), Z2);
         ObjectMapper m = newMapper()
-            .disable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
             .addMixIn(Temporal.class, MockObjectConfiguration.class);
-        Temporal value = m.readValue(
-                "[\"" + OffsetDateTime.class.getName() + "\",123456789422]", Temporal.class
-                );
-
-        assertNotNull("The value should not be null.", value);
+        Temporal value = m.readerFor(Temporal.class)
+                .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .readValue(
+                "[\"" + OffsetDateTime.class.getName() + "\",123456789422]");
         assertTrue("The value should be an OffsetDateTime.", value instanceof OffsetDateTime);
         assertIsEqual(date, (OffsetDateTime) value);
         assertEquals("The time zone is not correct.", ZoneOffset.UTC, ((OffsetDateTime) value).getOffset());
@@ -501,13 +427,11 @@ public class OffsetDateTimeDeserTest
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 422000000), Z2);
         ObjectMapper m = newMapper(TimeZone.getDefault())
-            .configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false)
             .addMixIn(Temporal.class, MockObjectConfiguration.class);
-        Temporal value = m.readValue(
-                "[\"" + OffsetDateTime.class.getName() + "\",123456789422]", Temporal.class
-                );
-
-        assertNotNull("The value should not be null.", value);
+        Temporal value = m.readerFor(Temporal.class)
+                .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .readValue(
+                "[\"" + OffsetDateTime.class.getName() + "\",123456789422]");
         assertTrue("The value should be an OffsetDateTime.", value instanceof OffsetDateTime);
         assertIsEqual(date, (OffsetDateTime) value);
         assertEquals("The time zone is not correct.", getDefaultOffset(date), ((OffsetDateTime) value).getOffset());
@@ -518,13 +442,11 @@ public class OffsetDateTimeDeserTest
     {
         OffsetDateTime date = OffsetDateTime.now(Z3);
         ObjectMapper m = newMapper()
-            .enable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
             .addMixIn(Temporal.class, MockObjectConfiguration.class);
-        Temporal value = m.readValue(
-                "[\"" + OffsetDateTime.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", Temporal.class
-                );
-
-        assertNotNull("The value should not be null.", value);
+        Temporal value = m.readerFor(Temporal.class)
+                .with(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+                .readValue(
+                "[\"" + OffsetDateTime.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]");
         assertTrue("The value should be an OffsetDateTime.", value instanceof OffsetDateTime);
         assertIsEqual(date, (OffsetDateTime) value);
         assertEquals("The time zone is not correct.", ZoneOffset.UTC, ((OffsetDateTime) value).getOffset());
@@ -551,11 +473,11 @@ public class OffsetDateTimeDeserTest
         OffsetDateTime date = OffsetDateTime.now(Z3);
 
         ObjectMapper m = newMapper(TimeZone.getDefault())
-            .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
             .addMixIn(Temporal.class, MockObjectConfiguration.class);
-        Temporal value = m.readValue(
-                "[\"" + OffsetDateTime.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", Temporal.class
-                );
+        Temporal value = m.readerFor(Temporal.class)
+                .without(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+                .readValue(
+                "[\"" + OffsetDateTime.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]");
 
         assertNotNull("The value should not be null.", value);
         assertTrue("The value should be an OffsetDateTime.", value instanceof OffsetDateTime);
@@ -569,11 +491,10 @@ public class OffsetDateTimeDeserTest
     {
         OffsetDateTime inputValue = OffsetDateTime.ofInstant(Instant.ofEpochSecond(0L), UTC);
         final Wrapper input = new Wrapper(inputValue);
-        final ObjectMapper m = newMapper();
-        String json = m.writeValueAsString(input);
+        String json = MAPPER.writeValueAsString(input);
         assertEquals(aposToQuotes("{'value':'1970_01_01T00:00:00+0000'}"), json);
 
-        Wrapper result = m.readValue(json, Wrapper.class);
+        Wrapper result = MAPPER.readValue(json, Wrapper.class);
         assertEquals(input.value, result.value);
     }
 

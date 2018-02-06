@@ -39,13 +39,14 @@ import org.junit.Test;
 
 public class LocalTimeDeserTest extends ModuleTestBase
 {
-    private ObjectReader reader = newMapper().readerFor(LocalTime.class);
+    private final ObjectMapper MAPPER = newMapper();
+    private final ObjectReader READER = MAPPER.readerFor(LocalTime.class);
 
     @Test
     public void testDeserializationAsTimestamp01() throws Exception
     {
         LocalTime time = LocalTime.of(15, 43);
-        LocalTime value = reader.readValue("[15,43]");
+        LocalTime value = READER.readValue("[15,43]");
         assertEquals("The value is not correct.", time, value);
     }
 
@@ -53,14 +54,14 @@ public class LocalTimeDeserTest extends ModuleTestBase
     public void testDeserializationAsTimestamp02() throws Exception
     {
         LocalTime time = LocalTime.of(9, 22, 57);
-        LocalTime value = reader.readValue("[9,22,57]");
+        LocalTime value = READER.readValue("[9,22,57]");
         assertEquals("The value is not correct.", time, value);
     }
 
     @Test
     public void testDeserializationAsTimestamp03Nanoseconds() throws Exception
     {
-        LocalTime value = reader
+        LocalTime value = READER
                 .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("[9,22,0,57]");
         assertEquals("The value is not correct.", LocalTime.of(9, 22, 0, 57), value);
@@ -69,7 +70,7 @@ public class LocalTimeDeserTest extends ModuleTestBase
     @Test
     public void testDeserializationAsTimestamp03Milliseconds() throws Exception
     {
-        LocalTime value = reader
+        LocalTime value = READER
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("[9,22,0,57]");
         assertEquals("The value is not correct.", LocalTime.of(9, 22, 0, 57000000), value);
@@ -78,7 +79,7 @@ public class LocalTimeDeserTest extends ModuleTestBase
     @Test
     public void testDeserializationAsTimestamp04Nanoseconds() throws Exception
     {
-        LocalTime value = reader
+        LocalTime value = READER
                 .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("[22,31,5,829837]");
         assertEquals("The value is not correct.", LocalTime.of(22, 31, 5, 829837), value);
@@ -87,7 +88,7 @@ public class LocalTimeDeserTest extends ModuleTestBase
     @Test
     public void testDeserializationAsTimestamp04Milliseconds01() throws Exception
     {
-        LocalTime value = reader
+        LocalTime value = READER
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("[22,31,5,829837]");
         assertEquals("The value is not correct.", LocalTime.of(22, 31, 5, 829837), value);
@@ -96,7 +97,7 @@ public class LocalTimeDeserTest extends ModuleTestBase
     @Test
     public void testDeserializationAsTimestamp04Milliseconds02() throws Exception
     {
-        LocalTime value = reader
+        LocalTime value = READER
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("[22,31,5,829]");
         assertEquals("The value is not correct.", LocalTime.of(22, 31, 5, 829000000), value);
@@ -106,17 +107,17 @@ public class LocalTimeDeserTest extends ModuleTestBase
     public void testDeserializationFromString() throws Exception
     {
         LocalTime time = LocalTime.of(15, 43);
-        LocalTime value = reader.readValue('"' + time.toString() + '"');
+        LocalTime value = READER.readValue('"' + time.toString() + '"');
         assertEquals("The value is not correct.", time, value);
 
         expectSuccess(LocalTime.of(12, 0), "'12:00'");
 
         time = LocalTime.of(9, 22, 57);
-        value = reader.readValue('"' + time.toString() + '"');
+        value = READER.readValue('"' + time.toString() + '"');
         assertEquals("The value is not correct.", time, value);
 
         time = LocalTime.of(22, 31, 5, 829837);
-        value = reader.readValue('"' + time.toString() + '"');
+        value = READER.readValue('"' + time.toString() + '"');
         assertEquals("The value is not correct.", time, value);
     }
 
@@ -130,7 +131,7 @@ public class LocalTimeDeserTest extends ModuleTestBase
     public void testDeserializationAsArrayDisabled() throws Throwable
     {
         try {
-            reader.readValue(aposToQuotes("['12:00']"));
+            READER.readValue(aposToQuotes("['12:00']"));
             fail("expected MismatchedInputException");
         } catch (MismatchedInputException e) {
             verifyException(e, "Unexpected token (VALUE_STRING) within Array");
@@ -138,25 +139,25 @@ public class LocalTimeDeserTest extends ModuleTestBase
 
         // 25-Jul-2017, tatu: Why does it work? Is it supposed to?
         // works even without the feature enabled
-        assertNull(reader.readValue("[]"));
+        assertNull(READER.readValue("[]"));
     }
 
     @Test
     public void testDeserializationAsArrayEnabled() throws Throwable
     {
-        LocalTime value= newMapper()
-               .enable(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
-               .readerFor(LocalTime.class).readValue(aposToQuotes("['12:00']"));
+        LocalTime value = READER
+               .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
+               .readValue(aposToQuotes("['12:00']"));
         expect(LocalTime.of(12, 0), value);
     }
 
     @Test
     public void testDeserializationAsEmptyArrayEnabled() throws Throwable
     {
-        LocalTime value= newMapper()
-               .enable(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
-               .enable(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT)
-               .readerFor(LocalTime.class).readValue(aposToQuotes("[]"));
+        LocalTime value = READER
+                .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS,
+                        DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT)
+                .readValue(aposToQuotes("[]"));
         assertNull(value);
     }    
 
@@ -164,13 +165,11 @@ public class LocalTimeDeserTest extends ModuleTestBase
     public void testDeserializationWithTypeInfo01() throws Exception
     {
         LocalTime time = LocalTime.of(22, 31, 5, 829837);
-
         ObjectMapper mapper = newMapper();
-        mapper.enable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
         mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
-        Temporal value = mapper.readValue(
-                "[\"" + LocalTime.class.getName() + "\",[22,31,5,829837]]", Temporal.class
-                );
+        Temporal value = mapper.readerFor(Temporal.class)
+                .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .readValue("[\"" + LocalTime.class.getName() + "\",[22,31,5,829837]]");
 
         assertNotNull("The value should not be null.", value);
         assertTrue("The value should be a LocalTime.", value instanceof LocalTime);
@@ -183,11 +182,10 @@ public class LocalTimeDeserTest extends ModuleTestBase
         LocalTime time = LocalTime.of(22, 31, 5, 422000000);
 
         ObjectMapper mapper = newMapper();
-        mapper.disable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
         mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
-        Temporal value = mapper.readValue(
-                "[\"" + LocalTime.class.getName() + "\",[22,31,5,422]]", Temporal.class
-                );
+        Temporal value = mapper.readerFor(Temporal.class)
+                .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .readValue("[\"" + LocalTime.class.getName() + "\",[22,31,5,422]]");
         assertTrue("The value should be a LocalTime.", value instanceof LocalTime);
         assertEquals("The value is not correct.", time, value);
     }
@@ -205,10 +203,9 @@ public class LocalTimeDeserTest extends ModuleTestBase
         assertEquals("The value is not correct.", time, value);
     }
 
-
     private void expectFailure(String aposJson) throws Throwable {
         try {
-            reader.readValue(aposToQuotes(aposJson));
+            READER.readValue(aposToQuotes(aposJson));
             fail("expected DateTimeParseException");
         } catch (JsonProcessingException e) {
             if (e.getCause() == null) {
@@ -221,13 +218,8 @@ public class LocalTimeDeserTest extends ModuleTestBase
     }
 
     private void expectSuccess(Object exp, String aposJson) throws IOException {
-        final LocalTime value = reader.readValue(aposToQuotes(aposJson));
-        notNull(value);
+        final LocalTime value = READER.readValue(aposToQuotes(aposJson));
         expect(exp, value);
-    }
-
-    private static void notNull(Object value) {
-        assertNotNull("The value should not be null.", value);
     }
 
     private static void expect(Object exp, Object value) {

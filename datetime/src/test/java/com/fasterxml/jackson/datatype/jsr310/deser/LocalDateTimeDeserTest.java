@@ -40,7 +40,8 @@ import static org.junit.Assert.*;
 public class LocalDateTimeDeserTest
     extends ModuleTestBase
 {
-    private final ObjectMapper mapper = newMapper();
+    private final ObjectMapper MAPPER = newMapper();
+    private final ObjectReader READER = MAPPER.readerFor(LocalDateTime.class);
 
     /*
     /**********************************************************
@@ -51,7 +52,7 @@ public class LocalDateTimeDeserTest
     @Test
     public void testDeserializationAsTimestamp01() throws Exception
     {
-        LocalDateTime value = mapper.readValue("[1986,1,17,15,43]", LocalDateTime.class);
+        LocalDateTime value = READER.readValue("[1986,1,17,15,43]");
         LocalDateTime time = LocalDateTime.of(1986, Month.JANUARY, 17, 15, 43);
         assertEquals("The value is not correct.", time, value);
     }
@@ -59,7 +60,7 @@ public class LocalDateTimeDeserTest
     @Test
     public void testDeserializationAsTimestamp02() throws Exception
     {
-        LocalDateTime value = mapper.readValue("[2013,8,21,9,22,57]", LocalDateTime.class);
+        LocalDateTime value = READER.readValue("[2013,8,21,9,22,57]");
         LocalDateTime time = LocalDateTime.of(2013, Month.AUGUST, 21, 9, 22, 57);
         assertEquals("The value is not correct.", time, value);
     }
@@ -67,7 +68,7 @@ public class LocalDateTimeDeserTest
     @Test
     public void testDeserializationAsTimestamp03Nanoseconds() throws Exception
     {
-        ObjectReader r = mapper.readerFor(LocalDateTime.class)
+        ObjectReader r = READER
                 .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
         LocalDateTime value = r.readValue("[2013,8,21,9,22,0,57]");
         LocalDateTime time = LocalDateTime.of(2013, Month.AUGUST, 21, 9, 22, 0, 57);
@@ -77,7 +78,7 @@ public class LocalDateTimeDeserTest
     @Test
     public void testDeserializationAsTimestamp03Milliseconds() throws Exception
     {
-        ObjectReader r = mapper.readerFor(LocalDateTime.class)
+        ObjectReader r = READER
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
         LocalDateTime value = r.readValue("[2013,8,21,9,22,0,57]");
         LocalDateTime time = LocalDateTime.of(2013, Month.AUGUST, 21, 9, 22, 0, 57000000);
@@ -87,7 +88,7 @@ public class LocalDateTimeDeserTest
     @Test
     public void testDeserializationAsTimestamp04Nanoseconds() throws Exception
     {
-        ObjectReader r = mapper.readerFor(LocalDateTime.class)
+        ObjectReader r = READER
                 .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
         LocalDateTime value = r.readValue("[2005,11,5,22,31,5,829837]");
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 829837);
@@ -97,7 +98,7 @@ public class LocalDateTimeDeserTest
     @Test
     public void testDeserializationAsTimestamp04Milliseconds01() throws Exception
     {
-        ObjectReader r = mapper.readerFor(LocalDateTime.class)
+        ObjectReader r = READER
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
         LocalDateTime value = r.readValue("[2005,11,5,22,31,5,829837]");
 
@@ -108,7 +109,7 @@ public class LocalDateTimeDeserTest
     @Test
     public void testDeserializationAsTimestamp04Milliseconds02() throws Exception
     {
-        ObjectReader r = mapper.readerFor(LocalDateTime.class)
+        ObjectReader r = READER
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
         LocalDateTime value = r.readValue("[2005,11,5,22,31,5,829]");
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 829000000);
@@ -125,7 +126,7 @@ public class LocalDateTimeDeserTest
     public void testDeserializationAsString01() throws Exception
     {
         LocalDateTime time = LocalDateTime.of(1986, Month.JANUARY, 17, 15, 43);
-        LocalDateTime value = mapper.readValue('"' + time.toString() + '"', LocalDateTime.class);
+        LocalDateTime value = MAPPER.readValue('"' + time.toString() + '"', LocalDateTime.class);
         assertEquals("The value is not correct.", time, value);
     }
 
@@ -133,7 +134,7 @@ public class LocalDateTimeDeserTest
     public void testDeserializationAsString02() throws Exception
     {
         LocalDateTime time = LocalDateTime.of(2013, Month.AUGUST, 21, 9, 22, 57);
-        LocalDateTime value = mapper.readValue('"' + time.toString() + '"', LocalDateTime.class);
+        LocalDateTime value = MAPPER.readValue('"' + time.toString() + '"', LocalDateTime.class);
         assertEquals("The value is not correct.", time, value);
     }
 
@@ -141,7 +142,7 @@ public class LocalDateTimeDeserTest
     public void testDeserializationAsString03() throws Exception
     {
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 829837);
-        LocalDateTime value = mapper.readValue('"' + time.toString() + '"', LocalDateTime.class);
+        LocalDateTime value = MAPPER.readValue('"' + time.toString() + '"', LocalDateTime.class);
         assertEquals("The value is not correct.", time, value);
     }
 
@@ -149,7 +150,7 @@ public class LocalDateTimeDeserTest
     public void testDeserializationAsString04() throws Exception
     {
         Instant instant = Instant.now();
-        LocalDateTime value = mapper.readValue('"' + instant.toString() + '"', LocalDateTime.class);
+        LocalDateTime value = MAPPER.readValue('"' + instant.toString() + '"', LocalDateTime.class);
         assertEquals("The value is not correct.", LocalDateTime.ofInstant(instant, ZoneOffset.UTC), value);
     }
 
@@ -164,10 +165,10 @@ public class LocalDateTimeDeserTest
     {
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 829837);
         final ObjectMapper m = newMapper().addMixIn(Temporal.class, MockObjectConfiguration.class);
-        m.enable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
-        Temporal value = m.readValue(
-                "[\"" + LocalDateTime.class.getName() + "\",[2005,11,5,22,31,5,829837]]", Temporal.class
-        );
+        Temporal value = m.readerFor(Temporal.class)
+                .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .readValue(
+                "[\"" + LocalDateTime.class.getName() + "\",[2005,11,5,22,31,5,829837]]");
         assertTrue("The value should be a LocalDateTime.", value instanceof LocalDateTime);
         assertEquals("The value is not correct.", time, value);
     }
@@ -178,10 +179,10 @@ public class LocalDateTimeDeserTest
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 422000000);
 
         final ObjectMapper m = newMapper().addMixIn(Temporal.class, MockObjectConfiguration.class);
-        m.disable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
-        Temporal value = m.readValue(
-                "[\"" + LocalDateTime.class.getName() + "\",[2005,11,5,22,31,5,422]]", Temporal.class
-        );
+        Temporal value = m.readerFor(Temporal.class)
+                .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .readValue(
+                "[\"" + LocalDateTime.class.getName() + "\",[2005,11,5,22,31,5,422]]");
         assertTrue("The value should be a LocalDateTime.", value instanceof LocalDateTime);
         assertEquals("The value is not correct.", time, value);
     }
@@ -190,7 +191,6 @@ public class LocalDateTimeDeserTest
     public void testDeserializationWithTypeInfo03() throws Exception
     {
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 829837);
-
         final ObjectMapper m = newMapper().addMixIn(Temporal.class, MockObjectConfiguration.class);
         Temporal value = m.readValue(
                 "[\"" + LocalDateTime.class.getName() + "\",\"" + time.toString() + "\"]", Temporal.class
@@ -228,7 +228,7 @@ public class LocalDateTimeDeserTest
     @Test
     public void testDeserilizeFromSimpleTimestamp() throws Exception
     {
-        ObjectReader r = mapper.readerFor(LocalDateTime.class);
+        ObjectReader r = MAPPER.readerFor(LocalDateTime.class);
         LocalDateTime value;
         try {
             value = r.readValue("1235");
