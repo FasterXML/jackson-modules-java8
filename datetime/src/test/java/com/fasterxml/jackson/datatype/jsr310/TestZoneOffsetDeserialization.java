@@ -51,32 +51,27 @@ public class TestZoneOffsetDeserialization extends ModuleTestBase
     public void testDeserializationAsEmptyArrayDisabled() throws Throwable
     {
         try {
-    		read("[]");
-    	    fail("expected MismatchedInputException");
+            read("[]");
+    	        fail("expected MismatchedInputException");
         } catch (MismatchedInputException e) {
-           // OK
+            // OK
         }
         try {
-    		String json="[]";
-        	newMapper()
-        			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
-        			.readerFor(ZoneOffset.class).readValue(aposToQuotes(json));
-    	    fail("expected JsonMappingException");
+            /* String json =*/ READER
+    		        .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
+    		        .readValue("[]");
+            fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
            // OK
-        } catch (IOException e) {
-            throw e;
         }
     }
     
     @Test
     public void testDeserializationAsArrayEnabled() throws Throwable
     {
-        String json="['+0300']";
-        ZoneOffset value= newMapper()
-    			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
-    			.readerFor(ZoneOffset.class).readValue(aposToQuotes(json));
-        notNull(value);
+        ZoneOffset value= READER
+                .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
+    			.readValue(aposToQuotes("['+0300']"));
         expect(ZoneOffset.of("+0300"), value);
     }
     
@@ -84,16 +79,15 @@ public class TestZoneOffsetDeserialization extends ModuleTestBase
     public void testDeserializationAsEmptyArrayEnabled() throws Throwable
     {
         String json="[]";
-        ZoneOffset value= newMapper()
-    			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
-    			.configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true)
-    			.readerFor(ZoneOffset.class).readValue(aposToQuotes(json));
-    	assertNull(value);
+        ZoneOffset value = READER
+    			.with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS,
+    			        DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT)
+    			.readValue(aposToQuotes(json));
+        assertNull(value);
     }
 
     private void expectSuccess(Object exp, String json) throws IOException {
         final ZoneOffset value = read(json);
-        notNull(value);
         expect(exp, value);
     }
 

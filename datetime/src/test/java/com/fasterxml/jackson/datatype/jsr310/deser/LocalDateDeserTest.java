@@ -57,7 +57,7 @@ public class LocalDateDeserTest extends ModuleTestBase
     {
         String json="['2000-01-01']";
         LocalDate value= newMapper()
-                .configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
+                .enable(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
                 .readerFor(LocalDate.class).readValue(aposToQuotes(json));
         notNull(value);
         expect(LocalDate.of(2000, 1, 1), value);
@@ -68,8 +68,8 @@ public class LocalDateDeserTest extends ModuleTestBase
     {
         String json="[]";
         LocalDate value= newMapper()
-                .configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
-                .configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true)
+                .enable(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
+                .enable(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT)
                 .readerFor(LocalDate.class).readValue(aposToQuotes(json));
         assertNull(value);
     }

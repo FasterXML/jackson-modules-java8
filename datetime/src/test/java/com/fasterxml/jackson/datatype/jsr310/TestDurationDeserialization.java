@@ -135,11 +135,11 @@ public class TestDurationDeserialization extends ModuleTestBase
         String prefix = "[\"" + Duration.class.getName() + "\",";
 
         ObjectMapper mapper = newMapper();
-        mapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
         mapper.addMixIn(TemporalAmount.class, MockObjectConfiguration.class);
-        TemporalAmount value = mapper.readValue(prefix + "13498.000008374]", TemporalAmount.class);
+        TemporalAmount value = mapper.readerFor(TemporalAmount.class)
+                .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .readValue(prefix + "13498.000008374]");
 
-        assertNotNull("The value should not be null.", value);
         assertTrue("The value should be a Duration.", value instanceof Duration);
         assertEquals("The value is not correct.", duration, value);
     }
@@ -150,11 +150,10 @@ public class TestDurationDeserialization extends ModuleTestBase
         String prefix = "[\"" + Duration.class.getName() + "\",";
 
         ObjectMapper mapper = newMapper();
-        mapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
         mapper.addMixIn(TemporalAmount.class, MockObjectConfiguration.class);
-        TemporalAmount value = mapper.readValue(prefix + "13498]", TemporalAmount.class);
-
-        assertNotNull("The value should not be null.", value);
+        TemporalAmount value = mapper.readerFor(TemporalAmount.class)
+                .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .readValue(prefix + "13498]");
         assertTrue("The value should be a Duration.", value instanceof Duration);
         assertEquals("The value is not correct.", Duration.ofSeconds(13498L), value);
     }
@@ -165,11 +164,11 @@ public class TestDurationDeserialization extends ModuleTestBase
         String prefix = "[\"" + Duration.class.getName() + "\",";
 
         ObjectMapper mapper = newMapper();
-        mapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
         mapper.addMixIn(TemporalAmount.class, MockObjectConfiguration.class);
-        TemporalAmount value = mapper.readValue(prefix + "13498837]", TemporalAmount.class);
-
-        assertNotNull("The value should not be null.", value);
+        TemporalAmount value = mapper
+                .readerFor(TemporalAmount.class)
+                .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .readValue(prefix + "13498837]");
         assertTrue("The value should be a Duration.", value instanceof Duration);
         assertEquals("The value is not correct.", Duration.ofSeconds(13498L, 837000000), value);
     }
@@ -178,14 +177,11 @@ public class TestDurationDeserialization extends ModuleTestBase
     public void testDeserializationWithTypeInfo04() throws Exception
     {
         Duration duration = Duration.ofSeconds(13498L, 8374);
-
         String prefix = "[\"" + Duration.class.getName() + "\",";
-
         ObjectMapper mapper = newMapper();
         mapper.addMixIn(TemporalAmount.class, MockObjectConfiguration.class);
-        TemporalAmount value = mapper.readValue(prefix + '"' + duration.toString() + "\"]", TemporalAmount.class);
-
-        assertNotNull("The value should not be null.", value);
+        TemporalAmount value = mapper.readerFor(TemporalAmount.class)
+                .readValue(prefix + '"' + duration.toString() + "\"]");
         assertTrue("The value should be a Duration.", value instanceof Duration);
         assertEquals("The value is not correct.", duration, value);
     }
@@ -212,9 +208,9 @@ public class TestDurationDeserialization extends ModuleTestBase
             verifyException(e, "Cannot deserialize instance of `java.time.Duration` out of START_ARRAY");
         }
         try {
-            newMapper()
-                .configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
-        	        .readerFor(Duration.class).readValue(aposToQuotes("[]"));
+            newMapper().readerFor(Duration.class)
+                  .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
+        	        .readValue(aposToQuotes("[]"));
             fail("expected MismatchedInputException");
         } catch (MismatchedInputException e) {
             verifyException(e, "Unexpected token (END_ARRAY), expected one of");
@@ -224,9 +220,9 @@ public class TestDurationDeserialization extends ModuleTestBase
     @Test
     public void testDeserializationAsArrayEnabled() throws Exception {
     	  Duration exp = Duration.ofSeconds(13498L, 8374);
-          Duration value = newMapper()
-      			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
-      			.readerFor(Duration.class).readValue("[\"" + exp.toString() + "\"]");
+          Duration value = newMapper().readerFor(Duration.class)
+                    .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
+                    .readValue("[\"" + exp.toString() + "\"]");
 
           assertNotNull("The value should not be null.", value);
           assertEquals("The value is not correct.", exp,  value);
@@ -236,10 +232,10 @@ public class TestDurationDeserialization extends ModuleTestBase
     public void testDeserializationAsEmptyArrayEnabled() throws Throwable
     {
     	String json="[]";
-    	Duration value= newMapper()
-    			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
-    			.configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true)
-    			.readerFor(Duration.class).readValue(aposToQuotes(json));
+    	Duration value= newMapper().readerFor(Duration.class)
+               .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS,
+                       DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT)
+    			.readValue(aposToQuotes(json));
     	assertNull(value);
     }
 }

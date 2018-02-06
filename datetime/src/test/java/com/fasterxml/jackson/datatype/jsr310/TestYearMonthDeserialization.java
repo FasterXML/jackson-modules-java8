@@ -3,9 +3,7 @@ package com.fasterxml.jackson.datatype.jsr310;
 import java.io.IOException;
 import java.time.Month;
 import java.time.YearMonth;
-import java.time.format.DateTimeParseException;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectReader;

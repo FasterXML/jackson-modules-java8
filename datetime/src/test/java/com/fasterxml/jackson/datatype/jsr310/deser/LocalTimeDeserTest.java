@@ -145,7 +145,7 @@ public class LocalTimeDeserTest extends ModuleTestBase
     public void testDeserializationAsArrayEnabled() throws Throwable
     {
         LocalTime value= newMapper()
-               .configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
+               .enable(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
                .readerFor(LocalTime.class).readValue(aposToQuotes("['12:00']"));
         expect(LocalTime.of(12, 0), value);
     }
@@ -154,8 +154,8 @@ public class LocalTimeDeserTest extends ModuleTestBase
     public void testDeserializationAsEmptyArrayEnabled() throws Throwable
     {
         LocalTime value= newMapper()
-               .configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
-               .configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true)
+               .enable(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
+               .enable(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT)
                .readerFor(LocalTime.class).readValue(aposToQuotes("[]"));
         assertNull(value);
     }    
@@ -166,7 +166,7 @@ public class LocalTimeDeserTest extends ModuleTestBase
         LocalTime time = LocalTime.of(22, 31, 5, 829837);
 
         ObjectMapper mapper = newMapper();
-        mapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
+        mapper.enable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
         mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         Temporal value = mapper.readValue(
                 "[\"" + LocalTime.class.getName() + "\",[22,31,5,829837]]", Temporal.class
@@ -183,13 +183,11 @@ public class LocalTimeDeserTest extends ModuleTestBase
         LocalTime time = LocalTime.of(22, 31, 5, 422000000);
 
         ObjectMapper mapper = newMapper();
-        mapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
+        mapper.disable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
         mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         Temporal value = mapper.readValue(
                 "[\"" + LocalTime.class.getName() + "\",[22,31,5,422]]", Temporal.class
                 );
-
-        assertNotNull("The value should not be null.", value);
         assertTrue("The value should be a LocalTime.", value instanceof LocalTime);
         assertEquals("The value is not correct.", time, value);
     }
@@ -203,8 +201,6 @@ public class LocalTimeDeserTest extends ModuleTestBase
         Temporal value = mapper.readValue(
                 "[\"" + LocalTime.class.getName() + "\",\"" + time.toString() + "\"]", Temporal.class
                 );
-
-        assertNotNull("The value should not be null.", value);
         assertTrue("The value should be a LocalTime.", value instanceof LocalTime);
         assertEquals("The value is not correct.", time, value);
     }

@@ -164,7 +164,7 @@ public class LocalDateTimeDeserTest
     {
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 829837);
         final ObjectMapper m = newMapper().addMixIn(Temporal.class, MockObjectConfiguration.class);
-        m.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
+        m.enable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
         Temporal value = m.readValue(
                 "[\"" + LocalDateTime.class.getName() + "\",[2005,11,5,22,31,5,829837]]", Temporal.class
         );
@@ -178,7 +178,7 @@ public class LocalDateTimeDeserTest
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 422000000);
 
         final ObjectMapper m = newMapper().addMixIn(Temporal.class, MockObjectConfiguration.class);
-        m.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
+        m.disable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
         Temporal value = m.readValue(
                 "[\"" + LocalDateTime.class.getName() + "\",[2005,11,5,22,31,5,422]]", Temporal.class
         );

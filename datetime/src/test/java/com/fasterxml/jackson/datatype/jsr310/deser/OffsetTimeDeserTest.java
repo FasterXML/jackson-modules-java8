@@ -38,7 +38,8 @@ public class OffsetTimeDeserTest extends ModuleTestBase
         public String comments;
     }
 
-    private final ObjectReader READER = newMapper().readerFor(OffsetTime.class);
+    private final ObjectMapper MAPPER = newMapper();
+    private final ObjectReader READER = MAPPER.readerFor(OffsetTime.class);
 
     @Test
     public void testDeserializationAsTimestamp01() throws Exception
@@ -149,10 +150,10 @@ public class OffsetTimeDeserTest extends ModuleTestBase
 
         final ObjectMapper mapper = newMapper();
         mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
-        mapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
-        Temporal value = mapper.readValue(
-                "[\"" + OffsetTime.class.getName() + "\",[22,31,5,829837,\"+11:00\"]]", Temporal.class
-                );
+        Temporal value = mapper.readerFor(Temporal.class)
+                .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .readValue(
+                "[\"" + OffsetTime.class.getName() + "\",[22,31,5,829837,\"+11:00\"]]");
 
         assertNotNull("The value should not be null.", value);
         assertTrue("The value should be a OffsetTime.", value instanceof OffsetTime);
@@ -166,10 +167,9 @@ public class OffsetTimeDeserTest extends ModuleTestBase
 
         final ObjectMapper mapper = newMapper();
         mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
-        mapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
-        Temporal value = mapper.readValue(
-                "[\"" + OffsetTime.class.getName() + "\",[22,31,5,422,\"+11:00\"]]", Temporal.class
-                );
+        Temporal value = mapper.readerFor(Temporal.class)
+                .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .readValue("[\"" + OffsetTime.class.getName() + "\",[22,31,5,422,\"+11:00\"]]");
 
         assertNotNull("The value should not be null.", value);
         assertTrue("The value should be a OffsetTime.", value instanceof OffsetTime);
