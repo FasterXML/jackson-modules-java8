@@ -174,9 +174,10 @@ public class TestInstantSerialization extends ModuleTestBase
     public void testSerializationWithTypeInfo01() throws Exception
     {
         Instant date = Instant.ofEpochSecond(123456789L, 183917322);
-        ObjectMapper m = newMapper()
+        ObjectMapper m = newMapperBuilder()
             .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true)
-            .configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
+            .configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, true)
+            .build();
         m.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = m.writeValueAsString(date);
         assertEquals("The value is not correct.", "[\"" + Instant.class.getName() + "\",123456789.183917322]", value);
@@ -186,9 +187,10 @@ public class TestInstantSerialization extends ModuleTestBase
     public void testSerializationWithTypeInfo02() throws Exception
     {
         Instant date = Instant.ofEpochSecond(123456789L, 183917322);
-        ObjectMapper m = newMapper()
+        ObjectMapper m = newMapperBuilder()
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true)
-                .configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
+                .configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false)
+                .build();
         m.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = m.writeValueAsString(date);
         assertEquals("The value is not correct.", "[\"" + Instant.class.getName() + "\",123456789183]", value);
@@ -198,8 +200,9 @@ public class TestInstantSerialization extends ModuleTestBase
     public void testSerializationWithTypeInfo03() throws Exception
     {
         Instant date = Instant.now();
-        ObjectMapper m = newMapper()
-                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        ObjectMapper m = newMapperBuilder()
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .build();
         m.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = m.writeValueAsString(date);
         assertEquals("The value is not correct.",

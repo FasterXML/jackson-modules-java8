@@ -114,9 +114,10 @@ public class TestDurationSerialization extends ModuleTestBase
     @Test
     public void testSerializationWithTypeInfo01() throws Exception
     {
-        ObjectMapper mapper = newMapper(); // need new to add mix-ins:
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
-        mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
+        ObjectMapper mapper = newMapperBuilder()
+                .enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
+                        SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .build();
         mapper.addMixIn(TemporalAmount.class, MockObjectConfiguration.class);
         Duration duration = Duration.ofSeconds(13498L, 8374);
         String value = mapper.writeValueAsString(duration);
@@ -129,9 +130,10 @@ public class TestDurationSerialization extends ModuleTestBase
     @Test
     public void testSerializationWithTypeInfo02() throws Exception
     {
-        ObjectMapper mapper = newMapper(); // need new to add mix-ins:
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
-        mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
+        ObjectMapper mapper = newMapperBuilder()
+                .enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .build();
         mapper.addMixIn(TemporalAmount.class, MockObjectConfiguration.class);
         Duration duration = Duration.ofSeconds(13498L, 837481723);
         String value = mapper.writeValueAsString(duration);
@@ -144,8 +146,9 @@ public class TestDurationSerialization extends ModuleTestBase
     @Test
     public void testSerializationWithTypeInfo03() throws Exception
     {
-        ObjectMapper mapper = newMapper(); // need new to add mix-ins:
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        ObjectMapper mapper = newMapperBuilder()
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .build();
         mapper.addMixIn(TemporalAmount.class, MockObjectConfiguration.class);
         Duration duration = Duration.ofSeconds(13498L, 8374);
         String value = mapper.writeValueAsString(duration);

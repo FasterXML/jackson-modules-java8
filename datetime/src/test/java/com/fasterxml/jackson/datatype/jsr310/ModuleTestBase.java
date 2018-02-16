@@ -5,6 +5,7 @@ import java.util.TimeZone;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.cfg.MapperBuilder;
 
 public class ModuleTestBase
 {
@@ -12,12 +13,16 @@ public class ModuleTestBase
     //   Note, tho, that "0.0" itself is special case; need to avoid scientific notation:
     final static String NO_NANOSECS_SER = "0.0";
     final static String NO_NANOSECS_SUFFIX = ".000000000";
-    
+
     protected static ObjectMapper newMapper() {
-        return new ObjectMapper()
-                .registerModule(new JavaTimeModule());
+        return newMapperBuilder().build();
     }
 
+    protected static MapperBuilder<?,?> newMapperBuilder() {
+        return ObjectMapper.builder()
+                .addModule(new JavaTimeModule());
+    }
+    
     protected static ObjectMapper newMapperWith(DeserializationFeature... f) {
         return ObjectMapper.builder()
                 .enable(f)

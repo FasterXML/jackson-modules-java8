@@ -150,9 +150,10 @@ public class OffsetTimeSerTest extends ModuleTestBase
     {
         OffsetTime time = OffsetTime.of(22, 31, 5, 829837, ZoneOffset.of("+1100"));
 
-        final ObjectMapper mapper = newMapper();
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
-        mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
+        final ObjectMapper mapper = newMapperBuilder()
+                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true)
+                .configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, true)
+                .build();
         mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = mapper.writeValueAsString(time);
 
@@ -166,9 +167,10 @@ public class OffsetTimeSerTest extends ModuleTestBase
     {
         OffsetTime time = OffsetTime.of(22, 31, 5, 422829837, ZoneOffset.of("+1100"));
 
-        final ObjectMapper mapper = newMapper();
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
-        mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
+        final ObjectMapper mapper = newMapperBuilder()
+            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true)
+            .configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false)
+            .build();
         mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = mapper.writeValueAsString(time);
 
@@ -182,8 +184,9 @@ public class OffsetTimeSerTest extends ModuleTestBase
     {
         OffsetTime time = OffsetTime.of(22, 31, 5, 829837, ZoneOffset.of("+1100"));
 
-        final ObjectMapper mapper = newMapper();
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        final ObjectMapper mapper = newMapperBuilder()
+                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                .build();
         mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = mapper.writeValueAsString(time);
 

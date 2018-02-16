@@ -209,8 +209,9 @@ public class LocalDateTimeDeserTest
     @Test
     public void testDeserializeToDate() throws Exception
     {
-        ObjectMapper m = newMapper()
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        ObjectMapper m = newMapperBuilder()
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .build();
         String localDateTimeJson = m.writeValueAsString(LocalDateTime.of(1999,10,12,13,45,5));
         assertEquals("\"1999-10-12T13:45:05\"", localDateTimeJson);
         Date date = m.readValue(localDateTimeJson,Date.class);

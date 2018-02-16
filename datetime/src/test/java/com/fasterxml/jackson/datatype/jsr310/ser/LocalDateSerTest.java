@@ -130,9 +130,10 @@ public class LocalDateSerTest
     @Test
     public void testSerializationWithTypeInfo01() throws Exception
     {
-        ObjectMapper mapper = newMapper()
-        		.addMixIn(Temporal.class, MockObjectConfiguration.class)
-        		.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        ObjectMapper mapper = newMapperBuilder()
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .build();
+        mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         LocalDate date = LocalDate.of(2005, Month.NOVEMBER, 5);
         String value = mapper.writeValueAsString(date);
 

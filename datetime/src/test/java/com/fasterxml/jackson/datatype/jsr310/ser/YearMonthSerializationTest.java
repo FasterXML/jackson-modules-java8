@@ -95,8 +95,6 @@ public class YearMonthSerializationTest
         String value = MAPPER.writer()
         		.without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
         		.writeValueAsString(yearMonth);
-
-        assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.", '"' + yearMonth.toString() + '"', value);
     }
 
@@ -104,12 +102,11 @@ public class YearMonthSerializationTest
     public void testSerializationWithTypeInfo01() throws Exception
     {
         YearMonth yearMonth = YearMonth.of(2005, Month.NOVEMBER);
-        ObjectMapper mapper = newMapper()
+        ObjectMapper mapper = newMapperBuilder()
         		.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+        		.build()
         		.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = mapper.writeValueAsString(yearMonth);
-
-        assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.",
                 "[\"" + YearMonth.class.getName() + "\",\"" + yearMonth.toString() + "\"]", value);
     }
@@ -119,8 +116,6 @@ public class YearMonthSerializationTest
     {
         YearMonth yearMonth = YearMonth.of(1986, Month.JANUARY);
         YearMonth value = MAPPER.readValue("[1986,1]", YearMonth.class);
-
-        assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.", yearMonth, value);
     }
 
@@ -129,8 +124,6 @@ public class YearMonthSerializationTest
     {
         YearMonth yearMonth = YearMonth.of(2013, Month.AUGUST);
         YearMonth value = MAPPER.readValue("[2013,8]", YearMonth.class);
-
-        assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.", yearMonth, value);
     }
 

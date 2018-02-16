@@ -20,7 +20,6 @@ import java.time.LocalTime;
 import java.time.temporal.Temporal;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -64,10 +63,10 @@ public class LocalTimeSerTest extends ModuleTestBase
     public void testSerializationAsTimestamp03Milliseconds() throws Exception
     {
         LocalTime time = LocalTime.of(9, 22, 0, 57);
-
-        ObjectMapper mapper = newMapper();
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
-        mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
+        ObjectMapper mapper = newMapperBuilder()
+                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true)
+                .configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false)
+                .build();
         String value = mapper.writeValueAsString(time);
 
         assertEquals("The value is not correct.", "[9,22,0,0]", value);
@@ -77,12 +76,11 @@ public class LocalTimeSerTest extends ModuleTestBase
     public void testSerializationAsTimestamp04Nanoseconds() throws Exception
     {
         LocalTime time = LocalTime.of(22, 31, 5, 829837);
-
-        ObjectMapper mapper = newMapper();
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
-        mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
+        ObjectMapper mapper = newMapperBuilder()
+                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true)
+                .configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, true)
+                .build();
         String value = mapper.writeValueAsString(time);
-
         assertEquals("The value is not correct.", "[22,31,5,829837]", value);
     }
 
@@ -90,13 +88,11 @@ public class LocalTimeSerTest extends ModuleTestBase
     public void testSerializationAsTimestamp04Milliseconds() throws Exception
     {
         LocalTime time = LocalTime.of(22, 31, 5, 422829837);
-
-        ObjectMapper mapper = newMapper();
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
-        mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
+        ObjectMapper mapper = newMapperBuilder()
+                .enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .build();
         String value = mapper.writeValueAsString(time);
-
-        assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.", "[22,31,5,422]", value);
     }
 
@@ -104,23 +100,21 @@ public class LocalTimeSerTest extends ModuleTestBase
     public void testSerializationAsString01() throws Exception
     {
         LocalTime time = LocalTime.of(15, 43, 20);
-
-        ObjectMapper mapper = newMapper();
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        String value = mapper.writeValueAsString(time);
-
-        assertEquals("The value is not correct.", "\"15:43:20\"", value);
+        ObjectMapper mapper = newMapperBuilder()
+                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                .build();
+        assertEquals("The value is not correct.", "\"15:43:20\"",
+                mapper.writeValueAsString(time));
     }
 
     @Test
     public void testSerializationAsString02() throws Exception
     {
         LocalTime time = LocalTime.of(9, 22, 57);
-
-        ObjectMapper mapper = newMapper();
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        ObjectMapper mapper = newMapperBuilder()
+                    .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                    .build();
         String value = mapper.writeValueAsString(time);
-
         assertEquals("The value is not correct.", '"' + time.toString() + '"', value);
     }
 
@@ -128,12 +122,10 @@ public class LocalTimeSerTest extends ModuleTestBase
     public void testSerializationAsString03() throws Exception
     {
         LocalTime time = LocalTime.of(22, 31, 5, 829837);
-
-        ObjectMapper m = newMapper();
-        m.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        ObjectMapper m = newMapperBuilder()
+                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                .build();
         String value = m.writeValueAsString(time);
-
-        assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.", '"' + time.toString() + '"', value);
     }
 
@@ -141,9 +133,10 @@ public class LocalTimeSerTest extends ModuleTestBase
     public void testSerializationWithTypeInfo01() throws Exception
     {
         LocalTime time = LocalTime.of(22, 31, 5, 829837);
-        ObjectMapper m = newMapper();
-        m.enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        m.enable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS);
+        ObjectMapper m = newMapperBuilder()
+                .enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .enable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .build();
         m.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String json = m.writeValueAsString(time);
 
@@ -157,9 +150,10 @@ public class LocalTimeSerTest extends ModuleTestBase
     {
         LocalTime time = LocalTime.of(22, 31, 5, 422829837);
 
-        ObjectMapper m = newMapper();
-        m.enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        m.disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS);
+        ObjectMapper m = newMapperBuilder()
+                .enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .build();
         m.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String json = m.writeValueAsString(time);
         assertEquals("The value is not correct.",
@@ -171,8 +165,9 @@ public class LocalTimeSerTest extends ModuleTestBase
     public void testSerializationWithTypeInfo03() throws Exception
     {
         LocalTime time = LocalTime.of(22, 31, 5, 829837);
-        ObjectMapper m = newMapper();
-        m.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        ObjectMapper m = newMapperBuilder()
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .build();
         m.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = m.writeValueAsString(time);
 
