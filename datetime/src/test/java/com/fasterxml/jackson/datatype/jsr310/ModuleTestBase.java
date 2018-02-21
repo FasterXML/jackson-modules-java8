@@ -3,7 +3,6 @@ package com.fasterxml.jackson.datatype.jsr310;
 import java.util.Arrays;
 import java.util.TimeZone;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.cfg.MapperBuilder;
 
@@ -22,26 +21,15 @@ public class ModuleTestBase
         return ObjectMapper.builder()
                 .addModule(new JavaTimeModule());
     }
-    
-    protected static ObjectMapper newMapperWith(DeserializationFeature... f) {
-        return ObjectMapper.builder()
-                .enable(f)
-                .build()
-                .registerModule(new JavaTimeModule());
-    }
 
-    protected static ObjectMapper newMapperWithout(DeserializationFeature... f) {
-        return ObjectMapper.builder()
-                .disable(f)
-                .build()
-                .registerModule(new JavaTimeModule());
-    }
-    
-    protected static ObjectMapper newMapper(TimeZone tz) {
+    protected static MapperBuilder<?,?> newMapperBuilder(TimeZone tz) {
         return ObjectMapper.builder()
                 .defaultTimeZone(tz)
-                .build()
-                .registerModule(new JavaTimeModule());
+                .addModule(new JavaTimeModule());
+    }
+
+    protected static ObjectMapper newMapper(TimeZone tz) {
+        return newMapperBuilder(tz).build();
     }
 
     protected String quote(String value) {

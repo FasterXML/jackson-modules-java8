@@ -202,8 +202,9 @@ public class TestZonedDateTimeSerialization
     public void testSerializationWithTypeInfo01() throws Exception
     {
         ZonedDateTime date = ZonedDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 183917322), Z2);
-        String value = newMapper()
+        String value = newMapperBuilder()
                 .addMixIn(Temporal.class, MockObjectConfiguration.class)
+                .build()
                 .writer()
                 .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .with(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
@@ -216,8 +217,9 @@ public class TestZonedDateTimeSerialization
     public void testSerializationWithTypeInfo02() throws Exception
     {
         ZonedDateTime date = ZonedDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 183917322), Z2);
-        String value = newMapper()
+        String value = newMapperBuilder()
                 .addMixIn(Temporal.class, MockObjectConfiguration.class)
+                .build()
                 .writer()
                 .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .without(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
@@ -233,8 +235,8 @@ public class TestZonedDateTimeSerialization
         ObjectMapper mapper = newMapperBuilder()
                 .defaultTimeZone(TimeZone.getDefault())
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
                 .build();
-        mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = mapper.writeValueAsString(date);
         assertEquals("The value is not correct.",
                 "[\"" + ZonedDateTime.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", value);
@@ -581,8 +583,9 @@ public class TestZonedDateTimeSerialization
     public void testDeserializationWithTypeInfo01WithoutTimeZone() throws Exception
     {
         ZonedDateTime date = ZonedDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 183917322), Z2);
-        ObjectMapper mapper = newMapper();
-        mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
+        ObjectMapper mapper = newMapperBuilder()
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
+                .build();
         Temporal value = mapper.readValue(
                 "[\"" + ZonedDateTime.class.getName() + "\",123456789.183917322]", Temporal.class
                 );
@@ -595,8 +598,9 @@ public class TestZonedDateTimeSerialization
     public void testDeserializationWithTypeInfo01WithTimeZone() throws Exception
     {
         ZonedDateTime date = ZonedDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 183917322), Z2);
-        ObjectMapper mapper = newMapper(TimeZone.getDefault());
-        mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
+        ObjectMapper mapper = newMapperBuilder(TimeZone.getDefault())
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
+                .build();
         Temporal value = mapper.readValue(
                 "[\"" + ZonedDateTime.class.getName() + "\",123456789.183917322]", Temporal.class
                 );
@@ -610,8 +614,9 @@ public class TestZonedDateTimeSerialization
     {
         ZonedDateTime date = ZonedDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 0), Z2);
 
-        ObjectMapper mapper = newMapper();
-        mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
+        ObjectMapper mapper = newMapperBuilder()
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
+                .build();
         Temporal value = mapper.readerFor(Temporal.class)
                 .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("[\"" + ZonedDateTime.class.getName() + "\",123456789]");
@@ -624,8 +629,9 @@ public class TestZonedDateTimeSerialization
     public void testDeserializationWithTypeInfo02WithTimeZone() throws Exception
     {
         ZonedDateTime date = ZonedDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 0), Z2);
-        ObjectMapper mapper = newMapper(TimeZone.getDefault());
-        mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
+        ObjectMapper mapper = newMapperBuilder(TimeZone.getDefault())
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
+                .build();
         Temporal value = mapper.readerFor(Temporal.class)
                 .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("[\"" + ZonedDateTime.class.getName() + "\",123456789]");
@@ -639,8 +645,9 @@ public class TestZonedDateTimeSerialization
     {
         ZonedDateTime date = ZonedDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 422000000), Z2);
 
-        ObjectMapper mapper = newMapper();
-        mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
+        ObjectMapper mapper = newMapperBuilder()
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
+                .build();
         Temporal value = mapper.readerFor(Temporal.class)
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("[\"" + ZonedDateTime.class.getName() + "\",123456789422]");
@@ -653,8 +660,9 @@ public class TestZonedDateTimeSerialization
     public void testDeserializationWithTypeInfo03WithTimeZone() throws Exception
     {
         ZonedDateTime date = ZonedDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 422000000), Z2);
-        ObjectMapper mapper = newMapper(TimeZone.getDefault());
-        mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
+        ObjectMapper mapper = newMapperBuilder(TimeZone.getDefault())
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
+                .build();
         Temporal value = mapper
                 .readerFor(Temporal.class)
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
@@ -669,9 +677,9 @@ public class TestZonedDateTimeSerialization
     public void testDeserializationWithTypeInfo04WithoutTimeZone() throws Exception
     {
         ZonedDateTime date = ZonedDateTime.now(Z3);
-
-        ObjectMapper mapper = newMapper();
-        mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
+        ObjectMapper mapper = newMapperBuilder()
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
+                .build();
         Temporal value = mapper
                 .readerFor(Temporal.class)
                 .with(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
@@ -686,9 +694,9 @@ public class TestZonedDateTimeSerialization
     public void testDeserializationWithTypeInfo04WithTimeZone() throws Exception
     {
         ZonedDateTime date = ZonedDateTime.now(Z3);
-        ObjectMapper mapper = newMapper(TimeZone.getDefault());
-
-        mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
+        ObjectMapper mapper = newMapperBuilder(TimeZone.getDefault())
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
+                .build();
         Temporal value = mapper
                 .readerFor(Temporal.class)
                 .with(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
@@ -703,9 +711,9 @@ public class TestZonedDateTimeSerialization
     public void testDeserializationWithTypeInfo04WithTimeZoneTurnedOff() throws Exception
     {
         ZonedDateTime date = ZonedDateTime.now(FIX_OFFSET);
-
-        Temporal value = newMapper(TimeZone.getDefault())
+        Temporal value = newMapperBuilder(TimeZone.getDefault())
                 .addMixIn(Temporal.class, MockObjectConfiguration.class)
+                .build()
                 .readerFor(Temporal.class)
                 .without(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
                 .readValue(

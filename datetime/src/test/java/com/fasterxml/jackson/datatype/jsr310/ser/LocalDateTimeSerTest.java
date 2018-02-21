@@ -144,8 +144,8 @@ public class LocalDateTimeSerTest
         final ObjectMapper m = newMapperBuilder()
             .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true)
             .configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, true)
+            .addMixIn(Temporal.class, MockObjectConfiguration.class)
             .build();
-        m.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = m.writeValueAsString(time);
         assertEquals("The value is not correct.",
                 "[\"" + LocalDateTime.class.getName() + "\",[2005,11,5,22,31,5,829837]]", value);
@@ -157,8 +157,8 @@ public class LocalDateTimeSerTest
         final ObjectMapper m = newMapperBuilder()
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true)
                 .configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false)
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
                 .build();
-        m.addMixIn(Temporal.class, MockObjectConfiguration.class);
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 422829837);
         String value = m.writeValueAsString(time);
         assertEquals("The value is not correct.",
@@ -170,8 +170,8 @@ public class LocalDateTimeSerTest
     {
         final ObjectMapper m = newMapperBuilder()
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
                 .build();
-        m.addMixIn(Temporal.class, MockObjectConfiguration.class);
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 829837);
         String value = m.writeValueAsString(time);
         assertEquals("The value is not correct.",

@@ -165,8 +165,9 @@ public class LocalTimeDeserTest extends ModuleTestBase
     public void testDeserializationWithTypeInfo01() throws Exception
     {
         LocalTime time = LocalTime.of(22, 31, 5, 829837);
-        ObjectMapper mapper = newMapper();
-        mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
+        ObjectMapper mapper = newMapperBuilder()
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
+                .build();
         Temporal value = mapper.readerFor(Temporal.class)
                 .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("[\"" + LocalTime.class.getName() + "\",[22,31,5,829837]]");
@@ -181,8 +182,9 @@ public class LocalTimeDeserTest extends ModuleTestBase
     {
         LocalTime time = LocalTime.of(22, 31, 5, 422000000);
 
-        ObjectMapper mapper = newMapper();
-        mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
+        ObjectMapper mapper = newMapperBuilder()
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
+                .build();
         Temporal value = mapper.readerFor(Temporal.class)
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("[\"" + LocalTime.class.getName() + "\",[22,31,5,422]]");
@@ -194,8 +196,9 @@ public class LocalTimeDeserTest extends ModuleTestBase
     public void testDeserializationWithTypeInfo03() throws Exception
     {
         LocalTime time = LocalTime.of(22, 31, 5, 829837);
-        ObjectMapper mapper = newMapper();
-        mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
+        ObjectMapper mapper = newMapperBuilder()
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
+                .build();
         Temporal value = mapper.readValue(
                 "[\"" + LocalTime.class.getName() + "\",\"" + time.toString() + "\"]", Temporal.class
                 );

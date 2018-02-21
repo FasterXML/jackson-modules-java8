@@ -27,8 +27,9 @@ public class TestOffsetTimeKeySerialization {
 
     @Before
     public void setUp() {
-        this.om = new ObjectMapper();
-        om.registerModule(new JavaTimeModule());
+        om = ObjectMapper.builder()
+                .addModule(new JavaTimeModule())
+                .build();
         map = new HashMap<>();
     }
 

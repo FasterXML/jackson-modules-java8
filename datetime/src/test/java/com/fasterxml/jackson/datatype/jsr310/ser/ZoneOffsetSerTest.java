@@ -58,8 +58,9 @@ public class ZoneOffsetSerTest extends ModuleTestBase
     @Test
     public void testSerializationWithTypeInfo03() throws Exception
     {
-        ObjectMapper mapper = newMapper()
-                .addMixIn(ZoneId.class, MockObjectConfiguration.class);
+        ObjectMapper mapper = newMapperBuilder()
+                .addMixIn(ZoneId.class, MockObjectConfiguration.class)
+                .build();
         ZoneOffset offset = ZoneOffset.of("+0415");
         String value = mapper.writeValueAsString(offset);
         assertEquals("The value is not correct.", "[\"" + ZoneOffset.class.getName() + "\",\"+04:15\"]", value);

@@ -33,8 +33,10 @@ public class TestYearSerializationWithCustomFormatter {
     }
 
     private String serializeWith(Year dateTime, DateTimeFormatter f) throws Exception {
-        ObjectMapper mapper = new ObjectMapper().registerModule(new SimpleModule()
-            .addSerializer(new YearSerializer(f)));
+        ObjectMapper mapper = ObjectMapper.builder()
+                .addModule(new SimpleModule()
+                        .addSerializer(new YearSerializer(f)))
+                .build();
         return mapper.writeValueAsString(dateTime);
     }
 
@@ -45,8 +47,10 @@ public class TestYearSerializationWithCustomFormatter {
     }
 
     private Year deserializeWith(String json, DateTimeFormatter f) throws Exception {
-        ObjectMapper mapper = new ObjectMapper().registerModule(new SimpleModule()
-            .addDeserializer(Year.class, new YearDeserializer(f)));
+        ObjectMapper mapper = ObjectMapper.builder()
+                .addModule(new SimpleModule()
+                        .addDeserializer(Year.class, new YearDeserializer(f)))
+                .build();
         return mapper.readValue("\"" + json + "\"", Year.class);
     }
 

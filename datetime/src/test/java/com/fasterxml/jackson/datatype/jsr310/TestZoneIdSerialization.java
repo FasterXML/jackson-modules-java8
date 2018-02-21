@@ -16,41 +16,24 @@
 
 package com.fasterxml.jackson.datatype.jsr310;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import java.time.ZoneId;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class TestZoneIdSerialization
 {
-    private ObjectMapper mapper;
-
-    @Before
-    public void setUp()
-    {
-        this.mapper = new ObjectMapper();
-        this.mapper.registerModule(new JavaTimeModule());
-    }
-
-    @After
-    public void tearDown()
-    {
-
-    }
+    private final ObjectMapper MAPPER = ObjectMapper.builder()
+                .addModule(new JavaTimeModule())
+                .build();
 
     @Test
     public void testSerialization01() throws Exception
     {
         ZoneId id = ZoneId.of("America/Chicago");
-
-        String value = this.mapper.writeValueAsString(id);
-
-        assertNotNull("The value should not be null.", value);
+        String value = MAPPER.writeValueAsString(id);
         assertEquals("The value is not correct.", "\"America/Chicago\"", value);
     }
 
@@ -58,10 +41,7 @@ public class TestZoneIdSerialization
     public void testSerialization02() throws Exception
     {
         ZoneId id = ZoneId.of("America/Anchorage");
-
-        String value = this.mapper.writeValueAsString(id);
-
-        assertNotNull("The value should not be null.", value);
+        String value = MAPPER.writeValueAsString(id);
         assertEquals("The value is not correct.", "\"America/Anchorage\"", value);
     }
 
@@ -69,39 +49,36 @@ public class TestZoneIdSerialization
     public void testSerializationWithTypeInfo01() throws Exception
     {
         ZoneId id = ZoneId.of("America/Denver");
-
-        this.mapper.addMixIn(ZoneId.class, MockObjectConfiguration.class);
-        String value = this.mapper.writeValueAsString(id);
-
-        assertNotNull("The value should not be null.", value);
+        ObjectMapper mapper = ObjectMapper.builder()
+                .addMixIn(ZoneId.class, MockObjectConfiguration.class)
+                .addModule(new JavaTimeModule())
+                .build();
+        String value = mapper.writeValueAsString(id);
         assertEquals("The value is not correct.", "[\"java.time.ZoneRegion\",\"America/Denver\"]", value);
     }
 
     @Test
     public void testDeserialization01() throws Exception
     {
-        ZoneId value = this.mapper.readValue("\"America/Chicago\"", ZoneId.class);
-
-        assertNotNull("The value should not be null.", value);
+        ZoneId value = MAPPER.readValue("\"America/Chicago\"", ZoneId.class);
         assertEquals("The value is not correct.", ZoneId.of("America/Chicago"), value);
     }
 
     @Test
     public void testDeserialization02() throws Exception
     {
-        ZoneId value = this.mapper.readValue("\"America/Anchorage\"", ZoneId.class);
-
-        assertNotNull("The value should not be null.", value);
+        ZoneId value = MAPPER.readValue("\"America/Anchorage\"", ZoneId.class);
         assertEquals("The value is not correct.", ZoneId.of("America/Anchorage"), value);
     }
 
     @Test
     public void testDeserializationWithTypeInfo02() throws Exception
     {
-        this.mapper.addMixIn(ZoneId.class, MockObjectConfiguration.class);
-        ZoneId value = this.mapper.readValue("[\"" + ZoneId.class.getName() + "\",\"America/Denver\"]", ZoneId.class);
-
-        assertNotNull("The value should not be null.", value);
+        ObjectMapper mapper = ObjectMapper.builder()
+                .addMixIn(ZoneId.class, MockObjectConfiguration.class)
+                .addModule(new JavaTimeModule())
+                .build();
+        ZoneId value = mapper.readValue("[\"" + ZoneId.class.getName() + "\",\"America/Denver\"]", ZoneId.class);
         assertEquals("The value is not correct.", ZoneId.of("America/Denver"), value);
     }
 }

@@ -177,8 +177,8 @@ public class TestInstantSerialization extends ModuleTestBase
         ObjectMapper m = newMapperBuilder()
             .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true)
             .configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, true)
+            .addMixIn(Temporal.class, MockObjectConfiguration.class)
             .build();
-        m.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = m.writeValueAsString(date);
         assertEquals("The value is not correct.", "[\"" + Instant.class.getName() + "\",123456789.183917322]", value);
     }
@@ -190,8 +190,8 @@ public class TestInstantSerialization extends ModuleTestBase
         ObjectMapper m = newMapperBuilder()
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true)
                 .configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false)
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
                 .build();
-        m.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = m.writeValueAsString(date);
         assertEquals("The value is not correct.", "[\"" + Instant.class.getName() + "\",123456789183]", value);
     }
@@ -202,8 +202,8 @@ public class TestInstantSerialization extends ModuleTestBase
         Instant date = Instant.now();
         ObjectMapper m = newMapperBuilder()
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
                 .build();
-        m.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = m.writeValueAsString(date);
         assertEquals("The value is not correct.",
                 "[\"" + Instant.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", value);
@@ -328,8 +328,9 @@ public class TestInstantSerialization extends ModuleTestBase
     public void testDeserializationWithTypeInfo01() throws Exception
     {
         Instant date = Instant.ofEpochSecond(123456789L, 183917322);
-        ObjectMapper m = newMapper()
-                .addMixIn(Temporal.class, MockObjectConfiguration.class);
+        ObjectMapper m = newMapperBuilder()
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
+                .build();
         Temporal value = m.readValue(
                 "[\"" + Instant.class.getName() + "\",123456789.183917322]", Temporal.class
                 );
@@ -341,8 +342,10 @@ public class TestInstantSerialization extends ModuleTestBase
     public void testDeserializationWithTypeInfo02() throws Exception
     {
         Instant date = Instant.ofEpochSecond(123456789L, 0);
-        ObjectMapper m = newMapperWith(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
-                .addMixIn(Temporal.class, MockObjectConfiguration.class);
+        ObjectMapper m = newMapperBuilder()
+                .enable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
+                .build();
         Temporal value = m.readValue(
                 "[\"" + Instant.class.getName() + "\",123456789]", Temporal.class
                 );
@@ -354,8 +357,10 @@ public class TestInstantSerialization extends ModuleTestBase
     public void testDeserializationWithTypeInfo03() throws Exception
     {
         Instant date = Instant.ofEpochSecond(123456789L, 422000000);
-        ObjectMapper m = newMapperWithout(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
-                .addMixIn(Temporal.class, MockObjectConfiguration.class);
+        ObjectMapper m = newMapperBuilder()
+                .disable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
+                .build();
         Temporal value = m.readValue(
                 "[\"" + Instant.class.getName() + "\",123456789422]", Temporal.class
                 );
@@ -368,8 +373,9 @@ public class TestInstantSerialization extends ModuleTestBase
     public void testDeserializationWithTypeInfo04() throws Exception
     {
         Instant date = Instant.now();
-        ObjectMapper m = newMapper()
-                .addMixIn(Temporal.class, MockObjectConfiguration.class);
+        ObjectMapper m = newMapperBuilder()
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
+                .build();
         Temporal value = m.readValue(
                 "[\"" + Instant.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", Temporal.class
                 );

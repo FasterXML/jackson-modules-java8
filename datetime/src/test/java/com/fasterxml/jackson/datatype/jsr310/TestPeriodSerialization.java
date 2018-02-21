@@ -17,42 +17,32 @@
 package com.fasterxml.jackson.datatype.jsr310;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.time.Period;
 import java.time.temporal.TemporalAmount;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 public class TestPeriodSerialization
 {
-    private ObjectMapper mapper;
+    private ObjectMapper MAPPER;
 
     @Before
     public void setUp()
     {
-        this.mapper = new ObjectMapper();
-        this.mapper.registerModule(new JavaTimeModule());
-    }
-
-    @After
-    public void tearDown()
-    {
-
+        MAPPER = ObjectMapper.builder()
+                .addModule(new JavaTimeModule())
+                .build();
     }
 
     @Test
     public void testSerialization01() throws Exception
     {
         Period period = Period.of(1, 6, 15);
-
-        String value = this.mapper.writeValueAsString(period);
-
-        assertNotNull("The value should not be null.", value);
+        String value = MAPPER.writeValueAsString(period);
         assertEquals("The value is not correct.", '"' + period.toString() + '"', value);
     }
 
@@ -60,10 +50,7 @@ public class TestPeriodSerialization
     public void testSerialization02() throws Exception
     {
         Period period = Period.of(0, 0, 21);
-
-        String value = this.mapper.writeValueAsString(period);
-
-        assertNotNull("The value should not be null.", value);
+        String value = MAPPER.writeValueAsString(period);
         assertEquals("The value is not correct.", '"' + period.toString() + '"', value);
     }
 
@@ -71,11 +58,11 @@ public class TestPeriodSerialization
     public void testSerializationWithTypeInfo01() throws Exception
     {
         Period period = Period.of(5, 1, 12);
-
-        this.mapper.addMixIn(TemporalAmount.class, MockObjectConfiguration.class);
-        String value = this.mapper.writeValueAsString(period);
-
-        assertNotNull("The value should not be null.", value);
+        ObjectMapper mapper = ObjectMapper.builder()
+                .addModule(new JavaTimeModule())
+                .addMixIn(TemporalAmount.class, MockObjectConfiguration.class)
+                .build();
+        String value = mapper.writeValueAsString(period);
         assertEquals("The value is not correct.",
                 "[\"" + Period.class.getName() + "\",\"" + period.toString() + "\"]", value);
     }
@@ -84,10 +71,7 @@ public class TestPeriodSerialization
     public void testDeserialization01() throws Exception
     {
         Period period = Period.of(1, 6, 15);
-
-        Period value = this.mapper.readValue('"' + period.toString() + '"', Period.class);
-
-        assertNotNull("The value should not be null.", value);
+        Period value = MAPPER.readValue('"' + period.toString() + '"', Period.class);
         assertEquals("The value is not correct.", period, value);
     }
 
@@ -95,10 +79,7 @@ public class TestPeriodSerialization
     public void testDeserialization02() throws Exception
     {
         Period period = Period.of(0, 0, 21);
-
-        Period value = this.mapper.readValue('"' + period.toString() + '"', Period.class);
-
-        assertNotNull("The value should not be null.", value);
+        Period value = MAPPER.readValue('"' + period.toString() + '"', Period.class);
         assertEquals("The value is not correct.", period, value);
     }
 
@@ -106,13 +87,13 @@ public class TestPeriodSerialization
     public void testDeserializationWithTypeInfo01() throws Exception
     {
         Period period = Period.of(5, 1, 12);
-
-        this.mapper.addMixIn(TemporalAmount.class, MockObjectConfiguration.class);
-        TemporalAmount value = this.mapper.readValue(
+        ObjectMapper mapper = ObjectMapper.builder()
+                .addModule(new JavaTimeModule())
+                .addMixIn(TemporalAmount.class, MockObjectConfiguration.class)
+                .build();
+        TemporalAmount value = mapper.readValue(
                 "[\"" + Period.class.getName() + "\",\"" + period.toString() + "\"]", TemporalAmount.class
                 );
-
-        assertNotNull("The value should not be null.", value);
         assertTrue("The value should be a Period.", value instanceof Period);
         assertEquals("The value is not correct.", period, value);
     }

@@ -132,8 +132,8 @@ public class LocalDateSerTest
     {
         ObjectMapper mapper = newMapperBuilder()
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
                 .build();
-        mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         LocalDate date = LocalDate.of(2005, Month.NOVEMBER, 5);
         String value = mapper.writeValueAsString(date);
 
@@ -211,8 +211,9 @@ public class LocalDateSerTest
     @Test
     public void testDeserializationWithTypeInfo01() throws Exception
     {
-        ObjectMapper mapper = newMapper()
-    			.addMixIn(Temporal.class, MockObjectConfiguration.class);
+        ObjectMapper mapper = newMapperBuilder()
+    			.addMixIn(Temporal.class, MockObjectConfiguration.class)
+    			.build();
         LocalDate date = LocalDate.of(2005, Month.NOVEMBER, 5);
         Temporal value = mapper.readValue(
                 "[\"" + LocalDate.class.getName() + "\",\"" + date.toString() + "\"]", Temporal.class
@@ -237,9 +238,10 @@ public class LocalDateSerTest
     @Test
     public void testConfigOverrides() throws Exception
     {
-        ObjectMapper mapper = newMapper();
-        mapper.configOverride(LocalDate.class)
-            .setFormat(JsonFormat.Value.forPattern("yyyy_MM_dd"));
+        ObjectMapper mapper = newMapperBuilder()
+                .withConfigOverride(LocalDate.class,
+                        o -> o.setFormat(JsonFormat.Value.forPattern("yyyy_MM_dd")))
+                .build();
         LocalDate date = LocalDate.of(2005, Month.NOVEMBER, 5);
         VanillaWrapper input = new VanillaWrapper(date);
         final String EXP_DATE = "\"2005_11_05\"";
@@ -257,9 +259,10 @@ public class LocalDateSerTest
     @Test
     public void testConfigOverridesToEpochDay() throws Exception
     {
-        ObjectMapper mapper = newMapper();
-        mapper.configOverride(LocalDate.class)
-            .setFormat(JsonFormat.Value.forShape(JsonFormat.Shape.NUMBER_INT));
+        ObjectMapper mapper = newMapperBuilder()
+                .withConfigOverride(LocalDate.class,
+                        o -> o.setFormat(JsonFormat.Value.forShape(JsonFormat.Shape.NUMBER_INT)))
+                .build();
         LocalDate date = LocalDate.ofEpochDay(1000);
         VanillaWrapper input = new VanillaWrapper(date);
         final String EXP_DATE = "1000";

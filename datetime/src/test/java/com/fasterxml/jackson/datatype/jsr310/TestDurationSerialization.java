@@ -117,8 +117,8 @@ public class TestDurationSerialization extends ModuleTestBase
         ObjectMapper mapper = newMapperBuilder()
                 .enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
                         SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .addMixIn(TemporalAmount.class, MockObjectConfiguration.class)
                 .build();
-        mapper.addMixIn(TemporalAmount.class, MockObjectConfiguration.class);
         Duration duration = Duration.ofSeconds(13498L, 8374);
         String value = mapper.writeValueAsString(duration);
 
@@ -133,8 +133,8 @@ public class TestDurationSerialization extends ModuleTestBase
         ObjectMapper mapper = newMapperBuilder()
                 .enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .addMixIn(TemporalAmount.class, MockObjectConfiguration.class)
                 .build();
-        mapper.addMixIn(TemporalAmount.class, MockObjectConfiguration.class);
         Duration duration = Duration.ofSeconds(13498L, 837481723);
         String value = mapper.writeValueAsString(duration);
 
@@ -148,8 +148,8 @@ public class TestDurationSerialization extends ModuleTestBase
     {
         ObjectMapper mapper = newMapperBuilder()
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .addMixIn(TemporalAmount.class, MockObjectConfiguration.class)
                 .build();
-        mapper.addMixIn(TemporalAmount.class, MockObjectConfiguration.class);
         Duration duration = Duration.ofSeconds(13498L, 8374);
         String value = mapper.writeValueAsString(duration);
 

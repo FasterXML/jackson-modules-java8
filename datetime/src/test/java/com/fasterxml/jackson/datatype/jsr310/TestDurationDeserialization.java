@@ -134,8 +134,9 @@ public class TestDurationDeserialization extends ModuleTestBase
 
         String prefix = "[\"" + Duration.class.getName() + "\",";
 
-        ObjectMapper mapper = newMapper();
-        mapper.addMixIn(TemporalAmount.class, MockObjectConfiguration.class);
+        ObjectMapper mapper = newMapperBuilder()
+                .addMixIn(TemporalAmount.class, MockObjectConfiguration.class)
+                .build();
         TemporalAmount value = mapper.readerFor(TemporalAmount.class)
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue(prefix + "13498.000008374]");
@@ -149,8 +150,9 @@ public class TestDurationDeserialization extends ModuleTestBase
     {
         String prefix = "[\"" + Duration.class.getName() + "\",";
 
-        ObjectMapper mapper = newMapper();
-        mapper.addMixIn(TemporalAmount.class, MockObjectConfiguration.class);
+        ObjectMapper mapper = newMapperBuilder()
+                .addMixIn(TemporalAmount.class, MockObjectConfiguration.class)
+                .build();
         TemporalAmount value = mapper.readerFor(TemporalAmount.class)
                 .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue(prefix + "13498]");
@@ -163,8 +165,9 @@ public class TestDurationDeserialization extends ModuleTestBase
     {
         String prefix = "[\"" + Duration.class.getName() + "\",";
 
-        ObjectMapper mapper = newMapper();
-        mapper.addMixIn(TemporalAmount.class, MockObjectConfiguration.class);
+        ObjectMapper mapper = newMapperBuilder()
+                .addMixIn(TemporalAmount.class, MockObjectConfiguration.class)
+                .build();
         TemporalAmount value = mapper
                 .readerFor(TemporalAmount.class)
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
@@ -178,8 +181,9 @@ public class TestDurationDeserialization extends ModuleTestBase
     {
         Duration duration = Duration.ofSeconds(13498L, 8374);
         String prefix = "[\"" + Duration.class.getName() + "\",";
-        ObjectMapper mapper = newMapper();
-        mapper.addMixIn(TemporalAmount.class, MockObjectConfiguration.class);
+        ObjectMapper mapper = newMapperBuilder()
+            .addMixIn(TemporalAmount.class, MockObjectConfiguration.class)
+            .build();
         TemporalAmount value = mapper.readerFor(TemporalAmount.class)
                 .readValue(prefix + '"' + duration.toString() + "\"]");
         assertTrue("The value should be a Duration.", value instanceof Duration);

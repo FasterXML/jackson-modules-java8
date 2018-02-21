@@ -27,21 +27,16 @@ public class TestLocalTimeKeySerialization {
 
     @Before
     public void setUp() {
-        this.om = new ObjectMapper();
-        om.registerModule(new JavaTimeModule());
+        this.om = ObjectMapper.builder()
+                .addModule(new JavaTimeModule())
+                .build();
         map = new HashMap<>();
     }
-
-    /*
-     * ObjectMapper configuration is not respected at deserialization and serialization at the moment.
-     */
 
     @Test
     public void testSerialization0() throws Exception {
         map.put(TIME_0, "test");
-
         String value = om.writeValueAsString(map);
-
         Assert.assertEquals("Value is incorrect", map(TIME_0_STRING, "test"), value);
     }
 

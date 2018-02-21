@@ -148,14 +148,13 @@ public class OffsetTimeDeserTest extends ModuleTestBase
     {
         OffsetTime time = OffsetTime.of(22, 31, 5, 829837, ZoneOffset.of("+1100"));
 
-        final ObjectMapper mapper = newMapper();
-        mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
+        final ObjectMapper mapper = newMapperBuilder()
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
+                .build();
         Temporal value = mapper.readerFor(Temporal.class)
                 .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue(
                 "[\"" + OffsetTime.class.getName() + "\",[22,31,5,829837,\"+11:00\"]]");
-
-        assertNotNull("The value should not be null.", value);
         assertTrue("The value should be a OffsetTime.", value instanceof OffsetTime);
         assertEquals("The value is not correct.", time, value);
     }
@@ -165,8 +164,9 @@ public class OffsetTimeDeserTest extends ModuleTestBase
     {
         OffsetTime time = OffsetTime.of(22, 31, 5, 422000000, ZoneOffset.of("+1100"));
 
-        final ObjectMapper mapper = newMapper();
-        mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
+        final ObjectMapper mapper = newMapperBuilder()
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
+                .build();
         Temporal value = mapper.readerFor(Temporal.class)
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("[\"" + OffsetTime.class.getName() + "\",[22,31,5,422,\"+11:00\"]]");
@@ -181,8 +181,9 @@ public class OffsetTimeDeserTest extends ModuleTestBase
     {
         OffsetTime time = OffsetTime.of(22, 31, 5, 829837, ZoneOffset.of("+1100"));
 
-        final ObjectMapper mapper = newMapper();
-        mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
+        final ObjectMapper mapper = newMapperBuilder()
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
+                .build();
         Temporal value = mapper.readValue(
                 "[\"" + OffsetTime.class.getName() + "\",\"" + time.toString() + "\"]", Temporal.class
                 );

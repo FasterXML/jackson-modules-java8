@@ -136,8 +136,8 @@ public class LocalTimeSerTest extends ModuleTestBase
         ObjectMapper m = newMapperBuilder()
                 .enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .enable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
                 .build();
-        m.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String json = m.writeValueAsString(time);
 
         assertEquals("The value is not correct.",
@@ -153,8 +153,8 @@ public class LocalTimeSerTest extends ModuleTestBase
         ObjectMapper m = newMapperBuilder()
                 .enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
                 .build();
-        m.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String json = m.writeValueAsString(time);
         assertEquals("The value is not correct.",
                 "[\"" + LocalTime.class.getName() + "\",[22,31,5,422]]",
@@ -167,8 +167,8 @@ public class LocalTimeSerTest extends ModuleTestBase
         LocalTime time = LocalTime.of(22, 31, 5, 829837);
         ObjectMapper m = newMapperBuilder()
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
                 .build();
-        m.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = m.writeValueAsString(time);
 
         assertEquals("The value is not correct.",

@@ -141,11 +141,11 @@ public class OffsetDateTimeSerTest
     public void testSerializationWithTypeInfo01() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 183917322), Z2);
-        String value = newMapper()
+        String value = newMapperBuilder()
+                .enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
+                        SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .addMixIn(Temporal.class, MockObjectConfiguration.class)
-                .writer()
-                .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .with(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .build()
                 .writeValueAsString(date);
         assertEquals("The value is not correct.",
                 "[\"" + OffsetDateTime.class.getName() + "\",123456789.183917322]", value);
@@ -155,11 +155,11 @@ public class OffsetDateTimeSerTest
     public void testSerializationWithTypeInfo02() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 183917322), Z2);
-        String value = newMapper()
+        String value = newMapperBuilder()
                 .addMixIn(Temporal.class, MockObjectConfiguration.class)
-                .writer()
-                .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .without(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .build()
                 .writeValueAsString(date);
         assertEquals("The value is not correct.",
                 "[\"" + OffsetDateTime.class.getName() + "\",123456789183]", value);
@@ -170,9 +170,9 @@ public class OffsetDateTimeSerTest
     {
         OffsetDateTime date = OffsetDateTime.now(Z3);
         ObjectMapper m = newMapperBuilder()
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
                 .build();
-        m.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = m.writeValueAsString(date);
         
         assertNotNull("The value should not be null.", value);

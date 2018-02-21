@@ -153,8 +153,8 @@ public class OffsetTimeSerTest extends ModuleTestBase
         final ObjectMapper mapper = newMapperBuilder()
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true)
                 .configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, true)
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
                 .build();
-        mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = mapper.writeValueAsString(time);
 
         assertNotNull("The value should not be null.", value);
@@ -170,8 +170,8 @@ public class OffsetTimeSerTest extends ModuleTestBase
         final ObjectMapper mapper = newMapperBuilder()
             .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true)
             .configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false)
+            .addMixIn(Temporal.class, MockObjectConfiguration.class)
             .build();
-        mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = mapper.writeValueAsString(time);
 
         assertNotNull("The value should not be null.", value);
@@ -186,8 +186,8 @@ public class OffsetTimeSerTest extends ModuleTestBase
 
         final ObjectMapper mapper = newMapperBuilder()
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
                 .build();
-        mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = mapper.writeValueAsString(time);
 
         assertNotNull("The value should not be null.", value);

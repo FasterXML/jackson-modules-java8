@@ -23,8 +23,9 @@ public class TestDurationKeySerialization {
 
     @Before
     public void setUp() {
-        this.om = new ObjectMapper();
-        om.registerModule(new JavaTimeModule());
+        this.om = ObjectMapper.builder()
+                .addModule(new JavaTimeModule())
+                .build();
         map = new HashMap<>();
     }
 

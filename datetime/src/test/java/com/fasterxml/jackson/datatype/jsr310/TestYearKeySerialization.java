@@ -19,14 +19,11 @@ public class TestYearKeySerialization {
 
     @Before
     public void setUp() {
-        this.om = new ObjectMapper();
-        om.registerModule(new JavaTimeModule());
+        om = ObjectMapper.builder()
+                .addModule(new JavaTimeModule())
+                .build();
         map = new HashMap<>();
     }
-
-    /*
-     * ObjectMapper configuration is not respected at deserialization and serialization at the moment.
-     */
 
     @Test
     public void testSerialization() throws Exception {

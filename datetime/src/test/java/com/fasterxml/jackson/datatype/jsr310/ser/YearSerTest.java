@@ -49,8 +49,9 @@ public class YearSerTest extends ModuleTestBase
     @Test
     public void testSerializationWithTypeInfo01() throws Exception
     {
-        ObjectMapper mapper = newMapper()
-                .addMixIn(Temporal.class, MockObjectConfiguration.class);
+        ObjectMapper mapper = newMapperBuilder()
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
+                .build();
         String value = mapper.writeValueAsString(Year.of(2005));
         assertEquals("The value is not correct.", "[\"" + Year.class.getName() + "\",2005]", value);
     }

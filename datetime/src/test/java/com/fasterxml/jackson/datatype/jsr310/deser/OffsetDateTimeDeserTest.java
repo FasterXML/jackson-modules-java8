@@ -351,8 +351,9 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationWithTypeInfo01WithoutTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 183917322), Z2);
-        ObjectMapper m = newMapper()
-                .addMixIn(Temporal.class, MockObjectConfiguration.class);
+        ObjectMapper m = newMapperBuilder()
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
+                .build();
         Temporal value = m.readValue(
                 "[\"" + OffsetDateTime.class.getName() + "\",123456789.183917322]", Temporal.class
                 );
@@ -365,8 +366,9 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationWithTypeInfo01WithTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 183917322), Z2);
-        ObjectMapper m = newMapper(TimeZone.getDefault())
-            .addMixIn(Temporal.class, MockObjectConfiguration.class);
+        ObjectMapper m = newMapperBuilder(TimeZone.getDefault())
+            .addMixIn(Temporal.class, MockObjectConfiguration.class)
+            .build();
         Temporal value = m.readValue(
                 "[\"" + OffsetDateTime.class.getName() + "\",123456789.183917322]", Temporal.class
                 );
@@ -381,8 +383,9 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationWithTypeInfo02WithoutTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 0), Z2);
-        ObjectMapper m = newMapper()
-            .addMixIn(Temporal.class, MockObjectConfiguration.class);
+        ObjectMapper m = newMapperBuilder()
+            .addMixIn(Temporal.class, MockObjectConfiguration.class)
+            .build();
         Temporal value = m.readerFor(Temporal.class)
                 .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue(
@@ -396,8 +399,9 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationWithTypeInfo02WithTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 0), Z2);
-        ObjectMapper m = newMapper(TimeZone.getDefault())
-            .addMixIn(Temporal.class, MockObjectConfiguration.class);
+        ObjectMapper m = newMapperBuilder(TimeZone.getDefault())
+            .addMixIn(Temporal.class, MockObjectConfiguration.class)
+            .build();
         Temporal value = m.readerFor(Temporal.class)
                 .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue(
@@ -411,8 +415,9 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationWithTypeInfo03WithoutTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 422000000), Z2);
-        ObjectMapper m = newMapper()
-            .addMixIn(Temporal.class, MockObjectConfiguration.class);
+        ObjectMapper m = newMapperBuilder()
+            .addMixIn(Temporal.class, MockObjectConfiguration.class)
+            .build();
         Temporal value = m.readerFor(Temporal.class)
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue(
@@ -426,8 +431,9 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationWithTypeInfo03WithTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 422000000), Z2);
-        ObjectMapper m = newMapper(TimeZone.getDefault())
-            .addMixIn(Temporal.class, MockObjectConfiguration.class);
+        ObjectMapper m = newMapperBuilder(TimeZone.getDefault())
+            .addMixIn(Temporal.class, MockObjectConfiguration.class)
+            .build();
         Temporal value = m.readerFor(Temporal.class)
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue(
@@ -441,8 +447,9 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationWithTypeInfo04WithoutTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.now(Z3);
-        ObjectMapper m = newMapper()
-            .addMixIn(Temporal.class, MockObjectConfiguration.class);
+        ObjectMapper m = newMapperBuilder()
+            .addMixIn(Temporal.class, MockObjectConfiguration.class)
+            .build();
         Temporal value = m.readerFor(Temporal.class)
                 .with(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
                 .readValue(
@@ -456,8 +463,9 @@ public class OffsetDateTimeDeserTest
     public void testDeserializationWithTypeInfo04WithTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.now(Z3);
-        ObjectMapper m = newMapper(TimeZone.getDefault())
-            .addMixIn(Temporal.class, MockObjectConfiguration.class);
+        ObjectMapper m = newMapperBuilder(TimeZone.getDefault())
+            .addMixIn(Temporal.class, MockObjectConfiguration.class)
+            .build();
         Temporal value = m.readerFor(Temporal.class)
                 .with(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
                 .readValue(
@@ -472,8 +480,9 @@ public class OffsetDateTimeDeserTest
     {
         OffsetDateTime date = OffsetDateTime.now(Z3);
 
-        ObjectMapper m = newMapper(TimeZone.getDefault())
-            .addMixIn(Temporal.class, MockObjectConfiguration.class);
+        ObjectMapper m = newMapperBuilder(TimeZone.getDefault())
+            .addMixIn(Temporal.class, MockObjectConfiguration.class)
+            .build();
         Temporal value = m.readerFor(Temporal.class)
                 .without(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
                 .readValue(

@@ -26,8 +26,9 @@ public class TestInstantKeySerialization {
 
     @Before
     public void setUp() {
-        this.om = new ObjectMapper();
-        om.registerModule(new JavaTimeModule());
+        this.om = ObjectMapper.builder()
+                .addModule(new JavaTimeModule())
+                .build();
         map = new HashMap<>();
     }
 
@@ -38,9 +39,7 @@ public class TestInstantKeySerialization {
     @Test
     public void testSerialization0() throws Exception {
         map.put(INSTANT_0, "test");
-
         String value = om.writeValueAsString(map);
-
         Assert.assertEquals("Value is incorrect", map(INSTANT_0_STRING, "test"), value);
     }
 

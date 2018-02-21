@@ -24,8 +24,9 @@ public class TestZoneOffsetKeySerialization {
 
     @Before
     public void setUp() {
-        this.om = new ObjectMapper();
-        om.registerModule(new JavaTimeModule());
+        om = ObjectMapper.builder()
+                .addModule(new JavaTimeModule())
+                .build();
         map = new HashMap<>();
     }
 
@@ -36,9 +37,7 @@ public class TestZoneOffsetKeySerialization {
     @Test
     public void testSerialization0() throws Exception {
         map.put(OFFSET_0, "test");
-
         String value = om.writeValueAsString(map);
-
         Assert.assertEquals("Value is incorrect", map(OFFSET_0_STRING, "test"), value);
     }
 

@@ -45,17 +45,16 @@ public class TestMonthDaySerialization
     @Before
     public void setUp()
     {
-        MAPPER = new ObjectMapper()
-            .registerModule(new JavaTimeModule());
+        MAPPER = ObjectMapper.builder()
+                .addModule(new JavaTimeModule())
+                .build();
     }
 
     @Test
     public void testSerialization01() throws Exception
     {
         MonthDay monthDay = MonthDay.of(Month.JANUARY, 17);
-
         String value = MAPPER.writeValueAsString(monthDay);
-
         assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.", "\"--01-17\"", value);
     }
@@ -74,15 +73,13 @@ public class TestMonthDaySerialization
     @Test
     public void testSerializationWithTypeInfo01() throws Exception
     {
-        final ObjectMapper mapper = new ObjectMapper()
-            .registerModule(new JavaTimeModule());
-        mapper.addMixIn(TemporalAccessor.class, MockObjectConfiguration.class);
+        final ObjectMapper mapper = ObjectMapper.builder()
+                .addModule(new JavaTimeModule())
+                .addMixIn(TemporalAccessor.class, MockObjectConfiguration.class)
+                .build();
 
         MonthDay monthDay = MonthDay.of(Month.NOVEMBER, 5);
-
         String value = mapper.writeValueAsString(monthDay);
-
-        assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.", "[\"" + MonthDay.class.getName() + "\",\"--11-05\"]", value);
     }
 
@@ -90,10 +87,7 @@ public class TestMonthDaySerialization
     public void testDeserialization01() throws Exception
     {
         MonthDay monthDay = MonthDay.of(Month.JANUARY, 17);
-
         MonthDay value = MAPPER.readValue("\"--01-17\"", MonthDay.class);
-
-        assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.", monthDay, value);
     }
 
@@ -111,15 +105,13 @@ public class TestMonthDaySerialization
     @Test
     public void testDeserializationWithTypeInfo01() throws Exception
     {
-        final ObjectMapper mapper = new ObjectMapper()
-            .registerModule(new JavaTimeModule());
-        mapper.addMixIn(TemporalAccessor.class, MockObjectConfiguration.class);
+        final ObjectMapper mapper = ObjectMapper.builder()
+                .addModule(new JavaTimeModule())
+                .addMixIn(TemporalAccessor.class, MockObjectConfiguration.class)
+                .build();
                
         MonthDay monthDay = MonthDay.of(Month.NOVEMBER, 5);
-
         TemporalAccessor value = mapper.readValue("[\"" + MonthDay.class.getName() + "\",\"--11-05\"]", TemporalAccessor.class);
-
-        assertNotNull("The value should not be null.", value);
         assertTrue("The value should be a MonthDay.", value instanceof MonthDay);
         assertEquals("The value is not correct.", monthDay, value);
     }

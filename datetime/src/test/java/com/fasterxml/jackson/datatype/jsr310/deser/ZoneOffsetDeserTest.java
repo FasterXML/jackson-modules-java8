@@ -56,8 +56,9 @@ public class ZoneOffsetDeserTest extends ModuleTestBase
     @Test
     public void testDeserializationWithTypeInfo03() throws Exception
     {
-        ObjectMapper mapper = newMapper()
-            .addMixIn(ZoneId.class, MockObjectConfiguration.class);
+        ObjectMapper mapper = newMapperBuilder()
+            .addMixIn(ZoneId.class, MockObjectConfiguration.class)
+            .build();
         ZoneId value = mapper.readValue("[\"" + ZoneOffset.class.getName() + "\",\"+0415\"]", ZoneId.class);
         assertTrue("The value should be a ZoneOffset.", value instanceof ZoneOffset);
         assertEquals("The value is not correct.", ZoneOffset.of("+0415"), value);

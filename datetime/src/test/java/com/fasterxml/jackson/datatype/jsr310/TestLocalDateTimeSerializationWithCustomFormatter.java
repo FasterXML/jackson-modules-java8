@@ -33,7 +33,10 @@ public class TestLocalDateTimeSerializationWithCustomFormatter {
     }
 
     private String serializeWith(LocalDateTime dateTime, DateTimeFormatter f) throws Exception {
-        ObjectMapper mapper = new ObjectMapper().registerModule(new SimpleModule().addSerializer(new LocalDateTimeSerializer(f)));
+        ObjectMapper mapper = ObjectMapper.builder()
+                .addModule(new SimpleModule()
+                        .addSerializer(new LocalDateTimeSerializer(f)))
+                .build();
         return mapper.writeValueAsString(dateTime);
     }
 
@@ -44,7 +47,10 @@ public class TestLocalDateTimeSerializationWithCustomFormatter {
     }
 
     private LocalDateTime deserializeWith(String json, DateTimeFormatter f) throws Exception {
-        ObjectMapper mapper = new ObjectMapper().registerModule(new SimpleModule().addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(f)));
+        ObjectMapper mapper = ObjectMapper.builder()
+                .addModule(new SimpleModule()
+                        .addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(f)))
+                .build();
         return mapper.readValue("\"" + json + "\"", LocalDateTime.class);
     }
 

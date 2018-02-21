@@ -49,8 +49,9 @@ public class YearDeserTest extends ModuleTestBase
     @Test
     public void testDeserializationWithTypeInfo01() throws Exception
     {
-        ObjectMapper mapper = newMapper()
-                .addMixIn(Temporal.class, MockObjectConfiguration.class);
+        ObjectMapper mapper = newMapperBuilder()
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
+                .build();
         Temporal value = mapper.readValue("[\"" + Year.class.getName() + "\",2005]", Temporal.class);
         assertTrue("The value should be a Year.", value instanceof Year);
         assertEquals("The value is not correct.", Year.of(2005), value);
