@@ -36,7 +36,13 @@ public class ZonedDateTimeSerializer extends InstantSerializerBase<ZonedDateTime
 
     protected ZonedDateTimeSerializer(ZonedDateTimeSerializer base,
             Boolean useTimestamp, DateTimeFormatter formatter, Boolean writeZoneId) {
-        super(base, useTimestamp, formatter);
+        this(base, useTimestamp, null, formatter, writeZoneId);
+    }
+
+    protected ZonedDateTimeSerializer(ZonedDateTimeSerializer base,
+            Boolean useTimestamp, Boolean useNanoseconds, DateTimeFormatter formatter,
+            Boolean writeZoneId) {
+        super(base, useTimestamp, useNanoseconds, formatter);
         _writeZoneId = writeZoneId;
     }
 
@@ -51,6 +57,11 @@ public class ZonedDateTimeSerializer extends InstantSerializerBase<ZonedDateTime
     @Override
     protected JSR310FormattedSerializerBase<?> withFeatures(Boolean writeZoneId) {
         return new ZonedDateTimeSerializer(this, _useTimestamp, _formatter, writeZoneId);
+    }
+
+    @Override
+    protected JSR310FormattedSerializerBase<?> withFeatures(Boolean writeZoneId, Boolean writeNanoseconds) {
+        return new ZonedDateTimeSerializer(this, _useTimestamp, writeNanoseconds, _formatter, writeZoneId);
     }
 
     @Override

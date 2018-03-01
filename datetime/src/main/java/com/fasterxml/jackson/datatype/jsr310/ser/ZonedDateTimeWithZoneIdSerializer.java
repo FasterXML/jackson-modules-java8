@@ -27,7 +27,12 @@ public class ZonedDateTimeWithZoneIdSerializer extends InstantSerializerBase<Zon
 
     protected ZonedDateTimeWithZoneIdSerializer(ZonedDateTimeWithZoneIdSerializer base,
             Boolean useTimestamp, DateTimeFormatter formatter) {
-        super(base, useTimestamp, formatter);
+        this(base, useTimestamp, null, formatter);
+    }
+
+    protected ZonedDateTimeWithZoneIdSerializer(ZonedDateTimeWithZoneIdSerializer base,
+            Boolean useTimestamp, Boolean useNanoseconds, DateTimeFormatter formatter) {
+        super(base, useTimestamp, useNanoseconds, formatter);
     }
 
     @Override
@@ -37,4 +42,8 @@ public class ZonedDateTimeWithZoneIdSerializer extends InstantSerializerBase<Zon
         return new ZonedDateTimeWithZoneIdSerializer(this, useTimestamp, formatter);
     }
 
+    @Override
+    protected JSR310FormattedSerializerBase<?> withFeatures(Boolean writeZoneId, Boolean writeNanoseconds) {
+        return new ZonedDateTimeWithZoneIdSerializer(this, _useTimestamp, writeNanoseconds, _formatter);
+    }
 }

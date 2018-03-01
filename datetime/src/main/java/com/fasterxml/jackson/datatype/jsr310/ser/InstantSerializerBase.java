@@ -28,7 +28,6 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.JsonParser.NumberType;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonIntegerFormatVisitor;
@@ -66,7 +65,13 @@ public abstract class InstantSerializerBase<T extends Temporal>
     protected InstantSerializerBase(InstantSerializerBase<T> base,
             Boolean useTimestamp, DateTimeFormatter dtf)
     {
-        super(base, useTimestamp, dtf, null);
+        this(base, useTimestamp, null, dtf);
+    }
+
+    protected InstantSerializerBase(InstantSerializerBase<T> base,
+            Boolean useTimestamp, Boolean useNanoseconds, DateTimeFormatter dtf)
+    {
+        super(base, useTimestamp, useNanoseconds, dtf, null);
         defaultFormat = base.defaultFormat;
         getEpochMillis = base.getEpochMillis;
         getEpochSeconds = base.getEpochSeconds;
@@ -82,7 +87,7 @@ public abstract class InstantSerializerBase<T extends Temporal>
     public void serialize(T value, JsonGenerator generator, SerializerProvider provider) throws IOException
     {
         if (useTimestamp(provider)) {
-            if (provider.isEnabled(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)) {
+            if (useNanoseconds(provider)) {
                 generator.writeNumber(DecimalUtils.toBigDecimal(
                         getEpochSeconds.applyAsLong(value), getNanoseconds.applyAsInt(value)
                 ));
@@ -109,8 +114,7 @@ public abstract class InstantSerializerBase<T extends Temporal>
         throws JsonMappingException
     {
         SerializerProvider prov = visitor.getProvider();
-        if ((prov != null) && 
-                prov.isEnabled(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)) {
+        if ((prov != null) && useNanoseconds(prov)) {
             JsonNumberFormatVisitor v2 = visitor.expectNumberFormat(typeHint);
             if (v2 != null) {
                 v2.numberType(NumberType.BIG_DECIMAL);
@@ -126,7 +130,7 @@ public abstract class InstantSerializerBase<T extends Temporal>
     @Override // since 2.9
     protected JsonToken serializationShape(SerializerProvider provider) {
         if (useTimestamp(provider)) {
-            if (provider.isEnabled(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)) {
+            if (useNanoseconds(provider)) {
                 return JsonToken.VALUE_NUMBER_FLOAT;
             }
             return JsonToken.VALUE_NUMBER_INT;
