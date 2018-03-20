@@ -11,10 +11,9 @@ import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
 public class DefaultTypingTest extends ModuleTestBase
 {
-    private final ObjectMapper TYPING_MAPPER = newMapper();
-    {
-        TYPING_MAPPER.enableDefaultTyping();
-    }
+    private final ObjectMapper TYPING_MAPPER = newMapperBuilder()
+            .enableDefaultTyping()
+            .build();
 
     // for [datatype-jsr310#24]
     @Test

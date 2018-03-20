@@ -6,42 +6,37 @@ import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.key.Jsr310NullKeySerializer;
+
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
-public class TestNullKeySerialization {
-
-    private static final TypeReference<Map<LocalDate, String>> TYPE_REF = new TypeReference<Map<LocalDate, String>>() {
-    };
-
-    private ObjectMapper om;
-    private Map<LocalDate, String> map;
-
-    @Before
-    public void setUp() {
-        this.om = ObjectMapper.builder()
-                .addModule(new JavaTimeModule())
-                .build();
-        map = new HashMap<>();
-    }
+public class TestNullKeySerialization extends ModuleTestBase
+{
+    private static final TypeReference<Map<LocalDate, String>> TYPE_REF = new TypeReference<Map<LocalDate, String>>() { };
 
     @Test
-    public void testSerialization() throws Exception {
-        om.getSerializerProvider().setNullKeySerializer(new Jsr310NullKeySerializer());
+    public void testSerialization() throws Exception
+    {
+        ObjectMapper mapper = newMapperBuilder()
+                .addModule(new SimpleModule()
+                        .setDefaultNullKeySerializer(new Jsr310NullKeySerializer()))
+                .build();
 
+        Map<LocalDate, String> map = new HashMap<>();
         map.put(null, "test");
-        String value = om.writeValueAsString(map);
+        String value = mapper.writeValueAsString(map);
 
         Assert.assertEquals(map(Jsr310NullKeySerializer.NULL_KEY, "test"), value);
     }
 
     @Test
     public void testDeserialization() throws Exception {
-        Map<LocalDate, String> value = om.readValue(map(Jsr310NullKeySerializer.NULL_KEY, "test"), TYPE_REF);
-
+        ObjectMapper mapper = newMapper();
+        Map<LocalDate, String> map = new HashMap<>();
         map.put(null, "test");
+        Map<LocalDate, String> value = mapper.readValue(map(Jsr310NullKeySerializer.NULL_KEY, "test"), TYPE_REF);
         Assert.assertEquals(map, value);
     }
 
