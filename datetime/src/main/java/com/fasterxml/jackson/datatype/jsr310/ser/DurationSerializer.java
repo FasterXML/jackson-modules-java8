@@ -22,7 +22,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonIntegerFormatVisitor;
@@ -54,6 +53,11 @@ public class DurationSerializer extends JSR310FormattedSerializerBase<Duration>
         super(base, useTimestamp, dtf, null);
     }
 
+    protected DurationSerializer(DurationSerializer base,
+            Boolean useTimestamp, Boolean useNanoseconds, DateTimeFormatter dtf) {
+        super(base, useTimestamp, useNanoseconds, dtf, null);
+    }
+
     @Override
     protected DurationSerializer withFormat(Boolean useTimestamp, DateTimeFormatter dtf, JsonFormat.Shape shape) {
         return new DurationSerializer(this, useTimestamp, dtf);
@@ -63,7 +67,7 @@ public class DurationSerializer extends JSR310FormattedSerializerBase<Duration>
     public void serialize(Duration duration, JsonGenerator generator, SerializerProvider provider) throws IOException
     {
         if (useTimestamp(provider)) {
-            if (provider.isEnabled(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)) {
+            if (useNanoseconds(provider)) {
                 generator.writeNumber(DecimalUtils.toBigDecimal(
                         duration.getSeconds(), duration.getNano()
                 ));
@@ -83,7 +87,7 @@ public class DurationSerializer extends JSR310FormattedSerializerBase<Duration>
         if (v2 != null) {
             v2.numberType(JsonParser.NumberType.LONG);
             SerializerProvider provider = visitor.getProvider();
-            if ((provider != null) && provider.isEnabled(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)) {
+            if ((provider != null) && useNanoseconds(provider)) {
                 // big number, no more specific qualifier to use...
             } else { // otherwise good old Unix timestamp, in milliseconds
                 v2.format(JsonValueFormat.UTC_MILLISEC);
@@ -94,11 +98,16 @@ public class DurationSerializer extends JSR310FormattedSerializerBase<Duration>
     @Override // since 2.9
     protected JsonToken serializationShape(SerializerProvider provider) {
         if (useTimestamp(provider)) {
-            if (provider.isEnabled(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)) {
+            if (useNanoseconds(provider)) {
                 return JsonToken.VALUE_NUMBER_FLOAT;
             }
             return JsonToken.VALUE_NUMBER_INT;
         }
         return JsonToken.VALUE_STRING;
+    }
+
+    @Override
+    protected JSR310FormattedSerializerBase<?> withFeatures(Boolean writeZoneId, Boolean writeNanoseconds) {
+        return new DurationSerializer(this, _useTimestamp, writeNanoseconds, _formatter);
     }
 }

@@ -20,7 +20,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.type.WritableTypeId;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 
@@ -47,7 +46,12 @@ public class OffsetTimeSerializer extends JSR310FormattedSerializerBase<OffsetTi
 
     protected OffsetTimeSerializer(OffsetTimeSerializer base,
             Boolean useTimestamp, DateTimeFormatter dtf) {
-        super(base, useTimestamp, dtf, null);
+        this(base, useTimestamp, null, dtf);
+    }
+
+    protected OffsetTimeSerializer(OffsetTimeSerializer base,
+            Boolean useTimestamp, Boolean useNanoseconds, DateTimeFormatter dtf) {
+        super(base, useTimestamp, useNanoseconds, dtf, null);
     }
 
     @Override
@@ -94,7 +98,7 @@ public class OffsetTimeSerializer extends JSR310FormattedSerializerBase<OffsetTi
         if ((secs > 0) || (nanos > 0)) {
             g.writeNumber(secs);
             if (nanos > 0) {
-                if(provider.isEnabled(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)) {
+                if(useNanoseconds(provider)) {
                     g.writeNumber(nanos);
                 } else {
                     g.writeNumber(value.get(ChronoField.MILLI_OF_SECOND));
@@ -107,5 +111,10 @@ public class OffsetTimeSerializer extends JSR310FormattedSerializerBase<OffsetTi
     @Override // since 2.9
     protected JsonToken serializationShape(SerializerProvider provider) {
         return useTimestamp(provider) ? JsonToken.START_ARRAY : JsonToken.VALUE_STRING;
+    }
+
+    @Override
+    protected JSR310FormattedSerializerBase<?> withFeatures(Boolean writeZoneId, Boolean writeNanoseconds) {
+        return new OffsetTimeSerializer(this, _useTimestamp, writeNanoseconds, _formatter);
     }
 }
