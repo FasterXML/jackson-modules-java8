@@ -102,13 +102,14 @@ abstract class JSR310FormattedSerializerBase<T>
     /**
      * @since 2.8
      */
+    @Deprecated // since 2.9.5
     protected JSR310FormattedSerializerBase<?> withFeatures(Boolean writeZoneId) {
         // 01-Jul-2016, tatu: Sub-classes need to override
         return this;
     }
 
     /**
-     * @since 2.9
+     * @since 2.9.5
      */
     protected JSR310FormattedSerializerBase<?> withFeatures(Boolean writeZoneId,
             Boolean writeNanoseconds) {
@@ -153,7 +154,7 @@ abstract class JSR310FormattedSerializerBase<T>
             }
             Boolean writeZoneId = format.getFeature(JsonFormat.Feature.WRITE_DATES_WITH_ZONE_ID);
             Boolean writeNanoseconds = format.getFeature(JsonFormat.Feature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS);
-            if (writeZoneId != null || writeNanoseconds != null) {
+            if ((writeZoneId != null) || (writeNanoseconds != null)) {
                 ser = ser.withFeatures(writeZoneId, writeNanoseconds);
             }
             return ser;
@@ -195,7 +196,7 @@ abstract class JSR310FormattedSerializerBase<T>
 
     protected boolean useTimestamp(SerializerProvider provider) {
         if (_useTimestamp != null) {
-            return _useTimestamp;
+            return _useTimestamp.booleanValue();
         }
         if (_shape != null) {
             if (_shape == Shape.STRING) {
@@ -211,14 +212,14 @@ abstract class JSR310FormattedSerializerBase<T>
 
     protected boolean _useTimestampExplicitOnly(SerializerProvider provider) {
         if (_useTimestamp != null) {
-            return _useTimestamp;
+            return _useTimestamp.booleanValue();
         }
         return false;
     }
 
     protected boolean useNanoseconds(SerializerProvider provider) {
         if (_useNanoseconds != null) {
-            return _useNanoseconds;
+            return _useNanoseconds.booleanValue();
         }
         if (_shape != null) {
             if (_shape == Shape.NUMBER_INT) {

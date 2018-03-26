@@ -118,7 +118,7 @@ public class LocalDateTimeSerializer extends JSR310FormattedSerializerBase<Local
             }
         }
     }
-    
+
     @Override // since 2.9
     protected JsonToken serializationShape(SerializerProvider provider) {
         return useTimestamp(provider) ? JsonToken.START_ARRAY : JsonToken.VALUE_STRING;

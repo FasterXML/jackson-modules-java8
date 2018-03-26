@@ -55,6 +55,7 @@ public class ZonedDateTimeSerializer extends InstantSerializerBase<ZonedDateTime
     }
 
     @Override
+    @Deprecated
     protected JSR310FormattedSerializerBase<?> withFeatures(Boolean writeZoneId) {
         return new ZonedDateTimeSerializer(this, _useTimestamp, _formatter, writeZoneId);
     }
