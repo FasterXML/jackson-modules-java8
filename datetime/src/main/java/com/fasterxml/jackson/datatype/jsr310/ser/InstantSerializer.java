@@ -42,14 +42,22 @@ public class InstantSerializer extends InstantSerializerBase<Instant>
 
     protected InstantSerializer(InstantSerializer base,
             Boolean useTimestamp, DateTimeFormatter formatter) {
-        super(base, useTimestamp, formatter);
+        this(base, useTimestamp, null, formatter);
+    }
+
+    protected InstantSerializer(InstantSerializer base,
+            Boolean useTimestamp, Boolean useNanoseconds, DateTimeFormatter formatter) {
+        super(base, useTimestamp, useNanoseconds, formatter);
     }
 
     @Override
-    protected JSR310FormattedSerializerBase<Instant> withFormat(
-        Boolean useTimestamp,
-        DateTimeFormatter formatter,
-        JsonFormat.Shape shape) {
+    protected JSR310FormattedSerializerBase<Instant> withFormat(Boolean useTimestamp,
+            DateTimeFormatter formatter, JsonFormat.Shape shape) {
         return new InstantSerializer(this, useTimestamp, formatter);
+    }
+
+    @Override
+    protected JSR310FormattedSerializerBase<?> withFeatures(Boolean writeZoneId, Boolean writeNanoseconds) {
+        return new InstantSerializer(this, _useTimestamp, writeNanoseconds, _formatter);
     }
 }

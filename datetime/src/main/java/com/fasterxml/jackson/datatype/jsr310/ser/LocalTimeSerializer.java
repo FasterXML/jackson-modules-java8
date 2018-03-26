@@ -25,7 +25,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.type.WritableTypeId;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 
@@ -50,7 +49,11 @@ public class LocalTimeSerializer extends JSR310FormattedSerializerBase<LocalTime
     }
 
     protected LocalTimeSerializer(LocalTimeSerializer base, Boolean useTimestamp, DateTimeFormatter formatter) {
-        super(base, useTimestamp, formatter, null);
+        this(base, useTimestamp, null, formatter);
+    }
+
+    protected LocalTimeSerializer(LocalTimeSerializer base, Boolean useTimestamp, Boolean useNanoseconds, DateTimeFormatter formatter) {
+        super(base, useTimestamp, useNanoseconds, formatter, null);
     }
 
     @Override
@@ -110,7 +113,7 @@ public class LocalTimeSerializer extends JSR310FormattedSerializerBase<LocalTime
         {
             g.writeNumber(secs);
             if (nanos > 0) {
-                if (provider.isEnabled(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)) {
+                if (useNanoseconds(provider)) {
                     g.writeNumber(nanos);
                 } else {
                     g.writeNumber(value.get(ChronoField.MILLI_OF_SECOND));
@@ -122,5 +125,10 @@ public class LocalTimeSerializer extends JSR310FormattedSerializerBase<LocalTime
     @Override // since 2.9
     protected JsonToken serializationShape(SerializerProvider provider) {
         return useTimestamp(provider) ? JsonToken.START_ARRAY : JsonToken.VALUE_STRING;
+    }
+
+    @Override
+    protected JSR310FormattedSerializerBase<?> withFeatures(Boolean writeZoneId, Boolean writeNanoseconds) {
+        return new LocalTimeSerializer(this, _useTimestamp, writeNanoseconds, _formatter);
     }
 }

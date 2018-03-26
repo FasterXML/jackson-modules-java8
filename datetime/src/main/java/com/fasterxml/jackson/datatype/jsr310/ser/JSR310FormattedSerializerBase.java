@@ -42,7 +42,14 @@ abstract class JSR310FormattedSerializerBase<T>
      * Java timestamp, regardless of other settings.
      */
     protected final Boolean _useTimestamp;
-    
+
+    /**
+     * Flag that indicates that numeric timestamp values must be written using
+     * nanosecond timestamps if the datatype supports such resolution,
+     * regardless of other settings.
+     */
+    protected final Boolean _useNanoseconds;
+
     /**
      * Specific format to use, if not default format: non null value
      * also indicates that serialization is to be done as JSON String,
@@ -60,15 +67,24 @@ abstract class JSR310FormattedSerializerBase<T>
             DateTimeFormatter formatter) {
         super(supportedType);
         _useTimestamp = null;
+        _useNanoseconds = null;
         _shape = null;
         _formatter = formatter;
     }
     
     protected JSR310FormattedSerializerBase(JSR310FormattedSerializerBase<?> base,
             Boolean useTimestamp, DateTimeFormatter dtf, JsonFormat.Shape shape)
-    {            
+    {
+        this(base, useTimestamp, null, dtf, shape);
+    }
+
+    protected JSR310FormattedSerializerBase(JSR310FormattedSerializerBase<?> base,
+            Boolean useTimestamp, Boolean useNanoseconds, DateTimeFormatter dtf,
+            JsonFormat.Shape shape)
+    {
         super(base.handledType());
         _useTimestamp = useTimestamp;
+        _useNanoseconds = useNanoseconds;
         _formatter = dtf;
         _shape = shape;
     }
@@ -79,11 +95,20 @@ abstract class JSR310FormattedSerializerBase<T>
     /**
      * @since 2.8
      */
+    @Deprecated // since 2.9.5
     protected JSR310FormattedSerializerBase<?> withFeatures(Boolean writeZoneId) {
         // 01-Jul-2016, tatu: Sub-classes need to override
         return this;
     }
-    
+
+    /**
+     * @since 2.9.5
+     */
+    protected JSR310FormattedSerializerBase<?> withFeatures(Boolean writeZoneId,
+            Boolean writeNanoseconds) {
+        return this;
+    }
+
     @Override
     public JsonSerializer<?> createContextual(SerializerProvider prov,
             BeanProperty property) throws JsonMappingException
@@ -121,8 +146,9 @@ abstract class JSR310FormattedSerializerBase<T>
                 ser = ser.withFormat(useTimestamp, dtf, shape);
             }
             Boolean writeZoneId = format.getFeature(JsonFormat.Feature.WRITE_DATES_WITH_ZONE_ID);
-            if (writeZoneId != null) {
-                ser = ser.withFeatures(writeZoneId);
+            Boolean writeNanoseconds = format.getFeature(JsonFormat.Feature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS);
+            if ((writeZoneId != null) || (writeNanoseconds != null)) {
+                ser = ser.withFeatures(writeZoneId, writeNanoseconds);
             }
             return ser;
         }
@@ -166,10 +192,7 @@ abstract class JSR310FormattedSerializerBase<T>
             }
         }
         // assume that explicit formatter definition implies use of textual format
-        if (_formatter != null) { 
-            return false;
-        }
-        return provider.isEnabled(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return _formatter == null && provider.isEnabled(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
     protected boolean _useTimestampExplicitOnly(SerializerProvider provider) {
@@ -177,5 +200,20 @@ abstract class JSR310FormattedSerializerBase<T>
             return _useTimestamp.booleanValue();
         }
         return false;
+    }
+
+    protected boolean useNanoseconds(SerializerProvider provider) {
+        if (_useNanoseconds != null) {
+            return _useNanoseconds.booleanValue();
+        }
+        if (_shape != null) {
+            if (_shape == Shape.NUMBER_INT) {
+                return false;
+            }
+            if (_shape == Shape.NUMBER_FLOAT) {
+                return true;
+            }
+        }
+        return provider.isEnabled(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS);
     }
 }
