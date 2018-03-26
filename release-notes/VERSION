@@ -8,7 +8,7 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
-2.9.5 (not yet releaed)
+2.9.5 (26-Mar-2018)
 
 #98: `OffsetDateTime` with `@JsonFormat(without=...)` doesn't seem to work
  (reported by ayush-veem@github)
