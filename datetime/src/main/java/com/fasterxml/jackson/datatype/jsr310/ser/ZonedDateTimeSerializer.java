@@ -17,8 +17,6 @@ public class ZonedDateTimeSerializer extends InstantSerializerBase<ZonedDateTime
 
     /**
      * Flag for <code>JsonFormat.Feature.WRITE_DATES_WITH_ZONE_ID</code>
-     *
-     * @since 2.8
      */
     protected final Boolean _writeZoneId;
     
@@ -35,34 +33,29 @@ public class ZonedDateTimeSerializer extends InstantSerializerBase<ZonedDateTime
     }
 
     protected ZonedDateTimeSerializer(ZonedDateTimeSerializer base,
-            Boolean useTimestamp, DateTimeFormatter formatter, Boolean writeZoneId) {
-        this(base, useTimestamp, null, formatter, writeZoneId);
-    }
-
-    protected ZonedDateTimeSerializer(ZonedDateTimeSerializer base,
-            Boolean useTimestamp, Boolean useNanoseconds, DateTimeFormatter formatter,
-            Boolean writeZoneId) {
-        super(base, useTimestamp, useNanoseconds, formatter);
+            DateTimeFormatter formatter,
+            Boolean useTimestamp, Boolean useNanoseconds,
+            Boolean writeZoneId)
+    {
+        super(base, formatter, useTimestamp, useNanoseconds);
         _writeZoneId = writeZoneId;
     }
 
     @Override
-    protected JSR310FormattedSerializerBase<?> withFormat(
-        Boolean useTimestamp,
-        DateTimeFormatter formatter,
-        JsonFormat.Shape shape) {
-        return new ZonedDateTimeSerializer(this, useTimestamp, formatter, _writeZoneId);
+    protected JSR310FormattedSerializerBase<?> withFormat(DateTimeFormatter formatter, 
+            Boolean useTimestamp,
+            JsonFormat.Shape shape)
+    {
+        return new ZonedDateTimeSerializer(this, formatter,
+                useTimestamp, _useNanoseconds, _writeZoneId);
     }
 
     @Override
-    @Deprecated
-    protected JSR310FormattedSerializerBase<?> withFeatures(Boolean writeZoneId) {
-        return new ZonedDateTimeSerializer(this, _useTimestamp, _formatter, writeZoneId);
-    }
-
-    @Override
-    protected JSR310FormattedSerializerBase<?> withFeatures(Boolean writeZoneId, Boolean writeNanoseconds) {
-        return new ZonedDateTimeSerializer(this, _useTimestamp, writeNanoseconds, _formatter, writeZoneId);
+    protected JSR310FormattedSerializerBase<?> withFeatures(Boolean writeZoneId,
+            Boolean useNanoseconds)
+    {
+        return new ZonedDateTimeSerializer(this, _formatter,
+                _useTimestamp, useNanoseconds, writeZoneId);
     }
 
     @Override
@@ -79,15 +72,12 @@ public class ZonedDateTimeSerializer extends InstantSerializerBase<ZonedDateTime
         super.serialize(value, g, provider);
     }
 
-    /**
-     * @since 2.8
-     */
     public boolean shouldWriteWithZoneId(SerializerProvider ctxt) {
         return (_writeZoneId != null) ? _writeZoneId :
             ctxt.isEnabled(SerializationFeature.WRITE_DATES_WITH_ZONE_ID);
     }
 
-    @Override // since 2.9
+    @Override
     protected JsonToken serializationShape(SerializerProvider provider) {
         if (!useTimestamp(provider) && shouldWriteWithZoneId(provider)) {
             return JsonToken.VALUE_STRING;

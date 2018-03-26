@@ -18,23 +18,26 @@ public class OffsetDateTimeSerializer extends InstantSerializerBase<OffsetDateTi
 
     protected OffsetDateTimeSerializer(OffsetDateTimeSerializer base,
             Boolean useTimestamp, DateTimeFormatter formatter) {
-        this(base, useTimestamp, null, formatter);
+        this(base, formatter, useTimestamp, null);
     }
 
     protected OffsetDateTimeSerializer(OffsetDateTimeSerializer base,
-            Boolean useTimestamp, Boolean useNanoseconds, DateTimeFormatter formatter) {
-        super(base, useTimestamp, useNanoseconds, formatter);
+            DateTimeFormatter formatter,
+            Boolean useTimestamp, Boolean useNanoseconds) {
+        super(base, formatter, useTimestamp, useNanoseconds);
     }
 
     @Override
-    protected JSR310FormattedSerializerBase<?> withFormat(Boolean useTimestamp,
-        DateTimeFormatter formatter, JsonFormat.Shape shape)
+    protected JSR310FormattedSerializerBase<?> withFormat(DateTimeFormatter formatter,
+            Boolean useTimestamp,
+            JsonFormat.Shape shape)
     {
         return new OffsetDateTimeSerializer(this, useTimestamp, formatter);
     }
 
     @Override
     protected JSR310FormattedSerializerBase<?> withFeatures(Boolean writeZoneId, Boolean writeNanoseconds) {
-        return new OffsetDateTimeSerializer(this, _useTimestamp, writeNanoseconds, _formatter);
+        return new OffsetDateTimeSerializer(this, _formatter,
+                _useTimestamp, writeNanoseconds);
     }
 }

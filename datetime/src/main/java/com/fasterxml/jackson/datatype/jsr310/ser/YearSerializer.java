@@ -52,13 +52,15 @@ public class YearSerializer extends JSR310FormattedSerializerBase<Year>
         super(Year.class, formatter);
     }
 
-    protected YearSerializer(YearSerializer base, Boolean useTimestamp, DateTimeFormatter formatter) {
-        super(base, useTimestamp, formatter, null);
+    protected YearSerializer(YearSerializer base, DateTimeFormatter dtf,
+            Boolean useTimestamp) {
+        super(base, dtf, useTimestamp, null, null);
     }
 
     @Override
-    protected YearSerializer withFormat(Boolean useTimestamp, DateTimeFormatter formatter, JsonFormat.Shape shape) {
-        return new YearSerializer(this, useTimestamp, formatter);
+    protected YearSerializer withFormat(DateTimeFormatter dtf,
+            Boolean useTimestamp, JsonFormat.Shape shape) {
+        return new YearSerializer(this, dtf, useTimestamp);
     }
 
     @Override

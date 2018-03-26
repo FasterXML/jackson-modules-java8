@@ -48,13 +48,15 @@ public class LocalDateTimeSerializer extends JSR310FormattedSerializerBase<Local
         super(LocalDateTime.class, f);
     }
 
-    private LocalDateTimeSerializer(LocalDateTimeSerializer base, Boolean useTimestamp, Boolean useNanoseconds, DateTimeFormatter f) {
-        super(base, useTimestamp, useNanoseconds, f, null);
+    private LocalDateTimeSerializer(LocalDateTimeSerializer base, DateTimeFormatter dtf,
+            Boolean useTimestamp, Boolean useNanoseconds) {
+        super(base, dtf, useTimestamp, useNanoseconds, null);
     }
 
     @Override
-    protected JSR310FormattedSerializerBase<LocalDateTime> withFormat(Boolean useTimestamp, DateTimeFormatter f, JsonFormat.Shape shape) {
-        return new LocalDateTimeSerializer(this, useTimestamp, _useNanoseconds, f);
+    protected JSR310FormattedSerializerBase<LocalDateTime> withFormat(DateTimeFormatter f,
+            Boolean useTimestamp, JsonFormat.Shape shape) {
+        return new LocalDateTimeSerializer(this, f, useTimestamp, _useNanoseconds);
     }
 
     protected DateTimeFormatter _defaultFormatter() {
@@ -119,13 +121,13 @@ public class LocalDateTimeSerializer extends JSR310FormattedSerializerBase<Local
         }
     }
 
-    @Override // since 2.9
+    @Override
     protected JsonToken serializationShape(SerializerProvider provider) {
         return useTimestamp(provider) ? JsonToken.START_ARRAY : JsonToken.VALUE_STRING;
     }
 
     @Override
     protected JSR310FormattedSerializerBase<?> withFeatures(Boolean writeZoneId, Boolean writeNanoseconds) {
-        return new LocalDateTimeSerializer(this, _useTimestamp, writeNanoseconds, _formatter);
+        return new LocalDateTimeSerializer(this, _formatter, _useTimestamp, writeNanoseconds);
     }
 }

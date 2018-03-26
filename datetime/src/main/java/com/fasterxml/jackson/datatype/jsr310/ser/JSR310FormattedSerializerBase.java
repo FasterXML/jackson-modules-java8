@@ -30,7 +30,6 @@ import com.fasterxml.jackson.databind.jsonFormatVisitors.*;
  * {@link SerializationFeature#WRITE_DATES_AS_TIMESTAMPS} is enabled.
  *
  * @author Nick Williams
- * @since 2.2
  */
 abstract class JSR310FormattedSerializerBase<T>
     extends JSR310SerializerBase<T>
@@ -71,15 +70,20 @@ abstract class JSR310FormattedSerializerBase<T>
         _shape = null;
         _formatter = formatter;
     }
+
+    /*
     
     protected JSR310FormattedSerializerBase(JSR310FormattedSerializerBase<?> base,
-            Boolean useTimestamp, DateTimeFormatter dtf, JsonFormat.Shape shape)
+            DateTimeFormatter dtf,
+            Boolean useTimestamp, JsonFormat.Shape shape)
     {
-        this(base, useTimestamp, null, dtf, shape);
+        this(base, dtf, useTimestamp, null, shape);
     }
+    */
 
     protected JSR310FormattedSerializerBase(JSR310FormattedSerializerBase<?> base,
-            Boolean useTimestamp, Boolean useNanoseconds, DateTimeFormatter dtf,
+            DateTimeFormatter dtf,
+            Boolean useTimestamp, Boolean useNanoseconds, 
             JsonFormat.Shape shape)
     {
         super(base.handledType());
@@ -89,21 +93,9 @@ abstract class JSR310FormattedSerializerBase<T>
         _shape = shape;
     }
 
-    protected abstract JSR310FormattedSerializerBase<?> withFormat(Boolean useTimestamp,
-            DateTimeFormatter dtf, JsonFormat.Shape shape);
+    protected abstract JSR310FormattedSerializerBase<?> withFormat(DateTimeFormatter dtf,
+            Boolean useTimestamp, JsonFormat.Shape shape);
 
-    /**
-     * @since 2.8
-     */
-    @Deprecated // since 2.9.5
-    protected JSR310FormattedSerializerBase<?> withFeatures(Boolean writeZoneId) {
-        // 01-Jul-2016, tatu: Sub-classes need to override
-        return this;
-    }
-
-    /**
-     * @since 2.9.5
-     */
     protected JSR310FormattedSerializerBase<?> withFeatures(Boolean writeZoneId,
             Boolean writeNanoseconds) {
         return this;
@@ -143,7 +135,7 @@ abstract class JSR310FormattedSerializerBase<T>
             }
             JSR310FormattedSerializerBase<?> ser = this;
             if ((shape != _shape) || (useTimestamp != _useTimestamp) || (dtf != _formatter)) {
-                ser = ser.withFormat(useTimestamp, dtf, shape);
+                ser = ser.withFormat(dtf, useTimestamp, shape);
             }
             Boolean writeZoneId = format.getFeature(JsonFormat.Feature.WRITE_DATES_WITH_ZONE_ID);
             Boolean writeNanoseconds = format.getFeature(JsonFormat.Feature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS);

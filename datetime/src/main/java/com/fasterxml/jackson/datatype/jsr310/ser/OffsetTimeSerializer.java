@@ -44,19 +44,20 @@ public class OffsetTimeSerializer extends JSR310FormattedSerializerBase<OffsetTi
         super(OffsetTime.class);
     }
 
-    protected OffsetTimeSerializer(OffsetTimeSerializer base,
-            Boolean useTimestamp, DateTimeFormatter dtf) {
-        this(base, useTimestamp, null, dtf);
+    protected OffsetTimeSerializer(OffsetTimeSerializer base, DateTimeFormatter dtf,
+            Boolean useTimestamp) {
+        this(base, dtf, useTimestamp, null);
     }
 
-    protected OffsetTimeSerializer(OffsetTimeSerializer base,
-            Boolean useTimestamp, Boolean useNanoseconds, DateTimeFormatter dtf) {
-        super(base, useTimestamp, useNanoseconds, dtf, null);
+    protected OffsetTimeSerializer(OffsetTimeSerializer base, DateTimeFormatter dtf,
+            Boolean useTimestamp, Boolean useNanoseconds) {
+        super(base, dtf, useTimestamp, useNanoseconds, null);
     }
 
     @Override
-    protected OffsetTimeSerializer withFormat(Boolean useTimestamp, DateTimeFormatter dtf, JsonFormat.Shape shape) {
-        return new OffsetTimeSerializer(this, useTimestamp, dtf);
+    protected OffsetTimeSerializer withFormat(DateTimeFormatter dtf,
+            Boolean useTimestamp, JsonFormat.Shape shape) {
+        return new OffsetTimeSerializer(this, dtf, useTimestamp);
     }
 
     @Override
@@ -108,13 +109,13 @@ public class OffsetTimeSerializer extends JSR310FormattedSerializerBase<OffsetTi
         g.writeString(value.getOffset().toString());
     }
     
-    @Override // since 2.9
+    @Override
     protected JsonToken serializationShape(SerializerProvider provider) {
         return useTimestamp(provider) ? JsonToken.START_ARRAY : JsonToken.VALUE_STRING;
     }
 
     @Override
     protected JSR310FormattedSerializerBase<?> withFeatures(Boolean writeZoneId, Boolean writeNanoseconds) {
-        return new OffsetTimeSerializer(this, _useTimestamp, writeNanoseconds, _formatter);
+        return new OffsetTimeSerializer(this, _formatter, _useTimestamp, writeNanoseconds);
     }
 }

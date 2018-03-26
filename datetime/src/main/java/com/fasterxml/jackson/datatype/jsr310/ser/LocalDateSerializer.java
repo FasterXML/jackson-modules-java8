@@ -46,9 +46,9 @@ public class LocalDateSerializer extends JSR310FormattedSerializerBase<LocalDate
         super(LocalDate.class);
     }
 
-    protected LocalDateSerializer(LocalDateSerializer base,
-                                  Boolean useTimestamp, DateTimeFormatter dtf, JsonFormat.Shape shape) {
-        super(base, useTimestamp, dtf, shape);
+    protected LocalDateSerializer(LocalDateSerializer base, DateTimeFormatter dtf,
+            Boolean useTimestamp, JsonFormat.Shape shape) {
+        super(base, dtf, useTimestamp, null, shape);
     }
 
     public LocalDateSerializer(DateTimeFormatter formatter) {
@@ -56,8 +56,9 @@ public class LocalDateSerializer extends JSR310FormattedSerializerBase<LocalDate
     }
 
     @Override
-    protected LocalDateSerializer withFormat(Boolean useTimestamp, DateTimeFormatter dtf, JsonFormat.Shape shape) {
-        return new LocalDateSerializer(this, useTimestamp, dtf, shape);
+    protected LocalDateSerializer withFormat(DateTimeFormatter dtf,
+            Boolean useTimestamp, JsonFormat.Shape shape) {
+        return new LocalDateSerializer(this, dtf, useTimestamp, shape);
     }
 
     @Override

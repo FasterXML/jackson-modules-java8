@@ -26,7 +26,6 @@ import java.time.format.DateTimeFormatter;
  * Serializer for Java 8 temporal {@link Instant}s, {@link OffsetDateTime}, and {@link ZonedDateTime}s.
  *
  * @author Nick Williams
- * @since 2.2
  */
 public class InstantSerializer extends InstantSerializerBase<Instant>
 {
@@ -42,22 +41,23 @@ public class InstantSerializer extends InstantSerializerBase<Instant>
 
     protected InstantSerializer(InstantSerializer base,
             Boolean useTimestamp, DateTimeFormatter formatter) {
-        this(base, useTimestamp, null, formatter);
+        this(base, formatter, useTimestamp, null);
     }
 
-    protected InstantSerializer(InstantSerializer base,
-            Boolean useTimestamp, Boolean useNanoseconds, DateTimeFormatter formatter) {
-        super(base, useTimestamp, useNanoseconds, formatter);
+    protected InstantSerializer(InstantSerializer base, DateTimeFormatter formatter,
+            Boolean useTimestamp, Boolean useNanoseconds) {
+        super(base, formatter, useTimestamp, useNanoseconds);
     }
 
     @Override
-    protected JSR310FormattedSerializerBase<Instant> withFormat(Boolean useTimestamp,
-            DateTimeFormatter formatter, JsonFormat.Shape shape) {
+    protected JSR310FormattedSerializerBase<Instant> withFormat(DateTimeFormatter formatter,
+            Boolean useTimestamp,
+            JsonFormat.Shape shape) {
         return new InstantSerializer(this, useTimestamp, formatter);
     }
 
     @Override
     protected JSR310FormattedSerializerBase<?> withFeatures(Boolean writeZoneId, Boolean writeNanoseconds) {
-        return new InstantSerializer(this, _useTimestamp, writeNanoseconds, _formatter);
+        return new InstantSerializer(this, _formatter, _useTimestamp, writeNanoseconds);
     }
 }

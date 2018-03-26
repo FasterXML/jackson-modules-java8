@@ -63,15 +63,10 @@ public abstract class InstantSerializerBase<T extends Temporal>
     }
 
     protected InstantSerializerBase(InstantSerializerBase<T> base,
-            Boolean useTimestamp, DateTimeFormatter dtf)
+            DateTimeFormatter dtf,
+            Boolean useTimestamp,  Boolean useNanoseconds)
     {
-        this(base, useTimestamp, null, dtf);
-    }
-
-    protected InstantSerializerBase(InstantSerializerBase<T> base,
-            Boolean useTimestamp, Boolean useNanoseconds, DateTimeFormatter dtf)
-    {
-        super(base, useTimestamp, useNanoseconds, dtf, null);
+        super(base, dtf, useTimestamp, useNanoseconds, null);
         defaultFormat = base.defaultFormat;
         getEpochMillis = base.getEpochMillis;
         getEpochSeconds = base.getEpochSeconds;
@@ -79,9 +74,9 @@ public abstract class InstantSerializerBase<T extends Temporal>
     }
 
     @Override
-    protected abstract JSR310FormattedSerializerBase<?> withFormat(
+    protected abstract JSR310FormattedSerializerBase<?> withFormat(DateTimeFormatter dtf,
         Boolean useTimestamp,
-        DateTimeFormatter dtf, JsonFormat.Shape shape);
+        JsonFormat.Shape shape);
 
     @Override
     public void serialize(T value, JsonGenerator generator, SerializerProvider provider) throws IOException
@@ -127,7 +122,7 @@ public abstract class InstantSerializerBase<T extends Temporal>
         }
     }
 
-    @Override // since 2.9
+    @Override
     protected JsonToken serializationShape(SerializerProvider provider) {
         if (useTimestamp(provider)) {
             if (useNanoseconds(provider)) {

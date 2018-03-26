@@ -48,20 +48,18 @@ public class LocalTimeSerializer extends JSR310FormattedSerializerBase<LocalTime
         super(LocalTime.class, formatter);
     }
 
-    protected LocalTimeSerializer(LocalTimeSerializer base, Boolean useTimestamp, DateTimeFormatter formatter) {
-        this(base, useTimestamp, null, formatter);
-    }
-
-    protected LocalTimeSerializer(LocalTimeSerializer base, Boolean useTimestamp, Boolean useNanoseconds, DateTimeFormatter formatter) {
-        super(base, useTimestamp, useNanoseconds, formatter, null);
+    protected LocalTimeSerializer(LocalTimeSerializer base, DateTimeFormatter dtf,
+            Boolean useTimestamp, Boolean useNanoseconds) {
+        super(base, dtf, useTimestamp, useNanoseconds, null);
     }
 
     @Override
-    protected JSR310FormattedSerializerBase<LocalTime> withFormat(Boolean useTimestamp, DateTimeFormatter dtf, JsonFormat.Shape shape) {
-        return new LocalTimeSerializer(this, useTimestamp, dtf);
+    protected JSR310FormattedSerializerBase<LocalTime> withFormat(DateTimeFormatter dtf, 
+            Boolean useTimestamp, JsonFormat.Shape shape) {
+        return new LocalTimeSerializer(this, dtf, useTimestamp, _useNanoseconds);
     }
 
-    // since 2.7: TODO in 2.8; change to use per-type defaulting
+    // since 2.7: TODO in 3.x; change to use per-type defaulting
     protected DateTimeFormatter _defaultFormatter() {
         return DateTimeFormatter.ISO_LOCAL_TIME;
     }
@@ -128,7 +126,8 @@ public class LocalTimeSerializer extends JSR310FormattedSerializerBase<LocalTime
     }
 
     @Override
-    protected JSR310FormattedSerializerBase<?> withFeatures(Boolean writeZoneId, Boolean writeNanoseconds) {
-        return new LocalTimeSerializer(this, _useTimestamp, writeNanoseconds, _formatter);
+    protected JSR310FormattedSerializerBase<?> withFeatures(Boolean writeZoneId, Boolean useNanoseconds) {
+        return new LocalTimeSerializer(this, _formatter,
+                _useTimestamp, useNanoseconds);
     }
 }

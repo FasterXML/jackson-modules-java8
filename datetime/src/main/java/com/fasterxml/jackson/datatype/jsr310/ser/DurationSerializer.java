@@ -48,23 +48,25 @@ public class DurationSerializer extends JSR310FormattedSerializerBase<Duration>
         super(Duration.class);
     }
 
-    protected DurationSerializer(DurationSerializer base,
-            Boolean useTimestamp, DateTimeFormatter dtf) {
-        super(base, useTimestamp, dtf, null);
+    protected DurationSerializer(DurationSerializer base, DateTimeFormatter dtf,
+            Boolean useTimestamp) {
+        super(base, dtf, useTimestamp, null, null);
     }
 
-    protected DurationSerializer(DurationSerializer base,
-            Boolean useTimestamp, Boolean useNanoseconds, DateTimeFormatter dtf) {
-        super(base, useTimestamp, useNanoseconds, dtf, null);
+    protected DurationSerializer(DurationSerializer base, DateTimeFormatter dtf,
+            Boolean useTimestamp, Boolean useNanoseconds) {
+        super(base, dtf, useTimestamp, useNanoseconds, null);
     }
 
     @Override
-    protected DurationSerializer withFormat(Boolean useTimestamp, DateTimeFormatter dtf, JsonFormat.Shape shape) {
-        return new DurationSerializer(this, useTimestamp, dtf);
+    protected DurationSerializer withFormat(DateTimeFormatter dtf,
+            Boolean useTimestamp, JsonFormat.Shape shape) {
+        return new DurationSerializer(this, dtf, useTimestamp);
     }
     
     @Override
-    public void serialize(Duration duration, JsonGenerator generator, SerializerProvider provider) throws IOException
+    public void serialize(Duration duration, JsonGenerator generator,
+            SerializerProvider provider) throws IOException
     {
         if (useTimestamp(provider)) {
             if (useNanoseconds(provider)) {
@@ -95,7 +97,7 @@ public class DurationSerializer extends JSR310FormattedSerializerBase<Duration>
         }
     }
 
-    @Override // since 2.9
+    @Override
     protected JsonToken serializationShape(SerializerProvider provider) {
         if (useTimestamp(provider)) {
             if (useNanoseconds(provider)) {
@@ -108,6 +110,6 @@ public class DurationSerializer extends JSR310FormattedSerializerBase<Duration>
 
     @Override
     protected JSR310FormattedSerializerBase<?> withFeatures(Boolean writeZoneId, Boolean writeNanoseconds) {
-        return new DurationSerializer(this, _useTimestamp, writeNanoseconds, _formatter);
+        return new DurationSerializer(this, _formatter, _useTimestamp, writeNanoseconds);
     }
 }
