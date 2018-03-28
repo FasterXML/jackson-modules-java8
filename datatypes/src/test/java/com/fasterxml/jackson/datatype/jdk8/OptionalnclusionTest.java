@@ -1,5 +1,7 @@
 package com.fasterxml.jackson.datatype.jdk8;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -35,6 +37,15 @@ public class OptionalnclusionTest extends ModuleTestBase
             OptionalGenericData<T> ret = new OptionalGenericData<T>();
             ret.myData = Optional.of(data);
             return ret;
+        }
+    }
+
+    static final class OptMapBean {
+        public Map<String, Optional<?>> values;
+
+        public OptMapBean(String key, Optional<?> v) {
+            values = new LinkedHashMap<>();
+            values.put(key, v);
         }
     }
 
@@ -117,5 +128,20 @@ public class OptionalnclusionTest extends ModuleTestBase
         ObjectMapper mapper = mapperWithModule().setDefaultPropertyInclusion(incl);
         assertEquals("{\"myData\":true}",
                 mapper.writeValueAsString(OptionalGenericData.construct(Boolean.TRUE)));
+    }
+
+    public void testMapElementInclusion() throws Exception
+    {
+        ObjectMapper mapper = mapperWithModule().setDefaultPropertyInclusion(
+                JsonInclude.Value.construct(JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_ABSENT));
+        // first: Absent entry/-ies should NOT be included
+        assertEquals("{\"values\":{}}",
+                mapper.writeValueAsString(new OptMapBean("key", Optional.empty())));
+        // but non-empty should
+        assertEquals("{\"values\":{\"key\":\"value\"}}",
+                mapper.writeValueAsString(new OptMapBean("key", Optional.of("value"))));
+        // and actually even empty
+        assertEquals("{\"values\":{\"key\":\"\"}}",
+                mapper.writeValueAsString(new OptMapBean("key", Optional.of(""))));
     }
 }
