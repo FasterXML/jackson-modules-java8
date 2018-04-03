@@ -209,7 +209,7 @@ public class InstantDeserializer<T extends Temporal>
                         return adjust.apply(value, this.getZone(context));
                     }
                 } catch (DateTimeException e) {
-                    value = _rethrowDateTimeException(parser, context, e, string);
+                    value = _handleDateTimeException(context, e, string);
                 }
                 return value;
             }

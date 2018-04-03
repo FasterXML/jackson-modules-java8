@@ -80,7 +80,7 @@ public class LocalDateDeserializer extends JSR310DateTimeDeserializerBase<LocalD
                 }
                 return LocalDate.parse(string, format);
             } catch (DateTimeException e) {
-                _rethrowDateTimeException(parser, context, e, string);
+                return _handleDateTimeException(context, e, string);
             }
         }
         if (parser.isExpectedStartArrayToken()) {

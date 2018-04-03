@@ -19,7 +19,7 @@ public class ZoneIdKeyDeserializer extends Jsr310KeyDeserializer {
         try {
             return ZoneId.of(key);
         } catch (DateTimeException e) {
-            return _rethrowDateTimeException(ctxt, ZoneId.class, e, key);
+            return _handleDateTimeException(ctxt, ZoneId.class, e, key);
         }
     }
 }
