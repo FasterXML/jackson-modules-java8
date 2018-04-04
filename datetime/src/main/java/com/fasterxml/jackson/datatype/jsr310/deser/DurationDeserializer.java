@@ -80,7 +80,7 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
             case JsonTokenId.ID_START_ARRAY:
             	return _deserializeFromArray(parser, context);
         }
-        return _reportWrongToken(parser, context, JsonToken.VALUE_STRING,
+        return _handleUnexpectedToken(context, parser, JsonToken.VALUE_STRING,
                 JsonToken.VALUE_NUMBER_INT, JsonToken.VALUE_NUMBER_FLOAT);
     }
 }

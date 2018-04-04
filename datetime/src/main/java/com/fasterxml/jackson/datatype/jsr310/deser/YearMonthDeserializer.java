@@ -102,6 +102,6 @@ public class YearMonthDeserializer extends JSR310DateTimeDeserializerBase<YearMo
         if (parser.hasToken(JsonToken.VALUE_EMBEDDED_OBJECT)) {
             return (YearMonth) parser.getEmbeddedObject();
         }
-        return _reportWrongToken(parser, context, JsonToken.VALUE_STRING, JsonToken.START_ARRAY);
+        return _handleUnexpectedToken(context, parser, JsonToken.VALUE_STRING, JsonToken.START_ARRAY);
     }
 }

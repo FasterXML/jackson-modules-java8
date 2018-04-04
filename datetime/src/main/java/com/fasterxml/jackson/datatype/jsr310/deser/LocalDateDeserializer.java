@@ -118,7 +118,6 @@ public class LocalDateDeserializer extends JSR310DateTimeDeserializerBase<LocalD
         if (parser.hasToken(JsonToken.VALUE_NUMBER_INT)) {
             return LocalDate.ofEpochDay(parser.getLongValue());
         }
-        throw context.wrongTokenException(parser, handledType(), JsonToken.VALUE_STRING,
-                "Expected array or string.");
+        return _handleUnexpectedToken(context, parser, "Expected array or string.");
     }
 }

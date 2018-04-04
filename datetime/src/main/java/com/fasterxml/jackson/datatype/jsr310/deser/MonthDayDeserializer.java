@@ -48,6 +48,6 @@ public class MonthDayDeserializer extends JSR310DateTimeDeserializerBase<MonthDa
         if (parser.hasToken(JsonToken.START_ARRAY)){
         	return _deserializeFromArray(parser, context);
     	}
-        return _reportWrongToken(parser, context, JsonToken.VALUE_STRING, JsonToken.VALUE_NUMBER_INT);
+        return _handleUnexpectedToken(context, parser, JsonToken.VALUE_STRING, JsonToken.VALUE_NUMBER_INT);
     }
 }

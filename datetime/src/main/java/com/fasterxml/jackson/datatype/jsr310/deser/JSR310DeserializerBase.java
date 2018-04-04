@@ -18,7 +18,6 @@ package com.fasterxml.jackson.datatype.jsr310.deser;
 
 import java.io.IOException;
 import java.time.DateTimeException;
-import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -91,6 +90,30 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
             }
             throw JsonMappingException.fromUnexpectedIOE(e);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <R> R _handleUnexpectedToken(DeserializationContext context,
+              JsonParser parser, String message, Object... args) throws JsonMappingException {
+        try {
+            return (R) context.handleUnexpectedToken(handledType(), parser.getCurrentToken(),
+                    parser, message, args);
+
+        } catch (JsonMappingException e) {
+            throw e;
+        } catch (IOException e) {
+            throw JsonMappingException.fromUnexpectedIOE(e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <R> R _handleUnexpectedToken(DeserializationContext context,
+              JsonParser parser, JsonToken... expTypes) throws JsonMappingException {
+        return _handleUnexpectedToken(context, parser,
+                "Unexpected token (%s), expected one of %s for %s value",
+                parser.currentToken(),
+                Arrays.asList(expTypes),
+                handledType().getName());
     }
 
     /**
