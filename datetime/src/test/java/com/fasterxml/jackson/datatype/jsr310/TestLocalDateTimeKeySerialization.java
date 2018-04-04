@@ -86,7 +86,7 @@ public class TestLocalDateTimeKeySerialization {
         DeserializationProblemHandler handler = new DeserializationProblemHandler() {
             @Override
             public Object handleWeirdStringValue(DeserializationContext ctxt, Class<?> targetType,
-                                                 String valueToConvert, String failureMsg) throws IOException {
+                   String valueToConvert, String failureMsg) throws IOException {
                 if (LocalDateTime.class == targetType) {
                     if ("now".equals(valueToConvert)) {
                         return now;

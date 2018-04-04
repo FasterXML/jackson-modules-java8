@@ -85,7 +85,7 @@ public class TestLocalDateTimeDeserialization extends ModuleTestBase
         DeserializationProblemHandler handler = new DeserializationProblemHandler() {
             @Override
             public Object handleWeirdStringValue(DeserializationContext ctxt, Class<?> targetType,
-                                                 String valueToConvert, String failureMsg) throws IOException {
+                   String valueToConvert, String failureMsg) throws IOException {
                 if (LocalDateTime.class == targetType) {
                     if ("now".equals(valueToConvert)) {
                         return now;
@@ -105,7 +105,7 @@ public class TestLocalDateTimeDeserialization extends ModuleTestBase
         DeserializationProblemHandler handler = new DeserializationProblemHandler() {
             @Override
             public Object handleUnexpectedToken(DeserializationContext ctxt, Class<?> targetType,
-                                                JsonToken t, JsonParser p, String failureMsg) throws IOException {
+                   JsonToken t, JsonParser p, String failureMsg) throws IOException {
                 if (LocalDateTime.class == targetType) {
                     if (t.isBoolean()) {
                         return now;
