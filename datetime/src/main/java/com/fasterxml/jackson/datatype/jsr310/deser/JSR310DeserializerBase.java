@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.deser.std.StdScalarDeserializer;
 import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
+import com.fasterxml.jackson.databind.util.ClassUtil;
 
 /**
  * Base class that indicates that all JSR310 datatypes are deserialized from scalar JSON types.
@@ -96,9 +97,8 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
     protected <R> R _handleUnexpectedToken(DeserializationContext context,
               JsonParser parser, String message, Object... args) throws JsonMappingException {
         try {
-            return (R) context.handleUnexpectedToken(handledType(), parser.getCurrentToken(),
+            return (R) context.handleUnexpectedToken(handledType(), parser.currentToken(),
                     parser, message, args);
-
         } catch (JsonMappingException e) {
             throw e;
         } catch (IOException e) {
@@ -106,14 +106,13 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
         }
     }
 
-    @SuppressWarnings("unchecked")
     protected <R> R _handleUnexpectedToken(DeserializationContext context,
               JsonParser parser, JsonToken... expTypes) throws JsonMappingException {
         return _handleUnexpectedToken(context, parser,
                 "Unexpected token (%s), expected one of %s for %s value",
                 parser.currentToken(),
                 Arrays.asList(expTypes),
-                handledType().getName());
+                ClassUtil.nameOf(handledType()));
     }
 
     /**

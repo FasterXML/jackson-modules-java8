@@ -6,6 +6,7 @@ import java.time.DateTimeException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.KeyDeserializer;
+import com.fasterxml.jackson.databind.util.ClassUtil;
 import com.fasterxml.jackson.datatype.jsr310.ser.key.Jsr310NullKeySerializer;
 
 abstract class Jsr310KeyDeserializer extends KeyDeserializer {
@@ -31,7 +32,9 @@ abstract class Jsr310KeyDeserializer extends KeyDeserializer {
         try {
             return (T) ctxt.handleWeirdKey(type, value,
                     "Failed to deserialize %s: (%s) %s",
-                    type.getName(), e0.getClass().getName(), e0.getMessage());
+                    ClassUtil.nameOf(type),
+                    e0.getClass().getName(),
+                    e0.getMessage());
 
         } catch (JsonMappingException e) {
             e.initCause(e0);

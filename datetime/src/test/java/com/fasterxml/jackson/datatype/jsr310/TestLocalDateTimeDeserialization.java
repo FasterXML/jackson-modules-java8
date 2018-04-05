@@ -13,7 +13,6 @@ import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeParseException;
@@ -94,7 +93,9 @@ public class TestLocalDateTimeDeserialization extends ModuleTestBase
                 return NOT_HANDLED;
             }
         };
-        ObjectMapper mapper = newMapper().addHandler(handler);
+        ObjectMapper mapper = newMapperBuilder()
+                .addHandler(handler)
+                .build();
         assertEquals(now, mapper.readValue(quote("now"), LocalDateTime.class));
     }
 
@@ -114,7 +115,9 @@ public class TestLocalDateTimeDeserialization extends ModuleTestBase
                 return NOT_HANDLED;
             }
         };
-        ObjectMapper mapper = newMapper().addHandler(handler);
+        ObjectMapper mapper = newMapperBuilder()
+                .addHandler(handler)
+                .build();
         assertEquals(now, mapper.readValue("true", LocalDateTime.class));
     }
 
