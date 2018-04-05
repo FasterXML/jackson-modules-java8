@@ -2,7 +2,6 @@ package com.fasterxml.jackson.datatype.jsr310.deser.key;
 
 import java.io.IOException;
 import java.time.DateTimeException;
-import java.time.format.DateTimeParseException;
 
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -30,7 +29,7 @@ abstract class Jsr310KeyDeserializer extends KeyDeserializer {
               Class<?> type, DateTimeException e0, String value) throws IOException
     {
         try {
-            return (T) ctxt.handleWeirdStringValue(type, value,
+            return (T) ctxt.handleWeirdKey(type, value,
                     "Failed to deserialize %s: (%s) %s",
                     type.getName(), e0.getClass().getName(), e0.getMessage());
 
