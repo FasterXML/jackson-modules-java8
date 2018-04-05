@@ -14,7 +14,12 @@ Modules:
   now included directly in `jackson-databind`
 - Remove legacy `JSR310Module`
 
-2.9.5 (not yet releaed)
+2.9.6 (not yet released)
+
+#65: Use `DeserializationContext.handleWeirdXxxValue()` for datetime deserializers
+ (contributed by Semyon L)
+
+2.9.5 (26-Mar-2018)
 
 #98: `OffsetDateTime` with `@JsonFormat(without=...)` doesn't seem to work
  (reported by ayush-veem@github)

@@ -18,7 +18,6 @@ package com.fasterxml.jackson.datatype.jsr310.deser;
 
 import java.io.IOException;
 import java.time.DateTimeException;
-import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -38,7 +37,7 @@ import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
 abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
 {
     private static final long serialVersionUID = 1L;
-    
+
     protected JSR310DeserializerBase(Class<T> supportedType)
     {
         super(supportedType);
@@ -73,35 +72,55 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
                 handledType().getName());
     }
 
-    protected <BOGUS> BOGUS _rethrowDateTimeException(JsonParser p, DeserializationContext context,
-            DateTimeException e0, String value) throws JsonMappingException
+    @SuppressWarnings("unchecked")
+    protected <R> R _handleDateTimeException(DeserializationContext context,
+              DateTimeException e0, String value) throws JsonMappingException
     {
-        JsonMappingException e;
-        if (e0 instanceof DateTimeParseException) {
-            e = context.weirdStringException(value, handledType(), e0.getMessage());
+        try {
+            return (R) context.handleWeirdStringValue(handledType(), value,
+                    "Failed to deserialize %s: (%s) %s",
+                    handledType().getName(), e0.getClass().getName(), e0.getMessage());
+
+        } catch (JsonMappingException e) {
             e.initCause(e0);
             throw e;
-        }
-        if (e0 instanceof DateTimeException) {
-            String msg = e0.getMessage();
-            // 26-Mar-2017, tatu: Let's add some more logic to try to find likely format(ting)
-            //   issues
-            if (msg.contains("invalid format")) {
-                e = context.weirdStringException(value, handledType(), e0.getMessage());
+        } catch (IOException e) {
+            if (null == e.getCause()) {
                 e.initCause(e0);
-                throw e;
             }
+            throw JsonMappingException.fromUnexpectedIOE(e);
         }
-        return context.reportInputMismatch(handledType(),
-                "Failed to deserialize %s: (%s) %s",
-                handledType().getName(), e0.getClass().getName(), e0.getMessage());
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <R> R _handleUnexpectedToken(DeserializationContext context,
+              JsonParser parser, String message, Object... args) throws JsonMappingException {
+        try {
+            return (R) context.handleUnexpectedToken(handledType(), parser.getCurrentToken(),
+                    parser, message, args);
+
+        } catch (JsonMappingException e) {
+            throw e;
+        } catch (IOException e) {
+            throw JsonMappingException.fromUnexpectedIOE(e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <R> R _handleUnexpectedToken(DeserializationContext context,
+              JsonParser parser, JsonToken... expTypes) throws JsonMappingException {
+        return _handleUnexpectedToken(context, parser,
+                "Unexpected token (%s), expected one of %s for %s value",
+                parser.currentToken(),
+                Arrays.asList(expTypes),
+                handledType().getName());
     }
 
     /**
      * Helper method used to peel off spurious wrappings of DateTimeException
      *
      * @param e DateTimeException to peel
-     * 
+     *
      * @return DateTimeException that does not have another DateTimeException as its cause.
      */
     protected DateTimeException _peelDTE(DateTimeException e) {

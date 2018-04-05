@@ -19,7 +19,7 @@ public class DurationKeyDeserializer extends Jsr310KeyDeserializer {
         try {
             return Duration.parse(key);
         } catch (DateTimeException e) {
-            return _rethrowDateTimeException(ctxt, Duration.class, e, key);
+            return _handleDateTimeException(ctxt, Duration.class, e, key);
         }
     }
 }

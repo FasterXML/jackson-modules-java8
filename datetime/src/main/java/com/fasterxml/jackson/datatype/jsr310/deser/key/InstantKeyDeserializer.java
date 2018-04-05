@@ -20,7 +20,7 @@ public class InstantKeyDeserializer extends Jsr310KeyDeserializer {
         try {
             return DateTimeFormatter.ISO_INSTANT.parse(key, Instant::from);
         } catch (DateTimeException e) {
-            return _rethrowDateTimeException(ctxt, Instant.class, e, key);
+            return _handleDateTimeException(ctxt, Instant.class, e, key);
         }
     }
 }

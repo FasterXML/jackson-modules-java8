@@ -27,3 +27,8 @@ KP Moresmau (JPMoresmau@github)
 Julien Bouyoud (jBouyoud@github)
   #3: (datatype) Add Serialization Support for Streams
    (2.9.0)
+
+Semyon Levin (remal@github)
+  #65: Use `DeserializationContext.handleWeirdXxxValue()` for datetime deserializers
+   (2.9.6)
+

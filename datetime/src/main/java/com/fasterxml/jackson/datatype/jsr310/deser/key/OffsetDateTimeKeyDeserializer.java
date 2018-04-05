@@ -20,7 +20,7 @@ public class OffsetDateTimeKeyDeserializer extends Jsr310KeyDeserializer {
         try {
             return OffsetDateTime.parse(key, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
         } catch (DateTimeException e) {
-            return _rethrowDateTimeException(ctxt, OffsetDateTime.class, e, key);
+            return _handleDateTimeException(ctxt, OffsetDateTime.class, e, key);
         }
     }
 }

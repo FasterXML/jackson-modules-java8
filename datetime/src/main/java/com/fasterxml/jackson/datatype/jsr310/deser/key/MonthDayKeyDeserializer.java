@@ -32,7 +32,7 @@ public class MonthDayKeyDeserializer extends Jsr310KeyDeserializer {
         try {
             return MonthDay.parse(key, PARSER);
         } catch (DateTimeException e) {
-            return _rethrowDateTimeException(ctxt, MonthDay.class, e, key);
+            return _handleDateTimeException(ctxt, MonthDay.class, e, key);
         }
     }
 }

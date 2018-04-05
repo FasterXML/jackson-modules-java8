@@ -209,7 +209,7 @@ public class InstantDeserializer<T extends Temporal>
                         return adjust.apply(value, this.getZone(context));
                     }
                 } catch (DateTimeException e) {
-                    value = _rethrowDateTimeException(parser, context, e, string);
+                    value = _handleDateTimeException(context, e, string);
                 }
                 return value;
             }
@@ -222,7 +222,7 @@ public class InstantDeserializer<T extends Temporal>
             case JsonTokenId.ID_START_ARRAY:
             	return _deserializeFromArray(parser, context);
         }
-        return _reportWrongToken(parser, context, JsonToken.VALUE_STRING,
+        return _handleUnexpectedToken(context, parser, JsonToken.VALUE_STRING,
                 JsonToken.VALUE_NUMBER_INT, JsonToken.VALUE_NUMBER_FLOAT);
     }
 

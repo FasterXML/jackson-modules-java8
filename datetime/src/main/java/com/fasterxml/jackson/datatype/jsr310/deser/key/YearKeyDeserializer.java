@@ -31,7 +31,7 @@ public class YearKeyDeserializer extends Jsr310KeyDeserializer {
         try {
             return Year.parse(key, FORMATTER);
         } catch (DateTimeException e) {
-            return _rethrowDateTimeException(ctxt, Year.class, e, key);
+            return _handleDateTimeException(ctxt, Year.class, e, key);
         }
     }
 }
