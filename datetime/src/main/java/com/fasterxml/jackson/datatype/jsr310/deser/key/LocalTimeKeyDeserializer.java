@@ -20,7 +20,7 @@ public class LocalTimeKeyDeserializer extends Jsr310KeyDeserializer {
         try {
             return LocalTime.parse(key, DateTimeFormatter.ISO_LOCAL_TIME);
         } catch (DateTimeException e) {
-            return _rethrowDateTimeException(ctxt, LocalTime.class, e, key);
+            return _handleDateTimeException(ctxt, LocalTime.class, e, key);
         }
     }
 

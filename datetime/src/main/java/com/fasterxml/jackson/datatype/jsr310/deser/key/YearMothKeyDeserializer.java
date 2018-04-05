@@ -32,7 +32,7 @@ public class YearMothKeyDeserializer extends Jsr310KeyDeserializer {
         try {
             return YearMonth.parse(key, FORMATTER);
         } catch (DateTimeException e) {
-            return _rethrowDateTimeException(ctxt, YearMonth.class, e, key);
+            return _handleDateTimeException(ctxt, YearMonth.class, e, key);
         }
     }
 }

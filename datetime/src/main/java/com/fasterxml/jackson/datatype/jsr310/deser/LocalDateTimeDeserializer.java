@@ -81,7 +81,7 @@ public class LocalDateTimeDeserializer
 
                 return LocalDateTime.parse(string, _formatter);
             } catch (DateTimeException e) {
-                _rethrowDateTimeException(parser, context, e, string);
+                return _handleDateTimeException(context, e, string);
             }
         }
         if (parser.isExpectedStartArrayToken()) {
@@ -138,7 +138,6 @@ public class LocalDateTimeDeserializer
         if (parser.hasToken(JsonToken.VALUE_NUMBER_INT)) {
             _throwNoNumericTimestampNeedTimeZone(parser, context);
         }
-        throw context.wrongTokenException(parser, handledType(), JsonToken.VALUE_STRING,
-                "Expected array or string.");
+        return _handleUnexpectedToken(context, parser, "Expected array or string.");
     }
 }

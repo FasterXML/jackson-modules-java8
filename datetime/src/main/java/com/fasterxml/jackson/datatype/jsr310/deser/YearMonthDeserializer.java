@@ -66,7 +66,7 @@ public class YearMonthDeserializer extends JSR310DateTimeDeserializerBase<YearMo
             try {
                 return YearMonth.parse(string, _formatter);
             } catch (DateTimeException e) {
-                _rethrowDateTimeException(parser, context, e, string);
+                return _handleDateTimeException(context, e, string);
             }
         }
         if (parser.isExpectedStartArrayToken()) {
@@ -102,6 +102,6 @@ public class YearMonthDeserializer extends JSR310DateTimeDeserializerBase<YearMo
         if (parser.hasToken(JsonToken.VALUE_EMBEDDED_OBJECT)) {
             return (YearMonth) parser.getEmbeddedObject();
         }
-        return _reportWrongToken(parser, context, JsonToken.VALUE_STRING, JsonToken.START_ARRAY);
+        return _handleUnexpectedToken(context, parser, JsonToken.VALUE_STRING, JsonToken.START_ARRAY);
     }
 }

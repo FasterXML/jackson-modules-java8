@@ -39,7 +39,7 @@ public class MonthDayDeserializer extends JSR310DateTimeDeserializerBase<MonthDa
                 }
                 return MonthDay.parse(string, _formatter);
             } catch (DateTimeException e) {
-                _rethrowDateTimeException(parser, context, e, string);
+                return _handleDateTimeException(context, e, string);
             }
         }
         if (parser.hasToken(JsonToken.VALUE_EMBEDDED_OBJECT)) {
@@ -48,6 +48,6 @@ public class MonthDayDeserializer extends JSR310DateTimeDeserializerBase<MonthDa
         if (parser.hasToken(JsonToken.START_ARRAY)){
         	return _deserializeFromArray(parser, context);
     	}
-        return _reportWrongToken(parser, context, JsonToken.VALUE_STRING, JsonToken.VALUE_NUMBER_INT);
+        return _handleUnexpectedToken(context, parser, JsonToken.VALUE_STRING, JsonToken.VALUE_NUMBER_INT);
     }
 }
