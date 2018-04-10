@@ -114,23 +114,6 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
     }
 
     /**
-     * Helper method that may be called to check whether String value might be
-     * empty String, and if so whether it is allowed to be returned as `null`.
-     *
-     * @since 3.0
-     */
-    protected <R> R _handleEmptyStringScalar(DeserializationContext context)
-        throws IOException
-    {
-        return null;
-        /*
-        return (R) context.handleWeirdStringValue(handledType(), "",
-    "Failed to deserialize %s from empty String (enable `DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT` to allow)",
-                    ClassUtil.nameOf(handledType()));
-                    */
-    }
-
-    /**
      * Helper method used to peel off spurious wrappings of DateTimeException
      *
      * @param e DateTimeException to peel

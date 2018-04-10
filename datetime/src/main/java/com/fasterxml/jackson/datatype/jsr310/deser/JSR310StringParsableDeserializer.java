@@ -76,7 +76,7 @@ public class JSR310StringParsableDeserializer
         if (parser.hasToken(JsonToken.VALUE_STRING)) {
             String string = parser.getText().trim();
             if (string.isEmpty()) {
-                return _handleEmptyStringScalar(context);
+                return _coerceEmptyString(context, false);
             }
             try {
                 switch (_valueType) {

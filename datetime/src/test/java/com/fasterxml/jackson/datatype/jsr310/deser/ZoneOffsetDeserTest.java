@@ -22,8 +22,11 @@ import java.time.ZoneOffset;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
@@ -36,16 +39,12 @@ public class ZoneOffsetDeserTest extends ModuleTestBase
     @Test
     public void testSimpleZoneOffsetDeser() throws Exception
     {
-        ZoneOffset value;
-        
-        value = MAPPER.readValue("\"Z\"", ZoneOffset.class);
-        assertEquals("The value is not correct.", ZoneOffset.of("Z"), value);
-
-        value = MAPPER.readValue("\"+0300\"", ZoneOffset.class);
-        assertEquals("The value is not correct.", ZoneOffset.of("+0300"), value);
-
-        value = MAPPER.readValue("\"-06:30\"", ZoneOffset.class);
-        assertEquals("The value is not correct.", ZoneOffset.of("-0630"), value);
+        assertEquals("The value is not correct.", ZoneOffset.of("Z"),
+                MAPPER.readValue("\"Z\"", ZoneOffset.class));
+        assertEquals("The value is not correct.", ZoneOffset.of("+0300"),
+                MAPPER.readValue("\"+0300\"", ZoneOffset.class));
+        assertEquals("The value is not correct.", ZoneOffset.of("-0630"),
+                MAPPER.readValue("\"-06:30\"", ZoneOffset.class));
     }
 
     @Test
@@ -53,6 +52,17 @@ public class ZoneOffsetDeserTest extends ModuleTestBase
     {
         // by default, should be fine
         assertNull(MAPPER.readValue(quote("  "), ZoneOffset.class));
+        // but fail if coercion illegal
+        try {
+            MAPPER.readerFor(ZoneOffset.class)
+                .without(DeserializationFeature.ALLOW_COERCION_OF_SCALARS)
+                .readValue(quote(" "));
+            fail("Should not pass");
+        } catch (MismatchedInputException e) {
+            verifyException(e, "Cannot coerce");
+            verifyException(e, ZoneOffset.class.getName());
+            verifyException(e, "enable `DeserializationFeature.ALLOW_COERCION_OF_SCALARS`");
+        }
     }
     
     @Test
