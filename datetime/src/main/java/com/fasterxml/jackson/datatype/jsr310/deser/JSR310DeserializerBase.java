@@ -22,9 +22,8 @@ import java.util.Arrays;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonMappingException;
+
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.deser.std.StdScalarDeserializer;
 import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
 import com.fasterxml.jackson.databind.util.ClassUtil;
@@ -57,7 +56,7 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
     {
         context.reportWrongTokenException((JsonDeserializer<?>)this, exp,
                 "Expected %s for '%s' of %s value",
-                        exp.name(), unit, handledType().getName());
+                        exp.name(), unit, ClassUtil.nameOf(handledType()));
         return null;
     }
 
@@ -80,8 +79,7 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
         try {
             return (R) context.handleWeirdStringValue(handledType(), value,
                     "Failed to deserialize %s: (%s) %s",
-                    handledType().getName(), e0.getClass().getName(), e0.getMessage());
-
+                    ClassUtil.nameOf(handledType()), e0.getClass().getName(), e0.getMessage());
         } catch (JsonMappingException e) {
             e.initCause(e0);
             throw e;
@@ -113,6 +111,23 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
                 parser.currentToken(),
                 Arrays.asList(expTypes),
                 ClassUtil.nameOf(handledType()));
+    }
+
+    /**
+     * Helper method that may be called to check whether String value might be
+     * empty String, and if so whether it is allowed to be returned as `null`.
+     *
+     * @since 3.0
+     */
+    protected <R> R _handleEmptyStringScalar(DeserializationContext context)
+        throws IOException
+    {
+        return null;
+        /*
+        return (R) context.handleWeirdStringValue(handledType(), "",
+    "Failed to deserialize %s from empty String (enable `DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT` to allow)",
+                    ClassUtil.nameOf(handledType()));
+                    */
     }
 
     /**

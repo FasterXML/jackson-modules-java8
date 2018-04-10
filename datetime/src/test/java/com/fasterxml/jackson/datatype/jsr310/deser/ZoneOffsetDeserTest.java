@@ -20,6 +20,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,28 +34,29 @@ public class ZoneOffsetDeserTest extends ModuleTestBase
     private final ObjectMapper MAPPER = newMapper();
 
     @Test
-    public void testDeserialization01() throws Exception
+    public void testSimpleZoneOffsetDeser() throws Exception
     {
-        ZoneOffset value = MAPPER.readValue("\"Z\"", ZoneOffset.class);
+        ZoneOffset value;
+        
+        value = MAPPER.readValue("\"Z\"", ZoneOffset.class);
         assertEquals("The value is not correct.", ZoneOffset.of("Z"), value);
-    }
 
-    @Test
-    public void testDeserialization02() throws Exception
-    {
-        ZoneOffset value = MAPPER.readValue("\"+0300\"", ZoneOffset.class);
+        value = MAPPER.readValue("\"+0300\"", ZoneOffset.class);
         assertEquals("The value is not correct.", ZoneOffset.of("+0300"), value);
-    }
 
-    @Test
-    public void testDeserialization03() throws Exception
-    {
-        ZoneOffset value = MAPPER.readValue("\"-06:30\"", ZoneOffset.class);
+        value = MAPPER.readValue("\"-06:30\"", ZoneOffset.class);
         assertEquals("The value is not correct.", ZoneOffset.of("-0630"), value);
     }
 
     @Test
-    public void testDeserializationWithTypeInfo03() throws Exception
+    public void testZoneOffsetDeserFromEmpty() throws Exception
+    {
+        // by default, should be fine
+        assertNull(MAPPER.readValue(quote("  "), ZoneOffset.class));
+    }
+    
+    @Test
+    public void testPolymorphicZoneOffsetDeser() throws Exception
     {
         ObjectMapper mapper = newMapperBuilder()
             .addMixIn(ZoneId.class, MockObjectConfiguration.class)

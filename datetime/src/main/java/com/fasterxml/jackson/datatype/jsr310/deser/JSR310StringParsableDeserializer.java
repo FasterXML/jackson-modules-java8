@@ -25,6 +25,7 @@ import java.time.ZoneOffset;
 import com.fasterxml.jackson.core.JsonParser;
 
 import com.fasterxml.jackson.core.JsonToken;
+
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
@@ -36,8 +37,6 @@ import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
  *
  * @author Nick Williams
  * @author Tatu Saloranta
- *
- * @since 2.2
  */
 public class JSR310StringParsableDeserializer
     extends JSR310DeserializerBase<Object>
@@ -76,8 +75,8 @@ public class JSR310StringParsableDeserializer
     {
         if (parser.hasToken(JsonToken.VALUE_STRING)) {
             String string = parser.getText().trim();
-            if (string.length() == 0) {
-                return null;
+            if (string.isEmpty()) {
+                return _handleEmptyStringScalar(context);
             }
             try {
                 switch (_valueType) {
@@ -109,9 +108,8 @@ public class JSR310StringParsableDeserializer
             TypeDeserializer deserializer)
         throws IOException
     {
-        /* This is a nasty kludge right here, working around issues like
-         * [datatype-jsr310#24]. But should work better than not having the work-around.
-         */
+        // This is a nasty kludge right here, working around issues like
+        // [datatype-jsr310#24]. But should work better than not having the work-around.
         JsonToken t = parser.currentToken();
         if ((t != null) && t.isScalarValue()) {
             return deserialize(parser, context);

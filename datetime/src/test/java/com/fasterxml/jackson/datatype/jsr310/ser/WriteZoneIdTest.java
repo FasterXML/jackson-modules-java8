@@ -1,11 +1,15 @@
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
+import static org.junit.Assert.assertEquals;
+
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
 import org.junit.Assert;
@@ -13,6 +17,8 @@ import org.junit.Test;
 
 public class WriteZoneIdTest extends ModuleTestBase
 {
+    private final ObjectMapper MAPPER = newMapper();
+
     static class DummyClassWithDate {
         @JsonFormat(shape = JsonFormat.Shape.STRING,
                 pattern = "dd-MM-yyyy hh:mm:ss Z",
@@ -27,9 +33,36 @@ public class WriteZoneIdTest extends ModuleTestBase
     }
 
     @Test
+    public void testSerialization01() throws Exception
+    {
+        ZoneId id = ZoneId.of("America/Chicago");
+        String value = MAPPER.writeValueAsString(id);
+        assertEquals("The value is not correct.", "\"America/Chicago\"", value);
+    }
+    
+    @Test
+    public void testSerialization02() throws Exception
+    {
+        ZoneId id = ZoneId.of("America/Anchorage");
+        String value = MAPPER.writeValueAsString(id);
+        assertEquals("The value is not correct.", "\"America/Anchorage\"", value);
+    }
+    
+    @Test
+    public void testSerializationWithTypeInfo01() throws Exception
+    {
+        ZoneId id = ZoneId.of("America/Denver");
+        ObjectMapper mapper = ObjectMapper.builder()
+                .addMixIn(ZoneId.class, MockObjectConfiguration.class)
+                .addModule(new JavaTimeModule())
+                .build();
+        String value = mapper.writeValueAsString(id);
+        assertEquals("The value is not correct.", "[\"java.time.ZoneRegion\",\"America/Denver\"]", value);
+    }
+
+    @Test
     public void testJacksonAnnotatedPOJOWithDateWithTimezoneToJson() throws Exception
     {
-        ObjectMapper mapper = newMapper();
         String ZONE_ID_STR = "Asia/Krasnoyarsk";
         final ZoneId ZONE_ID = ZoneId.of(ZONE_ID_STR);
 
@@ -37,7 +70,7 @@ public class WriteZoneIdTest extends ModuleTestBase
 
         // 30-Jun-2016, tatu: Exact time seems to vary a bit based on DST, so let's actually
         //    just verify appending of timezone id itself:
-        String json = mapper.writeValueAsString(input);
+        String json = MAPPER.writeValueAsString(input);
         if (!json.contains("\"1970-01-01T")) {
             Assert.fail("Should contain time prefix, did not: "+json);
         }
