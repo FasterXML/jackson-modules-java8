@@ -19,7 +19,7 @@ abstract class JSR310SerializerBase<T> extends StdSerializer<T>
     private static final long serialVersionUID = 1L;
 
     protected JSR310SerializerBase(Class<?> supportedType) {
-        super(supportedType, false);
+        super(supportedType);
     }
 
     @Override
@@ -36,8 +36,6 @@ abstract class JSR310SerializerBase<T> extends StdSerializer<T>
      * Overridable helper method used from {@link #serializeWithType}, to indicate
      * shape of value during serialization; needed to know how type id is to be
      * serialized.
-     *
-     * @since 2.9
      */
     protected abstract JsonToken serializationShape(SerializerProvider provider);
 }
