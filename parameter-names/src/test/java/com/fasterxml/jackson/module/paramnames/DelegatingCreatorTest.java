@@ -12,7 +12,7 @@ import java.util.*;
 
 import static org.assertj.core.api.BDDAssertions.*;
 
-public class DelegatingCreatorTest
+public class DelegatingCreatorTest extends ModuleTestBase
 {
     static class ClassWithDelegatingCreator {
         private final String value;
@@ -55,44 +55,38 @@ public class DelegatingCreatorTest
         }
    }
 
-    
-	@Test
-	public void shouldNotOverrideJsonCreatorAnnotationWithSpecifiedMode() throws IOException {
+   @Test
+   public void shouldNotOverrideJsonCreatorAnnotationWithSpecifiedMode() throws IOException {
+        // given
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
 
-		// given
-		ObjectMapper objectMapper = new ObjectMapper();
-		objectMapper.registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
+        // when
+        ClassWithDelegatingCreator actual = objectMapper.readValue("{\"value\":\"aValue\"}",
+                ClassWithDelegatingCreator.class);
 
-		// when
-		ClassWithDelegatingCreator actual = objectMapper.readValue("{\"value\":\"aValue\"}",
-		        ClassWithDelegatingCreator.class);
+        // then
+        Map<String, String> props = new HashMap<>();
+        props.put("value", "aValue");
+        ClassWithDelegatingCreator expected = new ClassWithDelegatingCreator(props);
+        then(actual).isEqualToComparingFieldByField(expected);
+    }
 
-		// then
-		Map<String, String> props = new HashMap<>();
-		props.put("value", "aValue");
-		ClassWithDelegatingCreator expected = new ClassWithDelegatingCreator(props);
-		then(actual).isEqualToComparingFieldByField(expected);
-	}
+    @Test
+    public void shouldDeserializeIntWrapper() throws Exception {
+        ObjectMapper mapper = newMapper();
 
-	@Test
-	public void shouldDeserializeIntWrapper() throws Exception {
-		ObjectMapper mapper = new ObjectMapper();
+        IntWrapper actual = mapper.readValue
+                ("{\"value\":13}", IntWrapper.class);
+        then(actual).isEqualToComparingFieldByField(new IntWrapper(13));
+    }
 
-		mapper.registerModule(new ParameterNamesModule());
+    @Test
+    public void shouldDeserializeGenericWrapper() throws Exception {
+        ObjectMapper mapper = newMapper();
 
-		IntWrapper actual = mapper.readValue
-				("{\"value\":13}", IntWrapper.class);
-		then(actual).isEqualToComparingFieldByField(new IntWrapper(13));
-	}
-
-	@Test
-	public void shouldDeserializeGenericWrapper() throws Exception {
-		ObjectMapper mapper = new ObjectMapper();
-
-		mapper.registerModule(new ParameterNamesModule());
-
-		GenericWrapper<String> actual = mapper.readValue
-				("{\"value\":\"aValue\"}", new TypeReference<GenericWrapper<String>>() { });
-		then(actual).isEqualToComparingFieldByField(new GenericWrapper<>("aValue"));
-	}
+        GenericWrapper<String> actual = mapper.readValue
+                ("{\"value\":\"aValue\"}", new TypeReference<GenericWrapper<String>>() { });
+        then(actual).isEqualToComparingFieldByField(new GenericWrapper<>("aValue"));
+    }
 }

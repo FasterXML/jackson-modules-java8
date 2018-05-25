@@ -32,3 +32,7 @@ Semyon Levin (remal@github)
   #65: Use `DeserializationContext.handleWeirdXxxValue()` for datetime deserializers
    (2.9.6)
 
+Sonny Gill (sonnygill@github)
+  #67: `ParameterNamesModule` does not deserialize with a single parameter
+    constructor when using `SnakeCase` `PropertyNamingStrategy`
+   (2.9.6)
