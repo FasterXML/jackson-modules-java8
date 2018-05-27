@@ -171,6 +171,10 @@ abstract class JSR310FormattedSerializerBase<T>
         }
     }
 
+    protected SerializationFeature getTimestampsFeature() {
+        return SerializationFeature.WRITE_DATES_AS_TIMESTAMPS;
+    }
+
     protected boolean useTimestamp(SerializerProvider provider) {
         if (_useTimestamp != null) {
             return _useTimestamp.booleanValue();
@@ -184,7 +188,7 @@ abstract class JSR310FormattedSerializerBase<T>
             }
         }
         // assume that explicit formatter definition implies use of textual format
-        return _formatter == null && provider.isEnabled(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return _formatter == null && provider.isEnabled(getTimestampsFeature());
     }
 
     protected boolean _useTimestampExplicitOnly(SerializerProvider provider) {
