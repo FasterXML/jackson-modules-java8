@@ -55,6 +55,10 @@ To include modules, you use some or all of:
 and either include versions directly, OR, preferably, import
 [Jackson BOM](../../../jackson-bom) that will specify consistent version set.
 
+Note that the parent project -- `jackson-modules-java8` -- is ONLY used as parent pom by
+individual "child" modules, and DOES NOT have dependencies on them. This means that you should not depend on it
+as that will not include child modules.
+
 ### Registering modules
 
 ```java
