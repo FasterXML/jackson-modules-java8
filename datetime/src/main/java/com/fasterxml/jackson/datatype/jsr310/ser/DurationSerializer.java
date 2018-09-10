@@ -22,6 +22,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonIntegerFormatVisitor;
@@ -63,7 +64,12 @@ public class DurationSerializer extends JSR310FormattedSerializerBase<Duration>
             Boolean useTimestamp, JsonFormat.Shape shape) {
         return new DurationSerializer(this, dtf, useTimestamp);
     }
-    
+
+    @Override
+    protected SerializationFeature getTimestampsFeature() {
+        return SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS;
+    }
+
     @Override
     public void serialize(Duration duration, JsonGenerator generator,
             SerializerProvider provider) throws IOException

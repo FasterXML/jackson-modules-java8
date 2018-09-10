@@ -92,7 +92,7 @@ public class TestDurationSerialization extends ModuleTestBase
     {
         Duration duration = Duration.ofSeconds(60L, 0);
         String value = WRITER
-                .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .without(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
                 .writeValueAsString(duration);
 
         assertNotNull("The value should not be null.", value);
@@ -104,7 +104,7 @@ public class TestDurationSerialization extends ModuleTestBase
     {
         Duration duration = Duration.ofSeconds(13498L, 8374);
         String value = WRITER
-                .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .without(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
                 .writeValueAsString(duration);
 
         assertNotNull("The value should not be null.", value);
@@ -147,7 +147,7 @@ public class TestDurationSerialization extends ModuleTestBase
     public void testSerializationWithTypeInfo03() throws Exception
     {
         ObjectMapper mapper = newMapperBuilder()
-                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .disable(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
                 .addMixIn(TemporalAmount.class, MockObjectConfiguration.class)
                 .build();
         Duration duration = Duration.ofSeconds(13498L, 8374);
