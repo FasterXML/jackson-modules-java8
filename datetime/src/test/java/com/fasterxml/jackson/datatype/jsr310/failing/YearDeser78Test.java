@@ -14,11 +14,12 @@
  * limitations under the license.
  */
 
-package com.fasterxml.jackson.datatype.jsr310.deser;
+package com.fasterxml.jackson.datatype.jsr310.failing;
 
 import java.time.Year;
 import java.time.temporal.Temporal;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
@@ -28,26 +29,28 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class YearDeserTest extends ModuleTestBase
+public class YearDeser78Test extends ModuleTestBase
 {
-    private final ObjectMapper MAPPER = newMapper();
+    // [module-java8#78]
+    final static class ObjectTest {
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "'Y'yyyy")
+        public Year value;
 
-    @Test
-    public void testDefaultDeserialization() throws Exception
-    {
-        Year value = MAPPER.readValue("1986", Year.class);
-        assertEquals("The value is not correct.", Year.of(1986), value);
-        value = MAPPER.readValue("2013", Year.class);
-        assertEquals("The value is not correct.", Year.of(2013), value);
+        public ObjectTest(Year y) {
+            value = y;
+        }
     }
 
+    private final ObjectMapper MAPPER = newMapper();
+
+    // [module-java8#78]
     @Test
-    public void testDeserializationWithTypeInfo() throws Exception
+    public void testWithCustomFormat() throws Exception
     {
-        ObjectMapper mapper = newMapper()
-                .addMixIn(Temporal.class, MockObjectConfiguration.class);
-        Temporal value = mapper.readValue("[\"" + Year.class.getName() + "\",2005]", Temporal.class);
-        assertTrue("The value should be a Year.", value instanceof Year);
-        assertEquals("The value is not correct.", Year.of(2005), value);
+        ObjectTest input = new ObjectTest(Year.of(2018));
+        String json = MAPPER.writeValueAsString(input);
+        assertEquals("{\"customYear\":\"Y2018\"}", json);
+        ObjectTest result = MAPPER.readValue(json, ObjectTest.class);
+        assertEquals(input, result);
     }
 }
