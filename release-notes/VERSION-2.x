@@ -8,6 +8,8 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
+2.9.7 (not yet released)
+
 2.9.6 (12-Jun-2018)
 
 #65: Use `DeserializationContext.handleWeirdXxxValue()` for datetime deserializers
