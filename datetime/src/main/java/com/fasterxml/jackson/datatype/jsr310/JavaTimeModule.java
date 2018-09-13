@@ -88,15 +88,18 @@ import com.fasterxml.jackson.datatype.jsr310.ser.key.ZonedDateTimeKeySerializer;
  * </pre>
  *<p>
  * Note that as of 2.x, if auto-registering modules, this package will register
- * legacy version, {@link JSR310Module}, and NOT this module. 3.x will change the efaults.
+ * legacy version, {@link JSR310Module}, and NOT this module. 3.x will change the default.
  * Legacy version has the same functionality, but slightly different default configuration:
  * see {@link com.fasterxml.jackson.datatype.jsr310.JSR310Module} for details.
  *<p>
  * Most {@code java.time} types are serialized as numbers (integers or decimals as appropriate) if the
- * {@link com.fasterxml.jackson.databind.SerializationFeature#WRITE_DATES_AS_TIMESTAMPS} feature is enabled, and otherwise are serialized in
- * standard <a href="http://en.wikipedia.org/wiki/ISO_8601" target="_blank">ISO-8601</a> string representation. ISO-8601 specifies formats
- * for representing offset dates and times, zoned dates and times, local dates and times, periods, durations, zones, and more. All
- * {@code java.time} types have built-in translation to and from ISO-8601 formats.
+ * {@link com.fasterxml.jackson.databind.SerializationFeature#WRITE_DATES_AS_TIMESTAMPS} feature is enabled
+ * (or, for {@link Duration}, {@link com.fasterxml.jackson.databind.SerializationFeature#WRITE_DURATIONS_AS_TIMESTAMPS}),
+ * and otherwise are serialized in standard
+ * <a href="http://en.wikipedia.org/wiki/ISO_8601" target="_blank">ISO-8601</a> string representation.
+ * ISO-8601 specifies formats for representing offset dates and times, zoned dates and times,
+ * local dates and times, periods, durations, zones, and more. All {@code java.time} types
+ * have built-in translation to and from ISO-8601 formats.
  * <p>
  * Granularity of timestamps is controlled through the companion features
  * {@link com.fasterxml.jackson.databind.SerializationFeature#WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS} and
@@ -155,7 +158,6 @@ public final class JavaTimeModule extends SimpleModule
         addDeserializer(ZoneId.class, JSR310StringParsableDeserializer.ZONE_ID);
         addDeserializer(ZoneOffset.class, JSR310StringParsableDeserializer.ZONE_OFFSET);
 
-        
         // then serializers:
         addSerializer(Duration.class, DurationSerializer.INSTANCE);
         addSerializer(Instant.class, InstantSerializer.INSTANCE);

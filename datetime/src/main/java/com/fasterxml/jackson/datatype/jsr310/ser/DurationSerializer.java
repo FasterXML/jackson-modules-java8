@@ -20,8 +20,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonIntegerFormatVisitor;
@@ -34,6 +36,11 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * Serializer for Java 8 temporal {@link Duration}s.
+ *<p>
+ * NOTE: since 2.10, {@link SerializationFeature#WRITE_DURATIONS_AS_TIMESTAMPS}
+ * determines global default used for determining if serialization should use
+ * numeric (timestamps) or textual representation. Before this,
+ * {@link SerializationFeature#WRITE_DATES_AS_TIMESTAMPS} was used.
  *
  * @author Nick Williams
  * @since 2.2
@@ -62,7 +69,13 @@ public class DurationSerializer extends JSR310FormattedSerializerBase<Duration>
     protected DurationSerializer withFormat(Boolean useTimestamp, DateTimeFormatter dtf, JsonFormat.Shape shape) {
         return new DurationSerializer(this, useTimestamp, dtf);
     }
-    
+
+    // @since 2.10
+    @Override
+    protected SerializationFeature getTimestampsFeature() {
+        return SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS;
+    }
+
     @Override
     public void serialize(Duration duration, JsonGenerator generator, SerializerProvider provider) throws IOException
     {
