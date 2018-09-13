@@ -36,3 +36,8 @@ Sonny Gill (sonnygill@github)
   #67: `ParameterNamesModule` does not deserialize with a single parameter
     constructor when using `SnakeCase` `PropertyNamingStrategy`
    (2.9.6)
+
+Kezhu Wang (kezhuw@github)
+  #75: Use `SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS` for configuring
+    `Duration` serialization
+   (2.10.0)

@@ -171,6 +171,20 @@ abstract class JSR310FormattedSerializerBase<T>
         }
     }
 
+    /**
+     * Overridable method that determines {@link SerializationFeature} that is used as
+     * the global default in determining if date/time value serialized should use numeric
+     * format ("timestamp") or not.
+     *<p>
+     * Note that this feature is just the baseline setting and may be overridden on per-type
+     * or per-property basis.
+     *
+     * @since 2.10
+     */
+    protected SerializationFeature getTimestampsFeature() {
+        return SerializationFeature.WRITE_DATES_AS_TIMESTAMPS;
+    }
+
     protected boolean useTimestamp(SerializerProvider provider) {
         if (_useTimestamp != null) {
             return _useTimestamp.booleanValue();
@@ -184,7 +198,7 @@ abstract class JSR310FormattedSerializerBase<T>
             }
         }
         // assume that explicit formatter definition implies use of textual format
-        return _formatter == null && provider.isEnabled(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return (_formatter == null) && provider.isEnabled(getTimestampsFeature());
     }
 
     protected boolean _useTimestampExplicitOnly(SerializerProvider provider) {
