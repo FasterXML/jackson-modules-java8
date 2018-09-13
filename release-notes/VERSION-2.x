@@ -8,6 +8,12 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
+2.10.0 (not yet released)
+
+#75: Use `SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS` for configuring
+ `Duration` serialization
+ (suggested by Kezhu W)
+
 2.9.7 (not yet released)
 
 2.9.6 (12-Jun-2018)
