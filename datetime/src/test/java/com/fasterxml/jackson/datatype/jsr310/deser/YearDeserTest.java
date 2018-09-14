@@ -19,6 +19,7 @@ package com.fasterxml.jackson.datatype.jsr310.deser;
 import java.time.Year;
 import java.time.temporal.Temporal;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
@@ -49,5 +50,25 @@ public class YearDeserTest extends ModuleTestBase
         Temporal value = mapper.readValue("[\"" + Year.class.getName() + "\",2005]", Temporal.class);
         assertTrue("The value should be a Year.", value instanceof Year);
         assertEquals("The value is not correct.", Year.of(2005), value);
+    }
+
+    @Test
+    public void testWithCustomFormat() throws Exception
+    {
+        FormattedYear input = new FormattedYear(Year.of(2018));
+        String json = MAPPER.writeValueAsString(input);
+        assertEquals("{\"value\":\"Y2018\"}", json);
+        FormattedYear result = MAPPER.readValue(json, FormattedYear.class);
+        assertEquals(input.value, result.value);
+    }
+
+    final static class FormattedYear {
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "'Y'yyyy")
+        public Year value;
+
+        public FormattedYear() {}
+        public FormattedYear(Year year) {
+            value = year;
+        }
     }
 }
