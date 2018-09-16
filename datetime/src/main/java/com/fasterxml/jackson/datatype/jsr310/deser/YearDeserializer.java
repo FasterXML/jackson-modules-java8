@@ -25,10 +25,6 @@ import java.io.IOException;
 import java.time.DateTimeException;
 import java.time.Year;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.format.SignStyle;
-
-import static java.time.temporal.ChronoField.YEAR;
 
 /**
  * Deserializer for Java 8 temporal {@link Year}s.
@@ -40,14 +36,11 @@ public class YearDeserializer extends JSR310DateTimeDeserializerBase<Year>
 {
     private static final long serialVersionUID = 1L;
 
-    private static final DateTimeFormatter DEFAULT_FORMATTER = new DateTimeFormatterBuilder()
-            .appendValue(YEAR, 4, 10, SignStyle.EXCEEDS_PAD).toFormatter();
-
     public static final YearDeserializer INSTANCE = new YearDeserializer();
 
     private YearDeserializer()
     {
-        this(DEFAULT_FORMATTER);
+        this(null);
     }
 
     public YearDeserializer(DateTimeFormatter formatter) {
