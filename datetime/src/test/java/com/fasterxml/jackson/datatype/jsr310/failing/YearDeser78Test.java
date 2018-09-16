@@ -17,17 +17,14 @@
 package com.fasterxml.jackson.datatype.jsr310.failing;
 
 import java.time.Year;
-import java.time.temporal.Temporal;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class YearDeser78Test extends ModuleTestBase
 {
@@ -36,6 +33,7 @@ public class YearDeser78Test extends ModuleTestBase
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "'Y'yyyy")
         public Year value;
 
+        protected ObjectTest() { }
         public ObjectTest(Year y) {
             value = y;
         }
@@ -49,7 +47,7 @@ public class YearDeser78Test extends ModuleTestBase
     {
         ObjectTest input = new ObjectTest(Year.of(2018));
         String json = MAPPER.writeValueAsString(input);
-        assertEquals("{\"customYear\":\"Y2018\"}", json);
+        assertEquals("{\"value\":\"Y2018\"}", json);
         ObjectTest result = MAPPER.readValue(json, ObjectTest.class);
         assertEquals(input, result);
     }
