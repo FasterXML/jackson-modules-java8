@@ -32,22 +32,16 @@ public class YearSerTest extends ModuleTestBase
     private final ObjectMapper MAPPER = newMapper();
 
     @Test
-    public void testSerialization01() throws Exception
+    public void testDefaultSerialization() throws Exception
     {
-        Year year = Year.of(1986);
-        String value = MAPPER.writeValueAsString(year);
-        assertEquals("The value is not correct.", "1986", value);
-    }
-
-    @Test
-    public void testSerialization02() throws Exception
-    {
+        assertEquals("The value is not correct.", "1986",
+                MAPPER.writeValueAsString(Year.of(1986)));
         assertEquals("The value is not correct.", "2013",
                 MAPPER.writeValueAsString(Year.of(2013)));
     }
 
     @Test
-    public void testSerializationWithTypeInfo01() throws Exception
+    public void testSerializationWithTypeInfo() throws Exception
     {
         ObjectMapper mapper = newMapperBuilder()
                 .addMixIn(Temporal.class, MockObjectConfiguration.class)

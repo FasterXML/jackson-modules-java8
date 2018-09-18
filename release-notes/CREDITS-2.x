@@ -41,3 +41,8 @@ Kezhu Wang (kezhuw@github)
   #75: Use `SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS` for configuring
     `Duration` serialization
    (2.10.0)
+
+Adrian Palanques (devdevx@github)
+  #78: Year deserialization ignores `@JsonFormat` pattern
+   (2.9.7)
+

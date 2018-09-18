@@ -19,6 +19,7 @@ package com.fasterxml.jackson.datatype.jsr310.deser;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
 
 import java.io.IOException;
 import java.time.DateTimeException;
@@ -31,13 +32,11 @@ import java.time.format.DateTimeFormatter;
  * @author Nick Williams
  * @since 2.2
  */
-public class YearDeserializer extends JSR310DeserializerBase<Year>
+public class YearDeserializer extends JSR310DateTimeDeserializerBase<Year>
 {
     private static final long serialVersionUID = 1L;
 
     public static final YearDeserializer INSTANCE = new YearDeserializer();
-
-    private final DateTimeFormatter _formatter;
 
     private YearDeserializer()
     {
@@ -45,8 +44,12 @@ public class YearDeserializer extends JSR310DeserializerBase<Year>
     }
 
     public YearDeserializer(DateTimeFormatter formatter) {
-        super(Year.class);
-        _formatter = formatter;
+        super(Year.class, formatter);
+    }
+
+    @Override
+    protected JsonDeserializer<Year> withDateFormat(DateTimeFormatter dtf) {
+        return new YearDeserializer(dtf);
     }
 
     @Override
