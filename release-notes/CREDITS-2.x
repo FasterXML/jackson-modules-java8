@@ -36,3 +36,7 @@ Sonny Gill (sonnygill@github)
   #67: `ParameterNamesModule` does not deserialize with a single parameter
     constructor when using `SnakeCase` `PropertyNamingStrategy`
    (2.9.6)
+
+Adrian Palanques (devdevx@github)
+  #78: Year deserialization ignores `@JsonFormat` pattern
+   (2.9.7)
