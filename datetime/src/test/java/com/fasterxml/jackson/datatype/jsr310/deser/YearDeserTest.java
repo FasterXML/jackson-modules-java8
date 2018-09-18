@@ -76,9 +76,10 @@ public class YearDeserTest extends ModuleTestBase
     @Test
     public void testWithFormatViaConfigOverride() throws Exception
     {
-        ObjectMapper mapper = newMapper();
-        mapper.configOverride(Year.class)
-                .setFormat(JsonFormat.Value.forPattern("'X'yyyy"));
+        ObjectMapper mapper = newMapperBuilder()
+                .withConfigOverride(Year.class,
+                        vc -> vc.setFormat((JsonFormat.Value.forPattern("'X'yyyy"))))
+                .build();
         Year input = Year.of(2018);
         String json = mapper.writeValueAsString(input);
         assertEquals("\"X2018\"", json);
