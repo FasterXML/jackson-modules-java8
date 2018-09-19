@@ -8,7 +8,7 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
-2.9.7 (not yet released)
+2.9.7 (19-Sep-2018)
 
 #78: Year deserialization ignores `@JsonFormat` pattern
  (reported, fixed by Adrian P)
