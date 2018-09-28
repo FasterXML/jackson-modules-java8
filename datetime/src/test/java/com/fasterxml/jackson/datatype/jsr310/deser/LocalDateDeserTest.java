@@ -1,5 +1,10 @@
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Month;
@@ -7,13 +12,12 @@ import java.time.format.DateTimeParseException;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
-
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Feature;
+import com.fasterxml.jackson.annotation.JsonFormat.Value;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
@@ -38,7 +42,7 @@ public class LocalDateDeserTest extends ModuleTestBase
     public void testDeserializationAsArrayDisabled() throws Throwable
     {
         try {
-            read("['2000-01-01']");
+            read(READER, "['2000-01-01']");
             fail("expected MismatchedInputException");
         } catch (MismatchedInputException e) {
             verifyException(e, "Unexpected token (VALUE_STRING) within Array");
@@ -49,9 +53,57 @@ public class LocalDateDeserTest extends ModuleTestBase
     public void testDeserializationAsEmptyArrayDisabled() throws Throwable
     {
         // works even without the feature enabled
-        assertNull(read("[]"));
+        assertNull(read(READER, "[]"));
     }
 
+    @Test
+    public void testDeserializationCaseInsensitiveEnabledOnValue() throws Throwable
+    {
+        ObjectMapper mapper = newMapper();
+        Value format = JsonFormat.Value
+        		.forPattern("dd-MMM-yyyy")
+        		.withFeature(Feature.ACCEPT_CASE_INSENSITIVE_VALUES);
+        mapper.configOverride(LocalDate.class).setFormat(format);
+        ObjectReader reader = mapper.readerFor(LocalDate.class);
+        String[] jsons = new String[] {"'01-Jan-2000'","'01-JAN-2000'", "'01-jan-2000'"};
+        for(String json : jsons) {
+            expectSuccess(reader, LocalDate.of(2000, Month.JANUARY, 1), json);
+        }
+    }
+    
+    @Test
+    public void testDeserializationCaseInsensitiveEnabled() throws Throwable
+    {
+        ObjectMapper mapper = newMapper().configure(DeserializationFeature.ACCEPT_CASE_INSENSITIVE_VALUES, true);
+        mapper.configOverride(LocalDate.class).setFormat(JsonFormat.Value.forPattern("dd-MMM-yyyy"));
+        ObjectReader reader = mapper.readerFor(LocalDate.class);
+        String[] jsons = new String[] {"'01-Jan-2000'","'01-JAN-2000'", "'01-jan-2000'"};
+        for(String json : jsons) {
+            expectSuccess(reader, LocalDate.of(2000, Month.JANUARY, 1), json);
+        }
+    }
+    
+    @Test
+    public void testDeserializationCaseInsensitiveDisabled() throws Throwable
+    {
+        ObjectMapper mapper = newMapper().configure(DeserializationFeature.ACCEPT_CASE_INSENSITIVE_VALUES, false);
+        mapper.configOverride(LocalDate.class).setFormat(JsonFormat.Value.forPattern("dd-MMM-yyyy"));
+        ObjectReader reader = mapper.readerFor(LocalDate.class);
+        expectSuccess(reader, LocalDate.of(2000, Month.JANUARY, 1), "'01-Jan-2000'");
+    }
+    
+    @Test
+    public void testDeserializationCaseInsensitiveDisabled_InvalidDate() throws Throwable
+    {
+        ObjectMapper mapper = newMapper().configure(DeserializationFeature.ACCEPT_CASE_INSENSITIVE_VALUES, false);
+        mapper.configOverride(LocalDate.class).setFormat(JsonFormat.Value.forPattern("dd-MMM-yyyy"));
+        ObjectReader reader = mapper.readerFor(LocalDate.class);
+        String[] jsons = new String[] {"'01-JAN-2000'", "'01-jan-2000'"};
+        for(String json : jsons) {
+        	expectFailure(reader, json);
+        }
+    }
+    
     @Test
     public void testDeserializationAsArrayEnabled() throws Throwable
     {
@@ -75,8 +127,12 @@ public class LocalDateDeserTest extends ModuleTestBase
     }
 
     private void expectFailure(String json) throws Throwable {
+    	expectFailure(READER, json);
+    }
+    
+    private void expectFailure(ObjectReader reader, String json) throws Throwable {
         try {
-            read(json);
+            read(reader, json);
             fail("expected DateTimeParseException");
         } catch (JsonProcessingException e) {
             if (e.getCause() == null) {
@@ -91,13 +147,16 @@ public class LocalDateDeserTest extends ModuleTestBase
     }
 
     private void expectSuccess(Object exp, String json) throws IOException {
-        final LocalDate value = read(json);
+    	expectSuccess(READER, exp, json);
+    }
+    private void expectSuccess(ObjectReader reader, Object exp, String json) throws IOException {
+        final LocalDate value = read(reader, json);
         notNull(value);
         expect(exp, value);
     }
 
-    private LocalDate read(final String json) throws IOException {
-        return READER.readValue(aposToQuotes(json));
+    private LocalDate read(ObjectReader reader, final String json) throws IOException {
+        return reader.readValue(aposToQuotes(json));
     }
 
     private static void notNull(Object value) {
