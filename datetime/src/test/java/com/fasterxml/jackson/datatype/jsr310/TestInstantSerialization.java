@@ -17,6 +17,7 @@
 package com.fasterxml.jackson.datatype.jsr310;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -375,6 +376,61 @@ public class TestInstantSerialization extends ModuleTestBase
         assertTrue("The value should be an Instant.", value instanceof Instant);
         assertEquals("The value is not correct.", date, value);
     }
+
+    /**
+     * This should be within the range of a max Instant and should pass
+     * @throws Exception
+     */
+    @Test(timeout=3000)
+    public void testDeserializationWithTypeInfo05() throws Exception
+    {
+        Instant date = Instant.MAX;
+        String customInstant = date.getEpochSecond() +"."+ date.getNano();
+        ObjectMapper m = newMapper()
+                .addMixIn(Temporal.class, MockObjectConfiguration.class);
+        Temporal value = m.readValue(
+                "[\"" + Instant.class.getName() + "\","+customInstant+"]", Temporal.class
+        );
+        assertTrue("The value should be an Instant.", value instanceof Instant);
+        assertEquals("The value is not correct.", date, value);
+    }
+
+    /**
+     * This test can potentially hang the VM, so exit if it doesn't finish
+     * within a few seconds.
+     *
+     * @throws Exception
+     */
+    @Test(timeout=3000, expected = JsonParseException.class)
+    public void testDeserializationWithTypeInfoAndStringTooLarge01() throws Exception
+    {
+        String customInstant = "1000000000000e1000000000000";
+        ObjectMapper m = newMapper()
+                .addMixIn(Temporal.class, MockObjectConfiguration.class);
+        m.readValue(
+                "[\"" + Instant.class.getName() + "\","+customInstant+"]", Temporal.class
+        );
+    }
+
+    /**
+     * This test can potentially hang the VM, so exit if it doesn't finish
+     * within a few seconds.
+     *
+     * @throws Exception
+     */
+    @Test(timeout=3000, expected = JsonParseException.class)
+    public void testDeserializationWithTypeInfoAndStringTooLarge02() throws Exception
+    {
+        Instant date = Instant.MAX;
+        // Add in an few extra zeros to be longer than what an epoch should be
+        String customInstant = date.getEpochSecond() +"0000000000000000."+ date.getNano();
+        ObjectMapper m = newMapper()
+                .addMixIn(Temporal.class, MockObjectConfiguration.class);
+        m.readValue(
+                "[\"" + Instant.class.getName() + "\","+customInstant+"]", Temporal.class
+        );
+    }
+
 
     @Test
     public void testCustomPatternWithAnnotations01() throws Exception

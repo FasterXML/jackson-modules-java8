@@ -16,6 +16,7 @@
 
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.JsonTokenId;
@@ -40,6 +41,11 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
 
     public static final DurationDeserializer INSTANCE = new DurationDeserializer();
 
+    private static final BigDecimal INSTANT_MAX = new BigDecimal(
+            java.time.Instant.MAX.getEpochSecond() + "." + java.time.Instant.MAX.getNano());
+    private static final BigDecimal INSTANT_MIN = new BigDecimal(
+            java.time.Instant.MIN.getEpochSecond() + "." + java.time.Instant.MIN.getNano());
+
     private DurationDeserializer()
     {
         super(Duration.class);
@@ -52,6 +58,13 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
         {
             case JsonTokenId.ID_NUMBER_FLOAT:
                 BigDecimal value = parser.getDecimalValue();
+                // If the decimal isnt within the bounds of a float, bail out
+                if(value.compareTo(INSTANT_MAX) > 0 ||
+                        value.compareTo(INSTANT_MIN) < 0) {
+                    throw new JsonParseException(context.getParser(),
+                            "Value of Float too large to be converted to Duration");
+                }
+
                 long seconds = value.longValue();
                 int nanoseconds = DecimalUtils.extractNanosecondDecimal(value, seconds);
                 return Duration.ofSeconds(seconds, nanoseconds);
