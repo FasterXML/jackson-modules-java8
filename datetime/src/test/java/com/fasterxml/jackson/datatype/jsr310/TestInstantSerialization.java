@@ -429,8 +429,25 @@ public class TestInstantSerialization extends ModuleTestBase
         m.readValue(
                 "[\"" + Instant.class.getName() + "\","+customInstant+"]", Temporal.class
         );
+        System.out.println("test");
     }
 
+    /**
+     * This test can potentially hang the VM, so exit if it doesn't finish
+     * within a few seconds.
+     *
+     * @throws Exception
+     */
+    @Test(timeout=13000, expected = JsonParseException.class)
+    public void testDeserializationWithTypeInfoAndStringTooFractional01() throws Exception
+    {
+        String customInstant = "1e-100000000000";
+        ObjectMapper m = newMapper()
+                .addMixIn(Temporal.class, MockObjectConfiguration.class);
+        m.readValue(
+                "[\"" + Instant.class.getName() + "\","+customInstant+"]", Temporal.class
+        );
+    }
 
     @Test
     public void testCustomPatternWithAnnotations01() throws Exception
