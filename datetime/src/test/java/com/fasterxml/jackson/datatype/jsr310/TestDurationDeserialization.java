@@ -1,9 +1,10 @@
 package com.fasterxml.jackson.datatype.jsr310;
 
+import java.math.BigInteger;
+import java.time.DateTimeException;
 import java.time.Duration;
 import java.time.temporal.TemporalAmount;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -53,19 +54,6 @@ public class TestDurationDeserialization extends ModuleTestBase
         assertEquals("The value is not correct.", Duration.ofSeconds(13498L, 8374), value);
     }
 
-    /**
-     * This test can potentially hang the VM, so exit if it doesn't finish
-     * within a few seconds.
-     * @throws Exception
-     */
-    @Test(timeout=3000, expected = JsonParseException.class)
-    public void testDeserializationAsFloatWhereStringTooLarge() throws Exception
-    {
-        String customDuration = "1000000000e1000000000";
-        READER.without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
-                .readValue(customDuration);
-    }
-
     @Test
     public void testDeserializationAsFloat04() throws Exception
     {
@@ -73,6 +61,27 @@ public class TestDurationDeserialization extends ModuleTestBase
                 .readValue("13498.000008374");
         assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.", Duration.ofSeconds(13498L, 8374), value);
+    }
+
+    @Test(expected = DateTimeException.class)
+    public void testDeserializationAsFloat05() throws Exception
+    {
+        String customInstant = new BigInteger(Long.toString(Long.MAX_VALUE)).add(BigInteger.ONE) + ".0";
+        READER.without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .readValue(customInstant);
+    }
+
+    /**
+     * This test can potentially hang the VM, so exit if it doesn't finish
+     * within a few seconds.
+     * @throws Exception
+     */
+    @Test(timeout=3000, expected = DateTimeException.class)
+    public void testDeserializationAsFloatWhereStringTooLarge() throws Exception
+    {
+        String customDuration = "1000000000e1000000000";
+        READER.without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .readValue(customDuration);
     }
 
     @Test

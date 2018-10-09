@@ -285,13 +285,13 @@ public class InstantDeserializer<T extends Temporal>
                 timestamp, this.getZone(context)));
     }
     
-    protected T _fromDecimal(DeserializationContext context, BigDecimal value) throws JsonParseException
+    protected T _fromDecimal(DeserializationContext context, BigDecimal value)
     {
         // If the decimal isnt within the bounds of an Instant, bail out
         if(value.compareTo(INSTANT_MAX) > 0 ||
                 value.compareTo(INSTANT_MIN) < 0) {
-            throw new JsonParseException(context.getParser(),
-                    "Value of String too large to be converted to Instant");
+            throw new DateTimeException(
+                    "Instant exceeds minimum or maximum instant");
         }
 
         long seconds = value.longValue();

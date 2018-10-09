@@ -23,11 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.junit.Test;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
@@ -418,7 +414,7 @@ public class TestInstantSerialization extends ModuleTestBase
      *
      * @throws Exception
      */
-    @Test(timeout=3000, expected = JsonParseException.class)
+    @Test(timeout=3000, expected = DateTimeException.class)
     public void testDeserializationWithTypeInfoAndStringTooLarge02() throws Exception
     {
         Instant date = Instant.MAX;
