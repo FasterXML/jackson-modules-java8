@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.junit.Test;
 
+import java.time.DateTimeException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -231,6 +232,120 @@ public class TestInstantSerialization extends ModuleTestBase
                 );
         assertEquals("The value is not correct.", date, value);
     }
+
+    /**
+     * Test the upper-bound of Instant.
+     */
+    @Test
+    public void testDeserializationAsFloatEdgeCase01() throws Exception
+    {
+        String input = Instant.MAX.getEpochSecond() + ".999999999";
+        Instant value = MAPPER.readValue(input, Instant.class);
+        assertEquals(value, Instant.MAX);
+        assertEquals(Instant.MAX.getEpochSecond(), value.getEpochSecond());
+        assertEquals(999999999, value.getNano());
+    }
+
+    /**
+     * Test the lower-bound of Instant.
+     */
+    @Test
+    public void testDeserializationAsFloatEdgeCase02() throws Exception
+    {
+        String input = Instant.MIN.getEpochSecond() + ".0";
+        Instant value = MAPPER.readValue(input, Instant.class);
+        assertEquals(value, Instant.MIN);
+        assertEquals(Instant.MIN.getEpochSecond(), value.getEpochSecond());
+        assertEquals(0, value.getNano());
+    }
+
+    @Test(expected = DateTimeException.class)
+    public void testDeserializationAsFloatEdgeCase03() throws Exception
+    {
+        // Instant can't go this low
+        String input = Instant.MIN.getEpochSecond() + ".1";
+        MAPPER.readValue(input, Instant.class);
+    }
+
+    /*
+     * InstantDeserializer currently uses BigDecimal.longValue() which has surprising behavior
+     * for numbers outside the range of Long.  Numbers less than 1e64 will result in the lower 64 bits.
+     * Numbers at or above 1e64 will always result in zero.
+     */
+
+    @Test(expected = DateTimeException.class)
+    public void testDeserializationAsFloatEdgeCase04() throws Exception
+    {
+        // 1ns beyond the upper-bound of Instant.
+        String input = (Instant.MAX.getEpochSecond() + 1) + ".0";
+        MAPPER.readValue(input, Instant.class);
+    }
+
+    @Test(expected = DateTimeException.class)
+    public void testDeserializationAsFloatEdgeCase05() throws Exception
+    {
+        // 1ns beyond the lower-bound of Instant.
+        String input = (Instant.MIN.getEpochSecond() - 1) + ".0";
+        MAPPER.readValue(input, Instant.class);
+    }
+
+    @Test
+    public void testDeserializationAsFloatEdgeCase06() throws Exception
+    {
+        // Into the positive zone where everything becomes zero.
+        String input = "1e64";
+        Instant value = MAPPER.readValue(input, Instant.class);
+        assertEquals(0, value.getEpochSecond());
+    }
+
+    @Test
+    public void testDeserializationAsFloatEdgeCase07() throws Exception
+    {
+        // Into the negative zone where everything becomes zero.
+        String input = "-1e64";
+        Instant value = MAPPER.readValue(input, Instant.class);
+        assertEquals(0, value.getEpochSecond());
+    }
+
+    /**
+     * Numbers with very large exponents can take a long time, but still result in zero.
+     * https://github.com/FasterXML/jackson-databind/issues/2141
+     */
+    @Test
+    public void testDeserializationAsFloatEdgeCase08() throws Exception
+    {
+        String input = "1e10000000";
+        Instant value = MAPPER.readValue(input, Instant.class);
+        assertEquals(0, value.getEpochSecond());
+    }
+
+    @Test
+    public void testDeserializationAsFloatEdgeCase09() throws Exception
+    {
+        String input = "-1e10000000";
+        Instant value = MAPPER.readValue(input, Instant.class);
+        assertEquals(0, value.getEpochSecond());
+    }
+
+    /**
+     * Same for large negative exponents.
+     */
+    @Test
+    public void testDeserializationAsFloatEdgeCase10() throws Exception
+    {
+        String input = "1e-10000000";
+        Instant value = MAPPER.readValue(input, Instant.class);
+        assertEquals(0, value.getEpochSecond());
+    }
+
+    @Test
+    public void testDeserializationAsFloatEdgeCase11() throws Exception
+    {
+        String input = "-1e-10000000";
+        Instant value = MAPPER.readValue(input, Instant.class);
+        assertEquals(0, value.getEpochSecond());
+    }
+
 
     @Test
     public void testDeserializationAsInt01Nanoseconds() throws Exception
