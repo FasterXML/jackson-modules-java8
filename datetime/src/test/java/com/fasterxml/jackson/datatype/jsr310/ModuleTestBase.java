@@ -5,6 +5,7 @@ import java.util.TimeZone;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.cfg.MapperBuilder;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 
 public class ModuleTestBase
 {
@@ -18,12 +19,12 @@ public class ModuleTestBase
     }
 
     protected static MapperBuilder<?,?> newMapperBuilder() {
-        return ObjectMapper.builder()
+        return JsonMapper.builder()
                 .addModule(new JavaTimeModule());
     }
 
     protected static MapperBuilder<?,?> newMapperBuilder(TimeZone tz) {
-        return ObjectMapper.builder()
+        return JsonMapper.builder()
                 .defaultTimeZone(tz)
                 .addModule(new JavaTimeModule());
     }

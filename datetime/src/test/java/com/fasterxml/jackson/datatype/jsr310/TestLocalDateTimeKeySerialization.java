@@ -28,9 +28,7 @@ public class TestLocalDateTimeKeySerialization
     private static final LocalDateTime DATE_TIME = LocalDateTime.of(2015, 3, 14, 9, 26, 53, 590 * 1000 * 1000);
     private static final String DATE_TIME_STRING = "2015-03-14T09:26:53.590";
 
-    private final ObjectMapper om = ObjectMapper.builder()
-                .addModule(new JavaTimeModule())
-                .build();
+    private final ObjectMapper om = newMapper();
 
     @Test
     public void testSerialization0() throws Exception {

@@ -23,20 +23,15 @@ import java.time.Period;
 import java.time.temporal.TemporalAmount;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Before;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+
 import org.junit.Test;
 
 public class TestPeriodSerialization
 {
-    private ObjectMapper MAPPER;
-
-    @Before
-    public void setUp()
-    {
-        MAPPER = ObjectMapper.builder()
+    private final ObjectMapper MAPPER = JsonMapper.builder()
                 .addModule(new JavaTimeModule())
                 .build();
-    }
 
     @Test
     public void testSerialization01() throws Exception
@@ -58,8 +53,7 @@ public class TestPeriodSerialization
     public void testSerializationWithTypeInfo01() throws Exception
     {
         Period period = Period.of(5, 1, 12);
-        ObjectMapper mapper = ObjectMapper.builder()
-                .addModule(new JavaTimeModule())
+        ObjectMapper mapper = MAPPER.rebuild()
                 .addMixIn(TemporalAmount.class, MockObjectConfiguration.class)
                 .build();
         String value = mapper.writeValueAsString(period);
@@ -87,7 +81,7 @@ public class TestPeriodSerialization
     public void testDeserializationWithTypeInfo01() throws Exception
     {
         Period period = Period.of(5, 1, 12);
-        ObjectMapper mapper = ObjectMapper.builder()
+        ObjectMapper mapper = JsonMapper.builder()
                 .addModule(new JavaTimeModule())
                 .addMixIn(TemporalAmount.class, MockObjectConfiguration.class)
                 .build();

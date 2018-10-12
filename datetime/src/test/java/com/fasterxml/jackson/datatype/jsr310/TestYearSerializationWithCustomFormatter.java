@@ -4,6 +4,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.YearDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.YearSerializer;
@@ -33,7 +34,7 @@ public class TestYearSerializationWithCustomFormatter {
     }
 
     private String serializeWith(Year dateTime, DateTimeFormatter f) throws Exception {
-        ObjectMapper mapper = ObjectMapper.builder()
+        ObjectMapper mapper = JsonMapper.builder()
                 .addModule(new SimpleModule()
                         .addSerializer(new YearSerializer(f)))
                 .build();
@@ -47,7 +48,7 @@ public class TestYearSerializationWithCustomFormatter {
     }
 
     private Year deserializeWith(String json, DateTimeFormatter f) throws Exception {
-        ObjectMapper mapper = ObjectMapper.builder()
+        ObjectMapper mapper = JsonMapper.builder()
                 .addModule(new SimpleModule()
                         .addDeserializer(Year.class, new YearDeserializer(f)))
                 .build();

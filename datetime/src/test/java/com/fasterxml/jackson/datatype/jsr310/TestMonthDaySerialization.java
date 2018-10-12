@@ -26,6 +26,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -45,7 +46,7 @@ public class TestMonthDaySerialization
     @Before
     public void setUp()
     {
-        MAPPER = ObjectMapper.builder()
+        MAPPER = JsonMapper.builder()
                 .addModule(new JavaTimeModule())
                 .build();
     }
@@ -73,7 +74,7 @@ public class TestMonthDaySerialization
     @Test
     public void testSerializationWithTypeInfo01() throws Exception
     {
-        final ObjectMapper mapper = ObjectMapper.builder()
+        final ObjectMapper mapper = JsonMapper.builder()
                 .addModule(new JavaTimeModule())
                 .addMixIn(TemporalAccessor.class, MockObjectConfiguration.class)
                 .build();
@@ -105,7 +106,7 @@ public class TestMonthDaySerialization
     @Test
     public void testDeserializationWithTypeInfo01() throws Exception
     {
-        final ObjectMapper mapper = ObjectMapper.builder()
+        final ObjectMapper mapper = JsonMapper.builder()
                 .addModule(new JavaTimeModule())
                 .addMixIn(TemporalAccessor.class, MockObjectConfiguration.class)
                 .build();

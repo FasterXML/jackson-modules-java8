@@ -1,10 +1,12 @@
 package com.fasterxml.jackson.datatype.jsr310;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+
 import org.junit.Test;
 
 import java.io.IOException;
@@ -48,7 +50,7 @@ public class TestYearDeserialization extends ModuleTestBase
     @Test
     public void testDeserializationAsEmptyArrayDisabled() throws Throwable
     {
-    	try {
+        try {
     		read("[]");
     	    fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
@@ -56,13 +58,12 @@ public class TestYearDeserialization extends ModuleTestBase
         } catch (IOException e) {
             throw e;
         }
-    	try {
-    		String json="[]";
-    		ObjectMapper.builder()
+        try {
+    		JsonMapper.builder()
     		    .configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
               .build()
-    		    .readerFor(Year.class).readValue(aposToQuotes(json));
-    	    fail("expected JsonMappingException");
+    		    .readerFor(Year.class).readValue("[]");
+    		fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
            // OK
         } catch (IOException e) {

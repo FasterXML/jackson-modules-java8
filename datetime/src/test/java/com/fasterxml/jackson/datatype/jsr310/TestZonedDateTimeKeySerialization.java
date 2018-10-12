@@ -9,6 +9,8 @@ import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,14 +35,13 @@ public class TestZonedDateTimeKeySerialization {
     private static final ZonedDateTime DATE_TIME_2_OFFSET = DATE_TIME_2.withZoneSameInstant(ZoneOffset.ofHours(1));
     private static final String DATE_TIME_2_STRING = "2015-03-14T09:26:53.59+01:00";;
 
-    private ObjectMapper om;
+    private ObjectMapper om = JsonMapper.builder()
+            .addModule(new JavaTimeModule())
+            .build();
     private Map<ZonedDateTime, String> map;
 
     @Before
     public void setUp() {
-        om = ObjectMapper.builder()
-                .addModule(new JavaTimeModule())
-                .build();
         map = new HashMap<>();
     }
 

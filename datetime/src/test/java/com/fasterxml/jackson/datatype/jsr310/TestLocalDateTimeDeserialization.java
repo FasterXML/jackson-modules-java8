@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.deser.DeserializationProblemHandler;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 
 import org.junit.Test;
 
@@ -69,12 +70,11 @@ public class TestLocalDateTimeDeserialization extends ModuleTestBase
     @Test
     public void testDeserializationAsEmptyArrayEnabled() throws Throwable
     {
-        String json="[]";
-    	    LocalDateTime value = ObjectMapper.builder()
+    	    LocalDateTime value = JsonMapper.builder()
     	            .enable(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS,
     	                    DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT)
     	            .build()
-    	            .readerFor(LocalDateTime.class).readValue(aposToQuotes(json));
+    	            .readerFor(LocalDateTime.class).readValue("[]");
     	    assertNull(value);
     }
 

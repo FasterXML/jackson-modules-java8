@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThat;
 import static org.hamcrest.core.StringContains.containsString;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.YearMonthDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.YearMonthSerializer;
@@ -33,7 +34,7 @@ public class TestYearMonthSerializationWithCustomFormatter {
     }
 
     private String serializeWith(YearMonth dateTime, DateTimeFormatter f) throws Exception {
-        ObjectMapper mapper = ObjectMapper.builder()
+        ObjectMapper mapper = JsonMapper.builder()
                 .addModule(new SimpleModule()
                         .addSerializer(new YearMonthSerializer(f)))
                 .build();
@@ -47,7 +48,7 @@ public class TestYearMonthSerializationWithCustomFormatter {
     }
 
     private YearMonth deserializeWith(String json, DateTimeFormatter f) throws Exception {
-        ObjectMapper mapper = ObjectMapper.builder()
+        ObjectMapper mapper = JsonMapper.builder()
                 .addModule(new SimpleModule()
                         .addDeserializer(YearMonth.class, new YearMonthDeserializer(f)))
                 .build();

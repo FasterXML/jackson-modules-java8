@@ -5,13 +5,13 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
@@ -50,7 +50,7 @@ public class ZoneIdDeserTest extends ModuleTestBase
     @Test
     public void testPolymorphicZoneIdDeser() throws Exception
     {
-        ObjectMapper mapper = ObjectMapper.builder()
+        ObjectMapper mapper = JsonMapper.builder()
                 .addMixIn(ZoneId.class, MockObjectConfiguration.class)
                 .addModule(new JavaTimeModule())
                 .build();

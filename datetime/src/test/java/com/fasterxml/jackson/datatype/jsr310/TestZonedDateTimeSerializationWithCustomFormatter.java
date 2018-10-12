@@ -2,6 +2,7 @@ package com.fasterxml.jackson.datatype.jsr310;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.ZonedDateTimeSerializer;
 import org.junit.Test;
@@ -32,7 +33,7 @@ public class TestZonedDateTimeSerializationWithCustomFormatter {
     }
 
     private String serializeWith(ZonedDateTime zonedDateTime, DateTimeFormatter f) throws Exception {
-        ObjectMapper mapper = ObjectMapper.builder()
+        ObjectMapper mapper = JsonMapper.builder()
                 .addModule(new SimpleModule().addSerializer(
                         new ZonedDateTimeSerializer(f)))
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)

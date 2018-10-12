@@ -8,6 +8,8 @@ import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,7 +25,7 @@ public class TestLocalDateKeySerialization {
 
     @Before
     public void setUp() {
-        this.om = ObjectMapper.builder()
+        this.om = JsonMapper.builder()
                 .addModule(new JavaTimeModule())
                 .build();
         map = new HashMap<>();

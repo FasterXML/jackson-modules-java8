@@ -6,6 +6,8 @@ import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +22,7 @@ public class TestYearMonthKeySerialization {
 
     @Before
     public void setUp() {
-        om = ObjectMapper.builder()
+        om = JsonMapper.builder()
                 .addModule(new JavaTimeModule())
                 .build();
         map = new HashMap<>();

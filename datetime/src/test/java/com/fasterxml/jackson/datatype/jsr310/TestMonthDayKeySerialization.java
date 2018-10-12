@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 
 public class TestMonthDayKeySerialization
 {
@@ -17,7 +18,7 @@ public class TestMonthDayKeySerialization
     private static final MonthDay MONTH_DAY = MonthDay.of(3, 14);
     private static final String MONTH_DAY_STRING = "--03-14";
 
-    private final ObjectMapper MAPPER = ObjectMapper.builder()
+    private final ObjectMapper MAPPER = JsonMapper.builder()
             .addModule(new JavaTimeModule())
             .build();
 

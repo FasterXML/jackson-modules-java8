@@ -6,6 +6,8 @@ import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,14 +21,13 @@ public class TestZoneOffsetKeySerialization {
     private static final ZoneOffset OFFSET_1 = ZoneOffset.ofHours(6);
     private static final String OFFSET_1_STRING = "+06:00";
 
-    private ObjectMapper om;
+    private final ObjectMapper om = JsonMapper.builder()
+            .addModule(new JavaTimeModule())
+            .build();
     private Map<ZoneOffset, String> map;
 
     @Before
     public void setUp() {
-        om = ObjectMapper.builder()
-                .addModule(new JavaTimeModule())
-                .build();
         map = new HashMap<>();
     }
 

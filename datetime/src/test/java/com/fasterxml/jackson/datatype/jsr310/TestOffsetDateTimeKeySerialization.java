@@ -8,8 +8,9 @@ import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 public class TestOffsetDateTimeKeySerialization {
@@ -23,23 +24,13 @@ public class TestOffsetDateTimeKeySerialization {
     private static final OffsetDateTime DATE_TIME_2 = OffsetDateTime.of(2015, 3, 14, 9, 26, 53, 590 * 1000 * 1000, ZoneOffset.ofHours(6));
     private static final String DATE_TIME_2_STRING = "2015-03-14T09:26:53.590+06:00";
 
-    private ObjectMapper om;
-    private Map<OffsetDateTime, String> map;
-
-    @Before
-    public void setUp() {
-        om = ObjectMapper.builder()
-                .addModule(new JavaTimeModule())
-                .build();
-        map = new HashMap<>();
-    }
-
-    /*
-     * ObjectMapper configuration is not respected at deserialization and serialization at the moment.
-     */
+    private ObjectMapper om = JsonMapper.builder()
+            .addModule(new JavaTimeModule())
+            .build();
 
     @Test
     public void testSerialization0() throws Exception {
+        Map<OffsetDateTime, String> map = new HashMap<>();
         map.put(DATE_TIME_0, "test");
 
         String value = om.writeValueAsString(map);
@@ -49,6 +40,7 @@ public class TestOffsetDateTimeKeySerialization {
 
     @Test
     public void testSerialization1() throws Exception {
+        Map<OffsetDateTime, String> map = new HashMap<>();
         map.put(DATE_TIME_1, "test");
 
         String value = om.writeValueAsString(map);
@@ -58,6 +50,7 @@ public class TestOffsetDateTimeKeySerialization {
 
     @Test
     public void testSerialization2() throws Exception {
+        Map<OffsetDateTime, String> map = new HashMap<>();
         map.put(DATE_TIME_2, "test");
 
         String value = om.writeValueAsString(map);
@@ -69,6 +62,7 @@ public class TestOffsetDateTimeKeySerialization {
     public void testDeserialization0() throws Exception {
         Map<OffsetDateTime, String> value = om.readValue(map(DATE_TIME_0_STRING, "test"), TYPE_REF);
 
+        Map<OffsetDateTime, String> map = new HashMap<>();
         map.put(DATE_TIME_0, "test");
         Assert.assertEquals("Value is incorrect", map, value);
     }
@@ -77,6 +71,7 @@ public class TestOffsetDateTimeKeySerialization {
     public void testDeserialization1() throws Exception {
         Map<OffsetDateTime, String> value = om.readValue(map(DATE_TIME_1_STRING, "test"), TYPE_REF);
 
+        Map<OffsetDateTime, String> map = new HashMap<>();
         map.put(DATE_TIME_1, "test");
         Assert.assertEquals("Value is incorrect", map, value);
     }
@@ -85,6 +80,7 @@ public class TestOffsetDateTimeKeySerialization {
     public void testDeserialization2() throws Exception {
         Map<OffsetDateTime, String> value = om.readValue(map(DATE_TIME_2_STRING, "test"), TYPE_REF);
 
+        Map<OffsetDateTime, String> map = new HashMap<>();
         map.put(DATE_TIME_2, "test");
         Assert.assertEquals("Value is incorrect", map, value);
     }
@@ -92,5 +88,4 @@ public class TestOffsetDateTimeKeySerialization {
     private String map(String key, String value) {
         return String.format("{\"%s\":\"%s\"}", key, value);
     }
-
 }

@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 import static org.hamcrest.core.StringContains.containsString;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
@@ -34,7 +35,7 @@ public class TestLocalDateSerializationWithCustomFormatter {
     }
 
     private String serializeWith(LocalDate date, DateTimeFormatter f) throws Exception {
-        ObjectMapper mapper = ObjectMapper.builder()
+        ObjectMapper mapper = JsonMapper.builder()
                 .addModule(new SimpleModule()
                         .addSerializer(new LocalDateSerializer(f)))
                 .build();
@@ -48,7 +49,7 @@ public class TestLocalDateSerializationWithCustomFormatter {
     }
 
     private LocalDate deserializeWith(String json, DateTimeFormatter f) throws Exception {
-        ObjectMapper mapper = ObjectMapper.builder()
+        ObjectMapper mapper = JsonMapper.builder()
                 .addModule(new SimpleModule()
                         .addDeserializer(LocalDate.class, new LocalDateDeserializer(f)))
                 .build();
