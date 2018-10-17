@@ -17,6 +17,7 @@
 package com.fasterxml.jackson.datatype.jsr310;
 
 import java.math.BigDecimal;
+import java.util.function.BiFunction;
 
 /**
  * Utilities to aid in the translation of decimal types to/from multiple parts.
@@ -39,14 +40,14 @@ public final class DecimalUtils
             .append(seconds)
             .append('.');
         // 14-Mar-2016, tatu: Although we do not yet (with 2.7) trim trailing zeroes,
-        //   for general case, 
+        //   for general case,
         if (nanoseconds == 0L) {
             // !!! TODO: 14-Mar-2016, tatu: as per [datatype-jsr310], should trim
             //     trailing zeroes
             if (seconds == 0L) {
                 return "0.0";
             }
-            
+
 //            sb.append('0');
             sb.append("000000000");
         } else {
@@ -92,12 +93,51 @@ public final class DecimalUtils
         }
         return new BigDecimal(toDecimal(seconds, nanoseconds));
     }
-    
+
+    /**
+     * @Deprecated due to potential unbounded latency on some JRE releases.
+     */
     public static int extractNanosecondDecimal(BigDecimal value, long integer)
     {
         // !!! 14-Mar-2016, tatu: Somewhat inefficient; should replace with functionally
         //   equivalent code that just subtracts integral part? (or, measure and show
         //   there's no difference and do nothing... )
         return value.subtract(new BigDecimal(integer)).multiply(ONE_BILLION).intValue();
+    }
+
+
+    /**
+     * Extracts the seconds and nanoseconds component of {@code seconds} as {@code long} and {@code int}
+     * values, passing them to the given converter.   The implementation avoids latency issues present
+     * on some JRE releases.
+     *
+     * @since 2.9.8
+     */
+    public static <T> T extractSecondsAndNanos(BigDecimal seconds, BiFunction<Long, Integer, T> convert)
+    {
+        // Complexity is here to workaround unbounded latency in some BigDecimal operations.
+        //   https://github.com/FasterXML/jackson-databind/issues/2141
+
+        long secondsOnly;
+        int nanosOnly;
+
+        BigDecimal nanoseconds = seconds.scaleByPowerOfTen(9);
+        if (nanoseconds.precision() - nanoseconds.scale() <= 0) {
+            // There are no non-zero digits to the left of the decimal point.
+            // This protects against very negative exponents.
+            secondsOnly = nanosOnly = 0;
+        }
+        else if (seconds.scale() < -63) {
+            // There would be no low-order bits once we chop to a long.
+            // This protects against very positive exponents.
+            secondsOnly = nanosOnly = 0;
+        }
+        else {
+            // Now we know that seconds has reasonable scale, we can safely chop it apart.
+            secondsOnly = seconds.longValue();
+            nanosOnly = nanoseconds.subtract(new BigDecimal(secondsOnly).scaleByPowerOfTen(9)).intValue();
+        }
+
+        return convert.apply(secondsOnly, nanosOnly);
     }
 }

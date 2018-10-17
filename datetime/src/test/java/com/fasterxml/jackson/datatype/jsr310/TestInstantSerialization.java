@@ -311,7 +311,7 @@ public class TestInstantSerialization extends ModuleTestBase
      * Numbers with very large exponents can take a long time, but still result in zero.
      * https://github.com/FasterXML/jackson-databind/issues/2141
      */
-    @Test
+    @Test(timeout = 100)
     public void testDeserializationAsFloatEdgeCase08() throws Exception
     {
         String input = "1e10000000";
@@ -319,7 +319,7 @@ public class TestInstantSerialization extends ModuleTestBase
         assertEquals(0, value.getEpochSecond());
     }
 
-    @Test
+    @Test(timeout = 100)
     public void testDeserializationAsFloatEdgeCase09() throws Exception
     {
         String input = "-1e10000000";
@@ -330,7 +330,7 @@ public class TestInstantSerialization extends ModuleTestBase
     /**
      * Same for large negative exponents.
      */
-    @Test
+    @Test(timeout = 100)
     public void testDeserializationAsFloatEdgeCase10() throws Exception
     {
         String input = "1e-10000000";
@@ -338,7 +338,7 @@ public class TestInstantSerialization extends ModuleTestBase
         assertEquals(0, value.getEpochSecond());
     }
 
-    @Test
+    @Test(timeout = 100)
     public void testDeserializationAsFloatEdgeCase11() throws Exception
     {
         String input = "-1e-10000000";
