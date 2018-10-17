@@ -29,75 +29,57 @@ public class TestDecimalUtils extends ModuleTestBase
                 "19827342231.999888000", decimal);
     }
 
+
+
+    private void checkExtractNanos(long expectedSeconds, int expectedNanos, BigDecimal decimal)
+    {
+        long seconds = decimal.longValue();
+        assertEquals("The second part is not correct.", expectedSeconds, seconds);
+
+        int nanoseconds = DecimalUtils.extractNanosecondDecimal(decimal,  seconds);
+        assertEquals("The nanosecond part is not correct.", expectedNanos, nanoseconds);
+    }
+
     @Test
     public void testExtractNanosecondDecimal01()
     {
         BigDecimal value = new BigDecimal("0");
-
-        long seconds = value.longValue();
-        assertEquals("The second part is not correct.", 0L, seconds);
-
-        int nanoseconds = DecimalUtils.extractNanosecondDecimal(value,  seconds);
-        assertEquals("The nanosecond part is not correct.", 0, nanoseconds);
+        checkExtractNanos(0L, 0, value);
     }
 
     @Test
     public void testExtractNanosecondDecimal02()
     {
         BigDecimal value = new BigDecimal("15.000000072");
-
-        long seconds = value.longValue();
-        assertEquals("The second part is not correct.", 15L, seconds);
-
-        int nanoseconds = DecimalUtils.extractNanosecondDecimal(value,  seconds);
-        assertEquals("The nanosecond part is not correct.", 72, nanoseconds);
+        checkExtractNanos(15L, 72, value);
     }
 
     @Test
     public void testExtractNanosecondDecimal03()
     {
         BigDecimal value = new BigDecimal("15.72");
-
-        long seconds = value.longValue();
-        assertEquals("The second part is not correct.", 15L, seconds);
-
-        int nanoseconds = DecimalUtils.extractNanosecondDecimal(value,  seconds);
-        assertEquals("The nanosecond part is not correct.", 720000000, nanoseconds);
+        checkExtractNanos(15L, 720000000, value);
     }
 
     @Test
     public void testExtractNanosecondDecimal04()
     {
         BigDecimal value = new BigDecimal("19827342231.192837465");
-
-        long seconds = value.longValue();
-        assertEquals("The second part is not correct.", 19827342231L, seconds);
-
-        int nanoseconds = DecimalUtils.extractNanosecondDecimal(value,  seconds);
-        assertEquals("The nanosecond part is not correct.", 192837465, nanoseconds);
+        checkExtractNanos(19827342231L, 192837465, value);
     }
 
     @Test
     public void testExtractNanosecondDecimal05()
     {
         BigDecimal value = new BigDecimal("19827342231");
-
-        long seconds = value.longValue();
-        assertEquals("The second part is not correct.", 19827342231L, seconds);
-
-        int nanoseconds = DecimalUtils.extractNanosecondDecimal(value,  seconds);
-        assertEquals("The nanosecond part is not correct.", 0, nanoseconds);
+        checkExtractNanos(19827342231L, 0, value);
     }
 
     @Test
     public void testExtractNanosecondDecimal06()
     {
         BigDecimal value = new BigDecimal("19827342231.999999999");
-
-        long seconds = value.longValue();
-        assertEquals("The second part is not correct.", 19827342231L, seconds);
-
-        int nanoseconds = DecimalUtils.extractNanosecondDecimal(value,  seconds);
-        assertEquals("The nanosecond part is not correct.", 999999999, nanoseconds);
+        checkExtractNanos(19827342231L, 999999999, value);
     }
+
 }
