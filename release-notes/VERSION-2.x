@@ -10,9 +10,10 @@ Modules:
 
 2.10.0 (not yet released)
 
-#75: Use `SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS` for configuring
+#75: (datetime) Use `SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS` for configuring
  `Duration` serialization
  (suggested by Kezhu W)
+#82: (datetime) Typo in YearMothKeyDeserializer class name
 
 2.9.8 (not yet released)
 
