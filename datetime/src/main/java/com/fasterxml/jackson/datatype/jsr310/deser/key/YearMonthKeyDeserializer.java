@@ -12,9 +12,8 @@ import java.time.format.SignStyle;
 
 import com.fasterxml.jackson.databind.DeserializationContext;
 
-public class YearMothKeyDeserializer extends Jsr310KeyDeserializer {
-
-    public static final YearMothKeyDeserializer INSTANCE = new YearMothKeyDeserializer();
+public class YearMonthKeyDeserializer extends Jsr310KeyDeserializer {
+    public static final YearMonthKeyDeserializer INSTANCE = new YearMonthKeyDeserializer();
 
     // parser copied from YearMonth
     private static final DateTimeFormatter FORMATTER = new DateTimeFormatterBuilder()
@@ -23,9 +22,7 @@ public class YearMothKeyDeserializer extends Jsr310KeyDeserializer {
             .appendValue(MONTH_OF_YEAR, 2)
             .toFormatter();
 
-    private YearMothKeyDeserializer() {
-        // singleton
-    }
+    private YearMonthKeyDeserializer() { } // singleton
 
     @Override
     protected YearMonth deserialize(String key, DeserializationContext ctxt) throws IOException {

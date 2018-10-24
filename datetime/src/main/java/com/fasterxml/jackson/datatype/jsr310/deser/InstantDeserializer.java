@@ -91,7 +91,7 @@ public class InstantDeserializer<T extends Temporal>
     protected final Function<FromDecimalArguments, T> fromNanoseconds;
 
     protected final Function<TemporalAccessor, T> parsedToValue;
-    
+
     protected final BiFunction<T, ZoneId, T> adjust;
 
     /**
@@ -150,7 +150,7 @@ public class InstantDeserializer<T extends Temporal>
         replaceZeroOffsetAsZ = base.replaceZeroOffsetAsZ;
         _adjustToContextTZOverride = adjustToContextTimezoneOverride;
     }
-    
+
     @Override
     protected JsonDeserializer<T> withDateFormat(DateTimeFormatter dtf) {
         if (dtf == _formatter) {
@@ -218,7 +218,7 @@ public class InstantDeserializer<T extends Temporal>
                 // 20-Apr-2016, tatu: Related to [databind#1208], can try supporting embedded
                 //    values quite easily
                 return (T) parser.getEmbeddedObject();
-                
+
             case JsonTokenId.ID_START_ARRAY:
             	return _deserializeFromArray(parser, context);
         }
@@ -265,7 +265,7 @@ public class InstantDeserializer<T extends Temporal>
         }
         return commas;
     }
-    
+
     protected T _fromLong(DeserializationContext context, long timestamp)
     {
         if(context.isEnabled(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)){
@@ -276,15 +276,14 @@ public class InstantDeserializer<T extends Temporal>
         return fromMilliseconds.apply(new FromIntegerArguments(
                 timestamp, this.getZone(context)));
     }
-    
+
     protected T _fromDecimal(DeserializationContext context, BigDecimal value)
     {
-        long seconds = value.longValue();
-        int nanoseconds = DecimalUtils.extractNanosecondDecimal(value, seconds);
-        return fromNanoseconds.apply(new FromDecimalArguments(
-                seconds, nanoseconds, getZone(context)));
+        FromDecimalArguments args =
+            DecimalUtils.extractSecondsAndNanos(value, (s, ns) -> new FromDecimalArguments(s, ns, getZone(context)));
+        return fromNanoseconds.apply(args);
     }
-    
+
     private ZoneId getZone(DeserializationContext context)
     {
         // Instants are always in UTC, so don't waste compute cycles

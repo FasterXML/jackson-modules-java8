@@ -16,20 +16,7 @@
 
 package com.fasterxml.jackson.datatype.jsr310;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.MonthDay;
-import java.time.OffsetDateTime;
-import java.time.OffsetTime;
-import java.time.Period;
-import java.time.Year;
-import java.time.YearMonth;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import java.time.*;
 
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.DeserializationConfig;
@@ -52,20 +39,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.MonthDayDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.OffsetTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.YearDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.YearMonthDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.key.DurationKeyDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.key.InstantKeyDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.key.LocalDateKeyDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.key.LocalDateTimeKeyDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.key.LocalTimeKeyDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.key.MonthDayKeyDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.key.OffsetDateTimeKeyDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.key.OffsetTimeKeyDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.key.PeriodKeyDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.key.YearKeyDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.key.YearMothKeyDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.key.ZoneIdKeyDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.key.ZoneOffsetKeyDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.key.ZonedDateTimeKeyDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.key.*;
 import com.fasterxml.jackson.datatype.jsr310.ser.DurationSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.InstantSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
@@ -191,7 +165,7 @@ public final class JavaTimeModule extends SimpleModule
         addKeyDeserializer(OffsetTime.class, OffsetTimeKeyDeserializer.INSTANCE);
         addKeyDeserializer(Period.class, PeriodKeyDeserializer.INSTANCE);
         addKeyDeserializer(Year.class, YearKeyDeserializer.INSTANCE);
-        addKeyDeserializer(YearMonth.class, YearMothKeyDeserializer.INSTANCE);
+        addKeyDeserializer(YearMonth.class, YearMonthKeyDeserializer.INSTANCE);
         addKeyDeserializer(ZonedDateTime.class, ZonedDateTimeKeyDeserializer.INSTANCE);
         addKeyDeserializer(ZoneId.class, ZoneIdKeyDeserializer.INSTANCE);
         addKeyDeserializer(ZoneOffset.class, ZoneOffsetKeyDeserializer.INSTANCE);
