@@ -23,16 +23,13 @@ import java.util.function.BiFunction;
  * Utilities to aid in the translation of decimal types to/from multiple parts.
  *
  * @author Nick Williams
- * @since 2.2.0
+ * @since 2.2
  */
 public final class DecimalUtils
 {
     private static final BigDecimal ONE_BILLION = new BigDecimal(1_000_000_000L);
 
-    private DecimalUtils()
-    {
-        throw new RuntimeException("DecimalUtils cannot be instantiated.");
-    }
+    private DecimalUtils() { }
 
     public static String toDecimal(long seconds, int nanoseconds)
     {

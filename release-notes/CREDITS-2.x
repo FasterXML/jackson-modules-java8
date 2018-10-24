@@ -38,5 +38,14 @@ Sonny Gill (sonnygill@github)
    (2.9.6)
 
 Adrian Palanques (devdevx@github)
-  #78: Year deserialization ignores `@JsonFormat` pattern
+  * Reported #78: (datetime) Year deserialization ignores `@JsonFormat` pattern
    (2.9.7)
+
+Andriy Plokhotnyuk (plokhotnyuk@github)
+  * Reported #90 (datetime): Performance issue with malicious `BigDecimal` input,
+   `InstantDeserializer`, `DurationDeserializer`
+   (2.9.8)
+
+Todd Jonker (toddjonker@github)
+  * Contributed fix for #90 (see above)
+   (2.9.8)
