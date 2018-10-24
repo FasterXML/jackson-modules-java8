@@ -14,7 +14,13 @@ Modules:
  `Duration` serialization
  (suggested by Kezhu W)
 
-2.9.7 (not yet released)
+2.9.8 (not yet released)
+
+#90 (datetime): Performance issue with malicious `BigDecimal` input,
+   `InstantDeserializer`, `DurationDeserializer`
+ (reported by Andriy P, fix contributed by Todd J)
+
+2.9.7 (19-Sep-2018)
 
 #78: Year deserialization ignores `@JsonFormat` pattern
  (reported, fixed by Adrian P)
