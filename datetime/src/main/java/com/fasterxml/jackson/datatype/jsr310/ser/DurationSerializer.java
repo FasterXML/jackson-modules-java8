@@ -29,6 +29,7 @@ import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrappe
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonIntegerFormatVisitor;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonValueFormat;
 import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -36,7 +37,7 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * Serializer for Java 8 temporal {@link Duration}s.
- *<p>
+ * <p>
  * NOTE: since 2.10, {@link SerializationFeature#WRITE_DURATIONS_AS_TIMESTAMPS}
  * determines global default used for determining if serialization should use
  * numeric (timestamps) or textual representation. Before this,
@@ -45,9 +46,10 @@ import java.time.format.DateTimeFormatter;
  * @author Nick Williams
  * @since 2.2
  */
-public class DurationSerializer extends JSR310FormattedSerializerBase<Duration>
-{
+public class DurationSerializer extends JSR310FormattedSerializerBase<Duration> {
     private static final long serialVersionUID = 1L;
+
+    protected String _formatPattern;
 
     public static final DurationSerializer INSTANCE = new DurationSerializer();
 
@@ -55,20 +57,62 @@ public class DurationSerializer extends JSR310FormattedSerializerBase<Duration>
         super(Duration.class);
     }
 
-    protected DurationSerializer(DurationSerializer base, DateTimeFormatter dtf,
-            Boolean useTimestamp) {
-        super(base, dtf, useTimestamp, null, null);
+    public DurationSerializer(String formatPattern) {
+        this();
+        _formatPattern = formatPattern;
     }
 
-    protected DurationSerializer(DurationSerializer base, DateTimeFormatter dtf,
-            Boolean useTimestamp, Boolean useNanoseconds) {
-        super(base, dtf, useTimestamp, useNanoseconds, null);
+    protected DurationSerializer(DurationSerializer base, Boolean useTimestamp) {
+        super(base, null, useTimestamp, null, null);
+    }
+
+    protected DurationSerializer(DurationSerializer base, Boolean useTimestamp,
+                                 Boolean useNanoseconds) {
+        super(base, null, useTimestamp, useNanoseconds, null);
+    }
+
+    @Override
+    public JsonSerializer<?> createContextual(SerializerProvider prov,
+                                              BeanProperty property) throws JsonMappingException {
+        JsonFormat.Value format = findFormatOverrides(prov, property, handledType());
+        if (format != null) {
+            Boolean useTimestamp = null;
+
+            // Simple case first: serialize as numeric timestamp?
+            JsonFormat.Shape shape = format.getShape();
+            if (shape == JsonFormat.Shape.ARRAY || shape.isNumeric() ) {
+                useTimestamp = Boolean.TRUE;
+            } else {
+                useTimestamp = (shape == JsonFormat.Shape.STRING) ? Boolean.FALSE : null;
+            }
+
+            String formatPattern = null;
+            if (format.hasPattern()) {
+                formatPattern = format.getPattern();
+            }
+
+            Boolean writeNanoseconds = format.getFeature(JsonFormat.Feature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS);
+
+            DurationSerializer ser = new DurationSerializer();
+            if ((shape != _shape) || (useTimestamp != _useTimestamp)) {
+                ser = ser.withFormat(null, useTimestamp, shape);
+            }
+            if (writeNanoseconds != null) {
+                ser = ser.withFeatures(null, writeNanoseconds);
+            }
+            if (formatPattern != null) {
+                ser._formatPattern = formatPattern;
+            }
+            //DateTimeFormatter and ZoneId not acceptable for Duration class
+            return ser;
+        }
+        return this;
     }
 
     @Override
     protected DurationSerializer withFormat(DateTimeFormatter dtf,
-            Boolean useTimestamp, JsonFormat.Shape shape) {
-        return new DurationSerializer(this, dtf, useTimestamp);
+                                            Boolean useTimestamp, JsonFormat.Shape shape) {
+        return new DurationSerializer(this, useTimestamp);
     }
 
     // @since 2.10
@@ -79,8 +123,7 @@ public class DurationSerializer extends JSR310FormattedSerializerBase<Duration>
 
     @Override
     public void serialize(Duration duration, JsonGenerator generator,
-            SerializerProvider provider) throws IOException
-    {
+                          SerializerProvider provider) throws IOException {
         if (useTimestamp(provider)) {
             if (useNanoseconds(provider)) {
                 generator.writeNumber(DecimalUtils.toBigDecimal(
@@ -90,14 +133,18 @@ public class DurationSerializer extends JSR310FormattedSerializerBase<Duration>
                 generator.writeNumber(duration.toMillis());
             }
         } else {
-            // Does not look like we can make any use of DateTimeFormatter here?
-            generator.writeString(duration.toString());
+            if (_formatPattern == null) {
+                generator.writeString(duration.toString());
+            } else {
+                generator.writeString(DurationFormatUtils.formatDuration(
+                        duration.toMillis(), _formatPattern, true));
+            }
         }
     }
 
     @Override
-    protected void _acceptTimestampVisitor(JsonFormatVisitorWrapper visitor, JavaType typeHint) throws JsonMappingException
-    {
+    protected void _acceptTimestampVisitor(JsonFormatVisitorWrapper visitor, JavaType typeHint) throws
+            JsonMappingException {
         JsonIntegerFormatVisitor v2 = visitor.expectIntegerFormat(typeHint);
         if (v2 != null) {
             v2.numberType(JsonParser.NumberType.LONG);
@@ -122,7 +169,7 @@ public class DurationSerializer extends JSR310FormattedSerializerBase<Duration>
     }
 
     @Override
-    protected JSR310FormattedSerializerBase<?> withFeatures(Boolean writeZoneId, Boolean writeNanoseconds) {
-        return new DurationSerializer(this, _formatter, _useTimestamp, writeNanoseconds);
+    protected DurationSerializer withFeatures(Boolean writeZoneId, Boolean writeNanoseconds) {
+        return new DurationSerializer(this, _useTimestamp, writeNanoseconds);
     }
 }

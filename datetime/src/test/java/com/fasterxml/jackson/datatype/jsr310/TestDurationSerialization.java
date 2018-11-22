@@ -1,20 +1,38 @@
 package com.fasterxml.jackson.datatype.jsr310;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
 import org.junit.Before;
 import org.junit.Test;
 
 import java.time.Duration;
 import java.time.temporal.TemporalAmount;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class TestDurationSerialization extends ModuleTestBase
 {
     private ObjectWriter WRITER;
+
+    final static class HMSWrapper {
+        @JsonFormat(pattern="HH:mm:ss",
+                shape=JsonFormat.Shape.STRING)
+        public Duration duration;
+
+        public HMSWrapper() { }
+        public HMSWrapper(Duration d) { duration = d; }
+    }
+
+    final static class DaysDurationWrapper {
+        @JsonFormat(pattern="dd' Day(s)'",
+                shape=JsonFormat.Shape.STRING)
+        public Duration duration;
+
+        public DaysDurationWrapper(Duration d) { duration = d; }
+    }
 
     @Before
     public void setUp()
@@ -156,5 +174,29 @@ public class TestDurationSerialization extends ModuleTestBase
         assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.",
                 "[\"" + Duration.class.getName() + "\",\"" + duration.toString() + "\"]", value);
+    }
+
+    @Test
+    public void testSerializationWithHMSFormat() throws Exception
+    {
+        Duration duration = Duration.ofSeconds(3676L, 0);
+        final HMSWrapper hmsWrapper = new HMSWrapper(duration);
+        String value = WRITER.writeValueAsString(hmsWrapper);
+
+        assertNotNull("The value should not be null.", value);
+        assertEquals("The value is not correct.",
+                "{\"duration\":\"01:01:16\"}", value);
+    }
+
+    @Test
+    public void testSerializationWithDaysFormat() throws Exception
+    {
+        Duration duration = Duration.ofDays(367L);
+        final DaysDurationWrapper daysWrapper = new DaysDurationWrapper(duration);
+        String value = WRITER.writeValueAsString(daysWrapper);
+
+        assertNotNull("The value should not be null.", value);
+        assertEquals("The value is not correct.",
+                "{\"duration\":\"367 Day(s)\"}", value);
     }
 }
