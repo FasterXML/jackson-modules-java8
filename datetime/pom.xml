@@ -21,14 +21,27 @@
   </developers>
 
   <properties>
-    <!-- Java8 takes Javadoc-Nazi attitude, insert some sanity here --> 
+      <!-- Java8 takes Javadoc-Nazi attitude, insert some sanity here -->
     <additionalparam>-Xdoclint:none</additionalparam>
 
     <!-- Generate PackageVersion.java into this directory. -->
     <packageVersion.dir>com/fasterxml/jackson/datatype/jsr310</packageVersion.dir>
     <packageVersion.package>${project.groupId}.jsr310</packageVersion.package>
-    <javac.src.version>1.8</javac.src.version>
-    <javac.target.version>1.8</javac.target.version>
+
+      <!-- With Jackson 2.9 we will require JDK 7 (except for annotations/streaming),
+         and new language features (diamond pattern) may be used.
+         JDK classes are still loaded dynamically since there isn't much downside
+         (small number of types); this allows use on JDK 6 platforms still (including
+         Android)
+      -->
+      <!-- TODO Remove JDK 11 Settings -->
+      <javac.src.version>1.11</javac.src.version>
+      <javac.target.version>1.11</javac.target.version>
+
+      <jdk.version>1.11</jdk.version>
+      <maven.compiler.source>1.11</maven.compiler.source>
+      <maven.compiler.target>1.11</maven.compiler.target>
+      <maven.compiler.release>11</maven.compiler.release>
     <!-- Configuration properties for the OSGi maven-bundle-plugin -->
     <!-- import should be generated automatically from needed deps; export from simple package (include all) -->
 <!--
@@ -91,7 +104,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.0</version>
+          <version>3.8.0</version>
         <inherited>true</inherited>
         <configuration>
           <source>${javac.src.version}</source>
@@ -103,7 +116,8 @@
             <Xmaxerrs>10000</Xmaxerrs>
             <Xmaxwarns>10000</Xmaxwarns>
             <Xlint />
-            <Werror />
+              <!-- TODO Put this back when in moditect-->
+              <!--<Werror />-->
           </compilerArguments>
         </configuration>
       </plugin>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion> 
+    <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.fasterxml.jackson.module</groupId>
     <artifactId>jackson-modules-java8</artifactId>
@@ -15,8 +15,20 @@ introspection of method/constructor parameter names, without having to add expli
 
   <properties>
     <!-- explicitly target JDK 8 -->
-    <javac.src.version>1.8</javac.src.version>
-    <javac.target.version>1.8</javac.target.version>
+      <!-- With Jackson 2.9 we will require JDK 7 (except for annotations/streaming),
+           and new language features (diamond pattern) may be used.
+           JDK classes are still loaded dynamically since there isn't much downside
+           (small number of types); this allows use on JDK 6 platforms still (including
+           Android)
+        -->
+      <!-- TODO Remove JDK 11 Settings -->
+      <javac.src.version>1.11</javac.src.version>
+      <javac.target.version>1.11</javac.target.version>
+
+      <jdk.version>1.11</jdk.version>
+      <maven.compiler.source>1.11</maven.compiler.source>
+      <maven.compiler.target>1.11</maven.compiler.target>
+      <maven.compiler.release>11</maven.compiler.release>
     <!-- Generate PackageVersion.java into this directory. -->
     <packageVersion.dir>com/fasterxml/jackson/module/paramnames</packageVersion.dir>
     <packageVersion.package>${project.groupId}.paramnames</packageVersion.package>
@@ -38,6 +50,12 @@ introspection of method/constructor parameter names, without having to add expli
       <version>${mockito-core.version}</version>
       <scope>test</scope>
     </dependency>
+      <dependency>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-annotations</artifactId>
+          <version>${project.version}</version>
+          <scope>compile</scope>
+      </dependency>
   </dependencies>
 
   <build>
@@ -65,7 +83,7 @@ introspection of method/constructor parameter names, without having to add expli
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.2</version>
+          <version>3.8.0</version>
         <inherited>true</inherited>
         <configuration>
           <source>${javac.src.version}</source>
@@ -75,7 +93,8 @@ introspection of method/constructor parameter names, without having to add expli
           <optimize>true</optimize>
           <compilerArgs>
             <arg>-Xlint</arg>
-            <arg>-Werror</arg>
+              <!-- TODO Put this back when finished with module-info-->
+              <!--<arg>-Werror</arg>-->
             <arg>-parameters</arg>
           </compilerArgs>
         </configuration>
