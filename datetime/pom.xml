@@ -27,21 +27,13 @@
     <!-- Generate PackageVersion.java into this directory. -->
     <packageVersion.dir>com/fasterxml/jackson/datatype/jsr310</packageVersion.dir>
     <packageVersion.package>${project.groupId}.jsr310</packageVersion.package>
+      <!-- explicitly target JDK 8 -->
+      <javac.src.version>1.8</javac.src.version>
+      <javac.target.version>1.8</javac.target.version>
 
-      <!-- With Jackson 2.9 we will require JDK 7 (except for annotations/streaming),
-         and new language features (diamond pattern) may be used.
-         JDK classes are still loaded dynamically since there isn't much downside
-         (small number of types); this allows use on JDK 6 platforms still (including
-         Android)
-      -->
-      <!-- TODO Remove JDK 11 Settings -->
-      <javac.src.version>1.11</javac.src.version>
-      <javac.target.version>1.11</javac.target.version>
-
-      <jdk.version>1.11</jdk.version>
-      <maven.compiler.source>1.11</maven.compiler.source>
-      <maven.compiler.target>1.11</maven.compiler.target>
-      <maven.compiler.release>11</maven.compiler.release>
+      <jdk.version>1.8</jdk.version>
+      <maven.compiler.source>1.8</maven.compiler.source>
+      <maven.compiler.target>1.8</maven.compiler.target>
     <!-- Configuration properties for the OSGi maven-bundle-plugin -->
     <!-- import should be generated automatically from needed deps; export from simple package (include all) -->
 <!--
@@ -121,6 +113,42 @@
           </compilerArguments>
         </configuration>
       </plugin>
+        <plugin>
+            <groupId>org.moditect</groupId>
+            <artifactId>moditect-maven-plugin</artifactId>
+            <version>1.0.0.Beta1</version>
+            <executions>
+                <execution>
+                    <id>add-module-infos</id>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>add-module-info</goal>
+                    </goals>
+                    <configuration>
+                        <overwriteExistingFiles>true</overwriteExistingFiles>
+                        <module>
+                            <moduleInfoFile>
+                                src/moditect/module-info.java
+                            </moduleInfoFile>
+                        </module>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
     </plugins>
   </build>
+    <profiles>
+        <profile>
+            <id>jdk11</id>
+            <properties>
+                <javac.src.version>1.11</javac.src.version>
+                <javac.target.version>1.11</javac.target.version>
+
+                <jdk.version>1.11</jdk.version>
+                <maven.compiler.source>1.11</maven.compiler.source>
+                <maven.compiler.target>1.11</maven.compiler.target>
+                <maven.compiler.release>1.11</maven.compiler.release>
+            </properties>
+        </profile>
+    </profiles>
 </project>
