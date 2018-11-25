@@ -31,6 +31,15 @@ objectMapper.registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES
 
 ```
 
+# JPMS Configuration
+This module is strictly defined and the module-info.java is attached with the [moditect](https://github.com/moditect/moditect) plugin
+
+This allows for transitive dependencies, and will not place this library in the Automatic Named Modules.
+
+This modules name is ```com.fasterxml.jackson.module.parameternames```
+
+-----
+
 ### Usage example
 
 Java 8 API adds support for accessing parameter names at runtime in order to enable clients to abandon the JavaBeans standard if they want to without forcing them to use annotations (such as [JsonProperty][1]).

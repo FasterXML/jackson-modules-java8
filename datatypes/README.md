@@ -21,6 +21,15 @@ To use module on Maven-based projects, use following dependency:
 
 (or whatever version is most up-to-date at the moment)
 
+# JPMS Configuration
+This module is strictly defined and the module-info.java is attached with the [moditect](https://github.com/moditect/moditect) plugin
+
+This allows for transitive dependencies, and will not place this library in the Automatic Named Modules.
+
+This modules name is ```com.fasterxml.jackson.datatype.jdk8 ```
+
+-----
+
 ### Registering module
 
 Like all standard Jackson modules (libraries that implement Module interface), registration is done as follows:
