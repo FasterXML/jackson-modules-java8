@@ -76,6 +76,7 @@
                   <banSnapshots>true</banSnapshots>
                   <phases>clean,deploy,site</phases>
                   <message>[ERROR] Best Practice is to always define plugin versions!</message>
+                    <unCheckedPluginList>org.moditect:moditect-maven-plugin</unCheckedPluginList>
                 </requirePluginVersions>
               </rules>
             </configuration>
@@ -116,7 +117,6 @@
         <plugin>
             <groupId>org.moditect</groupId>
             <artifactId>moditect-maven-plugin</artifactId>
-            <version>1.0.0.Beta1</version>
             <executions>
                 <execution>
                     <id>add-module-infos</id>
