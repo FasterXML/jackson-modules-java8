@@ -15,7 +15,7 @@ Modules:
  (suggested by Kezhu W)
 #82: (datetime) Typo in YearMothKeyDeserializer class name
 
-2.9.8 (not yet released)
+2.9.8 (15-Dec-2018)
 
 #90 (datetime): Performance issue with malicious `BigDecimal` input,
    `InstantDeserializer`, `DurationDeserializer`
