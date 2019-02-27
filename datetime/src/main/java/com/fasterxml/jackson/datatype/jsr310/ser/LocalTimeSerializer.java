@@ -25,7 +25,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.type.WritableTypeId;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonStringFormatVisitor;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonValueFormat;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 
 /**
@@ -129,5 +134,20 @@ public class LocalTimeSerializer extends JSR310FormattedSerializerBase<LocalTime
     protected JSR310FormattedSerializerBase<?> withFeatures(Boolean writeZoneId, Boolean useNanoseconds) {
         return new LocalTimeSerializer(this, _formatter,
                 _useTimestamp, useNanoseconds);
+    }
+
+    @Override
+    public void acceptJsonFormatVisitor(JsonFormatVisitorWrapper visitor, JavaType typeHint) throws JsonMappingException
+    {
+        SerializerProvider provider = visitor.getProvider();
+        boolean useTimestamp = (provider != null) && useTimestamp(provider);
+        if (useTimestamp) {
+            _acceptTimestampVisitor(visitor, typeHint);
+        } else {
+            JsonStringFormatVisitor v2 = visitor.expectStringFormat(typeHint);
+            if (v2 != null) {
+                v2.format(JsonValueFormat.TIME);
+            }
+        }
     }
 }
