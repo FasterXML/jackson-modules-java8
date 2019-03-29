@@ -14,6 +14,7 @@ Modules:
  `Duration` serialization
  (suggested by Kezhu W)
 #82: (datetime) Typo in YearMothKeyDeserializer class name
+- Add JDK9+ `module-info.class` with Moditect plugin
 
 2.9.8 (15-Dec-2018)
 
