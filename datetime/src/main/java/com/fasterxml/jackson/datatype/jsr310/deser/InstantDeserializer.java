@@ -59,6 +59,8 @@ public class InstantDeserializer<T extends Temporal>
      */
     private static final Pattern ISO8601_UTC_ZERO_OFFSET_SUFFIX_REGEX = Pattern.compile("\\+00:?(00)?$");
 
+    private static final int NANOS_IN_SEC = 1_000_000_000;
+
     public static final InstantDeserializer<Instant> INSTANT = new InstantDeserializer<>(
             Instant.class, DateTimeFormatter.ISO_INSTANT,
             Instant::from,
@@ -266,11 +268,12 @@ public class InstantDeserializer<T extends Temporal>
         return commas;
     }
 
-    protected T _fromLong(DeserializationContext context, long timestamp)
-    {
-        if(context.isEnabled(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)){
+    protected T _fromLong(DeserializationContext context, long timestamp) {
+        if (context.isEnabled(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)) {
+            long seconds = timestamp / NANOS_IN_SEC;
+            int fraction = (int) (timestamp % NANOS_IN_SEC);
             return fromNanoseconds.apply(new FromDecimalArguments(
-                    timestamp, 0, this.getZone(context)
+                    seconds, fraction, this.getZone(context)
             ));
         }
         return fromMilliseconds.apply(new FromIntegerArguments(
