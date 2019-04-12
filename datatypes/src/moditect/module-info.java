@@ -5,6 +5,7 @@ module com.fasterxml.jackson.datatype.jdk8 {
 
     exports com.fasterxml.jackson.datatype.jdk8;
 
-    provides com.fasterxml.jackson.databind.Module with
-        com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+    // Since 3.0 bogus NOP module so let's NOT expose via SPI
+//    provides com.fasterxml.jackson.databind.Module with
+//    com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 }

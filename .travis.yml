@@ -8,4 +8,4 @@ jdk:
 branches:
   only:
     - master
-    - "2.10"
+    - "3.0"

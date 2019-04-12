@@ -6,6 +6,7 @@ module com.fasterxml.jackson.module.paramnames {
 
     exports com.fasterxml.jackson.module.paramnames;
 
-    provides com.fasterxml.jackson.databind.Module with
-        com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+    // Since 3.0 no real functionality so let's NOT expose via SPI
+//    provides com.fasterxml.jackson.databind.Module with
+//        com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 }
