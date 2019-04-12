@@ -16,7 +16,10 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 public class Jdk8Serializers extends Serializers.Base
+    implements java.io.Serializable
 {
+    private static final long serialVersionUID = 1L;
+
     @Override
     public JsonSerializer<?> findReferenceSerializer(SerializationConfig config,
             ReferenceType refType, BeanDescription beanDesc,
