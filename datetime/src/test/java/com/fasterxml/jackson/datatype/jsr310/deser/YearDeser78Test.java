@@ -14,9 +14,10 @@
  * limitations under the license.
  */
 
-package com.fasterxml.jackson.datatype.jsr310.failing;
+package com.fasterxml.jackson.datatype.jsr310.deser;
 
 import java.time.Year;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,6 +38,17 @@ public class YearDeser78Test extends ModuleTestBase
         public ObjectTest(Year y) {
             value = y;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == this) return true;
+            ObjectTest other = (ObjectTest) o;
+            return Objects.equals(this.value, other.value);
+        }
+
+        // stupid Javac 8 barfs on override missing?!
+        @Override
+        public int hashCode() { return 42; }
     }
 
     private final ObjectMapper MAPPER = newMapper();
