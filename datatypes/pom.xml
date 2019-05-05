@@ -15,10 +15,6 @@ JDK 8 data types.
   </description>
 
   <properties>
-    <!-- explicitly target JDK 8 -->
-    <javac.src.version>1.8</javac.src.version>
-    <javac.target.version>1.8</javac.target.version>
-
     <!-- Generate PackageVersion.java into this directory. -->
     <packageVersion.dir>com/fasterxml/jackson/datatype/jdk8</packageVersion.dir>
     <packageVersion.package>${project.groupId}.jdk8</packageVersion.package>
@@ -27,32 +23,9 @@ JDK 8 data types.
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <version>${version.plugin.surefire}</version>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <exclude>com/fasterxml/jackson/failing/*.java</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
-      <plugin>
         <!-- Inherited from oss-base. Generate PackageVersion.java.-->
         <groupId>com.google.code.maven-replacer-plugin</groupId>
         <artifactId>replacer</artifactId>
-        <executions>
-          <execution>
-            <id>process-packageVersion</id>
-            <phase>generate-sources</phase>
-          </execution>
-        </executions>
-      </plugin>
-      <!--  28-Mar-2019, tatu: Add rudimentary JDK9+ module info. To build with JDK 8
-             will have to use `moduleInfoFile` as anything else requires JDK 9+
-        -->
-      <plugin>
-        <groupId>org.moditect</groupId>
-        <artifactId>moditect-maven-plugin</artifactId>
       </plugin>
     </plugins>
   </build>
