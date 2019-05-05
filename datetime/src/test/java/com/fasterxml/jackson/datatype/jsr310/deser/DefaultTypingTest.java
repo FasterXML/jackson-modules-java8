@@ -6,13 +6,27 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
+import com.fasterxml.jackson.databind.DatabindContext;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
 public class DefaultTypingTest extends ModuleTestBase
 {
+    static class NoCheckSubTypeValidator
+        extends PolymorphicTypeValidator.Base
+    {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public Validity validateBaseType(DatabindContext ctxt, JavaType baseType) {
+            return Validity.ALLOWED;
+        }
+    }
+
     private final ObjectMapper TYPING_MAPPER = newMapperBuilder()
-            .enableDefaultTyping()
+            .enableDefaultTyping(new NoCheckSubTypeValidator())
             .build();
 
     // for [datatype-jsr310#24]
