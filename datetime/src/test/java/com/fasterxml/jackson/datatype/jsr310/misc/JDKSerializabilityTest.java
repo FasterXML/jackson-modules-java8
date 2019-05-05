@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.datatype.jsr310.failing;
+package com.fasterxml.jackson.datatype.jsr310.misc;
 
 import java.io.*;
 import java.time.Year;
