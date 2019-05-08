@@ -2,10 +2,24 @@ package com.fasterxml.jackson.datatype.jsr310;
 
 import java.util.Arrays;
 
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.cfg.MapperConfig;
+import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 
 public class ModuleTestBase
 {
+    public static class NoCheckSubTypeValidator
+        extends PolymorphicTypeValidator.Base
+    {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public Validity validateBaseType(MapperConfig<?> config, JavaType baseType) {
+            return Validity.ALLOWED;
+        }
+    }
+
     // 14-Mar-2016, tatu: Serialization of trailing zeroes may change [datatype-jsr310#67]
     //   Note, tho, that "0.0" itself is special case; need to avoid scientific notation:
     final static String NO_NANOSECS_SER = "0.0";

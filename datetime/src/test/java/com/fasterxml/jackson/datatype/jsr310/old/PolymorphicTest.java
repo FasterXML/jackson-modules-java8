@@ -7,12 +7,13 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase.NoCheckSubTypeValidator;
 
 public class PolymorphicTest extends ModuleTestBase
 {
     private final ObjectMapper TYPING_MAPPER = newMapper();
     {
-        TYPING_MAPPER.enableDefaultTyping();
+        TYPING_MAPPER.enableDefaultTyping(new NoCheckSubTypeValidator());
     }
 
     // for [datatype-jsr310#24]
