@@ -21,8 +21,6 @@ import java.time.MonthDay;
 import java.time.temporal.TemporalAccessor;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,6 +38,14 @@ public class TestMonthDaySerialization
         public Wrapper(MonthDay v) { value = v; }
         public Wrapper() { }
     }
+
+    static class WrapperAsArray {
+        @JsonFormat(shape = JsonFormat.Shape.ARRAY)
+        public MonthDay value;
+
+        public WrapperAsArray(MonthDay v) { value = v; }
+        public WrapperAsArray() { }
+    }
     
     private ObjectMapper MAPPER;
     
@@ -54,21 +60,15 @@ public class TestMonthDaySerialization
     @Test
     public void testSerialization01() throws Exception
     {
-        MonthDay monthDay = MonthDay.of(Month.JANUARY, 17);
-        String value = MAPPER.writeValueAsString(monthDay);
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "\"--01-17\"", value);
+        assertEquals("The value is not correct.", "\"--01-17\"",
+                MAPPER.writeValueAsString(MonthDay.of(Month.JANUARY, 17)));
     }
 
     @Test
     public void testSerialization02() throws Exception
     {
-        MonthDay monthDay = MonthDay.of(Month.AUGUST, 21);
-
-        String value = MAPPER.writeValueAsString(monthDay);
-
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "\"--08-21\"", value);
+        assertEquals("The value is not correct.", "\"--08-21\"",
+                MAPPER.writeValueAsString(MonthDay.of(Month.AUGUST, 21)));
     }
 
     @Test
@@ -78,7 +78,6 @@ public class TestMonthDaySerialization
                 .addModule(new JavaTimeModule())
                 .addMixIn(TemporalAccessor.class, MockObjectConfiguration.class)
                 .build();
-
         MonthDay monthDay = MonthDay.of(Month.NOVEMBER, 5);
         String value = mapper.writeValueAsString(monthDay);
         assertEquals("The value is not correct.", "[\"" + MonthDay.class.getName() + "\",\"--11-05\"]", value);
@@ -87,20 +86,15 @@ public class TestMonthDaySerialization
     @Test
     public void testDeserialization01() throws Exception
     {
-        MonthDay monthDay = MonthDay.of(Month.JANUARY, 17);
-        MonthDay value = MAPPER.readValue("\"--01-17\"", MonthDay.class);
-        assertEquals("The value is not correct.", monthDay, value);
+        assertEquals("The value is not correct.", MonthDay.of(Month.JANUARY, 17),
+                MAPPER.readValue("\"--01-17\"", MonthDay.class));
     }
 
     @Test
     public void testDeserialization02() throws Exception
     {
-        MonthDay monthDay = MonthDay.of(Month.AUGUST, 21);
-
-        MonthDay value = MAPPER.readValue("\"--08-21\"", MonthDay.class);
-
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", monthDay, value);
+        assertEquals("The value is not correct.", MonthDay.of(Month.AUGUST, 21),
+                MAPPER.readValue("\"--08-21\"", MonthDay.class));
     }
 
     @Test
@@ -113,18 +107,31 @@ public class TestMonthDaySerialization
                
         MonthDay monthDay = MonthDay.of(Month.NOVEMBER, 5);
         TemporalAccessor value = mapper.readValue("[\"" + MonthDay.class.getName() + "\",\"--11-05\"]", TemporalAccessor.class);
-        assertTrue("The value should be a MonthDay.", value instanceof MonthDay);
         assertEquals("The value is not correct.", monthDay, value);
     }
 
     @Test
     public void testFormatAnnotation() throws Exception
     {
-        Wrapper input = new Wrapper(MonthDay.of(12, 28));
+        final Wrapper input = new Wrapper(MonthDay.of(12, 28));
         String json = MAPPER.writeValueAsString(input);
         assertEquals("{\"value\":\"12/28\"}", json);
 
         Wrapper output = MAPPER.readValue(json, Wrapper.class);
         assertEquals(input.value, output.value);
+    }
+
+    @Test
+    public void testFormatAnnotationArray() throws Exception
+    {
+        final WrapperAsArray input = new WrapperAsArray(MonthDay.of(12, 28));
+        String json = MAPPER.writeValueAsString(input);
+        assertEquals("{\"value\":[12,28]}", json);
+
+        // 13-May-2019, tatu: [modules-java#107] not fully implemented so can't yet test
+/*        
+        WrapperAsArray output = MAPPER.readValue(json, WrapperAsArray.class);
+        assertEquals(input.value, output.value);
+        */
     }
 }
