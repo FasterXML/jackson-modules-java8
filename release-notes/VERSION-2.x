@@ -16,6 +16,10 @@ Modules:
 #82: (datetime) Typo in YearMothKeyDeserializer class name
 - Add JDK9+ `module-info.class` with Moditect plugin
 
+2.9.9 (16-May-2019)
+
+No changes since 2.9.8
+
 2.9.8 (15-Dec-2018)
 
 #90 (datetime): Performance issue with malicious `BigDecimal` input,
