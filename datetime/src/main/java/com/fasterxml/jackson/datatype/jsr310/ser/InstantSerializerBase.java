@@ -113,8 +113,7 @@ public abstract class InstantSerializerBase<T extends Temporal>
     protected void _acceptTimestampVisitor(JsonFormatVisitorWrapper visitor, JavaType typeHint)
         throws JsonMappingException
     {
-        SerializerProvider prov = visitor.getProvider();
-        if ((prov != null) && useNanoseconds(prov)) {
+        if (useNanoseconds(visitor.getProvider())) {
             JsonNumberFormatVisitor v2 = visitor.expectNumberFormat(typeHint);
             if (v2 != null) {
                 v2.numberType(NumberType.BIG_DECIMAL);
