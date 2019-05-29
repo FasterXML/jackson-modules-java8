@@ -14,6 +14,8 @@ Modules:
  `Duration` serialization
  (suggested by Kezhu W)
 #82: (datetime) Typo in YearMothKeyDeserializer class name
+#105: `LocalTime` should generate "time" schema instead of "date-time"
+ (suggeted by jaisonpjohn@github)
 - Add JDK9+ `module-info.class` with Moditect plugin
 
 2.9.9 (16-May-2019)
