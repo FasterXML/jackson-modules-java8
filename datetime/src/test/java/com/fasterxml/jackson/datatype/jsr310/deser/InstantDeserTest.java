@@ -19,6 +19,7 @@ import org.junit.Test;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
@@ -57,8 +58,9 @@ public class InstantDeserTest extends ModuleTestBase
             valueInUTC = v;
         }
     }
-    
+
     private final ObjectMapper MAPPER = newMapper();
+    private final ObjectReader READER = MAPPER.readerFor(Instant.class);
 
     /*
     /**********************************************************************
@@ -67,28 +69,23 @@ public class InstantDeserTest extends ModuleTestBase
      */
     
     @Test
-    public void testDeserializationAsFloat01() throws Exception
-    {
-        Instant date = Instant.ofEpochSecond(0L);
-        Instant value = MAPPER.readValue("0.000000000", Instant.class);
-        assertEquals("The value is not correct.", date, value);
+    public void testDeserializationAsFloat01() throws Exception {
+        assertEquals("The value is not correct.", Instant.ofEpochSecond(0L),
+                READER.readValue("0.000000000"));
     }
 
     @Test
-    public void testDeserializationAsFloat02() throws Exception
-    {
-        Instant date = Instant.ofEpochSecond(123456789L, 183917322);
-        Instant value = MAPPER.readValue("123456789.183917322", Instant.class);
-        assertEquals("The value is not correct.", date, value);
+    public void testDeserializationAsFloat02() throws Exception {
+        assertEquals("The value is not correct.", Instant.ofEpochSecond(123456789L, 183917322),
+                READER.readValue("123456789.183917322"));
     }
 
     @Test
     public void testDeserializationAsFloat03() throws Exception
     {
         Instant date = Instant.now();
-        Instant value = MAPPER.readValue(
-                DecimalUtils.toDecimal(date.getEpochSecond(), date.getNano()), Instant.class
-                );
+        Instant value = READER.readValue(
+                DecimalUtils.toDecimal(date.getEpochSecond(), date.getNano()));
         assertEquals("The value is not correct.", date, value);
     }
 
@@ -99,7 +96,7 @@ public class InstantDeserTest extends ModuleTestBase
     public void testDeserializationAsFloatEdgeCase01() throws Exception
     {
         String input = Instant.MAX.getEpochSecond() + ".999999999";
-        Instant value = MAPPER.readValue(input, Instant.class);
+        Instant value = READER.readValue(input);
         assertEquals(value, Instant.MAX);
         assertEquals(Instant.MAX.getEpochSecond(), value.getEpochSecond());
         assertEquals(999999999, value.getNano());
@@ -112,7 +109,7 @@ public class InstantDeserTest extends ModuleTestBase
     public void testDeserializationAsFloatEdgeCase02() throws Exception
     {
         String input = Instant.MIN.getEpochSecond() + ".0";
-        Instant value = MAPPER.readValue(input, Instant.class);
+        Instant value = READER.readValue(input);
         assertEquals(value, Instant.MIN);
         assertEquals(Instant.MIN.getEpochSecond(), value.getEpochSecond());
         assertEquals(0, value.getNano());
@@ -123,7 +120,7 @@ public class InstantDeserTest extends ModuleTestBase
     {
         // Instant can't go this low
         String input = Instant.MIN.getEpochSecond() + ".1";
-        MAPPER.readValue(input, Instant.class);
+        READER.readValue(input);
     }
 
     /*
@@ -137,7 +134,7 @@ public class InstantDeserTest extends ModuleTestBase
     {
         // 1ns beyond the upper-bound of Instant.
         String input = (Instant.MAX.getEpochSecond() + 1) + ".0";
-        MAPPER.readValue(input, Instant.class);
+        READER.readValue(input);
     }
 
     @Test(expected = DateTimeException.class)
@@ -145,15 +142,14 @@ public class InstantDeserTest extends ModuleTestBase
     {
         // 1ns beyond the lower-bound of Instant.
         String input = (Instant.MIN.getEpochSecond() - 1) + ".0";
-        MAPPER.readValue(input, Instant.class);
+        READER.readValue(input);
     }
 
     @Test
     public void testDeserializationAsFloatEdgeCase06() throws Exception
     {
         // Into the positive zone where everything becomes zero.
-        String input = "1e64";
-        Instant value = MAPPER.readValue(input, Instant.class);
+        Instant value = READER.readValue("1e64");
         assertEquals(0, value.getEpochSecond());
     }
 
@@ -161,8 +157,7 @@ public class InstantDeserTest extends ModuleTestBase
     public void testDeserializationAsFloatEdgeCase07() throws Exception
     {
         // Into the negative zone where everything becomes zero.
-        String input = "-1e64";
-        Instant value = MAPPER.readValue(input, Instant.class);
+        Instant value = READER.readValue("-1e64");
         assertEquals(0, value.getEpochSecond());
     }
 
@@ -173,16 +168,14 @@ public class InstantDeserTest extends ModuleTestBase
     @Test(timeout = 100)
     public void testDeserializationAsFloatEdgeCase08() throws Exception
     {
-        String input = "1e10000000";
-        Instant value = MAPPER.readValue(input, Instant.class);
+        Instant value = READER.readValue("1e10000000");
         assertEquals(0, value.getEpochSecond());
     }
 
     @Test(timeout = 100)
     public void testDeserializationAsFloatEdgeCase09() throws Exception
     {
-        String input = "-1e10000000";
-        Instant value = MAPPER.readValue(input, Instant.class);
+        Instant value = READER.readValue("-1e10000000");
         assertEquals(0, value.getEpochSecond());
     }
 
@@ -192,16 +185,14 @@ public class InstantDeserTest extends ModuleTestBase
     @Test(timeout = 100)
     public void testDeserializationAsFloatEdgeCase10() throws Exception
     {
-        String input = "1e-10000000";
-        Instant value = MAPPER.readValue(input, Instant.class);
+        Instant value = READER.readValue("1e-10000000");
         assertEquals(0, value.getEpochSecond());
     }
 
     @Test(timeout = 100)
     public void testDeserializationAsFloatEdgeCase11() throws Exception
     {
-        String input = "-1e-10000000";
-        Instant value = MAPPER.readValue(input, Instant.class);
+        Instant value = READER.readValue("-1e-10000000");
         assertEquals(0, value.getEpochSecond());
     }
 
@@ -215,18 +206,8 @@ public class InstantDeserTest extends ModuleTestBase
     public void testDeserializationAsInt01Nanoseconds() throws Exception
     {
         Instant date = Instant.ofEpochSecond(0L);
-        Instant value = MAPPER.readerFor(Instant.class)
+        Instant value = READER
                 .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
-                .readValue("0");
-        assertEquals("The value is not correct.", date, value);
-    }
-
-    @Test
-    public void testDeserializationAsInt01Milliseconds() throws Exception
-    {
-        Instant date = Instant.ofEpochSecond(0L);
-        Instant value = MAPPER.readerFor(Instant.class)
-                .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("0");
         assertEquals("The value is not correct.", date, value);
     }
@@ -234,26 +215,11 @@ public class InstantDeserTest extends ModuleTestBase
     @Test
     public void testDeserializationAsInt02Nanoseconds() throws Exception
     {
-        Instant date = Instant.ofEpochSecond(123456789L, 0);
-        Instant value = MAPPER.readerFor(Instant.class)
+        final long ts = 123456789L;
+        Instant date = Instant.ofEpochSecond(ts);
+        Instant value = READER
                 .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
-                .readValue("123456789");
-        assertEquals("The value is not correct.", date, value);
-    }
-
-    /*
-    /**********************************************************************
-    /* Basic deserialization from Integer (long) value, as milliseconds
-    /**********************************************************************
-     */
-    
-    @Test
-    public void testDeserializationAsInt02Milliseconds() throws Exception
-    {
-        Instant date = Instant.ofEpochSecond(123456789L, 422000000);
-        Instant value = MAPPER.readerFor(Instant.class)
-                .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
-                .readValue("123456789422");
+                .readValue(String.valueOf(ts));
         assertEquals("The value is not correct.", date, value);
     }
 
@@ -263,9 +229,35 @@ public class InstantDeserTest extends ModuleTestBase
         Instant date = Instant.now();
         date = date.minus(date.getNano(), ChronoUnit.NANOS);
 
-        Instant value = MAPPER.readerFor(Instant.class)
+        Instant value = READER
                 .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue(Long.toString(date.getEpochSecond()));
+        assertEquals("The value is not correct.", date, value);
+    }
+
+    /*
+    /**********************************************************************
+    /* Basic deserialization from Integer (long) value, as milliseconds
+    /**********************************************************************
+     */
+
+    @Test
+    public void testDeserializationAsInt01Milliseconds() throws Exception
+    {
+        Instant date = Instant.ofEpochSecond(0L);
+        Instant value = READER
+                .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .readValue("0");
+        assertEquals("The value is not correct.", date, value);
+    }
+
+    @Test
+    public void testDeserializationAsInt02Milliseconds() throws Exception
+    {
+        Instant date = Instant.ofEpochSecond(123456789L, 422000000);
+        Instant value = READER
+                .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .readValue("123456789422");
         assertEquals("The value is not correct.", date, value);
     }
 
@@ -275,7 +267,7 @@ public class InstantDeserTest extends ModuleTestBase
         Instant date = Instant.now();
         date = date.minus(date.getNano(), ChronoUnit.NANOS);
 
-        Instant value = MAPPER.readerFor(Instant.class)
+        Instant value = READER
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue(Long.toString(date.toEpochMilli()));
         assertEquals("The value is not correct.", date, value);
@@ -291,7 +283,7 @@ public class InstantDeserTest extends ModuleTestBase
     public void testDeserializationAsString01() throws Exception
     {
         Instant date = Instant.ofEpochSecond(0L);
-        Instant value = MAPPER.readValue('"' + FORMATTER.format(date) + '"', Instant.class);
+        Instant value = READER.readValue('"' + FORMATTER.format(date) + '"');
         assertEquals("The value is not correct.", date, value);
     }
 
@@ -299,7 +291,7 @@ public class InstantDeserTest extends ModuleTestBase
     public void testDeserializationAsString02() throws Exception
     {
         Instant date = Instant.ofEpochSecond(123456789L, 183917322);
-        Instant value = MAPPER.readValue('"' + FORMATTER.format(date) + '"', Instant.class);
+        Instant value = READER.readValue('"' + FORMATTER.format(date) + '"');
         assertEquals("The value is not correct.", date, value);
     }
 
@@ -308,7 +300,7 @@ public class InstantDeserTest extends ModuleTestBase
     {
         Instant date = Instant.now();
 
-        Instant value = MAPPER.readValue('"' + FORMATTER.format(date) + '"', Instant.class);
+        Instant value = READER.readValue('"' + FORMATTER.format(date) + '"');
         assertEquals("The value is not correct.", date, value);
     }
 
@@ -426,7 +418,7 @@ public class InstantDeserTest extends ModuleTestBase
     public void testDeserializationFromStringWithZeroZoneOffset01() throws Exception {
         Instant date = Instant.now();
         String json = formatWithZeroZoneOffset(date, "+00:00");
-        Instant result = MAPPER.readValue(json, Instant.class);
+        Instant result = READER.readValue(json);
         assertEquals("The value is not correct.", date, result);
     }
 
@@ -434,7 +426,7 @@ public class InstantDeserTest extends ModuleTestBase
     public void testDeserializationFromStringWithZeroZoneOffset02() throws Exception {
         Instant date = Instant.now();
         String json = formatWithZeroZoneOffset(date, "+0000");
-        Instant result = MAPPER.readValue(json, Instant.class);
+        Instant result = READER.readValue(json);
         assertEquals("The value is not correct.", date, result);
     }
 
@@ -442,7 +434,7 @@ public class InstantDeserTest extends ModuleTestBase
     public void testDeserializationFromStringWithZeroZoneOffset03() throws Exception {
         Instant date = Instant.now();
         String json = formatWithZeroZoneOffset(date, "+00");
-        Instant result = MAPPER.readValue(json, Instant.class);
+        Instant result = READER.readValue(json);
         assertEquals("The value is not correct.", date, result);
     }
 
@@ -466,13 +458,12 @@ public class InstantDeserTest extends ModuleTestBase
                 .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .with(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .writeValueAsString(inst);
-        Instant result = MAPPER.readValue(json, Instant.class);
+        Instant result = READER.readValue(json);
         assertNotNull(result);
         assertEquals(result, inst);
 
         // but then quoted as JSON String
-        result = MAPPER.readValue(String.format("\"%s\"", json),
-                Instant.class);
+        result = READER.readValue(String.format("\"%s\"", json));
         assertNotNull(result);
         assertEquals(result, inst);
     }
