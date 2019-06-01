@@ -16,7 +16,6 @@
 
 package com.fasterxml.jackson.datatype.jsr310;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.junit.Test;
