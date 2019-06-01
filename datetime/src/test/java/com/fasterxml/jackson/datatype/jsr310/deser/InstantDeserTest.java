@@ -60,6 +60,12 @@ public class InstantDeserTest extends ModuleTestBase
     
     private final ObjectMapper MAPPER = newMapper();
 
+    /*
+    /**********************************************************************
+    /* Basic deserialization from floating point value (seconds with fractions)
+    /**********************************************************************
+     */
+    
     @Test
     public void testDeserializationAsFloat01() throws Exception
     {
@@ -199,6 +205,12 @@ public class InstantDeserTest extends ModuleTestBase
         assertEquals(0, value.getEpochSecond());
     }
 
+    /*
+    /**********************************************************************
+    /* Basic deserialization from Integer (long) value, as nanos
+    /**********************************************************************
+     */
+    
     @Test
     public void testDeserializationAsInt01Nanoseconds() throws Exception
     {
@@ -229,6 +241,12 @@ public class InstantDeserTest extends ModuleTestBase
         assertEquals("The value is not correct.", date, value);
     }
 
+    /*
+    /**********************************************************************
+    /* Basic deserialization from Integer (long) value, as milliseconds
+    /**********************************************************************
+     */
+    
     @Test
     public void testDeserializationAsInt02Milliseconds() throws Exception
     {
@@ -263,6 +281,12 @@ public class InstantDeserTest extends ModuleTestBase
         assertEquals("The value is not correct.", date, value);
     }
 
+    /*
+    /**********************************************************************
+    /* Basic deserialization from String (ISO-8601 timestamps)
+    /**********************************************************************
+     */
+    
     @Test
     public void testDeserializationAsString01() throws Exception
     {
@@ -288,6 +312,12 @@ public class InstantDeserTest extends ModuleTestBase
         assertEquals("The value is not correct.", date, value);
     }
 
+    /*
+    /**********************************************************************
+    /* Polymorphic deserialization, numeric timestamps
+    /**********************************************************************
+     */
+    
     @Test
     public void testDeserializationWithTypeInfo01() throws Exception
     {
@@ -343,6 +373,12 @@ public class InstantDeserTest extends ModuleTestBase
         assertEquals("The value is not correct.", date, value);
     }
 
+    /*
+    /**********************************************************************
+    /* Deserialization with custom pattern overrides (for String values)
+    /**********************************************************************
+     */
+    
     @Test
     public void testCustomPatternWithAnnotations01() throws Exception
     {
@@ -375,6 +411,47 @@ public class InstantDeserTest extends ModuleTestBase
                 input.valueInUTC, result.valueInUTC);
     }
 
+    /*
+    /**********************************************************************
+    /* Deserialization, timezone overrides
+    /**********************************************************************
+     */
+
+    // [jackson-modules-java8#18]
+    @Test
+    public void testDeserializationFromStringWithZeroZoneOffset01() throws Exception {
+        Instant date = Instant.now();
+        String json = formatWithZeroZoneOffset(date, "+00:00");
+        Instant result = MAPPER.readValue(json, Instant.class);
+        assertEquals("The value is not correct.", date, result);
+    }
+
+    @Test
+    public void testDeserializationFromStringWithZeroZoneOffset02() throws Exception {
+        Instant date = Instant.now();
+        String json = formatWithZeroZoneOffset(date, "+0000");
+        Instant result = MAPPER.readValue(json, Instant.class);
+        assertEquals("The value is not correct.", date, result);
+    }
+
+    @Test
+    public void testDeserializationFromStringWithZeroZoneOffset03() throws Exception {
+        Instant date = Instant.now();
+        String json = formatWithZeroZoneOffset(date, "+00");
+        Instant result = MAPPER.readValue(json, Instant.class);
+        assertEquals("The value is not correct.", date, result);
+    }
+
+    private String formatWithZeroZoneOffset(Instant date, String offset){
+        return '"' + FORMATTER.format(date).replaceFirst("Z$", offset) + '"';
+    }
+
+    /*
+    /**********************************************************************
+    /* Deserialization, misc other
+    /**********************************************************************
+     */
+    
     // [datatype-jsr310#16]
     @Test
     public void testDeserializationFromStringAsNumber() throws Exception
@@ -410,34 +487,5 @@ public class InstantDeserTest extends ModuleTestBase
         Instant actual = mapper.readValue(json, Instant.class);
 
         assertEquals(givenInstant, actual);
-    }
-
-    // [jackson-modules-java8#18]
-    @Test
-    public void testDeserializationFromStringWithZeroZoneOffset01() throws Exception {
-        Instant date = Instant.now();
-        String json = formatWithZeroZoneOffset(date, "+00:00");
-        Instant result = MAPPER.readValue(json, Instant.class);
-        assertEquals("The value is not correct.", date, result);
-    }
-
-    @Test
-    public void testDeserializationFromStringWithZeroZoneOffset02() throws Exception {
-        Instant date = Instant.now();
-        String json = formatWithZeroZoneOffset(date, "+0000");
-        Instant result = MAPPER.readValue(json, Instant.class);
-        assertEquals("The value is not correct.", date, result);
-    }
-
-    @Test
-    public void testDeserializationFromStringWithZeroZoneOffset03() throws Exception {
-        Instant date = Instant.now();
-        String json = formatWithZeroZoneOffset(date, "+00");
-        Instant result = MAPPER.readValue(json, Instant.class);
-        assertEquals("The value is not correct.", date, result);
-    }
-
-    private String formatWithZeroZoneOffset(Instant date, String offset){
-        return '"' + FORMATTER.format(date).replaceFirst("Z$", offset) + '"';
     }
 }
