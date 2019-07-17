@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.datatype.jsr310;
+package com.fasterxml.jackson.datatype.jsr310.deser;
 
 import java.io.IOException;
 import java.time.Month;
@@ -8,6 +8,7 @@ import java.time.format.DateTimeParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
 import org.junit.Test;
 
@@ -16,7 +17,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
-public class TestMonthDayDeserialization extends ModuleTestBase
+public class MonthDayDeserTest extends ModuleTestBase
 {
     private final ObjectReader READER = newMapper().readerFor(MonthDay.class);
 
@@ -35,15 +36,14 @@ public class TestMonthDayDeserialization extends ModuleTestBase
     @Test
     public void testDeserializationAsArrayDisabled() throws Throwable
     {
-    	try {
-    		read("['--01-01']");
-    	    fail("expected JsonMappingException");
+        try {
+            read("['--01-01']");
+            fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
-           // OK
-        } catch (IOException e) {
-            throw e;
+            verifyException(e, "Cannot deserialize");
+            verifyException(e, "START_ARRAY token");
+            // OK
         }
-
     }
     
     @Test
@@ -53,9 +53,9 @@ public class TestMonthDayDeserialization extends ModuleTestBase
             READER.readValue("[]");
             fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
-           // OK
-        } catch (IOException e) {
-            throw e;
+            verifyException(e, "Cannot deserialize");
+            verifyException(e, "START_ARRAY token");
+            // OK
         }
         try {
             READER.with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
