@@ -16,18 +16,27 @@
 
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
+import java.io.IOException;
 import java.time.Year;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.Temporal;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class YearDeserTest extends ModuleTestBase
 {
@@ -42,13 +51,107 @@ public class YearDeserTest extends ModuleTestBase
     }
 
     private final ObjectMapper MAPPER = newMapper();
+    private final ObjectReader READER = MAPPER.readerFor(Year.class);
+
+    @Test
+    public void testDeserializationAsString01() throws Exception
+    {
+        expectSuccess(Year.of(2000), "'2000'");
+    }
+
+    @Test
+    public void testBadDeserializationAsString01() throws Throwable
+    {
+        expectFailure("'notayear'");
+    }
+
+    @Test
+    public void testDeserializationAsArrayDisabled() throws Throwable
+    {
+     try {
+          read("['2000']");
+         fail("expected JsonMappingException");
+        } catch (JsonMappingException e) {
+           // OK
+        } catch (IOException e) {
+            throw e;
+        }
+    }
+    
+    @Test
+    public void testDeserializationAsEmptyArrayDisabled() throws Throwable
+    {
+     try {
+          read("[]");
+         fail("expected JsonMappingException");
+        } catch (JsonMappingException e) {
+           // OK
+        } catch (IOException e) {
+            throw e;
+        }
+     try {
+          String json="[]";
+          newMapper()
+                    .configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
+                    .readerFor(Year.class).readValue(aposToQuotes(json));
+         fail("expected JsonMappingException");
+        } catch (JsonMappingException e) {
+           // OK
+        } catch (IOException e) {
+            throw e;
+        }
+    }
+    
+    @Test
+    public void testDeserializationAsArrayEnabled() throws Throwable
+    {
+     String json="['2000']";
+     Year value= newMapper()
+               .configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
+               .readerFor(Year.class).readValue(aposToQuotes(json));
+     notNull(value);
+        expect(Year.of(2000), value);
+    }
+    
+    @Test
+    public void testDeserializationAsEmptyArrayEnabled() throws Throwable
+    {
+     String json="[]";
+     Year value= newMapper()
+               .configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
+               .configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true)
+               .readerFor(Year.class).readValue(aposToQuotes(json));
+     assertNull(value);
+    }
+    
+    private void expectFailure(String json) throws Throwable {
+        try {
+            read(json);
+            fail("expected DateTimeParseException");
+        } catch (JsonProcessingException e) {
+            if (e.getCause() == null) {
+                throw e;
+            }
+            if (!(e.getCause() instanceof DateTimeParseException)) {
+                throw e.getCause();
+            }
+        } catch (IOException e) {
+            throw e;
+        }
+    }
+
+    private void expectSuccess(Object exp, String json) throws IOException {
+        final Year value = read(json);
+        notNull(value);
+        expect(exp, value);
+    }
 
     @Test
     public void testDefaultDeserialization() throws Exception
     {
-        Year value = MAPPER.readValue("1986", Year.class);
+        Year value = READER.readValue("1986");
         assertEquals("The value is not correct.", Year.of(1986), value);
-        value = MAPPER.readValue("2013", Year.class);
+        value = READER.readValue("2013");
         assertEquals("The value is not correct.", Year.of(2013), value);
     }
 
@@ -83,5 +186,17 @@ public class YearDeserTest extends ModuleTestBase
         assertEquals("\"X2018\"", json);
         Year result = mapper.readValue(json, Year.class);
         assertEquals(input, result);
+    }
+
+    private Year read(final String json) throws IOException {
+        return READER.readValue(aposToQuotes(json));
+    }
+
+    private static void notNull(Object value) {
+        assertNotNull("The value should not be null.", value);
+    }
+
+    private static void expect(Object exp, Object value) {
+        assertEquals("The value is not correct.", exp,  value);
     }
 }

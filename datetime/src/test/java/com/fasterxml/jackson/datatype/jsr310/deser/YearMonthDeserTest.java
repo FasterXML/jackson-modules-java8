@@ -1,13 +1,16 @@
-package com.fasterxml.jackson.datatype.jsr310;
+package com.fasterxml.jackson.datatype.jsr310.deser;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
+
 import org.junit.Test;
 
 import java.io.IOException;
-import java.time.Year;
+import java.time.Month;
+import java.time.YearMonth;
 import java.time.format.DateTimeParseException;
 
 import static org.junit.Assert.assertEquals;
@@ -15,81 +18,66 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
-public class TestYearDeserialization extends ModuleTestBase
+public class YearMonthDeserTest extends ModuleTestBase
 {
-    private final ObjectReader READER = newMapper().readerFor(Year.class);
+    private final ObjectReader READER = newMapper().readerFor(YearMonth.class);
 
     @Test
     public void testDeserializationAsString01() throws Exception
     {
-        expectSuccess(Year.of(2000), "'2000'");
+        expectSuccess(YearMonth.of(2000, Month.JANUARY), "'2000-01'");
     }
 
     @Test
     public void testBadDeserializationAsString01() throws Throwable
     {
-        expectFailure("'notayear'");
+        expectFailure("'notayearmonth'");
     }
-
+    
     @Test
     public void testDeserializationAsArrayDisabled() throws Throwable
     {
     	try {
-    		read("['2000']");
+    		read("['2000-01']");
     	    fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
            // OK
         } catch (IOException e) {
             throw e;
         }
+
     }
     
     @Test
     public void testDeserializationAsEmptyArrayDisabled() throws Throwable
     {
-    	try {
-    		read("[]");
-    	    fail("expected JsonMappingException");
-        } catch (JsonMappingException e) {
-           // OK
-        } catch (IOException e) {
-            throw e;
-        }
-    	try {
-    		String json="[]";
-        	newMapper()
-        			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
-        			.readerFor(Year.class).readValue(aposToQuotes(json));
-    	    fail("expected JsonMappingException");
-        } catch (JsonMappingException e) {
-           // OK
-        } catch (IOException e) {
-            throw e;
-        }
+    	// works even without the feature enabled
+    	assertNull(read("[]"));
     }
     
     @Test
     public void testDeserializationAsArrayEnabled() throws Throwable
     {
-    	String json="['2000']";
-    	Year value= newMapper()
+    	String json="['2000-01']";
+    	YearMonth value= newMapper()
     			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
-    			.readerFor(Year.class).readValue(aposToQuotes(json));
+    			.readerFor(YearMonth.class).readValue(aposToQuotes(json));
     	notNull(value);
-        expect(Year.of(2000), value);
+        expect(YearMonth.of(2000, Month.JANUARY), value);
     }
     
     @Test
     public void testDeserializationAsEmptyArrayEnabled() throws Throwable
     {
     	String json="[]";
-    	Year value= newMapper()
+    	YearMonth value= newMapper()
     			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
     			.configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true)
-    			.readerFor(Year.class).readValue(aposToQuotes(json));
+    			.readerFor(YearMonth.class).readValue(aposToQuotes(json));
     	assertNull(value);
     }
-    
+
+
     private void expectFailure(String json) throws Throwable {
         try {
             read(json);
@@ -107,12 +95,12 @@ public class TestYearDeserialization extends ModuleTestBase
     }
 
     private void expectSuccess(Object exp, String json) throws IOException {
-        final Year value = read(json);
+        final YearMonth value = read(json);
         notNull(value);
         expect(exp, value);
     }
 
-    private Year read(final String json) throws IOException {
+    private YearMonth read(final String json) throws IOException {
         return READER.readValue(aposToQuotes(json));
     }
 

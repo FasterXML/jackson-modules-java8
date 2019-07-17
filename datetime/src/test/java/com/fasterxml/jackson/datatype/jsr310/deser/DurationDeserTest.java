@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.datatype.jsr310;
+package com.fasterxml.jackson.datatype.jsr310.deser;
 
 import java.math.BigInteger;
 import java.time.Duration;
@@ -17,8 +17,10 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
+import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-public class TestDurationDeserialization extends ModuleTestBase
+public class DurationDeserTest extends ModuleTestBase
 {
     private final ObjectReader READER = newMapper().readerFor(Duration.class);
 
