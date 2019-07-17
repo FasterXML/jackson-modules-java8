@@ -17,7 +17,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
-public class TestZonedDateTimeDeserialization extends ModuleTestBase
+public class ZonedDateTimeDeserTest extends ModuleTestBase
 {
     private final ObjectReader READER = newMapper().readerFor(ZonedDateTime.class);
 

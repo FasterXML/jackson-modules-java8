@@ -11,8 +11,8 @@ public class ModuleTestBase
 {
     // 14-Mar-2016, tatu: Serialization of trailing zeroes may change [datatype-jsr310#67]
     //   Note, tho, that "0.0" itself is special case; need to avoid scientific notation:
-    final static String NO_NANOSECS_SER = "0.0";
-    final static String NO_NANOSECS_SUFFIX = ".000000000";
+    final protected static String NO_NANOSECS_SER = "0.0";
+    final protected static String NO_NANOSECS_SUFFIX = ".000000000";
 
     protected static ObjectMapper newMapper() {
         return newMapperBuilder().build();
@@ -33,6 +33,11 @@ public class ModuleTestBase
         return newMapperBuilder(tz).build();
     }
 
+    protected static JsonMapper.Builder mapperBuilder() {
+        return JsonMapper.builder()
+                .addModule(new JavaTimeModule());
+    }
+    
     protected String quote(String value) {
         return "\"" + value + "\"";
     }

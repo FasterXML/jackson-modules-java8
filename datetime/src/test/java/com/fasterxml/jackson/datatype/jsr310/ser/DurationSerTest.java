@@ -1,8 +1,10 @@
-package com.fasterxml.jackson.datatype.jsr310;
+package com.fasterxml.jackson.datatype.jsr310.ser;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
+import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,7 +14,7 @@ import java.time.temporal.TemporalAmount;
 
 import static org.junit.Assert.*;
 
-public class TestDurationSerialization extends ModuleTestBase
+public class DurationSerTest extends ModuleTestBase
 {
     private ObjectWriter WRITER;
 

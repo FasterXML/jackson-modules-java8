@@ -14,10 +14,14 @@
  * limitations under the license.
  */
 
-package com.fasterxml.jackson.datatype.jsr310;
+package com.fasterxml.jackson.datatype.jsr310.ser;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
+import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
+import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
+
 import org.junit.Test;
 
 import java.time.Instant;
@@ -27,7 +31,7 @@ import java.time.temporal.Temporal;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class TestInstantSerialization extends ModuleTestBase
+public class InstantSerTest extends ModuleTestBase
 {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_INSTANT;
 
