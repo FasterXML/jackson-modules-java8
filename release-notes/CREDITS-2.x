@@ -2,6 +2,9 @@ Here are people who have contributed to the development of Jackson JSON processo
 Java 8 module
 (version numbers in brackets indicate release in which the problem was fixed)
 
+Nick Williams (beamerblvd@github): author of Java 8 date/time module
+Tatu Saloranta (cowtowncoder@github): author (other modules)
+
 Louis-Rémi Paquet (lrpg@github)
   #15: Optional<Long> and OptionalLong deserialization not consistent when
      deserializing from String
