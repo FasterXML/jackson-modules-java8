@@ -61,31 +61,24 @@ public class MonthDayDeserTest extends ModuleTestBase
             read("['--01-01']");
             fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
-            verifyException(e, "Cannot deserialize");
-            verifyException(e, "START_ARRAY token");
-            // OK
+            // expecting array-of-ints
+            verifyException(e, "Unexpected token");
         }
     }
     
     @Test
     public void testDeserializationAsEmptyArrayDisabled() throws Throwable
     {
-        try {
-            READER.readValue("[]");
-            fail("expected JsonMappingException");
-        } catch (JsonMappingException e) {
-            verifyException(e, "Cannot deserialize");
-            verifyException(e, "START_ARRAY token");
-            // OK
-        }
-        try {
-            READER.with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
+        // since 2.10, empty array taken as `null`
+        
+        MonthDay value = READER.readValue("[]");
+        assertNull(value);
+
+        value = newMapper()
+                .readerFor(MonthDay.class)
+                .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
                 .readValue("[]");
-            fail("expected JsonMappingException");
-        } catch (JsonMappingException e) {
-            verifyException(e, "Unexpected token (END_ARRAY)");
-           // OK
-        }
+        assertNull(value);
     }
     
     @Test
@@ -150,12 +143,10 @@ public class MonthDayDeserTest extends ModuleTestBase
         assertEquals("{\"value\":[12,28]}", json);
 
         // 13-May-2019, tatu: [modules-java#107] not fully implemented so can't yet test
-/*        
         WrapperAsArray output = MAPPER.readValue(json, WrapperAsArray.class);
         assertEquals(input.value, output.value);
-        */
     }
-    
+
     private void expectFailure(String aposJson) throws Throwable {
         try {
             read(aposJson);
