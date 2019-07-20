@@ -15,7 +15,7 @@ Modules:
  (suggested by Kezhu W)
 #82: (datetime) Typo in YearMothKeyDeserializer class name
 #105: `LocalTime` should generate "time" schema instead of "date-time"
- (suggeted by jaisonpjohn@github)
+ (suggested by jaisonpjohn@github)
 #121: Array representation of `MonthDay` can not be deserialized
 - Add JDK9+ `module-info.class` with Moditect plugin
 
