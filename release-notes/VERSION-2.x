@@ -8,6 +8,10 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
+2.10.0.pr2
+
+#126: Change auto-registration in 2.10 to provide "new" (JavaTimeModule) instead of legacy module
+
 2.10.0.pr1 (19-Jul-2019)
 
 #75: (datetime) Use `SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS` for configuring
