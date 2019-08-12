@@ -29,8 +29,7 @@ public class TestDecimalUtils extends ModuleTestBase
                 "19827342231.999888000", decimal);
     }
 
-
-
+    @SuppressWarnings("deprecation")
     private void checkExtractNanos(long expectedSeconds, int expectedNanos, BigDecimal decimal)
     {
         long seconds = decimal.longValue();
