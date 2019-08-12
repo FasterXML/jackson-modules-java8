@@ -247,9 +247,7 @@ public class InstantDeserializer<T extends Temporal>
                 context.isEnabled(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
     }
 
-    /**
-     * Helper method to find Strings of form "all digits" and "digits-comma-digits"
-     */
+    // Helper method to find Strings of form "all digits" and "digits-comma-digits"
     protected int _countPeriods(String str)
     {
         int commas = 0;

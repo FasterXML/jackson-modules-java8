@@ -76,7 +76,10 @@ public final class DecimalUtils
     }
 
     /**
-     * @since 2.7.3
+     * Factory method for constructing {@link BigDecimal} out of second, nano-second
+     * components.
+     *
+     * @since 2.8
      */
     public static BigDecimal toBigDecimal(long seconds, int nanoseconds)
     {
@@ -92,8 +95,9 @@ public final class DecimalUtils
     }
 
     /**
-     * @Deprecated due to potential unbounded latency on some JRE releases.
+     * @deprecated due to potential unbounded latency on some JRE releases.
      */
+    @Deprecated // since 2.9.8
     public static int extractNanosecondDecimal(BigDecimal value, long integer)
     {
         // !!! 14-Mar-2016, tatu: Somewhat inefficient; should replace with functionally
@@ -101,7 +105,6 @@ public final class DecimalUtils
         //   there's no difference and do nothing... )
         return value.subtract(new BigDecimal(integer)).multiply(ONE_BILLION).intValue();
     }
-
 
     /**
      * Extracts the seconds and nanoseconds component of {@code seconds} as {@code long} and {@code int}
