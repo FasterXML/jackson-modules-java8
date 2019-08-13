@@ -115,4 +115,4 @@ Call after works because `getTypeId()` provided by modules differs so they are n
 
 ## More
 
-See [Wiki](../../wiki) for more information (javadocs).
+See [Wiki](../../../wiki) for more information (javadocs).
