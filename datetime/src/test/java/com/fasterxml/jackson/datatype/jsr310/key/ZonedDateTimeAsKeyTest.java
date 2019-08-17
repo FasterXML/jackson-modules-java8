@@ -4,19 +4,18 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
-public class TestZonedDateTimeKeySerialization {
-
+public class ZonedDateTimeAsKeyTest extends ModuleTestBase
+{
     private static final TypeReference<Map<ZonedDateTime, String>> TYPE_REF = new TypeReference<Map<ZonedDateTime, String>>() {
     };
     private static final ZonedDateTime DATE_TIME_0 = ZonedDateTime.ofInstant(Instant.ofEpochSecond(0), ZoneOffset.UTC);
@@ -35,73 +34,42 @@ public class TestZonedDateTimeKeySerialization {
     private static final ZonedDateTime DATE_TIME_2_OFFSET = DATE_TIME_2.withZoneSameInstant(ZoneOffset.ofHours(1));
     private static final String DATE_TIME_2_STRING = "2015-03-14T09:26:53.59+01:00";;
 
-    private ObjectMapper om;
-    private Map<ZonedDateTime, String> map;
-
-    @Before
-    public void setUp() {
-        this.om = new ObjectMapper();
-        om.registerModule(new JavaTimeModule());
-        map = new HashMap<>();
-    }
-
-    /*
-     * ObjectMapper configuration is not respected at deserialization and serialization at the moment.
-     */
+    private final ObjectMapper MAPPER = newMapper();
+    private final ObjectReader READER = MAPPER.readerFor(TYPE_REF);
 
     @Test
     public void testSerialization0() throws Exception {
-        map.put(DATE_TIME_0, "test");
-
-        String value = om.writerFor(TYPE_REF).writeValueAsString(map);
-
-        Assert.assertEquals("Value is incorrect", map(DATE_TIME_0_STRING, "test"), value);
+        String value = MAPPER.writerFor(TYPE_REF).writeValueAsString(asMap(DATE_TIME_0, "test"));
+        Assert.assertEquals("Value is incorrect", mapAsString(DATE_TIME_0_STRING, "test"), value);
     }
 
     @Test
     public void testSerialization1() throws Exception {
-        map.put(DATE_TIME_1, "test");
-
-        String value = om.writerFor(TYPE_REF).writeValueAsString(map);
-
-        Assert.assertEquals("Value is incorrect", map(DATE_TIME_1_STRING, "test"), value);
+        String value = MAPPER.writerFor(TYPE_REF).writeValueAsString(asMap(DATE_TIME_1, "test"));
+        Assert.assertEquals("Value is incorrect", mapAsString(DATE_TIME_1_STRING, "test"), value);
     }
 
     @Test
     public void testSerialization2() throws Exception {
-        map.put(DATE_TIME_2, "test");
-
-        String value = om.writerFor(TYPE_REF).writeValueAsString(map);
-
-        Assert.assertEquals("Value is incorrect", map(DATE_TIME_2_STRING, "test"), value);
+        String value = MAPPER.writerFor(TYPE_REF).writeValueAsString(asMap(DATE_TIME_2, "test"));
+        Assert.assertEquals("Value is incorrect", mapAsString(DATE_TIME_2_STRING, "test"), value);
     }
 
     @Test
     public void testDeserialization0() throws Exception {
-        Map<ZonedDateTime, String> value = om.readValue(map(DATE_TIME_0_STRING, "test"), TYPE_REF);
-
-        map.put(DATE_TIME_0, "test");
-        Assert.assertEquals("Value is incorrect", map, value);
+        Assert.assertEquals("Value is incorrect", asMap(DATE_TIME_0, "test"),
+                READER.readValue(mapAsString(DATE_TIME_0_STRING, "test")));
     }
 
     @Test
     public void testDeserialization1() throws Exception {
-        Map<ZonedDateTime, String> value = om.readValue(map(DATE_TIME_1_STRING, "test"), TYPE_REF);
-
-        map.put(DATE_TIME_1, "test");
-        Assert.assertEquals("Value is incorrect", map, value);
+        Assert.assertEquals("Value is incorrect", asMap(DATE_TIME_1, "test"),
+                READER.readValue(mapAsString(DATE_TIME_1_STRING, "test")));
     }
 
     @Test
     public void testDeserialization2() throws Exception {
-        Map<ZonedDateTime, String> value = om.readValue(map(DATE_TIME_2_STRING, "test"), TYPE_REF);
-
-        map.put(DATE_TIME_2_OFFSET, "test");
-        Assert.assertEquals("Value is incorrect", map, value);
+        Assert.assertEquals("Value is incorrect", asMap(DATE_TIME_2_OFFSET, "test"),
+                READER.readValue(mapAsString(DATE_TIME_2_STRING, "test")));
     }
-
-    private String map(String key, String value) {
-        return String.format("{\"%s\":\"%s\"}", key, value);
-    }
-
 }

@@ -6,14 +6,14 @@ import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ZoneOffsetAsKeyTest {
-
+public class ZoneOffsetAsKeyTest extends ModuleTestBase
+{
     private static final TypeReference<Map<ZoneOffset, String>> TYPE_REF = new TypeReference<Map<ZoneOffset, String>>() {
     };
     private static final ZoneOffset OFFSET_0 = ZoneOffset.UTC;
@@ -21,25 +21,20 @@ public class ZoneOffsetAsKeyTest {
     private static final ZoneOffset OFFSET_1 = ZoneOffset.ofHours(6);
     private static final String OFFSET_1_STRING = "+06:00";
 
-    private ObjectMapper om;
+    private final ObjectMapper MAPPER = newMapper();
+
     private Map<ZoneOffset, String> map;
 
     @Before
     public void setUp() {
-        this.om = new ObjectMapper();
-        om.registerModule(new JavaTimeModule());
         map = new HashMap<>();
     }
-
-    /*
-     * ObjectMapper configuration is not respected at deserialization and serialization at the moment.
-     */
 
     @Test
     public void testSerialization0() throws Exception {
         map.put(OFFSET_0, "test");
 
-        String value = om.writeValueAsString(map);
+        String value = MAPPER.writeValueAsString(map);
 
         Assert.assertEquals("Value is incorrect", map(OFFSET_0_STRING, "test"), value);
     }
@@ -48,14 +43,14 @@ public class ZoneOffsetAsKeyTest {
     public void testSerialization1() throws Exception {
         map.put(OFFSET_1, "test");
 
-        String value = om.writeValueAsString(map);
+        String value = MAPPER.writeValueAsString(map);
 
         Assert.assertEquals("Value is incorrect", map(OFFSET_1_STRING, "test"), value);
     }
 
     @Test
     public void testDeserialization0() throws Exception {
-        Map<ZoneOffset, String> value = om.readValue(map(OFFSET_0_STRING, "test"), TYPE_REF);
+        Map<ZoneOffset, String> value = MAPPER.readValue(map(OFFSET_0_STRING, "test"), TYPE_REF);
 
         map.put(OFFSET_0, "test");
         Assert.assertEquals("Value is incorrect", map, value);
@@ -63,7 +58,7 @@ public class ZoneOffsetAsKeyTest {
 
     @Test
     public void testDeserialization1() throws Exception {
-        Map<ZoneOffset, String> value = om.readValue(map(OFFSET_1_STRING, "test"), TYPE_REF);
+        Map<ZoneOffset, String> value = MAPPER.readValue(map(OFFSET_1_STRING, "test"), TYPE_REF);
 
         map.put(OFFSET_1, "test");
         Assert.assertEquals("Value is incorrect", map, value);

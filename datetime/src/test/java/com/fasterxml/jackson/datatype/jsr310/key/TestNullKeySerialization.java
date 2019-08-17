@@ -1,51 +1,34 @@
 package com.fasterxml.jackson.datatype.jsr310.key;
 
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.datatype.jsr310.ser.key.Jsr310NullKeySerializer;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
-public class TestNullKeySerialization {
+public class TestNullKeySerialization extends ModuleTestBase
+{
+    private static final TypeReference<Map<LocalDate, String>> TYPE_REF = new TypeReference<Map<LocalDate, String>>() { };
+    private final ObjectMapper MAPPER = newMapper();
+    private final ObjectReader READER = MAPPER.readerFor(TYPE_REF);
 
-    private static final TypeReference<Map<LocalDate, String>> TYPE_REF = new TypeReference<Map<LocalDate, String>>() {
-    };
-
-    private ObjectMapper om;
-    private Map<LocalDate, String> map;
-
-    @Before
-    public void setUp() {
-        this.om = new ObjectMapper();
-        om.registerModule(new JavaTimeModule());
-        map = new HashMap<>();
-    }
-
+    @SuppressWarnings("deprecation")
     @Test
     public void testSerialization() throws Exception {
-        om.getSerializerProvider().setNullKeySerializer(new Jsr310NullKeySerializer());
-
-        map.put(null, "test");
-        String value = om.writeValueAsString(map);
-
-        Assert.assertEquals(map(Jsr310NullKeySerializer.NULL_KEY, "test"), value);
+        final ObjectMapper mapper = newMapper();
+        mapper.getSerializerProvider().setNullKeySerializer(new com.fasterxml.jackson.datatype.jsr310.ser.key.Jsr310NullKeySerializer());
+        String value = mapper.writeValueAsString(asMap(null, "test"));
+        Assert.assertEquals(mapAsString(com.fasterxml.jackson.datatype.jsr310.ser.key.Jsr310NullKeySerializer.NULL_KEY, "test"), value);
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testDeserialization() throws Exception {
-        Map<LocalDate, String> value = om.readValue(map(Jsr310NullKeySerializer.NULL_KEY, "test"), TYPE_REF);
-
-        map.put(null, "test");
-        Assert.assertEquals(map, value);
-    }
-
-    private String map(String key, String value) {
-        return String.format("{\"%s\":\"%s\"}", key, value);
+        Map<LocalDate, String> value = READER.readValue(mapAsString(com.fasterxml.jackson.datatype.jsr310.ser.key.Jsr310NullKeySerializer.NULL_KEY, "test"));
+        Assert.assertEquals(asMap(null, "test"), value);
     }
 }
