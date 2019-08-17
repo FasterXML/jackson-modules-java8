@@ -10,8 +10,6 @@ import com.fasterxml.jackson.databind.util.ClassUtil;
 
 abstract class Jsr310KeyDeserializer extends KeyDeserializer
 {
-
-    @SuppressWarnings("deprecation")
     @Override
     public final Object deserializeKey(String key, DeserializationContext ctxt)
         throws IOException
