@@ -9,7 +9,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonDeserializer;
 
 /**
  * Deserializer for Java 8 temporal {@link MonthDay}s.
@@ -25,10 +24,16 @@ public class MonthDayDeserializer extends JSR310DateTimeDeserializerBase<MonthDa
     }
 
     @Override
-    protected JsonDeserializer<MonthDay> withDateFormat(DateTimeFormatter dtf) {
+    protected MonthDayDeserializer withDateFormat(DateTimeFormatter dtf) {
         return new MonthDayDeserializer(dtf);
     }
-    
+
+    // !!! TODO: lenient vs strict?
+    @Override
+    protected MonthDayDeserializer withLeniency(Boolean leniency) {
+        return this;
+    }
+
     @Override
     public MonthDay deserialize(JsonParser parser, DeserializationContext context) throws IOException
     {
