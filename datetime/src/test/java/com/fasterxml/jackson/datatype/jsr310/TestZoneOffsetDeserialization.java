@@ -28,7 +28,7 @@ public class TestZoneOffsetDeserialization extends ModuleTestBase
     public void testBadDeserializationAsString01() throws Throwable
     {
         try {
-            read("'notazonedoffset'");
+            READER.readValue("\"notazonedoffset\"");
             fail("expected MismatchedInputException");
         } catch (MismatchedInputException e) {
             verifyException(e, "Invalid ID for ZoneOffset");
@@ -39,32 +39,35 @@ public class TestZoneOffsetDeserialization extends ModuleTestBase
     public void testDeserializationAsArrayDisabled() throws Throwable
     {
         try {
-            read("['+0300']");
-    	        fail("expected MismatchedInputException");
+            READER.readValue("[\"+0300\"]");
+            fail("expected MismatchedInputException");
         } catch (MismatchedInputException e) {
-           // OK
+            verifyException(e, "Cannot deserialize");
+            verifyException(e, "out of START_ARRAY");
         }
     }
-    
+
     @Test
     public void testDeserializationAsEmptyArrayDisabled() throws Throwable
     {
         try {
-            read("[]");
-    	        fail("expected MismatchedInputException");
+            READER.readValue("[]");
+            fail("expected MismatchedInputException");
         } catch (MismatchedInputException e) {
-            // OK
+            verifyException(e, "Cannot deserialize");
+            verifyException(e, "out of START_ARRAY");
         }
         try {
-            /* String json =*/ READER
-    		        .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
-    		        .readValue("[]");
-            fail("expected JsonMappingException");
+            mapperBuilder()
+        			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
+        			.build()
+        			.readerFor(ZoneOffset.class).readValue("[]");
+    		    fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
-           // OK
+            verifyException(e, "Unexpected token (END_ARRAY)");
         }
     }
-    
+
     @Test
     public void testDeserializationAsArrayEnabled() throws Throwable
     {
@@ -73,7 +76,7 @@ public class TestZoneOffsetDeserialization extends ModuleTestBase
     			.readValue(aposToQuotes("['+0300']"));
         expect(ZoneOffset.of("+0300"), value);
     }
-    
+
     @Test
     public void testDeserializationAsEmptyArrayEnabled() throws Throwable
     {

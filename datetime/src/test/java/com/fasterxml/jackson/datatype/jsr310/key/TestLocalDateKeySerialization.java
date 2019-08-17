@@ -1,27 +1,28 @@
-package com.fasterxml.jackson.datatype.jsr310;
+package com.fasterxml.jackson.datatype.jsr310.key;
 
 import static org.junit.Assert.assertEquals;
 
-import java.time.Duration;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestDurationKeySerialization {
+public class TestLocalDateKeySerialization {
 
-    private static final TypeReference<Map<Duration, String>> TYPE_REF = new TypeReference<Map<Duration, String>>() {
+    private static final TypeReference<Map<LocalDate, String>> TYPE_REF = new TypeReference<Map<LocalDate, String>>() {
     };
-    private static final Duration DURATION = Duration.ofMinutes(13).plusSeconds(37).plusNanos(120 * 1000 * 1000L);
-    private static final String DURATION_STRING = "PT13M37.12S";
+    private static final LocalDate DATE = LocalDate.of(2015, 3, 14);
+    private static final String DATE_STRING = "2015-03-14";
 
     private ObjectMapper om;
-    private Map<Duration, String> map;
+    private Map<LocalDate, String> map;
 
     @Before
     public void setUp() {
@@ -37,25 +38,24 @@ public class TestDurationKeySerialization {
 
     @Test
     public void testSerialization() throws Exception {
-        map.put(DURATION, "test");
+        map.put(DATE, "test");
 
         String value = om.writeValueAsString(map);
 
-        assertEquals("Value is not correct", map(DURATION_STRING, "test"), value);
+        assertEquals("Incorrect value", map(DATE_STRING, "test"), value);
     }
 
     @Test
     public void testDeserialization() throws Exception {
-        Map<Duration, String> value = om.readValue(
-                map(DURATION_STRING, "test"),
+        Map<LocalDate, String> value = om.readValue(
+                map(DATE_STRING, "test"),
                 TYPE_REF);
 
-        map.put(DURATION, "test");
-        assertEquals("Value is not correct", map, value);
+        map.put(DATE, "test");
+        assertEquals("Incorrect value", map, value);
     }
 
     private String map(String key, String value) {
         return String.format("{\"%s\":\"%s\"}", key, value);
     }
-
 }

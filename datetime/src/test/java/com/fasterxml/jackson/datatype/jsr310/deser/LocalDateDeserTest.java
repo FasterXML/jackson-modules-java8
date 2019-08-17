@@ -26,20 +26,20 @@ public class LocalDateDeserTest extends ModuleTestBase
     @Test
     public void testDeserializationAsString01() throws Exception
     {
-        expectSuccess(LocalDate.of(2000, Month.JANUARY, 1), "'2000-01-01'");
+        expectSuccess(LocalDate.of(2000, Month.JANUARY, 1), quote("2000-01-01"));
     }
 
     @Test
     public void testBadDeserializationAsString01() throws Throwable
     {
-        expectFailure("'notalocaldate'");
+        expectFailure("\"notalocaldate\"");
     }
     
     @Test
     public void testDeserializationAsArrayDisabled() throws Throwable
     {
         try {
-            READER.readValue(aposToQuotes("['2000-01-01']"));
+            READER.readValue("[\"2000-01-01\"]");
             fail("expected MismatchedInputException");
         } catch (MismatchedInputException e) {
             verifyException(e, "Unexpected token (VALUE_STRING) within Array");
@@ -50,7 +50,7 @@ public class LocalDateDeserTest extends ModuleTestBase
     public void testDeserializationAsEmptyArrayDisabled() throws Throwable
     {
         // works even without the feature enabled
-        assertNull(READER.readValue(aposToQuotes("[]")));
+        assertNull(READER.readValue("[]"));
     }
 
     @Test
@@ -58,7 +58,7 @@ public class LocalDateDeserTest extends ModuleTestBase
     {
         LocalDate value = READER
                 .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
-                .readValue(aposToQuotes("['2000-01-01']"));
+                .readValue("[\"2000-01-01\"]");
         expect(LocalDate.of(2000, 1, 1), value);
     }
     
@@ -83,8 +83,6 @@ public class LocalDateDeserTest extends ModuleTestBase
             if (!(e.getCause() instanceof DateTimeParseException)) {
                 throw e.getCause();
             }
-        } catch (IOException e) {
-            throw e;
         }
     }
 
