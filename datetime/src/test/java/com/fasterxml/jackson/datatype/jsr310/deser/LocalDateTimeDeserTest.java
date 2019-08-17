@@ -29,6 +29,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
@@ -41,13 +42,14 @@ public class LocalDateTimeDeserTest
     extends ModuleTestBase
 {
     private final ObjectMapper mapper = newMapper();
+    private final ObjectReader READER = mapper.readerFor(LocalDateTime.class);
 
     /*
     /**********************************************************
     /* Tests for deserializing from int array
     /**********************************************************
      */
-    
+
     @Test
     public void testDeserializationAsTimestamp01() throws Exception
     {
@@ -124,9 +126,13 @@ public class LocalDateTimeDeserTest
     @Test
     public void testDeserializationAsString01() throws Exception
     {
-        LocalDateTime time = LocalDateTime.of(1986, Month.JANUARY, 17, 15, 43);
-        LocalDateTime value = mapper.readValue('"' + time.toString() + '"', LocalDateTime.class);
-        assertEquals("The value is not correct.", time, value);
+        LocalDateTime exp = LocalDateTime.of(1986, Month.JANUARY, 17, 15, 43);
+        LocalDateTime value = READER.readValue(quote(exp.toString()));
+        assertEquals("The value is not correct.", exp, value);
+
+        assertEquals("The value is not correct.",
+                LocalDateTime.of(2000, Month.JANUARY, 1, 12, 0),
+                READER.readValue(quote("2000-01-01T12:00")));
     }
 
     @Test
@@ -151,6 +157,18 @@ public class LocalDateTimeDeserTest
         Instant instant = Instant.now();
         LocalDateTime value = mapper.readValue('"' + instant.toString() + '"', LocalDateTime.class);
         assertEquals("The value is not correct.", LocalDateTime.ofInstant(instant, ZoneOffset.UTC), value);
+    }
+
+    @Test
+    public void testBadDeserializationAsString01() throws Throwable
+    {
+        try {
+            READER.readValue(quote("notalocaldatetime"));
+            fail("expected fail");
+        } catch (InvalidFormatException e) {
+            verifyException(e, "Cannot deserialize value of type");
+            verifyException(e, "from String \"");
+        }
     }
 
     /*

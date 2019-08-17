@@ -152,13 +152,19 @@ public class InstantDeserializer<T extends Temporal>
     }
 
     @Override
-    protected JsonDeserializer<T> withDateFormat(DateTimeFormatter dtf) {
+    protected InstantDeserializer<T> withDateFormat(DateTimeFormatter dtf) {
         if (dtf == _formatter) {
             return this;
         }
         return new InstantDeserializer<T>(this, dtf);
     }
 
+    // !!! TODO: lenient vs strict?
+    @Override
+    protected InstantDeserializer<T> withLeniency(Boolean leniency) {
+        return this;
+    }
+    
     @SuppressWarnings("unchecked")
     @Override
     public T deserialize(JsonParser parser, DeserializationContext context) throws IOException

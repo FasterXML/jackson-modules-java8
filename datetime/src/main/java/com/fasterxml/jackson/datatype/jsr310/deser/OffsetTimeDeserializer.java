@@ -45,10 +45,16 @@ public class OffsetTimeDeserializer extends JSR310DateTimeDeserializerBase<Offse
     }
 
     @Override
-    protected JsonDeserializer<OffsetTime> withDateFormat(DateTimeFormatter dtf) {
+    protected OffsetTimeDeserializer withDateFormat(DateTimeFormatter dtf) {
         return new OffsetTimeDeserializer(dtf);
     }
-    
+
+    // !!! TODO: lenient vs strict?
+    @Override
+    protected OffsetTimeDeserializer withLeniency(Boolean leniency) {
+        return this;
+    }
+
     @Override
     public OffsetTime deserialize(JsonParser parser, DeserializationContext context) throws IOException
     {

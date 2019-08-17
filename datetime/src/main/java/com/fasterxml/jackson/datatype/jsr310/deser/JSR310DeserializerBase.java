@@ -38,11 +38,17 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
 {
     private static final long serialVersionUID = 1L;
 
-    protected JSR310DeserializerBase(Class<T> supportedType)
-    {
+    protected JSR310DeserializerBase(Class<T> supportedType) {
         super(supportedType);
     }
 
+    /**
+     * @since 2.10
+     */
+    protected JSR310DeserializerBase(JSR310DeserializerBase<?> base) {
+        super(base);
+    }
+    
     @Override
     public Object deserializeWithType(JsonParser parser, DeserializationContext context,
             TypeDeserializer typeDeserializer)
