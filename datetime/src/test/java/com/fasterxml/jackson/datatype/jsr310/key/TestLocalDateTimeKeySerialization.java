@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.datatype.jsr310;
+package com.fasterxml.jackson.datatype.jsr310.key;
 
 import static org.junit.Assert.assertEquals;
 
@@ -12,6 +12,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.DeserializationProblemHandler;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import org.junit.Before;
 import org.junit.Test;
 

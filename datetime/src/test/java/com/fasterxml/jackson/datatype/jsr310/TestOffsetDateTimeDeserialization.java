@@ -14,13 +14,24 @@ import java.time.format.DateTimeParseException;
 import java.util.TimeZone;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 public class TestOffsetDateTimeDeserialization extends ModuleTestBase
 {
-   private final ObjectReader READER = newMapper().readerFor(OffsetDateTime.class);
+    private final ObjectReader READER = newMapper().readerFor(OffsetDateTime.class);
+
+    public static class WithoutContextTimezoneDateFieldBean {
+        @JsonFormat(shape = JsonFormat.Shape.STRING,
+                pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", without = JsonFormat.Feature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+        public OffsetDateTime date;
+    }
+
+    public static class WithContextTimezoneDateFieldBean {
+        @JsonFormat(shape = JsonFormat.Shape.STRING,
+                pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", with = JsonFormat.Feature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+        public OffsetDateTime date;
+    }
 
     @Test
     public void testDeserializationAsString01() throws Exception
@@ -53,12 +64,6 @@ public class TestOffsetDateTimeDeserialization extends ModuleTestBase
         expect(OffsetDateTime.of(2000, 1, 1, 12, 0, 0, 0, ZoneOffset.ofHours(5)), parsed) ;
     }
 
-    public static class WithContextTimezoneDateFieldBean {
-        @JsonFormat(shape = JsonFormat.Shape.STRING,
-                pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", with = JsonFormat.Feature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
-        public OffsetDateTime date;
-    }
-
     @Test
     public void testDeserializationWithContextTimezoneFeatureOverride() throws Exception
     {
@@ -68,19 +73,12 @@ public class TestOffsetDateTimeDeserialization extends ModuleTestBase
         expect(OffsetDateTime.of(2016, 5, 13, 14, 24, 40, 545000000, ZoneOffset.UTC), result.date);
     }
 
-    public static class WithoutContextTimezoneDateFieldBean {
-        @JsonFormat(shape = JsonFormat.Shape.STRING,
-                pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", without = JsonFormat.Feature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
-        public OffsetDateTime date;
-    }
-
     @Test
     public void testDeserializationWithoutContextTimezoneFeatureOverride() throws Exception
     {
         String inputStr = "{\"date\":\"2016-05-13T17:24:40.545+03\"}";
         WithoutContextTimezoneDateFieldBean result = newMapper().setTimeZone(TimeZone.getTimeZone("UTC")).
                 enable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE).readValue(inputStr, WithoutContextTimezoneDateFieldBean.class);
-        notNull(result);
         expect(OffsetDateTime.of(2016, 5, 13, 17, 24, 40, 545000000, ZoneOffset.ofHours(3)), result.date);
     }
 
@@ -180,16 +178,11 @@ public class TestOffsetDateTimeDeserialization extends ModuleTestBase
 
     private void expectSuccess(Object exp, String json) throws IOException {
         final OffsetDateTime value = read(json);
-        notNull(value);
         expect(exp, value);
     }
 
     private OffsetDateTime read(final String json) throws IOException {
         return READER.readValue(aposToQuotes(json));
-    }
-
-    private static void notNull(Object value) {
-        assertNotNull("The value should not be null.", value);
     }
 
     private static void expect(Object exp, Object value) {

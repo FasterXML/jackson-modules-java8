@@ -27,54 +27,49 @@ public class TestZoneIdSerialization extends ModuleTestBase
 {
     private ObjectMapper MAPPER = newMapper();
 
+    private final ObjectMapper MOCK_OBJECT_MIXIN_MAPPER = mapperBuilder()
+            .addMixIn(ZoneId.class, MockObjectConfiguration.class)
+            .build();
+
     @Test
     public void testSerialization01() throws Exception
     {
-        ZoneId id = ZoneId.of("America/Chicago");
-        String value = MAPPER.writeValueAsString(id);
+        final String value = MAPPER.writeValueAsString(ZoneId.of("America/Chicago"));
         assertEquals("The value is not correct.", "\"America/Chicago\"", value);
     }
 
     @Test
     public void testSerialization02() throws Exception
     {
-        ZoneId id = ZoneId.of("America/Anchorage");
-        String value = MAPPER.writeValueAsString(id);
+        final String value = MAPPER.writeValueAsString(ZoneId.of("America/Anchorage"));
         assertEquals("The value is not correct.", "\"America/Anchorage\"", value);
     }
 
     @Test
     public void testSerializationWithTypeInfo01() throws Exception
     {
-        ZoneId id = ZoneId.of("America/Denver");
-        final ObjectMapper mapper = mapperBuilder()
-                .addMixIn(ZoneId.class, MockObjectConfiguration.class)
-                .build();
-        String value = mapper.writeValueAsString(id);
+        String value = MOCK_OBJECT_MIXIN_MAPPER.writeValueAsString(ZoneId.of("America/Denver"));
         assertEquals("The value is not correct.", "[\"java.time.ZoneRegion\",\"America/Denver\"]", value);
     }
 
     @Test
     public void testDeserialization01() throws Exception
     {
-        ZoneId value = MAPPER.readValue("\"America/Chicago\"", ZoneId.class);
-        assertEquals("The value is not correct.", ZoneId.of("America/Chicago"), value);
+        assertEquals("The value is not correct.", ZoneId.of("America/Chicago"),
+                MAPPER.readValue("\"America/Chicago\"", ZoneId.class));
     }
 
     @Test
     public void testDeserialization02() throws Exception
     {
-        ZoneId value = MAPPER.readValue("\"America/Anchorage\"", ZoneId.class);
-        assertEquals("The value is not correct.", ZoneId.of("America/Anchorage"), value);
+        assertEquals("The value is not correct.", ZoneId.of("America/Anchorage"),
+                MAPPER.readValue("\"America/Anchorage\"", ZoneId.class));
     }
 
     @Test
     public void testDeserializationWithTypeInfo02() throws Exception
     {
-        final ObjectMapper mapper = mapperBuilder()
-                .addMixIn(ZoneId.class, MockObjectConfiguration.class)
-                .build();
-        ZoneId value = mapper.readValue("[\"" + ZoneId.class.getName() + "\",\"America/Denver\"]", ZoneId.class);
+        ZoneId value = MOCK_OBJECT_MIXIN_MAPPER.readValue("[\"" + ZoneId.class.getName() + "\",\"America/Denver\"]", ZoneId.class);
         assertEquals("The value is not correct.", ZoneId.of("America/Denver"), value);
     }
 }

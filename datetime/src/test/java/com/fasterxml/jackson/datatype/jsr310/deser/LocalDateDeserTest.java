@@ -8,7 +8,6 @@ import java.time.format.DateTimeParseException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
@@ -25,20 +24,20 @@ public class LocalDateDeserTest extends ModuleTestBase
     @Test
     public void testDeserializationAsString01() throws Exception
     {
-        expectSuccess(LocalDate.of(2000, Month.JANUARY, 1), "'2000-01-01'");
+        expectSuccess(LocalDate.of(2000, Month.JANUARY, 1), quote("2000-01-01"));
     }
 
     @Test
     public void testBadDeserializationAsString01() throws Throwable
     {
-        expectFailure("'notalocaldate'");
+        expectFailure("\"notalocaldate\"");
     }
     
     @Test
     public void testDeserializationAsArrayDisabled() throws Throwable
     {
         try {
-            read("['2000-01-01']");
+            READER.readValue("[\"2000-01-01\"]");
             fail("expected MismatchedInputException");
         } catch (MismatchedInputException e) {
             verifyException(e, "Unexpected token (VALUE_STRING) within Array");
@@ -49,34 +48,33 @@ public class LocalDateDeserTest extends ModuleTestBase
     public void testDeserializationAsEmptyArrayDisabled() throws Throwable
     {
         // works even without the feature enabled
-        assertNull(read("[]"));
+        assertNull(READER.readValue("[]"));
     }
 
     @Test
     public void testDeserializationAsArrayEnabled() throws Throwable
     {
-        String json="['2000-01-01']";
-        LocalDate value= newMapper()
+        LocalDate value = mapperBuilder()
                 .configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
-                .readerFor(LocalDate.class).readValue(aposToQuotes(json));
-        notNull(value);
+                .build()
+                .readerFor(LocalDate.class).readValue("[\"2000-01-01\"]");
         expect(LocalDate.of(2000, 1, 1), value);
     }
     
     @Test
     public void testDeserializationAsEmptyArrayEnabled() throws Throwable
     {
-        String json="[]";
-        LocalDate value= newMapper()
+        LocalDate value = mapperBuilder()
                 .configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
                 .configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true)
-                .readerFor(LocalDate.class).readValue(aposToQuotes(json));
+                .build()
+                .readerFor(LocalDate.class).readValue("[]");
         assertNull(value);
     }
 
     private void expectFailure(String json) throws Throwable {
         try {
-            read(json);
+            READER.readValue(aposToQuotes(json));
             fail("expected DateTimeParseException");
         } catch (JsonProcessingException e) {
             if (e.getCause() == null) {
@@ -85,23 +83,12 @@ public class LocalDateDeserTest extends ModuleTestBase
             if (!(e.getCause() instanceof DateTimeParseException)) {
                 throw e.getCause();
             }
-        } catch (IOException e) {
-            throw e;
         }
     }
 
     private void expectSuccess(Object exp, String json) throws IOException {
-        final LocalDate value = read(json);
-        notNull(value);
+        final LocalDate value = READER.readValue(aposToQuotes(json));
         expect(exp, value);
-    }
-
-    private LocalDate read(final String json) throws IOException {
-        return READER.readValue(aposToQuotes(json));
-    }
-
-    private static void notNull(Object value) {
-        assertNotNull("The value should not be null.", value);
     }
 
     private static void expect(Object exp, Object value) {
