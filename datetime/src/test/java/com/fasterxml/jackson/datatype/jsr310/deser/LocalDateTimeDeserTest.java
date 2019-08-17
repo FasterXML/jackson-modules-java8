@@ -16,6 +16,7 @@
 
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -25,12 +26,14 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.deser.DeserializationProblemHandler;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
@@ -41,8 +44,8 @@ import static org.junit.Assert.*;
 public class LocalDateTimeDeserTest
     extends ModuleTestBase
 {
-    private final ObjectMapper MAPPER = newMapper();
-    private final ObjectReader READER = MAPPER.readerFor(LocalDateTime.class);
+    private final static ObjectMapper MAPPER = newMapper();
+    private final static ObjectReader READER = MAPPER.readerFor(LocalDateTime.class);
 
     /*
     /**********************************************************
@@ -89,7 +92,7 @@ public class LocalDateTimeDeserTest
     @Test
     public void testDeserializationAsTimestamp04Nanoseconds() throws Exception
     {
-        ObjectReader r = READER
+        ObjectReader r = MAPPER.readerFor(LocalDateTime.class)
                 .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
         LocalDateTime value = r.readValue("[2005,11,5,22,31,5,829837]");
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 829837);
@@ -173,6 +176,49 @@ public class LocalDateTimeDeserTest
 
     /*
     /**********************************************************
+    /* Tests for alternate array handling
+    /**********************************************************
+     */
+
+    @Test
+    public void testDeserializationAsArrayDisabled() throws Throwable
+    {
+        try {
+            READER.readValue("[\"2000-01-01T12:00\"]");
+        } catch (MismatchedInputException e) {
+            verifyException(e, "Unexpected token (VALUE_STRING) within Array");
+        }
+    }
+    
+    @Test
+    public void testDeserializationAsEmptyArrayDisabled() throws Throwable
+    {
+        // works even without the feature enabled
+        assertNull(READER.readValue("[]"));
+    }
+
+    @Test
+    public void testDeserializationAsArrayEnabled() throws Throwable
+    {
+        LocalDateTime value = READER
+                .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
+                .readValue("[\"2000-01-01T12:00\"]");
+        assertEquals("The value is not correct.",
+                LocalDateTime.of(2000, 1, 1, 12, 0, 0, 0), value);
+    }
+    
+    @Test
+    public void testDeserializationAsEmptyArrayEnabled() throws Throwable
+    {
+        LocalDateTime value = READER
+               .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
+               .with(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT)
+               .readValue("[]");
+        assertNull(value);
+    }
+
+    /*
+    /**********************************************************
     /* Tests for polymorphic handling
     /**********************************************************
      */
@@ -222,6 +268,52 @@ public class LocalDateTimeDeserTest
         assertEquals("The value is not correct.", time, value);
     }
 
+    /*
+    /**********************************************************
+    /* Tests for `DeserialiazationProblemHandler` usage
+    /**********************************************************
+     */
+    
+    @Test
+    public void testDateTimeExceptionIsHandled() throws Throwable
+    {
+        LocalDateTime now = LocalDateTime.now();
+        DeserializationProblemHandler handler = new DeserializationProblemHandler() {
+            @Override
+            public Object handleWeirdStringValue(DeserializationContext ctxt, Class<?> targetType,
+                   String valueToConvert, String failureMsg) throws IOException {
+                if (LocalDateTime.class == targetType) {
+                    if ("now".equals(valueToConvert)) {
+                        return now;
+                    }
+                }
+                return NOT_HANDLED;
+            }
+        };
+        ObjectMapper handledMapper = mapperBuilder().addHandler(handler).build();
+        assertEquals(now, handledMapper.readValue(quote("now"), LocalDateTime.class));
+    }
+
+    @Test
+    public void testUnexpectedTokenIsHandled() throws Throwable
+    {
+        LocalDateTime now = LocalDateTime.now();
+        DeserializationProblemHandler handler = new DeserializationProblemHandler() {
+            @Override
+            public Object handleUnexpectedToken(DeserializationContext ctxt, Class<?> targetType,
+                   JsonToken t, JsonParser p, String failureMsg) throws IOException {
+                if (LocalDateTime.class == targetType) {
+                    if (t.isBoolean()) {
+                        return now;
+                    }
+                }
+                return NOT_HANDLED;
+            }
+        };
+        ObjectMapper handledMapper = mapperBuilder().addHandler(handler).build();
+        assertEquals(now, handledMapper.readValue("true", LocalDateTime.class));
+    }
+    
     /*
     /**********************************************************
     /* Tests for specific reported issues
