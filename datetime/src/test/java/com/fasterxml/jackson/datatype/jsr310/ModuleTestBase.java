@@ -2,6 +2,8 @@ package com.fasterxml.jackson.datatype.jsr310;
 
 import java.util.Arrays;
 import java.util.TimeZone;
+import java.util.Collections;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.cfg.MapperBuilder;
@@ -57,5 +59,13 @@ public class ModuleTestBase
             }
         }
         throw new Error("Expected an exception with one of substrings ("+Arrays.asList(matches)+"): got one with message \""+msg+"\"");
+    }
+
+    protected static <T> Map<T, String> asMap(T key, String value) {
+        return Collections.singletonMap(key, value);
+    }
+
+    protected static String mapAsString(String key, String value) {
+        return String.format("{\"%s\":\"%s\"}", key, value);
     }
 }

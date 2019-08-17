@@ -3,25 +3,21 @@ package com.fasterxml.jackson.datatype.jsr310.key;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.HashMap;
 import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.deser.DeserializationProblemHandler;
-
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-
-public class TestLocalDateTimeKeySerialization
-    extends ModuleTestBase
+public class LocalDateTimeAsKeyTest extends ModuleTestBase
 {
-    private static final TypeReference<Map<LocalDateTime, String>> TYPE_REF = new TypeReference<Map<LocalDateTime, String>>() {
-    };
     private static final LocalDateTime DATE_TIME_0 = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC);
     /*
      * Current serializer is LocalDateTime.toString(), which omits seconds if it can
@@ -30,44 +26,34 @@ public class TestLocalDateTimeKeySerialization
     private static final LocalDateTime DATE_TIME = LocalDateTime.of(2015, 3, 14, 9, 26, 53, 590 * 1000 * 1000);
     private static final String DATE_TIME_STRING = "2015-03-14T09:26:53.590";
 
-    private final ObjectMapper om = newMapper();
+    private final TypeReference<Map<LocalDateTime, String>> TYPE_REF = new TypeReference<Map<LocalDateTime, String>>() { };
+    private final ObjectMapper MAPPER = newMapper();
+    private final ObjectReader READER = MAPPER.readerFor(TYPE_REF);
 
     @Test
     public void testSerialization0() throws Exception {
-        Map<LocalDateTime, String> map = new HashMap<>();
-        map.put(DATE_TIME_0, "test");
-
-        String value = om.writeValueAsString(map);
-
-        assertEquals("Value is incorrect", map(DATE_TIME_0_STRING, "test"), value);
+        String value = MAPPER.writeValueAsString(asMap(DATE_TIME_0, "test"));
+        assertEquals("Value is incorrect", mapAsString(DATE_TIME_0_STRING, "test"), value);
     }
 
     @Test
     public void testSerialization1() throws Exception {
-        Map<LocalDateTime, String> map = new HashMap<>();
-        map.put(DATE_TIME, "test");
-        String value = om.writeValueAsString(map);
-        assertEquals("Value is incorrect", map(DATE_TIME_STRING, "test"), value);
+        String value = MAPPER.writeValueAsString(asMap(DATE_TIME, "test"));
+        assertEquals("Value is incorrect", mapAsString(DATE_TIME_STRING, "test"), value);
     }
 
     @Test
     public void testDeserialization0() throws Exception {
-        Map<LocalDateTime, String> value = om.readValue(
-                map(DATE_TIME_0_STRING, "test"),
-                TYPE_REF);
-        Map<LocalDateTime, String> map = new HashMap<>();
-        map.put(DATE_TIME_0, "test");
-        assertEquals("Value is incorrect", map, value);
+        Map<LocalDateTime, String> value = READER.readValue(
+                mapAsString(DATE_TIME_0_STRING, "test"));
+        assertEquals("Value is incorrect", asMap(DATE_TIME_0, "test"), value);
     }
 
     @Test
     public void testDeserialization1() throws Exception {
-        Map<LocalDateTime, String> value = om.readValue(
-                map(DATE_TIME_STRING, "test"),
-                TYPE_REF);
-        Map<LocalDateTime, String> map = new HashMap<>();
-        map.put(DATE_TIME, "test");
-        assertEquals("Value is incorrect", map, value);
+        Map<LocalDateTime, String> value = READER.readValue(
+                mapAsString(DATE_TIME_STRING, "test"));
+        assertEquals("Value is incorrect", asMap(DATE_TIME, "test"), value);
     }
 
     @Test
@@ -86,19 +72,10 @@ public class TestLocalDateTimeKeySerialization
                 return NOT_HANDLED;
             }
         };
-        ObjectMapper mapper = newMapperBuilder()
-                .addHandler(handler)
-                .build();
+        Map<LocalDateTime, String> value = mapperBuilder().addHandler(handler)
+                .build()
+                .readValue(mapAsString("now", "test"), TYPE_REF);
         
-        Map<LocalDateTime, String> value = mapper.readValue(
-                map("now", "test"),
-                TYPE_REF);
-        Map<LocalDateTime, String> map = new HashMap<>();
-        map.put(now, "test");
-        assertEquals(map, value);
-    }
- 
-    private String map(String key, String value) {
-        return String.format("{\"%s\":\"%s\"}", key, value);
+        assertEquals(asMap(now, "test"), value);
     }
 }

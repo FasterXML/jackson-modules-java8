@@ -7,15 +7,17 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.KeyDeserializer;
 import com.fasterxml.jackson.databind.util.ClassUtil;
-import com.fasterxml.jackson.datatype.jsr310.ser.key.Jsr310NullKeySerializer;
 
 abstract class Jsr310KeyDeserializer extends KeyDeserializer {
 
+    @SuppressWarnings("deprecation")
     @Override
     public final Object deserializeKey(String key, DeserializationContext ctxt)
         throws IOException
     {
-        if (Jsr310NullKeySerializer.NULL_KEY.equals(key)) {
+        // 17-Aug-2019, tatu: I think this is wrong, actually, but since it has been this way
+        //    throughout 2.x, can't just change. But with 3.0 will remove special handling.
+        if (com.fasterxml.jackson.datatype.jsr310.ser.key.Jsr310NullKeySerializer.NULL_KEY.equals(key)) {
             // potential null key in HashMap
             return null;
         }
