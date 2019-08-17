@@ -20,3 +20,5 @@ due to number of types.
 - Deprecate "paramater names" and "datatypes" modules as functionality
   now included directly in `jackson-databind`
 - Remove legacy `JSR310Module`
+- Remove deprecated `Jsr310NullKeySerializer`: null key handling should not be decided
+  by module (or at least not the way implemented in 2.x)
