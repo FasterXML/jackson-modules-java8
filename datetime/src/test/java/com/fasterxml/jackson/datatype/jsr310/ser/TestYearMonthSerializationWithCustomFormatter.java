@@ -1,60 +1,60 @@
-package com.fasterxml.jackson.datatype.jsr310;
+package com.fasterxml.jackson.datatype.jsr310.ser;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.hamcrest.core.StringContains.containsString;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.datatype.jsr310.deser.YearDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.YearSerializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.YearMonthDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.YearMonthSerializer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import java.time.Year;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 
 @RunWith(Parameterized.class)
-public class TestYearSerializationWithCustomFormatter {
+public class TestYearMonthSerializationWithCustomFormatter {
     private final DateTimeFormatter formatter;
 
-    public TestYearSerializationWithCustomFormatter(DateTimeFormatter formatter) {
+    public TestYearMonthSerializationWithCustomFormatter(DateTimeFormatter formatter) {
         this.formatter = formatter;
     }
 
     @Test
     public void testSerialization() throws Exception {
-        Year year = Year.now();
-        String expected = "\"" + year.format(formatter) + "\"";
-        assertThat(serializeWith(year, formatter), equalTo(expected));
+        YearMonth dateTime = YearMonth.now();
+        assertThat(serializeWith(dateTime, formatter), containsString(dateTime.format(formatter)));
     }
 
-    private String serializeWith(Year dateTime, DateTimeFormatter f) throws Exception {
+    private String serializeWith(YearMonth dateTime, DateTimeFormatter f) throws Exception {
         ObjectMapper mapper = new ObjectMapper().registerModule(new SimpleModule()
-            .addSerializer(new YearSerializer(f)));
+            .addSerializer(new YearMonthSerializer(f)));
         return mapper.writeValueAsString(dateTime);
     }
 
     @Test
     public void testDeserialization() throws Exception {
-        Year dateTime = Year.now();
+        YearMonth dateTime = YearMonth.now();
         assertThat(deserializeWith(dateTime.format(formatter), formatter), equalTo(dateTime));
     }
 
-    private Year deserializeWith(String json, DateTimeFormatter f) throws Exception {
+    private YearMonth deserializeWith(String json, DateTimeFormatter f) throws Exception {
         ObjectMapper mapper = new ObjectMapper().registerModule(new SimpleModule()
-            .addDeserializer(Year.class, new YearDeserializer(f)));
-        return mapper.readValue("\"" + json + "\"", Year.class);
+            .addDeserializer(YearMonth.class, new YearMonthDeserializer(f)));
+        return mapper.readValue("\"" + json + "\"", YearMonth.class);
     }
 
     @Parameters
     public static Collection<Object[]> customFormatters() {
         Collection<Object[]> formatters = new ArrayList<>();
-        formatters.add(new Object[]{DateTimeFormatter.ofPattern("yyyy")});
-        formatters.add(new Object[]{DateTimeFormatter.ofPattern("yy")});
+        formatters.add(new Object[]{DateTimeFormatter.ofPattern("uuuu-MM")});
+        formatters.add(new Object[]{DateTimeFormatter.ofPattern("uu-M")});
         return formatters;
     }
 }
