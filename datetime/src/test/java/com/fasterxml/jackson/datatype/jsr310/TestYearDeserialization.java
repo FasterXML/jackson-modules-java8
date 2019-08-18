@@ -14,7 +14,6 @@ import java.time.Year;
 import java.time.format.DateTimeParseException;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
@@ -37,9 +36,9 @@ public class TestYearDeserialization extends ModuleTestBase
     @Test
     public void testDeserializationAsArrayDisabled() throws Throwable
     {
-    	try {
-    		read("['2000']");
-    	    fail("expected JsonMappingException");
+        try {
+            READER.readValue("[\"2000\"]");
+            fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
            // OK
         } catch (IOException e) {
@@ -51,7 +50,7 @@ public class TestYearDeserialization extends ModuleTestBase
     public void testDeserializationAsEmptyArrayDisabled() throws Throwable
     {
         try {
-    		read("[]");
+            READER.readValue(aposToQuotes("[]"));
     	    fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
            // OK
@@ -91,7 +90,7 @@ public class TestYearDeserialization extends ModuleTestBase
 
     private void expectFailure(String json) throws Throwable {
         try {
-            read(json);
+            READER.readValue(aposToQuotes(json));
             fail("expected DateTimeParseException");
         } catch (JsonProcessingException e) {
             if (e.getCause() == null) {
@@ -104,17 +103,8 @@ public class TestYearDeserialization extends ModuleTestBase
     }
 
     private void expectSuccess(Object exp, String json) throws IOException {
-        final Year value = read(json);
-        notNull(value);
-        expect(exp, value);
-    }
-
-    private Year read(final String json) throws IOException {
-        return READER.readValue(aposToQuotes(json));
-    }
-
-    private static void notNull(Object value) {
-        assertNotNull("The value should not be null.", value);
+        assertEquals("The value is not correct.", exp,
+                READER.readValue(aposToQuotes(json)));
     }
 
     private static void expect(Object exp, Object value) {

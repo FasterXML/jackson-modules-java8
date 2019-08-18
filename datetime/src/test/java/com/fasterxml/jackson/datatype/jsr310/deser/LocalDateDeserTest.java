@@ -1,9 +1,7 @@
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Month;
-import java.time.format.DateTimeParseException;
 
 import org.junit.Test;
 
@@ -11,7 +9,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -26,14 +23,27 @@ public class LocalDateDeserTest extends ModuleTestBase
     @Test
     public void testDeserializationAsString01() throws Exception
     {
-        expectSuccess(LocalDate.of(2000, Month.JANUARY, 1), quote("2000-01-01"));
+        assertEquals("The value is not correct.", LocalDate.of(2000, Month.JANUARY, 1),
+                READER.readValue(quote("2000-01-01")));
     }
 
     @Test
     public void testBadDeserializationAsString01() throws Throwable
     {
-        expectFailure("\"notalocaldate\"");
+        try {
+            READER.readValue(quote("notalocaldate"));
+            fail("expected DateTimeParseException");
+        } catch (MismatchedInputException e) {
+            verifyException(e, "Cannot deserialize value of type");
+            verifyException(e, "from String \"");
+        }
     }
+
+    /*
+    /**********************************************************
+    /* Tests for alternate array handling
+    /**********************************************************
+     */
     
     @Test
     public void testDeserializationAsArrayDisabled() throws Throwable
@@ -56,12 +66,12 @@ public class LocalDateDeserTest extends ModuleTestBase
     @Test
     public void testDeserializationAsArrayEnabled() throws Throwable
     {
-        LocalDate value = READER
+        LocalDate actual = READER
                 .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
                 .readValue("[\"2000-01-01\"]");
-        expect(LocalDate.of(2000, 1, 1), value);
+        assertEquals("The value is not correct.", LocalDate.of(2000, 1, 1), actual);
     }
-    
+
     @Test
     public void testDeserializationAsEmptyArrayEnabled() throws Throwable
     {
@@ -72,26 +82,10 @@ public class LocalDateDeserTest extends ModuleTestBase
         assertNull(value);
     }
 
-    private void expectFailure(String json) throws Throwable {
-        try {
-            READER.readValue(aposToQuotes(json));
-            fail("expected DateTimeParseException");
-        } catch (JsonProcessingException e) {
-            if (e.getCause() == null) {
-                throw e;
-            }
-            if (!(e.getCause() instanceof DateTimeParseException)) {
-                throw e.getCause();
-            }
-        }
-    }
+    /*
+    /**********************************************************
+    /* Tests for lenient/strict
+    /**********************************************************
+     */
 
-    private void expectSuccess(Object exp, String json) throws IOException {
-        final LocalDate value = READER.readValue(aposToQuotes(json));
-        expect(exp, value);
-    }
-
-    private static void expect(Object exp, Object value) {
-        assertEquals("The value is not correct.", exp,  value);
-    }
 }
