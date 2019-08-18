@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.time.Year;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.Temporal;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -33,7 +34,6 @@ import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -56,13 +56,14 @@ public class YearDeserTest extends ModuleTestBase
     @Test
     public void testDeserializationAsString01() throws Exception
     {
-        expectSuccess(Year.of(2000), "'2000'");
+        assertEquals("The value is not correct.",Year.of(2000),
+                READER.readValue(quote("2000")));
     }
 
     @Test
     public void testBadDeserializationAsString01() throws Throwable
     {
-        expectFailure("'notayear'");
+        expectFailure(quote("notayear"));
     }
 
     @Test
@@ -105,47 +106,23 @@ public class YearDeserTest extends ModuleTestBase
     @Test
     public void testDeserializationAsArrayEnabled() throws Throwable
     {
-     String json="['2000']";
-     Year value= newMapper()
+        String json="['2000']";
+        Year value= newMapper()
              .readerFor(Year.class)
              .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
              .readValue(aposToQuotes(json));
-     notNull(value);
-        expect(Year.of(2000), value);
+        assertEquals("The value is not correct.", Year.of(2000), value);
     }
     
     @Test
     public void testDeserializationAsEmptyArrayEnabled() throws Throwable
     {
-     String json="[]";
-     Year value= newMapper()
+        Year value = newMapper()
              .readerFor(Year.class)
              .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
              .with(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT)
-             .readValue(aposToQuotes(json));
-     assertNull(value);
-    }
-    
-    private void expectFailure(String json) throws Throwable {
-        try {
-            read(json);
-            fail("expected DateTimeParseException");
-        } catch (JsonProcessingException e) {
-            if (e.getCause() == null) {
-                throw e;
-            }
-            if (!(e.getCause() instanceof DateTimeParseException)) {
-                throw e.getCause();
-            }
-        } catch (IOException e) {
-            throw e;
-        }
-    }
-
-    private void expectSuccess(Object exp, String json) throws IOException {
-        final Year value = read(json);
-        notNull(value);
-        expect(exp, value);
+             .readValue("[]");
+        assertNull(value);
     }
 
     @Test
@@ -192,15 +169,66 @@ public class YearDeserTest extends ModuleTestBase
         assertEquals(input, result);
     }
 
+    /*
+    /**********************************************************
+    /* Tests for specific issues
+    /**********************************************************
+     */
+
+    // [module-java8#78]
+    final static class ObjectTest {
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "'Y'yyyy")
+        public Year value;
+
+        protected ObjectTest() { }
+        public ObjectTest(Year y) {
+            value = y;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == this) return true;
+            ObjectTest other = (ObjectTest) o;
+            return Objects.equals(this.value, other.value);
+        }
+
+        // stupid Javac 8 barfs on override missing?!
+        @Override
+        public int hashCode() { return 42; }
+    }
+
+    // [module-java8#78]
+    @Test
+    public void testWithCustomFormat78() throws Exception
+    {
+        ObjectTest input = new ObjectTest(Year.of(2018));
+        String json = MAPPER.writeValueAsString(input);
+        assertEquals("{\"value\":\"Y2018\"}", json);
+        ObjectTest result = MAPPER.readValue(json, ObjectTest.class);
+        assertEquals(input, result);
+    }
+    
+    /*
+    /**********************************************************
+    /* Helper methods
+    /**********************************************************
+     */
+
     private Year read(final String json) throws IOException {
         return READER.readValue(aposToQuotes(json));
     }
 
-    private static void notNull(Object value) {
-        assertNotNull("The value should not be null.", value);
-    }
-
-    private static void expect(Object exp, Object value) {
-        assertEquals("The value is not correct.", exp,  value);
+    private void expectFailure(String json) throws Throwable {
+        try {
+            READER.readValue(json);
+            fail("expected DateTimeParseException");
+        } catch (JsonProcessingException e) {
+            if (e.getCause() == null) {
+                throw e;
+            }
+            if (!(e.getCause() instanceof DateTimeParseException)) {
+                throw e.getCause();
+            }
+        }
     }
 }

@@ -14,16 +14,19 @@
  * limitations under the license.
  */
 
-package com.fasterxml.jackson.datatype.jsr310;
+package com.fasterxml.jackson.datatype.jsr310.ser;
 
 import static org.junit.Assert.assertEquals;
 
 import java.time.ZoneId;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
+import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
+
 import org.junit.Test;
 
-public class TestZoneIdSerialization extends ModuleTestBase
+public class ZoneIdSerTest extends ModuleTestBase
 {
     private ObjectMapper MAPPER = newMapper();
 
@@ -50,26 +53,5 @@ public class TestZoneIdSerialization extends ModuleTestBase
     {
         String value = MOCK_OBJECT_MIXIN_MAPPER.writeValueAsString(ZoneId.of("America/Denver"));
         assertEquals("The value is not correct.", "[\"java.time.ZoneRegion\",\"America/Denver\"]", value);
-    }
-
-    @Test
-    public void testDeserialization01() throws Exception
-    {
-        assertEquals("The value is not correct.", ZoneId.of("America/Chicago"),
-                MAPPER.readValue("\"America/Chicago\"", ZoneId.class));
-    }
-
-    @Test
-    public void testDeserialization02() throws Exception
-    {
-        assertEquals("The value is not correct.", ZoneId.of("America/Anchorage"),
-                MAPPER.readValue("\"America/Anchorage\"", ZoneId.class));
-    }
-
-    @Test
-    public void testDeserializationWithTypeInfo02() throws Exception
-    {
-        ZoneId value = MOCK_OBJECT_MIXIN_MAPPER.readValue("[\"" + ZoneId.class.getName() + "\",\"America/Denver\"]", ZoneId.class);
-        assertEquals("The value is not correct.", ZoneId.of("America/Denver"), value);
     }
 }
