@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class PolymoprhicOptionalTest extends ModuleTestBase
+public class PolymorphicOptionalTest extends ModuleTestBase
 {
     // For [datatype-jdk8#14]
     public static class Container {
