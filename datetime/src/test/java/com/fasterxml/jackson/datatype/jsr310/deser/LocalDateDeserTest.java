@@ -175,15 +175,13 @@ public class LocalDateDeserTest extends ModuleTestBase
     @Test
     public void testDeserializationWithTypeInfo01() throws Exception
     {
-        ObjectMapper mapper = newMapper()
-               .addMixIn(Temporal.class, MockObjectConfiguration.class);
+        ObjectMapper mapper = mapperBuilder()
+               .addMixIn(Temporal.class, MockObjectConfiguration.class)
+               .build();
         LocalDate date = LocalDate.of(2005, Month.NOVEMBER, 5);
         Temporal value = mapper.readValue(
                 "[\"" + LocalDate.class.getName() + "\",\"" + date.toString() + "\"]", Temporal.class
                 );
-
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be a LocalDate.", value instanceof LocalDate);
         assertEquals("The value is not correct.", date, value);
     }
 
