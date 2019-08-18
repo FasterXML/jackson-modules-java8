@@ -236,11 +236,4 @@ public class LocalDateDeserTest extends ModuleTestBase
         assertNotNull(date);
         assertEquals(28, date.getDayOfMonth());
     }
-    
-    /*
-    /**********************************************************
-    /* Tests for lenient/strict
-    /**********************************************************
-     */
-
 }
