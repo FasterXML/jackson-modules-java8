@@ -16,40 +16,26 @@
 
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.temporal.Temporal;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.time.ZoneOffset;
-import java.time.temporal.Temporal;
 import org.junit.Test;
-
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public class LocalDateSerTest
 	extends ModuleTestBase
 {
-    final static class Wrapper {
-        @JsonFormat(pattern="yyyy_MM_dd'T'HH:mmZ",
-                shape=JsonFormat.Shape.STRING)
-        public LocalDate value;
-
-        public Wrapper() { }
-        public Wrapper(LocalDate v) { value = v; }
-    }
-
     final static class EpochDayWrapper {
         @JsonFormat(shape=JsonFormat.Shape.NUMBER_INT)
         public LocalDate value;
@@ -142,99 +128,17 @@ public class LocalDateSerTest
                 "[\"" + LocalDate.class.getName() + "\",\"" + date.toString() + "\"]", value);
     }
 
+    // [modules-java8#46]
     @Test
-    public void testDeserializationAsTimestamp01() throws Exception
+    public void testSerializationWithTypeInfo02() throws Exception
     {
-        LocalDate date = LocalDate.of(1986, Month.JANUARY, 17);
-        LocalDate value = MAPPER.readValue("[1986,1,17]", LocalDate.class);
-
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", date, value);
+        ObjectMapper mapper = newMapper();
+        final LocalDate localDate = LocalDate.of(2017, 12, 5);
+        String json = mapper.writeValueAsString(new Holder46(localDate, localDate));
+        assertEquals(aposToQuotes("{\"localDate\":[2017,12,5],\"object\":{\"java.time.LocalDate\":[2017,12,5]}}"),
+                json);
     }
-
-    @Test
-    public void testDeserializationAsTimestamp02() throws Exception
-    {
-        LocalDate date = LocalDate.of(2013, Month.AUGUST, 21);
-        LocalDate value = MAPPER.readValue("[2013,8,21]", LocalDate.class);
-
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", date, value);
-    }
-
-    @Test
-    public void testDeserializationAsString01() throws Exception
-    {
-        LocalDate date = LocalDate.of(1986, Month.JANUARY, 17);
-        LocalDate value = MAPPER.readValue('"' + date.toString() + '"', LocalDate.class);
-
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", date, value);
-    }
-
-    @Test
-    public void testDeserializationAsString02() throws Exception
-    {
-        LocalDate date = LocalDate.of(2013, Month.AUGUST, 21);
-        LocalDate value = MAPPER.readValue('"' + date.toString() + '"', LocalDate.class);
-
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", date, value);
-    }
-
-    @Test
-    public void testDeserializationAsString03() throws Exception
-    {
-        LocalDateTime date = LocalDateTime.now();
-        LocalDate value = MAPPER.readValue('"' + date.toString() + '"', LocalDate.class);
-
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", date.toLocalDate(), value);
-    }
-
-    @Test(expected = JsonMappingException.class)
-    public void testDeserializationAsString04() throws Exception
-    {
-        this.MAPPER.readValue("\"2015-06-19TShouldNotParse\"", LocalDate.class);
-    }
-
-    @Test
-    public void testDeserializationAsString05() throws Exception
-    {
-        Instant instant = Instant.now();
-        LocalDate value = MAPPER.readValue('"' + instant.toString() + '"', LocalDate.class);
-
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", LocalDateTime.ofInstant(instant, ZoneOffset.UTC).toLocalDate(), value);
-    }
-
-    @Test
-    public void testDeserializationWithTypeInfo01() throws Exception
-    {
-        ObjectMapper mapper = newMapperBuilder()
-    			.addMixIn(Temporal.class, MockObjectConfiguration.class)
-    			.build();
-        LocalDate date = LocalDate.of(2005, Month.NOVEMBER, 5);
-        Temporal value = mapper.readValue(
-                "[\"" + LocalDate.class.getName() + "\",\"" + date.toString() + "\"]", Temporal.class
-                );
-
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be a LocalDate.", value instanceof LocalDate);
-        assertEquals("The value is not correct.", date, value);
-    }
-
-    // for [datatype-jsr310#37]
-    @Test
-    public void testCustomFormat() throws Exception
-    {
-        Wrapper w = MAPPER.readValue("{\"value\":\"2015_07_28T13:53+0300\"}", Wrapper.class);
-        LocalDate date = w.value; 
-        assertNotNull(date);
-        assertEquals(28, date.getDayOfMonth());
-    }
-
-
+    
     @Test
     public void testConfigOverrides() throws Exception
     {
@@ -284,16 +188,5 @@ public class LocalDateSerTest
         LocalDate date = w.value;
         assertNotNull(date);
         assertEquals(LocalDate.ofEpochDay(1000), date);
-    }
-
-    // [modules-java8#46]
-    @Test
-    public void testPolymorphicSerialization() throws Exception
-    {
-        ObjectMapper mapper = newMapper();
-        final LocalDate localDate = LocalDate.of(2017, 12, 5);
-        String json = mapper.writeValueAsString(new Holder46(localDate, localDate));
-        assertEquals(aposToQuotes("{\"localDate\":[2017,12,5],\"object\":{\"java.time.LocalDate\":[2017,12,5]}}"),
-                json);
     }
 }
