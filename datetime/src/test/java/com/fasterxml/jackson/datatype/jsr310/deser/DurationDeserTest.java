@@ -193,7 +193,6 @@ public class DurationDeserTest extends ModuleTestBase
     {
         Duration value = READER.with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("60");
-        assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.", Duration.ofSeconds(60L, 0),  value);
     }
 
@@ -202,8 +201,6 @@ public class DurationDeserTest extends ModuleTestBase
     {
         Duration value = READER.without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("60000");
-
-        assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.", Duration.ofSeconds(60L, 0),  value);
     }
 
@@ -212,8 +209,6 @@ public class DurationDeserTest extends ModuleTestBase
     {
         Duration value = READER.with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("13498");
-
-        assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.", Duration.ofSeconds(13498L, 0),  value);
     }
 
@@ -222,8 +217,6 @@ public class DurationDeserTest extends ModuleTestBase
     {
         Duration value = READER.without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("13498000");
-
-        assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.", Duration.ofSeconds(13498L, 0),  value);
     }
 
@@ -232,8 +225,6 @@ public class DurationDeserTest extends ModuleTestBase
     {
         Duration exp = Duration.ofSeconds(60L, 0);
         Duration value = READER.readValue('"' + exp.toString() + '"');
-
-        assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.", exp,  value);
     }
 
@@ -242,16 +233,13 @@ public class DurationDeserTest extends ModuleTestBase
     {
         Duration exp = Duration.ofSeconds(13498L, 8374);
         Duration value = READER.readValue('"' + exp.toString() + '"');
-
-        assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.", exp,  value);
     }
 
     @Test
     public void testDeserializationAsString03() throws Exception
     {
-        Duration value = READER.readValue("\"   \"");
-        assertNull("The value should be null.", value);
+        assertNull("The value should be null.", READER.readValue("\"   \""));
     }
 
     @Test
@@ -336,11 +324,11 @@ public class DurationDeserTest extends ModuleTestBase
             READER.readValue("[]");
             fail("expected MismatchedInputException");
         } catch (MismatchedInputException e) {
-            verifyException(e, "Cannot deserialize instance of `java.time.Duration` out of START_ARRAY");
+            // 17-Aug-2019, tatu: Message differs between 2.10 and 3.0...
+            verifyException(e, "Cannot deserialize value of type `java.time.Duration` out of START_ARRAY");
         }
         try {
-            newMapper().readerFor(Duration.class)
-                  .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
+            READER.with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
         	        .readValue(aposToQuotes("[]"));
             fail("expected MismatchedInputException");
         } catch (MismatchedInputException e) {
@@ -350,23 +338,20 @@ public class DurationDeserTest extends ModuleTestBase
 
     @Test
     public void testDeserializationAsArrayEnabled() throws Exception {
-    	  Duration exp = Duration.ofSeconds(13498L, 8374);
-          Duration value = newMapper().readerFor(Duration.class)
-                    .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
-                    .readValue("[\"" + exp.toString() + "\"]");
-
-          assertNotNull("The value should not be null.", value);
-          assertEquals("The value is not correct.", exp,  value);
+        Duration exp = Duration.ofSeconds(13498L, 8374);
+        Duration value = newMapper().readerFor(Duration.class)
+                .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
+                .readValue("[\"" + exp.toString() + "\"]");
+        assertEquals("The value is not correct.", exp,  value);
     }
    
     @Test
     public void testDeserializationAsEmptyArrayEnabled() throws Throwable
     {
-    	String json="[]";
-    	Duration value= newMapper().readerFor(Duration.class)
-               .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS,
-                       DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT)
-    			.readValue(aposToQuotes(json));
-    	assertNull(value);
+        Duration value= newMapper().readerFor(Duration.class)
+                .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS,
+                        DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT)
+                .readValue("[]");
+        assertNull(value);
     }
 }

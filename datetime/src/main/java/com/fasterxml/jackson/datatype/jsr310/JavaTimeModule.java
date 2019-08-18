@@ -99,8 +99,6 @@ import com.fasterxml.jackson.datatype.jsr310.ser.key.ZonedDateTimeKeySerializer;
  * @author Zoltan Kiss
  *
  * @since 2.6
- *
- * @see com.fasterxml.jackson.datatype.jsr310.ser.key.Jsr310NullKeySerializer
  */
 public final class JavaTimeModule
     extends Module
