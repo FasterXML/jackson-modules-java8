@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
+import com.fasterxml.jackson.databind.util.ClassUtil;
 
 @SuppressWarnings("serial")
 public abstract class JSR310DateTimeDeserializerBase<T>
@@ -125,6 +126,7 @@ p.getNumberValue(), handledType().getName());
             JsonToken expToken) throws IOException
     {
        return (T) ctxt.handleUnexpectedToken(handledType(), expToken, p,
-               "not allowed because 'strict' mode set for property or type (enabled 'lenient' handling to allow)"); 
+"Cannot deserialize instance of %s out of %s token: not allowed because 'strict' mode set for property or type (enable 'lenient' handling to allow)",
+               ClassUtil.nameOf(handledType()), p.currentToken());
     }
 }

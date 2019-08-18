@@ -11,6 +11,8 @@ Modules:
 2.10.0.pr2
 
 #126: Change auto-registration in 2.10 to provide "new" (JavaTimeModule) instead of legacy module
+#129: Support `lenient` setting with `LocalDateDeserializer`
+ (suggested by esHack@github)
 
 2.10.0.pr1 (19-Jul-2019)
 

@@ -80,23 +80,15 @@ public class LocalDateDeserTest extends ModuleTestBase
     }
 
     @Test
-    public void testDeserializationAsString03() throws Exception
+    public void testDeserializationAsString02() throws Exception
     {
         LocalDateTime date = LocalDateTime.now();
-        LocalDate value = MAPPER.readValue('"' + date.toString() + '"', LocalDate.class);
-
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", date.toLocalDate(), value);
-    }
-
-    @Test(expected = JsonMappingException.class)
-    public void testDeserializationAsString04() throws Exception
-    {
-        this.MAPPER.readValue("\"2015-06-19TShouldNotParse\"", LocalDate.class);
+        assertEquals("The value is not correct.", date.toLocalDate(),
+                READER.readValue('"' + date.toString() + '"'));
     }
 
     @Test
-    public void testDeserializationAsString05() throws Exception
+    public void testDeserializationAsString03() throws Exception
     {
         Instant instant = Instant.now();
         LocalDate value = READER.readValue('"' + instant.toString() + '"');
@@ -104,24 +96,68 @@ public class LocalDateDeserTest extends ModuleTestBase
                 LocalDateTime.ofInstant(instant, ZoneOffset.UTC).toLocalDate(),
                 value);
     }
-    
+
     @Test
     public void testBadDeserializationAsString01() throws Throwable
     {
         try {
             READER.readValue(quote("notalocaldate"));
-            fail("expected DateTimeParseException");
+            fail("Should not pass");
         } catch (MismatchedInputException e) {
             verifyException(e, "Cannot deserialize value of type");
             verifyException(e, "from String \"");
         }
     }
 
+    @Test
+    public void testBadDeserializationAsString02() throws Exception
+    {
+        try {
+            READER.readValue(quote("2015-06-19TShouldNotParse"));
+            fail("Should not pass");
+        } catch (JsonMappingException e) {
+            verifyException(e, "Cannot deserialize value of type");
+            verifyException(e, "from String \"");
+        }
+    }
+    
     /*
     /**********************************************************
-    /* Deserialization from alternate representations
+    /* Deserialization from alternate representation: int (number
+    /* of days since Epoch)
     /**********************************************************
      */
+
+    // By default, lenient handling on so we can do this:
+    @Test
+    public void testLenientDeserializeFromInt() throws Exception
+    {
+        assertEquals("The value is not correct.", LocalDate.of(1970, Month.JANUARY, 3),
+                READER.readValue("2"));
+
+        assertEquals("The value is not correct.", LocalDate.of(1970, Month.FEBRUARY, 10),
+                READER.readValue("40"));
+    }
+
+    // But with alternate setting, not so
+    @Test
+    public void testStricDeserializeFromInt() throws Exception
+    {
+        ObjectMapper mapper = mapperBuilder()
+                .build();
+        mapper.configOverride(LocalDate.class)
+            .setFormat(JsonFormat.Value.forLeniency(false));
+        try {
+            mapper.readValue("2", LocalDate.class);
+            fail("Should not pass");
+        } catch (JsonMappingException e) {
+            verifyException(e, "Cannot deserialize instance of");
+            verifyException(e, "not allowed because 'strict' mode set for property or type");
+        }
+
+        // 17-Aug-2019, tatu: Should possibly test other mechanism too, but for now let's
+        //    be content with just one...
+    }
 
     /*
     /**********************************************************
