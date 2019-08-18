@@ -1,9 +1,10 @@
-package com.fasterxml.jackson.datatype.jsr310;
+package com.fasterxml.jackson.datatype.jsr310.deser;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
 import org.junit.Test;
 
@@ -13,7 +14,6 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
@@ -24,21 +24,23 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
     @Test
     public void testDeserializationAsString01() throws Exception
     {
-        expectSuccess(ZonedDateTime.of(2000, 1, 1, 12, 0, 0, 0, ZoneId.of("UTC")), "'2000-01-01T12:00Z'");
+        assertEquals("The value is not correct.",
+                ZonedDateTime.of(2000, 1, 1, 12, 0, 0, 0, ZoneId.of("UTC")),
+                READER.readValue(quote("2000-01-01T12:00Z")));
     }
 
     @Test
     public void testBadDeserializationAsString01() throws Throwable
     {
-        expectFailure("'notazone'");
+        expectFailure(quote("notazone"));
     }
     
     @Test
     public void testDeserializationAsArrayDisabled() throws Throwable
     {
-    	try {
-    		read("['2000-01-01T12:00Z']");
-    	    fail("expected JsonMappingException");
+        try {
+            READER.readValue("[\"2000-01-01T12:00Z\"]");
+            fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
            // OK
         } catch (IOException e) {
@@ -50,7 +52,7 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
     public void testDeserializationAsEmptyArrayDisabled() throws Throwable
     {
     	try {
-    		read("[]");
+    	    READER.readValue("[]");
     	    fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
            // OK
@@ -69,16 +71,18 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
             throw e;
         }
     }
-    
+
     @Test
     public void testDeserializationAsArrayEnabled() throws Throwable
     {
-    	String json="['2000-01-01T12:00Z']";
-    	ZonedDateTime value= newMapper()
+        String json="['2000-01-01T12:00Z']";
+        ZonedDateTime value = newMapper()
     			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
     			.readerFor(ZonedDateTime.class).readValue(aposToQuotes(json));
-    	notNull(value);
-        expect(ZonedDateTime.of(2000, 1, 1, 12, 0, 0, 0, ZoneId.of("UTC")), value);
+        assertEquals("The value is not correct.",
+                ZonedDateTime.of(2000, 1, 1, 12, 0, 0, 0, ZoneId.of("UTC")),
+                value);
+
     }
     
     @Test
@@ -94,7 +98,7 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
 
     private void expectFailure(String json) throws Throwable {
         try {
-            read(json);
+            READER.readValue(aposToQuotes(json));
             fail("expected DateTimeParseException");
         } catch (JsonProcessingException e) {
             if (e.getCause() == null) {
@@ -103,26 +107,6 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
             if (!(e.getCause() instanceof DateTimeParseException)) {
                 throw e.getCause();
             }
-        } catch (IOException e) {
-            throw e;
         }
-    }
-
-    private void expectSuccess(Object exp, String json) throws IOException {
-        final ZonedDateTime value = read(json);
-        notNull(value);
-        expect(exp, value);
-    }
-
-    private ZonedDateTime read(final String json) throws IOException {
-        return READER.readValue(aposToQuotes(json));
-    }
-
-    private static void notNull(Object value) {
-        assertNotNull("The value should not be null.", value);
-    }
-
-    private static void expect(Object exp, Object value) {
-        assertEquals("The value is not correct.", exp,  value);
     }
 }
