@@ -26,7 +26,7 @@ public class DefaultTypingTest extends ModuleTestBase
     }
 
     private final ObjectMapper TYPING_MAPPER = newMapperBuilder()
-            .enableDefaultTyping(new NoCheckSubTypeValidator())
+            .activateDefaultTyping(new NoCheckSubTypeValidator())
             .build();
 
     // for [datatype-jsr310#24]
