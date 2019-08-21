@@ -13,7 +13,7 @@ public class PolymorphicTest extends ModuleTestBase
 {
     private final ObjectMapper TYPING_MAPPER = newMapper();
     {
-        TYPING_MAPPER.enableDefaultTyping(new NoCheckSubTypeValidator());
+        TYPING_MAPPER.activateDefaultTyping(new NoCheckSubTypeValidator());
     }
 
     // for [datatype-jsr310#24]
