@@ -17,7 +17,6 @@
 package com.fasterxml.jackson.datatype.jsr310;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.util.function.BiFunction;
 
 /**
@@ -137,11 +136,6 @@ public final class DecimalUtils
             // Now we know that seconds has reasonable scale, we can safely chop it apart.
             secondsOnly = seconds.longValue();
             nanosOnly = nanoseconds.subtract(new BigDecimal(secondsOnly).scaleByPowerOfTen(9)).intValue();
-
-
-            if (secondsOnly < 0 && secondsOnly > Instant.MIN.getEpochSecond()) {
-                nanosOnly = Math.abs(nanosOnly);
-            }
         }
 
         return convert.apply(secondsOnly, nanosOnly);
