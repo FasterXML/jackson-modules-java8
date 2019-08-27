@@ -763,6 +763,15 @@ public class TestZonedDateTimeSerialization
         assertEquals(input.value.toInstant(), result.value.toInstant());
     }
 
+    @Test
+    public void testInstantPriorToEpochIsEqual() throws Exception
+    {
+        final Instant original = Instant.ofEpochMilli(-1);
+        final String serialized = MAPPER.writeValueAsString(original);
+        final Instant deserialized = MAPPER.readValue(serialized, Instant.class);
+        assertEquals(true,original.compareTo(deserialized)==0);
+    }
+
     private static void assertIsEqual(ZonedDateTime expected, ZonedDateTime actual)
     {
         assertTrue("The value is not correct. Expected timezone-adjusted <" + expected + ">, actual <" + actual + ">.",
