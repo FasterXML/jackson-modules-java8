@@ -92,6 +92,7 @@ public class TestZonedDateTimeSerialization
     @Test
     public void testSerializationAsTimestamp01NegativeSeconds() throws Exception
     {
+        // test for Issue #69
         ZonedDateTime date = ZonedDateTime.ofInstant(Instant.ofEpochSecond(-14159020000L, 183917322), UTC);
         String serialized = MAPPER.writer()
                 .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
@@ -766,10 +767,11 @@ public class TestZonedDateTimeSerialization
     @Test
     public void testInstantPriorToEpochIsEqual() throws Exception
     {
+        //Issue #120 test
         final Instant original = Instant.ofEpochMilli(-1);
         final String serialized = MAPPER.writeValueAsString(original);
         final Instant deserialized = MAPPER.readValue(serialized, Instant.class);
-        assertEquals(true,original.compareTo(deserialized)==0);
+        assertEquals(original, deserialized);
     }
 
     private static void assertIsEqual(ZonedDateTime expected, ZonedDateTime actual)
