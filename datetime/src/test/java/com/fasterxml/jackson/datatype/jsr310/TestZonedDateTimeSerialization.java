@@ -103,6 +103,17 @@ public class TestZonedDateTimeSerialization
     }
 
     @Test
+    public void testSerializationAsTimestamp01NegativeSecondsWithDefaults() throws Exception
+    {
+        // test for Issue #69 using default mapper config
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MMM dd yyyy HH:mm:ss.SSS zzz");
+        ZonedDateTime original = ZonedDateTime.parse("Apr 13 1969 05:05:38.599 UTC", dtf);
+        String serialized = MAPPER.writeValueAsString(original);
+        ZonedDateTime deserialized = MAPPER.readValue(serialized, ZonedDateTime.class);
+        assertEquals("The value is not correct.",  original, deserialized);
+    }
+
+    @Test
     public void testSerializationAsTimestamp01Milliseconds() throws Exception
     {
         ZonedDateTime date = ZonedDateTime.ofInstant(Instant.ofEpochSecond(0L), Z1);
