@@ -103,7 +103,6 @@
             <Xmaxerrs>10000</Xmaxerrs>
             <Xmaxwarns>10000</Xmaxwarns>
             <Xlint />
-            <Werror />
           </compilerArguments>
         </configuration>
       </plugin>
