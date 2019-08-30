@@ -10,6 +10,8 @@ Modules:
 
 2.10.0.pr2
 
+#69: `ZonedDateTime` for times before the epoch do not serialize correctly
+ (fixed by Mike [kupci@github])
 #126: Change auto-registration in 2.10 to provide "new" (JavaTimeModule) instead of legacy module
 #129: Support `lenient` setting with `LocalDateDeserializer`
  (suggested by esHack@github)
