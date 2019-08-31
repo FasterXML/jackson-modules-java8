@@ -16,6 +16,7 @@ public class YearKeyDeserializer extends Jsr310KeyDeserializer {
     public static final YearKeyDeserializer INSTANCE = new YearKeyDeserializer();
 
     private YearKeyDeserializer() {
+        // singleton
     }
 
     @Override
