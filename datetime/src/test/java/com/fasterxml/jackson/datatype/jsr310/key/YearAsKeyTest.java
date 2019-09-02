@@ -44,17 +44,11 @@ public class YearAsKeyTest extends ModuleTestBase
 
     @Test
     public void serializeAndDeserializeYearKeyUnpadded() throws Exception {
-
-        // from YearKeyDeserializer doesn't work with non-padded year values #51
-        Year year1 = Year.of(1);
-        Float float1 = 1F;
-
-        Map<Year, Float> testMap = Collections.singletonMap(year1, float1);
+        // fix for issue #51 verify we can deserialize an unpadded year e.g. "1"
+        Map<Year, Float> testMap = Collections.singletonMap(Year.of(1), 1F);
         String serialized = MAPPER.writeValueAsString(testMap);
         TypeReference<Map<Year, Float>> yearFloatTypeReference = new TypeReference<Map<Year, Float>>() {};
-
         Map<Year, Float> deserialized = MAPPER.readValue(serialized, yearFloatTypeReference);
-        Float floatVal = deserialized.get(year1);
-        assertEquals("Value is incorrect", String.valueOf(float1), floatVal.toString());
+        assertEquals(testMap, deserialized);
     }
 }
