@@ -45,10 +45,11 @@ public class YearAsKeyTest extends ModuleTestBase
     @Test
     public void serializeAndDeserializeYearKeyUnpadded() throws Exception {
         // fix for issue #51 verify we can deserialize an unpadded year e.g. "1"
+        ObjectMapper unpaddedMapper = newMapper();
         Map<Year, Float> testMap = Collections.singletonMap(Year.of(1), 1F);
-        String serialized = MAPPER.writeValueAsString(testMap);
+        String serialized = unpaddedMapper.writeValueAsString(testMap);
         TypeReference<Map<Year, Float>> yearFloatTypeReference = new TypeReference<Map<Year, Float>>() {};
-        Map<Year, Float> deserialized = MAPPER.readValue(serialized, yearFloatTypeReference);
+        Map<Year, Float> deserialized = unpaddedMapper.readValue(serialized, yearFloatTypeReference);
         assertEquals(testMap, deserialized);
     }
 }
