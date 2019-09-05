@@ -113,7 +113,7 @@ public final class JavaTimeModule
 
     @Override
     public Version version() {
-        return PackageVersion.VERSION;
+        return Version.unknownVersion();
     }
 
     public JavaTimeModule() { }

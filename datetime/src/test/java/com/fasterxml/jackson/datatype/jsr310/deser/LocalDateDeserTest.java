@@ -140,7 +140,7 @@ public class LocalDateDeserTest extends ModuleTestBase
 
     // But with alternate setting, not so
     @Test
-    public void testStricDeserializeFromInt() throws Exception
+    public void testStrictDeserializeFromInt() throws Exception
     {
         ObjectMapper mapper = mapperBuilder()
                 .withConfigOverride(LocalDate.class,
