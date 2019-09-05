@@ -21,15 +21,20 @@ public class YearAsKeyTest extends ModuleTestBase
     private final ObjectReader READER = MAPPER.readerFor(TYPE_REF);
 
     @Test
-    public void testSerialization() throws Exception {
+    public void testKeySerialization() throws Exception {
         assertEquals("Value is incorrect", mapAsString("3141", "test"),
                 MAPPER.writeValueAsString(asMap(Year.of(3141), "test")));
     }
 
     @Test
-    public void testDeserialization() throws Exception {
+    public void testKeyDeserialization() throws Exception {
         assertEquals("Value is incorrect", asMap(Year.of(3141), "test"),
                 READER.readValue(mapAsString("3141", "test")));
+        // Test both padded, unpadded
+        assertEquals("Value is incorrect", asMap(Year.of(476), "test"),
+                READER.readValue(mapAsString("0476", "test")));
+        assertEquals("Value is incorrect", asMap(Year.of(476), "test"),
+                READER.readValue(mapAsString("476", "test")));
     }
 
     @Test(expected = InvalidFormatException.class)
@@ -45,11 +50,15 @@ public class YearAsKeyTest extends ModuleTestBase
     @Test
     public void serializeAndDeserializeYearKeyUnpadded() throws Exception {
         // fix for issue #51 verify we can deserialize an unpadded year e.g. "1"
-        ObjectMapper unpaddedMapper = newMapper();
         Map<Year, Float> testMap = Collections.singletonMap(Year.of(1), 1F);
-        String serialized = unpaddedMapper.writeValueAsString(testMap);
+        String serialized = MAPPER.writeValueAsString(testMap);
         TypeReference<Map<Year, Float>> yearFloatTypeReference = new TypeReference<Map<Year, Float>>() {};
-        Map<Year, Float> deserialized = unpaddedMapper.readValue(serialized, yearFloatTypeReference);
+        Map<Year, Float> deserialized = MAPPER.readValue(serialized, yearFloatTypeReference);
         assertEquals(testMap, deserialized);
+
+        // actually, check padded as well just to make sure
+        Map<Year, Float> deserialized2 = MAPPER.readValue(aposToQuotes("{'0001':1.0}"),
+                yearFloatTypeReference);
+        assertEquals(testMap, deserialized2);
     }
 }
