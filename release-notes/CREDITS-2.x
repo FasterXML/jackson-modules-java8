@@ -57,3 +57,11 @@ Andriy Plokhotnyuk (plokhotnyuk@github)
 Todd Jonker (toddjonker@github)
   * Contributed fix for #90 (see above)
    (2.9.8)
+
+Michael O'Keeffe (kupci@github)
+  * Contributed fix for #69: `ZonedDateTime` for times before the epoch do not
+    serialize correctly
+   (2.10.0)
+  * Contributed fix for #51: `YearKeyDeserializer` doesn't work with non-padded
+    year values
+   (2.10.0)

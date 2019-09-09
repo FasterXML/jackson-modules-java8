@@ -8,8 +8,15 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
-2.10.0.pr2
+2.10.0 (not yet released)
 
+#51: `YearKeyDeserializer` doesn't work with non-padded year values
+ (reported by sladkoff@github; fix contributed by Mike [kupci@github])
+
+2.10.0.pr2 (31-Aug-2019)
+
+#69: `ZonedDateTime` for times before the epoch do not serialize correctly
+ (fixed by Mike [kupci@github])
 #126: Change auto-registration in 2.10 to provide "new" (JavaTimeModule) instead of legacy module
 #129: Support `lenient` setting with `LocalDateDeserializer`
  (suggested by esHack@github)
