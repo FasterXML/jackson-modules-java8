@@ -52,16 +52,23 @@ public class LocalDateTimeDeserializer
         super(LocalDateTime.class, formatter);
     }
 
+    /**
+     * Since 2.10
+     */
+    protected LocalDateTimeDeserializer(LocalDateTimeDeserializer base, Boolean leniency) {
+        super(base, leniency);
+    }
+
     @Override
     protected LocalDateTimeDeserializer withDateFormat(DateTimeFormatter formatter) {
         return new LocalDateTimeDeserializer(formatter);
     }
 
-    // !!! TODO: lenient vs strict?
     @Override
     protected LocalDateTimeDeserializer withLeniency(Boolean leniency) {
-        return this;
+        return new LocalDateTimeDeserializer(this, leniency);
     }
+
 
     @Override
     public LocalDateTime deserialize(JsonParser parser, DeserializationContext context) throws IOException
@@ -69,6 +76,9 @@ public class LocalDateTimeDeserializer
         if (parser.hasTokenId(JsonTokenId.ID_STRING)) {
             String string = parser.getText().trim();
             if (string.length() == 0) {
+                if (!isLenient()) {
+                    return _failForNotLenient(parser, context, JsonToken.VALUE_STRING);
+                }
                 return null;
             }
 

@@ -17,18 +17,18 @@
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
 import java.io.IOException;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.time.temporal.Temporal;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 import java.util.TimeZone;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.deser.DeserializationProblemHandler;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
@@ -46,6 +46,7 @@ public class LocalDateTimeDeserTest
 {
     private final static ObjectMapper MAPPER = newMapper();
     private final static ObjectReader READER = MAPPER.readerFor(LocalDateTime.class);
+    private final TypeReference<Map<String, LocalDateTime>> MAP_TYPE_REF = new TypeReference<Map<String, LocalDateTime>>() { };
 
     /*
     /**********************************************************
@@ -172,6 +173,58 @@ public class LocalDateTimeDeserTest
             verifyException(e, "Cannot deserialize value of type");
             verifyException(e, "from String \"");
         }
+    }
+
+    /*
+    /**********************************************************
+    /* Tests for empty string handling
+     */
+    /**********************************************************
+     */
+
+    @Test
+    public void testLenientDeserializeFromEmptyString() throws Exception {
+
+        String key = "datetime";
+        ObjectMapper mapper = newMapper();
+        ObjectReader objectReader = mapper.readerFor(MAP_TYPE_REF);
+
+        String dateValAsNullStr = null;
+        String dateValAsEmptyStr = "";
+
+        String valueFromNullStr = mapper.writeValueAsString(asMap(key, dateValAsNullStr));
+        Map<String, LocalDateTime> actualMapFromNullStr = objectReader.readValue(valueFromNullStr);
+        LocalDateTime actualDateFromNullStr = actualMapFromNullStr.get(key);
+        assertNull(actualDateFromNullStr);
+
+        String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, dateValAsEmptyStr));
+        Map<String, LocalDateTime> actualMapFromEmptyStr = objectReader.readValue(valueFromEmptyStr);
+        LocalDateTime actualDateFromEmptyStr = actualMapFromEmptyStr.get(key);
+        assertEquals("empty string failed to deserialize to null with lenient setting",actualDateFromNullStr, actualDateFromEmptyStr);
+    }
+
+    @Test( expected =  MismatchedInputException.class)
+    public void testStrictDeserializFromEmptyString() throws Exception {
+
+        final String key = "datetime";
+        final ObjectMapper mapper = mapperBuilder()
+                .withConfigOverride(LocalDateTime.class,
+                        c -> c.setFormat(JsonFormat.Value.forLeniency(false))
+                )
+                .build();
+        final ObjectReader objectReader = mapper.readerFor(MAP_TYPE_REF);
+        final String dateValAsNullStr = null;
+
+        // even with strict, null value should be deserialized without throwing an exception
+        String valueFromNullStr = mapper.writeValueAsString(asMap(key, dateValAsNullStr));
+        Map<String, LocalDateTime> actualMapFromNullStr = objectReader.readValue(valueFromNullStr);
+        assertNull(actualMapFromNullStr.get(key));
+
+        String dateValAsEmptyStr = "";
+        // TODO: nothing stops us from writing an empty string, maybe there should be a check there too?
+        String valueFromEmptyStr = mapper.writeValueAsString(asMap("date", dateValAsEmptyStr));
+        // with strict, deserializing an empty string is not permitted
+        objectReader.readValue(valueFromEmptyStr);
     }
 
     /*
