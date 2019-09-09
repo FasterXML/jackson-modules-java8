@@ -484,16 +484,4 @@ public class InstantDeserTest extends ModuleTestBase
 
         assertEquals(givenInstant, actual);
     }
-
-    @Test
-    public void testReadDateTimestampsAsNanosecondsEnabled() throws Throwable {
-        long seconds = 946684800;
-        long nanos = 900_000_000;
-        Instant testInstant = Instant.ofEpochSecond(seconds, nanos);
-
-        Instant actualValue = READER
-                .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
-                .readValue(testInstant.getEpochSecond()+"."+testInstant.getNano());
-        assertEquals(testInstant, actualValue);
-    }
 }

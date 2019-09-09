@@ -179,20 +179,4 @@ public class OffsetDateTimeSerTest
         assertEquals("The value is not correct.",
                 "[\"" + OffsetDateTime.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", value);
     }
-
-    @Test
-    public void testSerializationWithTypeInfo04() throws Exception
-    {
-        OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(946684800, 900000000), Z2);
-        String value = newMapperBuilder()
-                .enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
-                        SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
-                .addMixIn(Temporal.class, MockObjectConfiguration.class)
-                .build()
-                .writeValueAsString(date);
-        assertEquals("The value is not correct.",
-                "[\"" + OffsetDateTime.class.getName() + "\",946684800.900000000]", value);
-    }
-
-
 }
