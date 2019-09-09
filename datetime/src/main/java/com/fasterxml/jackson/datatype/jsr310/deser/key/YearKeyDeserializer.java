@@ -15,6 +15,13 @@ public class YearKeyDeserializer extends Jsr310KeyDeserializer {
 
     public static final YearKeyDeserializer INSTANCE = new YearKeyDeserializer();
 
+    /*
+     * formatter copied from Year. There is no way of getting a reference to the formatter it uses.
+     */
+    private static final DateTimeFormatter FORMATTER = new DateTimeFormatterBuilder()
+            .appendValue(YEAR, 4, 10, SignStyle.EXCEEDS_PAD)
+            .toFormatter();
+
     private YearKeyDeserializer() {
         // singleton
     }
@@ -23,11 +30,9 @@ public class YearKeyDeserializer extends Jsr310KeyDeserializer {
     protected Year deserialize(String key, DeserializationContext ctxt) throws IOException {
 
         try {
-            return Year.of(Integer.parseInt(key));
-        } catch (NumberFormatException nfe) {
-            return _handleDateTimeException(ctxt, Year.class, new DateTimeException("Number format exception", nfe), key);
-        } catch (DateTimeException dte) {
-            return _handleDateTimeException(ctxt, Year.class, dte, key);
+            return Year.parse(key, FORMATTER);
+        } catch (DateTimeException e) {
+            return _handleDateTimeException(ctxt, Year.class, e, key);
         }
     }
 }
