@@ -79,6 +79,9 @@ public class LocalDateDeserializer extends JSR310DateTimeDeserializerBase<LocalD
         if (parser.hasToken(JsonToken.VALUE_STRING)) {
             String string = parser.getText().trim();
             if (string.length() == 0) {
+                if (!isLenient()) {
+                    return _failForNotLenient(parser, context, JsonToken.VALUE_STRING);
+                }
                 return null;
             }
             // as per [datatype-jsr310#37], only check for optional (and, incorrect...) time marker 'T'
