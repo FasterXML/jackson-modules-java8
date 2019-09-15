@@ -6,7 +6,9 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.ZoneOffset;
 import java.time.temporal.Temporal;
+import java.util.Map;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -27,6 +29,7 @@ public class LocalDateDeserTest extends ModuleTestBase
 {
     private final ObjectMapper MAPPER = newMapper();
     private final ObjectReader READER = MAPPER.readerFor(LocalDate.class);
+    private final TypeReference<Map<String, LocalDate>> MAP_TYPE_REF = new TypeReference<Map<String, LocalDate>>() { };
 
     final static class Wrapper {
         @JsonFormat(pattern="yyyy_MM_dd'T'HH:mmZ",
@@ -157,6 +160,58 @@ public class LocalDateDeserTest extends ModuleTestBase
 
         // 17-Aug-2019, tatu: Should possibly test other mechanism too, but for now let's
         //    be content with just one...
+    }
+
+    /*
+    /**********************************************************
+    /* Tests for empty string handling
+     */
+    /**********************************************************
+     */
+
+    @Test
+    public void testLenientDeserializeFromEmptyString() throws Exception {
+
+        String key = "date";
+        ObjectMapper mapper = newMapper();
+        ObjectReader objectReader = mapper.readerFor(MAP_TYPE_REF);
+
+        String dateValAsNullStr = null;
+        String dateValAsEmptyStr = "";
+
+        String valueFromNullStr = mapper.writeValueAsString(asMap(key, dateValAsNullStr));
+        Map<String, LocalDate> actualMapFromNullStr = objectReader.readValue(valueFromNullStr);
+        LocalDate actualDateFromNullStr = actualMapFromNullStr.get(key);
+        assertNull(actualDateFromNullStr);
+
+        String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, dateValAsEmptyStr));
+        Map<String, LocalDate> actualMapFromEmptyStr = objectReader.readValue(valueFromEmptyStr);
+        LocalDate actualDateFromEmptyStr = actualMapFromEmptyStr.get(key);
+        assertEquals("empty string failed to deserialize to null with lenient setting",actualDateFromNullStr, actualDateFromEmptyStr);
+    }
+
+    @Test( expected =  MismatchedInputException.class)
+    public void testStrictDeserializFromEmptyString() throws Exception {
+
+        final String key = "date";
+        final ObjectMapper mapper = mapperBuilder()
+                .withConfigOverride(LocalDate.class,
+                        c -> c.setFormat(JsonFormat.Value.forLeniency(false))
+                )
+                .build();
+        final ObjectReader objectReader = mapper.readerFor(MAP_TYPE_REF);
+        final String dateValAsNullStr = null;
+
+        // even with strict, null value should be deserialized without throwing an exception
+        String valueFromNullStr = mapper.writeValueAsString(asMap(key, dateValAsNullStr));
+        Map<String, LocalDate> actualMapFromNullStr = objectReader.readValue(valueFromNullStr);
+        assertNull(actualMapFromNullStr.get(key));
+
+        String dateValAsEmptyStr = "";
+        // TODO: nothing stops us from writing an empty string, maybe there should be a check there too?
+        String valueFromEmptyStr = mapper.writeValueAsString(asMap("date", dateValAsEmptyStr));
+        // with strict, deserializing an empty string is not permitted
+        objectReader.readValue(valueFromEmptyStr);
     }
 
     /*
