@@ -210,11 +210,9 @@ public class LocalDateTimeDeserTest
     public void testStrictDeserializFromEmptyString() throws Exception {
 
         final String key = "datetime";
-        final ObjectMapper mapper = mapperBuilder()
-                .withConfigOverride(LocalDateTime.class,
-                        c -> c.setFormat(JsonFormat.Value.forLeniency(false))
-                )
-                .build();
+        final ObjectMapper mapper = mapperBuilder().build();
+        mapper.configOverride(LocalDateTime.class)
+            .setFormat(JsonFormat.Value.forLeniency(false));
         final ObjectReader objectReader = mapper.readerFor(MAP_TYPE_REF);
         final String dateValAsNullStr = null;
 
