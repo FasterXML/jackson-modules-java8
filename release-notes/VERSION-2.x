@@ -12,6 +12,9 @@ Modules:
 
 #51: `YearKeyDeserializer` doesn't work with non-padded year values
  (reported by sladkoff@github; fix contributed by Mike [kupci@github])
+#114: Prevent deserialization of "" as `null` for `LocalDate`, `LocalDateTime`
+  in "strict" (non-lenient) mode
+ (suggested by beytun@github, implemented by Mike [kupci@github])
 
 2.10.0.pr2 (31-Aug-2019)
 
