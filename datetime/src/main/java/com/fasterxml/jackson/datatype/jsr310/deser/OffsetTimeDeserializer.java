@@ -32,8 +32,6 @@ import com.fasterxml.jackson.databind.*;
  */
 public class OffsetTimeDeserializer extends JSR310DateTimeDeserializerBase<OffsetTime>
 {
-    private static final long serialVersionUID = 1L;
-
     public static final OffsetTimeDeserializer INSTANCE = new OffsetTimeDeserializer();
 
     private OffsetTimeDeserializer() {

@@ -36,8 +36,6 @@ import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
  */
 public class LocalDateTimeSerializer extends JSR310FormattedSerializerBase<LocalDateTime>
 {
-    private static final long serialVersionUID = 1L;
-
     public static final LocalDateTimeSerializer INSTANCE = new LocalDateTimeSerializer();
     
     protected LocalDateTimeSerializer() {

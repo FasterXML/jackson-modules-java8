@@ -11,8 +11,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 public class ZonedDateTimeSerializer extends InstantSerializerBase<ZonedDateTime> {
-    private static final long serialVersionUID = 1L;
-
     public static final ZonedDateTimeSerializer INSTANCE = new ZonedDateTimeSerializer();
 
     /**

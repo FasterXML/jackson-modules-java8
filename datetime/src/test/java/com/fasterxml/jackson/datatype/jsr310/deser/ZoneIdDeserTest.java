@@ -8,10 +8,10 @@ import java.time.ZoneId;
 
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
@@ -39,14 +39,15 @@ public class ZoneIdDeserTest extends ModuleTestBase
         assertNull(MAPPER.readValue(quote("  "), ZoneId.class));
         // but fail if coercion illegal
         try {
-            MAPPER.readerFor(ZoneId.class)
-                .without(DeserializationFeature.ALLOW_COERCION_OF_SCALARS)
-                .readValue(quote(" "));
+            newMapperBuilder()
+                .disable(MapperFeature.ALLOW_COERCION_OF_SCALARS)
+                .build()
+                .readValue(quote(" "), ZoneId.class);
             fail("Should not pass");
         } catch (MismatchedInputException e) {
             verifyException(e, "Cannot coerce");
             verifyException(e, ZoneId.class.getName());
-            verifyException(e, "enable `DeserializationFeature.ALLOW_COERCION_OF_SCALARS`");
+            verifyException(e, "enable `MapperFeature.ALLOW_COERCION_OF_SCALARS`");
         }
     }
     

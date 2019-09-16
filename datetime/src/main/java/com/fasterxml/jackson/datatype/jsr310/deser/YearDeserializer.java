@@ -32,8 +32,6 @@ import java.time.format.DateTimeFormatter;
  */
 public class YearDeserializer extends JSR310DateTimeDeserializerBase<Year>
 {
-    private static final long serialVersionUID = 1L;
-
     public static final YearDeserializer INSTANCE = new YearDeserializer();
 
     private YearDeserializer()

@@ -50,12 +50,8 @@ import java.util.regex.Pattern;
 public class InstantDeserializer<T extends Temporal>
     extends JSR310DateTimeDeserializerBase<T>
 {
-    private static final long serialVersionUID = 1L;
-
     /**
      * Constants used to check if the time offset is zero. See [jackson-modules-java8#18]
-     *
-     * @since 2.9.0
      */
     private static final Pattern ISO8601_UTC_ZERO_OFFSET_SUFFIX_REGEX = Pattern.compile("\\+00:?(00)?$");
 

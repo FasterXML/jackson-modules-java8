@@ -34,8 +34,6 @@ import com.fasterxml.jackson.core.JsonToken;
  */
 public class YearMonthDeserializer extends JSR310DateTimeDeserializerBase<YearMonth>
 {
-    private static final long serialVersionUID = 1L;
-
     public static final YearMonthDeserializer INSTANCE = new YearMonthDeserializer();
 
     private YearMonthDeserializer()

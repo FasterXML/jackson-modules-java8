@@ -40,8 +40,6 @@ import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
  */
 public class YearMonthSerializer extends JSR310FormattedSerializerBase<YearMonth>
 {
-    private static final long serialVersionUID = 1L;
-
     public static final YearMonthSerializer INSTANCE = new YearMonthSerializer();
 
     private YearMonthSerializer() {

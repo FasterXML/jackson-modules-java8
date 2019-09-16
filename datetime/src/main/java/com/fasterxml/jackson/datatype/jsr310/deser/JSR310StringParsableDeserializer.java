@@ -41,8 +41,6 @@ import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
 public class JSR310StringParsableDeserializer
     extends JSR310DeserializerBase<Object>
 {
-    private static final long serialVersionUID = 1L;
-
     protected final static int TYPE_PERIOD = 1;
     protected final static int TYPE_ZONE_ID = 2;
     protected final static int TYPE_ZONE_OFFSET = 3;

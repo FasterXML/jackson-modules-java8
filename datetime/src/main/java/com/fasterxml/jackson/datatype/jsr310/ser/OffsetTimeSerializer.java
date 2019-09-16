@@ -36,8 +36,6 @@ import java.time.temporal.ChronoField;
  */
 public class OffsetTimeSerializer extends JSR310FormattedSerializerBase<OffsetTime>
 {
-    private static final long serialVersionUID = 1L;
-
     public static final OffsetTimeSerializer INSTANCE = new OffsetTimeSerializer();
 
     protected OffsetTimeSerializer() {

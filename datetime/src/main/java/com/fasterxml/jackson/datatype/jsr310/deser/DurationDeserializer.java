@@ -32,12 +32,9 @@ import java.time.Duration;
  * Deserializer for Java 8 temporal {@link Duration}s.
  *
  * @author Nick Williams
- * @since 2.2.0
  */
 public class DurationDeserializer extends JSR310DeserializerBase<Duration>
 {
-    private static final long serialVersionUID = 1L;
-
     public static final DurationDeserializer INSTANCE = new DurationDeserializer();
 
     private DurationDeserializer()

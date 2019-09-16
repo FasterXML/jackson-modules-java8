@@ -47,8 +47,6 @@ import java.time.format.DateTimeFormatter;
  */
 public class DurationSerializer extends JSR310FormattedSerializerBase<Duration>
 {
-    private static final long serialVersionUID = 1L;
-
     public static final DurationSerializer INSTANCE = new DurationSerializer();
 
     private DurationSerializer() {

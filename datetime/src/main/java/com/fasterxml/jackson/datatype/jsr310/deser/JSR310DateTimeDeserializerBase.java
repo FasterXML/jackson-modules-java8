@@ -122,7 +122,7 @@ p.getNumberValue(), handledType().getName());
     protected T _failForNotLenient(JsonParser p, DeserializationContext ctxt,
             JsonToken expToken) throws IOException
     {
-       return (T) ctxt.handleUnexpectedToken(handledType(), expToken, p,
+       return (T) ctxt.handleUnexpectedToken(getValueType(ctxt), expToken, p,
 "Cannot deserialize instance of %s out of %s token: not allowed because 'strict' mode set for property or type (enable 'lenient' handling to allow)",
                ClassUtil.nameOf(handledType()), p.currentToken());
     }

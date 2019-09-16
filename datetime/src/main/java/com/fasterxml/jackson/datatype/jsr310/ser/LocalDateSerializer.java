@@ -34,12 +34,9 @@ import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
  * Serializer for Java 8 temporal {@link LocalDate}s.
  *
  * @author Nick Williams
- * @since 2.2
  */
 public class LocalDateSerializer extends JSR310FormattedSerializerBase<LocalDate>
 {
-    private static final long serialVersionUID = 1L;
-
     public static final LocalDateSerializer INSTANCE = new LocalDateSerializer();
 
     protected LocalDateSerializer() {

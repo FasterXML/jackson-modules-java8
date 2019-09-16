@@ -40,8 +40,6 @@ import java.time.format.DateTimeFormatter;
  */
 public class YearSerializer extends JSR310FormattedSerializerBase<Year>
 {
-    private static final long serialVersionUID = 1L;
-
     public static final YearSerializer INSTANCE = new YearSerializer();
 
     protected YearSerializer() {

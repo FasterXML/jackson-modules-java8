@@ -325,7 +325,9 @@ public class DurationDeserTest extends ModuleTestBase
             fail("expected MismatchedInputException");
         } catch (MismatchedInputException e) {
             // 17-Aug-2019, tatu: Message differs between 2.10 and 3.0...
-            verifyException(e, "Cannot deserialize value of type `java.time.Duration` out of START_ARRAY");
+            verifyException(e, "Cannot deserialize value of type");
+            verifyException(e, "java.time.Duration");
+            verifyException(e, "out of START_ARRAY");
         }
         try {
             READER.with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)

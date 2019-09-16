@@ -33,8 +33,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
  */
 public class LocalTimeDeserializer extends JSR310DateTimeDeserializerBase<LocalTime>
 {
-    private static final long serialVersionUID = 1L;
-    
     private static final DateTimeFormatter DEFAULT_FORMATTER = DateTimeFormatter.ISO_LOCAL_TIME;
 
     public static final LocalTimeDeserializer INSTANCE = new LocalTimeDeserializer();

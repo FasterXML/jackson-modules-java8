@@ -37,7 +37,6 @@ import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 /**
  * Base class for serializers used for {@link java.time.Instant}.
  */
-@SuppressWarnings("serial")
 public abstract class InstantSerializerBase<T extends Temporal>
     extends JSR310FormattedSerializerBase<T>
 {

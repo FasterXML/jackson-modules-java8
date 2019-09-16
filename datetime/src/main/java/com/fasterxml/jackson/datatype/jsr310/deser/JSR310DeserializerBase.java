@@ -36,15 +36,10 @@ import com.fasterxml.jackson.databind.util.ClassUtil;
  */
 abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
 {
-    private static final long serialVersionUID = 1L;
-
     protected JSR310DeserializerBase(Class<T> supportedType) {
         super(supportedType);
     }
 
-    /**
-     * @since 2.10
-     */
     protected JSR310DeserializerBase(JSR310DeserializerBase<?> base) {
         super(base);
     }
@@ -98,10 +93,10 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
     }
 
     @SuppressWarnings("unchecked")
-    protected <R> R _handleUnexpectedToken(DeserializationContext context,
+    protected <R> R _handleUnexpectedToken(DeserializationContext ctxt,
               JsonParser parser, String message, Object... args) throws JsonMappingException {
         try {
-            return (R) context.handleUnexpectedToken(handledType(), parser.currentToken(),
+            return (R) ctxt.handleUnexpectedToken(getValueType(ctxt), parser.currentToken(),
                     parser, message, args);
         } catch (JsonMappingException e) {
             throw e;

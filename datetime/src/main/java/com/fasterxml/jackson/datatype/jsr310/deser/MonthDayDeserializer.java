@@ -15,8 +15,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
  */
 public class MonthDayDeserializer extends JSR310DateTimeDeserializerBase<MonthDay>
 {
-    private static final long serialVersionUID = 1L;
-
     public static final MonthDayDeserializer INSTANCE = new MonthDayDeserializer(null);
 
     public MonthDayDeserializer(DateTimeFormatter formatter) {

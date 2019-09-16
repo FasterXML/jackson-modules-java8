@@ -24,11 +24,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
@@ -57,14 +55,16 @@ public class ZoneOffsetDeserTest extends ModuleTestBase
         assertNull(MAPPER.readValue(quote("  "), ZoneOffset.class));
         // but fail if coercion illegal
         try {
-            MAPPER.readerFor(ZoneOffset.class)
-                .without(DeserializationFeature.ALLOW_COERCION_OF_SCALARS)
+            newMapperBuilder()
+                .disable(MapperFeature.ALLOW_COERCION_OF_SCALARS)
+                .build()
+                .readerFor(ZoneOffset.class)
                 .readValue(quote(" "));
             fail("Should not pass");
         } catch (MismatchedInputException e) {
             verifyException(e, "Cannot coerce");
             verifyException(e, ZoneOffset.class.getName());
-            verifyException(e, "enable `DeserializationFeature.ALLOW_COERCION_OF_SCALARS`");
+            verifyException(e, "enable `MapperFeature.ALLOW_COERCION_OF_SCALARS`");
         }
     }
     

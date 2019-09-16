@@ -31,7 +31,6 @@ import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
 import org.junit.Test;
 
-@SuppressWarnings("serial")
 public class LocalTimeSerTest extends ModuleTestBase
 {
     private final ObjectMapper MAPPER = newMapper();
