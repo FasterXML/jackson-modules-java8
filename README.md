@@ -37,6 +37,7 @@ All modules are licensed under [Apache License 2.0](http://www.apache.org/licens
 ## Status
 
 [![Build Status](https://travis-ci.org/FasterXML/jackson-modules-java8.svg)](https://travis-ci.org/FasterXML/jackson-modules-java8)
+[![Tidelift](https://tidelift.com/badges/package/maven/com.fasterxml.jackson.datatype:jackson-datatype-jsr310)](https://tidelift.com/subscription/pkg/maven-com-fasterxml-jackson-datatype-jackson-datatype-jsr310?utm_source=maven-com-fasterxml-jackson-datatype-jackson-datatype-jsr310&utm_medium=referral&utm_campaign=readme)
 
 ## Usage
 
