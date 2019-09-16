@@ -349,9 +349,9 @@ public class LocalDateTimeDeserTest
         LocalDateTime now = LocalDateTime.now();
         DeserializationProblemHandler handler = new DeserializationProblemHandler() {
             @Override
-            public Object handleUnexpectedToken(DeserializationContext ctxt, Class<?> targetType,
+            public Object handleUnexpectedToken(DeserializationContext ctxt, JavaType targetType,
                    JsonToken t, JsonParser p, String failureMsg) throws IOException {
-                if (LocalDateTime.class == targetType) {
+                if (targetType.hasRawClass(LocalDateTime.class)) {
                     if (t.isBoolean()) {
                         return now;
                     }
