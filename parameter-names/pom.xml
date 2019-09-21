@@ -75,7 +75,6 @@ introspection of method/constructor parameter names, without having to add expli
           <optimize>true</optimize>
           <compilerArgs>
             <arg>-Xlint</arg>
-            <arg>-Werror</arg>
             <arg>-parameters</arg>
           </compilerArgs>
         </configuration>
