@@ -16,16 +16,15 @@
 
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-
 import java.io.IOException;
 import java.time.DateTimeException;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.core.JsonToken;
 
 /**
  * Deserializer for Java 8 temporal {@link YearMonth}s.
@@ -50,9 +49,14 @@ public class YearMonthDeserializer extends JSR310DateTimeDeserializerBase<YearMo
     }
 
     @Override
-    protected JsonDeserializer<YearMonth> withDateFormat(DateTimeFormatter dtf) 
-    {
+    protected YearMonthDeserializer withDateFormat(DateTimeFormatter dtf)  {
         return new YearMonthDeserializer(dtf);
+    }
+
+    // !!! TODO: lenient vs strict?
+    @Override
+    protected YearMonthDeserializer withLeniency(Boolean leniency) {
+        return this;
     }
 
     @Override
@@ -102,6 +106,7 @@ public class YearMonthDeserializer extends JSR310DateTimeDeserializerBase<YearMo
         if (parser.hasToken(JsonToken.VALUE_EMBEDDED_OBJECT)) {
             return (YearMonth) parser.getEmbeddedObject();
         }
-        return _handleUnexpectedToken(context, parser, JsonToken.VALUE_STRING, JsonToken.START_ARRAY);
+        return _handleUnexpectedToken(context, parser,
+                JsonToken.VALUE_STRING, JsonToken.START_ARRAY);
     }
 }

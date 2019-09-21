@@ -40,8 +40,16 @@ final class OptionalDeserializer
     }
 
     @Override
-    public Optional<?> getNullValue(DeserializationContext ctxt) {
-        return Optional.empty();
+    public Optional<?> getNullValue(DeserializationContext ctxt) throws JsonMappingException {
+        return Optional.ofNullable(_valueDeserializer.getNullValue(ctxt));
+    }
+
+    @Override
+    public Object getEmptyValue(DeserializationContext ctxt) throws JsonMappingException {
+        // 07-May-2019, tatu: I _think_ this needs to align with "null value" and
+        //    not necessarily with empty value of contents? (used to just do "absent"
+        //    so either way this seems to me like an improvement)
+        return getNullValue(ctxt);
     }
 
     @Override

@@ -8,13 +8,44 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
-2.10.0 (not yet released)
+2.10.0.pr3 (17-Sep-2019)
 
-#75: Use `SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS` for configuring
+#51: `YearKeyDeserializer` doesn't work with non-padded year values
+ (reported by sladkoff@github; fix contributed by Mike [kupci@github])
+#114: Prevent deserialization of "" as `null` for `LocalDate`, `LocalDateTime`
+  in "strict" (non-lenient) mode
+ (suggested by beytun@github, implemented by Mike [kupci@github])
+
+2.10.0.pr2 (31-Aug-2019)
+
+#69: `ZonedDateTime` for times before the epoch do not serialize correctly
+ (fixed by Mike [kupci@github])
+#126: Change auto-registration in 2.10 to provide "new" (JavaTimeModule) instead of legacy module
+#129: Support `lenient` setting with `LocalDateDeserializer`
+ (suggested by esHack@github)
+
+2.10.0.pr1 (19-Jul-2019)
+
+#75: (datetime) Use `SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS` for configuring
  `Duration` serialization
  (suggested by Kezhu W)
+#82: (datetime) Typo in YearMothKeyDeserializer class name
+#105: `LocalTime` should generate "time" schema instead of "date-time"
+ (suggested by jaisonpjohn@github)
+#121: Array representation of `MonthDay` can not be deserialized
+- Add JDK9+ `module-info.class` with Moditect plugin
 
-2.9.7 (not yet released)
+2.9.9 (16-May-2019)
+
+No changes since 2.9.8
+
+2.9.8 (15-Dec-2018)
+
+#90 (datetime): Performance issue with malicious `BigDecimal` input,
+   `InstantDeserializer`, `DurationDeserializer`
+ (reported by Andriy P, fix contributed by Todd J)
+
+2.9.7 (19-Sep-2018)
 
 #78: Year deserialization ignores `@JsonFormat` pattern
  (reported, fixed by Adrian P)

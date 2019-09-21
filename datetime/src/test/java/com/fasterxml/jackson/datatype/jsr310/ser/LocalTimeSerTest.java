@@ -17,6 +17,7 @@
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 
 import static org.junit.Assert.assertEquals;
@@ -25,15 +26,32 @@ import static org.junit.Assert.assertNotNull;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
 import org.junit.Test;
 
+@SuppressWarnings("serial")
 public class LocalTimeSerTest extends ModuleTestBase
 {
     private final ObjectMapper MAPPER = newMapper();
-    private ObjectWriter writer = MAPPER.writer();
+    private final ObjectWriter writer = MAPPER.writer();
+
+    // [modules-java8#115]
+    static class CustomLocalTimeSerializer extends LocalTimeSerializer {
+        public CustomLocalTimeSerializer() {
+             // Default doesn't cut it for us.
+             super(DateTimeFormatter.ofPattern("HH/mm"));
+        }
+    }
+
+    static class CustomWrapper {
+        @JsonSerialize(using = CustomLocalTimeSerializer.class)
+        public LocalTime value;
+
+        public CustomWrapper(LocalTime v) { value = v; }
+    }
 
     @Test
     public void testSerializationAsTimestamp01() throws Exception
@@ -137,6 +155,14 @@ public class LocalTimeSerTest extends ModuleTestBase
         assertEquals("The value is not correct.", '"' + time.toString() + '"', value);
     }
 
+    // [modules-java8#115]
+    @Test
+    public void testWithCustomSerializer() throws Exception
+    {
+        String json = MAPPER.writeValueAsString(new CustomWrapper(LocalTime.of(15, 43)));
+        assertEquals("The value is not correct.", "{\"value\":\"15/43\"}", json);
+    }
+    
     @Test
     public void testSerializationWithTypeInfo01() throws Exception
     {

@@ -91,7 +91,7 @@ public class InstantDeserializer<T extends Temporal>
     protected final Function<FromDecimalArguments, T> fromNanoseconds;
 
     protected final Function<TemporalAccessor, T> parsedToValue;
-    
+
     protected final BiFunction<T, ZoneId, T> adjust;
 
     /**
@@ -150,15 +150,21 @@ public class InstantDeserializer<T extends Temporal>
         replaceZeroOffsetAsZ = base.replaceZeroOffsetAsZ;
         _adjustToContextTZOverride = adjustToContextTimezoneOverride;
     }
-    
+
     @Override
-    protected JsonDeserializer<T> withDateFormat(DateTimeFormatter dtf) {
+    protected InstantDeserializer<T> withDateFormat(DateTimeFormatter dtf) {
         if (dtf == _formatter) {
             return this;
         }
         return new InstantDeserializer<T>(this, dtf);
     }
 
+    // !!! TODO: lenient vs strict?
+    @Override
+    protected InstantDeserializer<T> withLeniency(Boolean leniency) {
+        return this;
+    }
+    
     @SuppressWarnings("unchecked")
     @Override
     public T deserialize(JsonParser parser, DeserializationContext context) throws IOException
@@ -218,7 +224,7 @@ public class InstantDeserializer<T extends Temporal>
                 // 20-Apr-2016, tatu: Related to [databind#1208], can try supporting embedded
                 //    values quite easily
                 return (T) parser.getEmbeddedObject();
-                
+
             case JsonTokenId.ID_START_ARRAY:
             	return _deserializeFromArray(parser, context);
         }
@@ -247,9 +253,7 @@ public class InstantDeserializer<T extends Temporal>
                 context.isEnabled(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
     }
 
-    /**
-     * Helper method to find Strings of form "all digits" and "digits-comma-digits"
-     */
+    // Helper method to find Strings of form "all digits" and "digits-comma-digits"
     protected int _countPeriods(String str)
     {
         int commas = 0;
@@ -265,7 +269,7 @@ public class InstantDeserializer<T extends Temporal>
         }
         return commas;
     }
-    
+
     protected T _fromLong(DeserializationContext context, long timestamp)
     {
         if(context.isEnabled(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)){
@@ -276,15 +280,14 @@ public class InstantDeserializer<T extends Temporal>
         return fromMilliseconds.apply(new FromIntegerArguments(
                 timestamp, this.getZone(context)));
     }
-    
+
     protected T _fromDecimal(DeserializationContext context, BigDecimal value)
     {
-        long seconds = value.longValue();
-        int nanoseconds = DecimalUtils.extractNanosecondDecimal(value, seconds);
-        return fromNanoseconds.apply(new FromDecimalArguments(
-                seconds, nanoseconds, getZone(context)));
+        FromDecimalArguments args =
+            DecimalUtils.extractSecondsAndNanos(value, (s, ns) -> new FromDecimalArguments(s, ns, getZone(context)));
+        return fromNanoseconds.apply(args);
     }
-    
+
     private ZoneId getZone(DeserializationContext context)
     {
         // Instants are always in UTC, so don't waste compute cycles

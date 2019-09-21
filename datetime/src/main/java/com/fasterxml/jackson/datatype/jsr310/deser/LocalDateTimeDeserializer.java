@@ -28,7 +28,6 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.JsonTokenId;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonDeserializer;
 
 /**
  * Deserializer for Java 8 temporal {@link LocalDateTime}s.
@@ -53,9 +52,21 @@ public class LocalDateTimeDeserializer
         super(LocalDateTime.class, formatter);
     }
 
+    /**
+     * Since 2.10
+     */
+    protected LocalDateTimeDeserializer(LocalDateTimeDeserializer base, Boolean leniency) {
+        super(base, leniency);
+    }
+
     @Override
-    protected JsonDeserializer<LocalDateTime> withDateFormat(DateTimeFormatter formatter) {
+    protected LocalDateTimeDeserializer withDateFormat(DateTimeFormatter formatter) {
         return new LocalDateTimeDeserializer(formatter);
+    }
+
+    @Override
+    protected LocalDateTimeDeserializer withLeniency(Boolean leniency) {
+        return new LocalDateTimeDeserializer(this, leniency);
     }
 
     @Override
@@ -64,6 +75,9 @@ public class LocalDateTimeDeserializer
         if (parser.hasTokenId(JsonTokenId.ID_STRING)) {
             String string = parser.getText().trim();
             if (string.length() == 0) {
+                if (!isLenient()) {
+                    return _failForNotLenient(parser, context, JsonToken.VALUE_STRING);
+                }
                 return null;
             }
 

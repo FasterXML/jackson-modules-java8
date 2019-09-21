@@ -13,7 +13,10 @@ import com.fasterxml.jackson.databind.type.TypeModifier;
  * We need to ensure `Optional` is a `ReferenceType`
  */
 public class Jdk8TypeModifier extends TypeModifier
+    implements java.io.Serializable
 {
+    private static final long serialVersionUID = 1L;
+
     @Override
     public JavaType modifyType(JavaType type, Type jdkType, TypeBindings bindings, TypeFactory typeFactory)
     {

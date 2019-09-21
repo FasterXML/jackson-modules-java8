@@ -27,13 +27,11 @@ import java.time.format.DateTimeFormatter;
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonDeserializer;
 
 /**
  * Deserializer for Java 8 temporal {@link LocalDate}s.
  *
  * @author Nick Williams
- * @since 2.2.0
  */
 public class LocalDateDeserializer extends JSR310DateTimeDeserializerBase<LocalDate>
 {
@@ -43,7 +41,7 @@ public class LocalDateDeserializer extends JSR310DateTimeDeserializerBase<LocalD
     
     public static final LocalDateDeserializer INSTANCE = new LocalDateDeserializer();
 
-    private LocalDateDeserializer() {
+    protected LocalDateDeserializer() {
         this(DEFAULT_FORMATTER);
     }
 
@@ -51,17 +49,39 @@ public class LocalDateDeserializer extends JSR310DateTimeDeserializerBase<LocalD
         super(LocalDate.class, dtf);
     }
 
-    @Override
-    protected JsonDeserializer<LocalDate> withDateFormat(DateTimeFormatter dtf) {
-        return new LocalDateDeserializer(dtf);
+    /**
+     * Since 2.10
+     */
+    public LocalDateDeserializer(LocalDateDeserializer base, DateTimeFormatter dtf) {
+        super(base, dtf);
     }
-    
+
+    /**
+     * Since 2.10
+     */
+    protected LocalDateDeserializer(LocalDateDeserializer base, Boolean leniency) {
+        super(base, leniency);
+    }
+
+    @Override
+    protected LocalDateDeserializer withDateFormat(DateTimeFormatter dtf) {
+        return new LocalDateDeserializer(this, dtf);
+    }
+
+    @Override
+    protected LocalDateDeserializer withLeniency(Boolean leniency) {
+        return new LocalDateDeserializer(this, leniency);
+    }
+
     @Override
     public LocalDate deserialize(JsonParser parser, DeserializationContext context) throws IOException
     {
         if (parser.hasToken(JsonToken.VALUE_STRING)) {
             String string = parser.getText().trim();
             if (string.length() == 0) {
+                if (!isLenient()) {
+                    return _failForNotLenient(parser, context, JsonToken.VALUE_STRING);
+                }
                 return null;
             }
             // as per [datatype-jsr310#37], only check for optional (and, incorrect...) time marker 'T'
@@ -116,6 +136,9 @@ public class LocalDateDeserializer extends JSR310DateTimeDeserializerBase<LocalD
         }
         // 06-Jan-2018, tatu: Is this actually safe? Do users expect such coercion?
         if (parser.hasToken(JsonToken.VALUE_NUMBER_INT)) {
+            if (!isLenient()) {
+                return _failForNotLenient(parser, context, JsonToken.VALUE_STRING);
+            }
             return LocalDate.ofEpochDay(parser.getLongValue());
         }
         return _handleUnexpectedToken(context, parser, "Expected array or string.");

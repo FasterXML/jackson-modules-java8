@@ -18,6 +18,7 @@ package com.fasterxml.jackson.datatype.jsr310.ser;
 
 import java.lang.reflect.Type;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -66,6 +67,14 @@ abstract class JSR310FormattedSerializerBase<T>
 
     protected final JsonFormat.Shape _shape;
 
+    /**
+     * Lazily constructed {@code JavaType} representing type
+     * {@code List<Integer>}.
+     *
+     * @since 2.10
+     */
+    protected transient volatile JavaType _integerListType;
+    
     protected JSR310FormattedSerializerBase(Class<T> supportedType) {
         this(supportedType, null);
     }
@@ -166,16 +175,14 @@ abstract class JSR310FormattedSerializerBase<T>
     public JsonNode getSchema(SerializerProvider provider, Type typeHint)
     {
         return createSchemaNode(
-                provider.isEnabled(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS) ? "array" : "string", true
+            provider.isEnabled(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS) ? "array" : "string", true
         );
     }
 
     @Override
     public void acceptJsonFormatVisitor(JsonFormatVisitorWrapper visitor, JavaType typeHint) throws JsonMappingException
     {
-        SerializerProvider provider = visitor.getProvider();
-        boolean useTimestamp = (provider != null) && useTimestamp(provider);
-        if (useTimestamp) {
+        if (useTimestamp(visitor.getProvider())) {
             _acceptTimestampVisitor(visitor, typeHint);
         } else {
             JsonStringFormatVisitor v2 = visitor.expectStringFormat(typeHint);
@@ -188,12 +195,23 @@ abstract class JSR310FormattedSerializerBase<T>
     protected void _acceptTimestampVisitor(JsonFormatVisitorWrapper visitor, JavaType typeHint) throws JsonMappingException
     {
         // By default, most sub-types use JSON Array, so do this:
-        JsonArrayFormatVisitor v2 = visitor.expectArrayFormat(typeHint);
+        // 28-May-2019, tatu: serialized as a List<Integer>, presumably
+        JsonArrayFormatVisitor v2 = visitor.expectArrayFormat(_integerListType(visitor.getProvider()));
         if (v2 != null) {
             v2.itemsFormat(JsonFormatTypes.INTEGER);
         }
     }
 
+    protected JavaType _integerListType(SerializerProvider prov) {
+        JavaType t = _integerListType;
+        if (t == null) {
+            t = prov.getTypeFactory()
+                    .constructCollectionType(List.class, Integer.class);
+            _integerListType = t;
+        }
+        return t;
+    }
+    
     /**
      * Overridable method that determines {@link SerializationFeature} that is used as
      * the global default in determining if date/time value serialized should use numeric
@@ -221,7 +239,8 @@ abstract class JSR310FormattedSerializerBase<T>
             }
         }
         // assume that explicit formatter definition implies use of textual format
-        return (_formatter == null) && provider.isEnabled(getTimestampsFeature());
+        return (_formatter == null) && (provider != null)
+                && provider.isEnabled(getTimestampsFeature());
     }
 
     protected boolean _useTimestampExplicitOnly(SerializerProvider provider) {
@@ -243,6 +262,7 @@ abstract class JSR310FormattedSerializerBase<T>
                 return true;
             }
         }
-        return provider.isEnabled(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS);
+        return (provider != null)
+                && provider.isEnabled(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS);
     }
 }

@@ -2,11 +2,25 @@ package com.fasterxml.jackson.datatype.jdk8;
 
 import java.util.Arrays;
 
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.cfg.MapperConfig;
+import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
-public abstract class ModuleTestBase extends junit.framework.TestCase {
-   
+public abstract class ModuleTestBase extends junit.framework.TestCase
+{
+    public static class NoCheckSubTypeValidator
+        extends PolymorphicTypeValidator.Base
+    {
+        private static final long serialVersionUID = 1L;
+    
+        @Override
+        public Validity validateBaseType(MapperConfig<?> config, JavaType baseType) {
+            return Validity.ALLOWED;
+        }
+    }
+
     /*
     /**********************************************************************
     /* Helper methods, setup

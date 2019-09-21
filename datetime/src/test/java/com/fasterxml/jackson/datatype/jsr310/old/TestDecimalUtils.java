@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 import org.junit.Test;
 
+@SuppressWarnings("deprecation")
 public class TestDecimalUtils extends ModuleTestBase
 {
     @Test

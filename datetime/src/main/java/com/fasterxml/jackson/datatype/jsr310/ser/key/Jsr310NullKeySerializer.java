@@ -16,6 +16,8 @@ import com.fasterxml.jackson.databind.SerializerProvider;
  * @author Zoltan Kiss
  * @since 2.6
  */
+@Deprecated // since 2.10 -- not sure why module should provide general purpose null serializer
+//   (maybe add in databind)
 public class Jsr310NullKeySerializer extends JsonSerializer<Object> {
 
     public static final String NULL_KEY = "";
