@@ -2,15 +2,18 @@ package com.fasterxml.jackson.datatype.jsr310.deser;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.Locale;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Feature;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
 import com.fasterxml.jackson.databind.util.ClassUtil;
 
@@ -79,11 +82,16 @@ public abstract class JSR310DateTimeDeserializerBase<T>
             if (format.hasPattern()) {
                 final String pattern = format.getPattern();
                 final Locale locale = format.hasLocale() ? format.getLocale() : ctxt.getLocale();
+                DateTimeFormatterBuilder builder = new DateTimeFormatterBuilder();
+                if (acceptCaseInsensitiveValues(ctxt, format)) {
+                    builder.parseCaseInsensitive();
+                }
+                builder.appendPattern(pattern);
                 DateTimeFormatter df;
                 if (locale == null) {
-                    df = DateTimeFormatter.ofPattern(pattern);
+                    df = builder.toFormatter();
                 } else {
-                    df = DateTimeFormatter.ofPattern(pattern, locale);
+                    df = builder.toFormatter(locale);
                 }
                 //Issue #69: For instant serializers/deserializers we need to configure the formatter with
                 //a time zone picked up from JsonFormat annotation, otherwise serialization might not work
@@ -111,6 +119,15 @@ public abstract class JSR310DateTimeDeserializerBase<T>
      */
     protected boolean isLenient() {
         return _isLenient;
+    }
+
+    private boolean acceptCaseInsensitiveValues(DeserializationContext ctxt, JsonFormat.Value format) 
+    {
+        Boolean enabled = format.getFeature( Feature.ACCEPT_CASE_INSENSITIVE_VALUES);
+        if( enabled == null) {
+            enabled = ctxt.isEnabled(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES);
+        }
+        return enabled;
     }
     
     protected void _throwNoNumericTimestampNeedTimeZone(JsonParser p, DeserializationContext ctxt)
