@@ -8,6 +8,12 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
+2.10.0 (not yet released)
+
+#80: Feature request: Support case-insensitive `LocalDate` formats
+   (MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES)
+ (contributed by Craig P)
+
 2.10.0.pr3 (17-Sep-2019)
 
 #51: `YearKeyDeserializer` doesn't work with non-padded year values
