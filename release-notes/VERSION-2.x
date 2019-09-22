@@ -35,6 +35,7 @@ Modules:
 #121: Array representation of `MonthDay` can not be deserialized
 - Add JDK9+ `module-info.class` with Moditect plugin
 
+2.9.10 (21-Sep-2019)
 2.9.9 (16-May-2019)
 
 No changes since 2.9.8
