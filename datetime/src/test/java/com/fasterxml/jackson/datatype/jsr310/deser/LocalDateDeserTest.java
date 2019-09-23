@@ -244,7 +244,7 @@ public class LocalDateDeserTest extends ModuleTestBase
 
     /*
     /**********************************************************************
-    /* Case-insensitive deserialization
+    /* Case-insensitive tests
     /**********************************************************************
      */
     

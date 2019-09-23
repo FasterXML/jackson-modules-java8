@@ -412,10 +412,10 @@ public class LocalDateTimeDeserTest
 
     /*
     /**********************************************************************
-    /* Case-insensitive deserialization
+    /* Case-insensitive tests
     /**********************************************************************
      */
-    
+
     // [modules-java8#80]: handle case-insensitive date/time
     @Test
     public void testDeserializationCaseInsensitiveEnabledOnValue() throws Throwable
