@@ -459,14 +459,14 @@ public class LocalDateTimeDeserTest
     }
 
     private void expectSuccess(ObjectReader reader, Object exp, String json) throws IOException {
-        final LocalDateTime value = read(reader, json);
-        notNull(value);
-        expect(exp, value);
+        final LocalDateTime value = reader.readValue(aposToQuotes(json));
+        assertNotNull("The value should not be null.", value);
+        assertEquals("The value is not correct.", exp,  value);
     }
 
     private void expectFailure(ObjectReader reader, String json) throws Throwable {
         try {
-            read(reader, json);
+            reader.readValue(aposToQuotes(json));
             fail("expected DateTimeParseException");
         } catch (JsonProcessingException e) {
             if (e.getCause() == null) {
@@ -475,20 +475,6 @@ public class LocalDateTimeDeserTest
             if (!(e.getCause() instanceof DateTimeParseException)) {
                 throw e.getCause();
             }
-        } catch (IOException e) {
-            throw e;
         }
-    }
-
-    private LocalDateTime read(ObjectReader reader, final String json) throws IOException {
-        return reader.readValue(aposToQuotes(json));
-    }
-
-    private void notNull(Object value) {
-        assertNotNull("The value should not be null.", value);
-    }
-
-    private void expect(Object exp, Object value) {
-        assertEquals("The value is not correct.", exp,  value);
     }
 }

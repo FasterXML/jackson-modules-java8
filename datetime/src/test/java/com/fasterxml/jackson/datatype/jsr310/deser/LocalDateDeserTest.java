@@ -128,7 +128,20 @@ public class LocalDateDeserTest extends ModuleTestBase
             verifyException(e, "from String \"");
         }
     }
-    
+
+    @Test
+    public void testDeserializationWithTypeInfo01() throws Exception
+    {
+        ObjectMapper mapper = mapperBuilder()
+               .addMixIn(Temporal.class, MockObjectConfiguration.class)
+               .build();
+        LocalDate date = LocalDate.of(2005, Month.NOVEMBER, 5);
+        Temporal value = mapper.readValue(
+                "[\"" + LocalDate.class.getName() + "\",\"" + date.toString() + "\"]", Temporal.class
+                );
+        assertEquals("The value is not correct.", date, value);
+    }
+
     /*
     /**********************************************************
     /* Deserialization from alternate representation: int (number
@@ -170,7 +183,6 @@ public class LocalDateDeserTest extends ModuleTestBase
     /*
     /**********************************************************
     /* Tests for empty string handling
-     */
     /**********************************************************
      */
 
@@ -227,7 +239,7 @@ public class LocalDateDeserTest extends ModuleTestBase
     public void testDeserializationAsArrayDisabled() throws Throwable
     {
         try {
-            read(READER, "[\"2000-01-01\"]");
+            READER.readValue("[\"2000-01-01\"]");
             fail("expected MismatchedInputException");
         } catch (MismatchedInputException e) {
             verifyException(e, "Unexpected token (VALUE_STRING) within Array");
@@ -238,7 +250,41 @@ public class LocalDateDeserTest extends ModuleTestBase
     public void testDeserializationAsEmptyArrayDisabled() throws Throwable
     {
         // works even without the feature enabled
-        assertNull(read(READER, "[]"));
+        assertNull(READER.readValue("[]"));
+    }
+
+    @Test
+    public void testDeserializationAsArrayEnabled() throws Throwable
+    {
+        LocalDate actual = READER
+                .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
+                .readValue("[\"2000-01-01\"]");
+        assertEquals("The value is not correct.", LocalDate.of(2000, 1, 1), actual);
+    }
+
+    @Test
+    public void testDeserializationAsEmptyArrayEnabled() throws Throwable
+    {
+        LocalDate value = READER
+                .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS,
+                        DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT)
+                .readValue("[]");
+        assertNull(value);
+    }
+
+    /*
+    /**********************************************************
+    /* Custom format
+    /**********************************************************
+     */
+
+    // for [datatype-jsr310#37]
+    @Test
+    public void testCustomFormat() throws Exception
+    {
+        Wrapper w = MAPPER.readValue("{\"value\":\"2015_07_28T13:53+0300\"}", Wrapper.class);
+        LocalDate date = w.value; 
+        assertEquals(28, date.getDayOfMonth());
     }
 
     /*
@@ -294,29 +340,10 @@ public class LocalDateDeserTest extends ModuleTestBase
         	expectFailure(reader, json);
         }
     }
-    
-    @Test
-    public void testDeserializationAsArrayEnabled() throws Throwable
-    {
-        LocalDate actual = READER
-                .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
-                .readValue("[\"2000-01-01\"]");
-        assertEquals("The value is not correct.", LocalDate.of(2000, 1, 1), actual);
-    }
 
-    @Test
-    public void testDeserializationAsEmptyArrayEnabled() throws Throwable
-    {
-        LocalDate value = READER
-                .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS,
-                        DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT)
-                .readValue("[]");
-        assertNull(value);
-    }
-    
     private void expectFailure(ObjectReader reader, String json) throws Throwable {
         try {
-            read(reader, json);
+            reader.readValue(aposToQuotes(json));
             fail("expected DateTimeParseException");
         } catch (JsonProcessingException e) {
             if (e.getCause() == null) {
@@ -325,55 +352,13 @@ public class LocalDateDeserTest extends ModuleTestBase
             if (!(e.getCause() instanceof DateTimeParseException)) {
                 throw e.getCause();
             }
-        } catch (IOException e) {
-            throw e;
         }
     }
 
     private void expectSuccess(ObjectReader reader, Object exp, String json) throws IOException {
-        final LocalDate value = read(reader, json);
-        notNull(value);
-        expect(exp, value);
-    }
-
-    private LocalDate read(ObjectReader reader, final String json) throws IOException {
-        return reader.readValue(aposToQuotes(json));
-    }
-
-    private static void notNull(Object value) {
+        final LocalDate value = reader.readValue(aposToQuotes(json));
         assertNotNull("The value should not be null.", value);
-    }
-
-    private static void expect(Object exp, Object value) {
         assertEquals("The value is not correct.", exp,  value);
-    }
-
-    @Test
-    public void testDeserializationWithTypeInfo01() throws Exception
-    {
-        ObjectMapper mapper = mapperBuilder()
-               .addMixIn(Temporal.class, MockObjectConfiguration.class)
-               .build();
-        LocalDate date = LocalDate.of(2005, Month.NOVEMBER, 5);
-        Temporal value = mapper.readValue(
-                "[\"" + LocalDate.class.getName() + "\",\"" + date.toString() + "\"]", Temporal.class
-                );
-        assertEquals("The value is not correct.", date, value);
-    }
-
-    /*
-    /**********************************************************
-    /* Custom format
-    /**********************************************************
-     */
-
-    // for [datatype-jsr310#37]
-    @Test
-    public void testCustomFormat() throws Exception
-    {
-        Wrapper w = MAPPER.readValue("{\"value\":\"2015_07_28T13:53+0300\"}", Wrapper.class);
-        LocalDate date = w.value; 
-        assertEquals(28, date.getDayOfMonth());
     }
 }
 
