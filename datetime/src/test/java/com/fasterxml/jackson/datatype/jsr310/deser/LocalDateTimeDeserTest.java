@@ -16,31 +16,31 @@
 
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
-import java.io.IOException;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.time.ZoneOffset;
-import java.time.temporal.Temporal;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Map;
-import java.util.TimeZone;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Feature;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.deser.DeserializationProblemHandler;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
-
 import org.junit.Test;
+
+import java.io.IOException;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.Temporal;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Map;
+import java.util.TimeZone;
 
 import static org.junit.Assert.*;
 
@@ -408,5 +408,100 @@ public class LocalDateTimeDeserTest
         } catch (MismatchedInputException e) {
             verifyException(e, "raw timestamp (1235) not allowed for `java.time.LocalDateTime`");
         }
+    }
+
+    /*
+    /**********************************************************************
+    /* Case-insensitive deserialization
+    /**********************************************************************
+     */
+    
+    // [modules-java8#80]: handle case-insensitive date/time
+    @Test
+    public void testDeserializationCaseInsensitiveEnabledOnValue() throws Throwable
+    {
+        ObjectMapper mapper = newMapperBuilder()
+                .withConfigOverride(LocalDateTime.class, o -> JsonFormat.Value
+                        .forPattern("dd-MMM-yyyy HH:mm")
+                        .withFeature(Feature.ACCEPT_CASE_INSENSITIVE_VALUES))
+                .build();
+        ObjectReader reader = mapper.readerFor(LocalDateTime.class);
+        String[] jsons = new String[] {"'01-Jan-2000 13:14'","'01-JAN-2000 13:14'", "'01-jan-2000 13:14'"};
+        for(String json : jsons) {
+            expectSuccess(reader, LocalDateTime.of(2000, Month.JANUARY, 1, 13, 14), json);
+        }
+    }
+
+    @Test
+    public void testDeserializationCaseInsensitiveEnabled() throws Throwable
+    {
+        ObjectMapper mapper = newMapperBuilder()
+                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES, true)
+                .withConfigOverride(LocalDateTime.class, o -> JsonFormat.Value.forPattern("dd-MMM-yyyy HH:mm"))
+                .build();
+        ObjectReader reader = mapper.readerFor(LocalDateTime.class);
+        String[] jsons = new String[] {"'01-Jan-2000 13:45'","'01-JAN-2000 13:45'", "'01-jan-2000 13:45'"};
+        for(String json : jsons) {
+            expectSuccess(reader, LocalDateTime.of(2000, Month.JANUARY, 1, 13, 45), json);
+        }
+    }
+
+    @Test
+    public void testDeserializationCaseInsensitiveDisabled() throws Throwable
+    {
+        ObjectMapper mapper = newMapperBuilder()
+                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES, false)
+                .withConfigOverride(LocalDateTime.class, o -> JsonFormat.Value.forPattern("dd-MMM-yyyy HH:mm"))
+                .build();
+        ObjectReader reader = mapper.readerFor(LocalDateTime.class);
+        expectSuccess(reader, LocalDateTime.of(2000, Month.JANUARY, 1, 13, 45), "'01-Jan-2000 13:45'");
+    }
+
+    @Test
+    public void testDeserializationCaseInsensitiveDisabled_InvalidDate() throws Throwable
+    {
+        ObjectMapper mapper = newMapperBuilder()
+                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES, false)
+                .withConfigOverride(LocalDateTime.class, o -> JsonFormat.Value.forPattern("dd-MMM-yyyy"))
+                .build();
+        ObjectReader reader = mapper.readerFor(LocalDateTime.class);
+        String[] jsons = new String[] {"'01-JAN-2000'", "'01-jan-2000'"};
+        for(String json : jsons) {
+            expectFailure(reader, json);
+        }
+    }
+
+    private void expectSuccess(ObjectReader reader, Object exp, String json) throws IOException {
+        final LocalDateTime value = read(reader, json);
+        notNull(value);
+        expect(exp, value);
+    }
+
+    private void expectFailure(ObjectReader reader, String json) throws Throwable {
+        try {
+            read(reader, json);
+            fail("expected DateTimeParseException");
+        } catch (JsonProcessingException e) {
+            if (e.getCause() == null) {
+                throw e;
+            }
+            if (!(e.getCause() instanceof DateTimeParseException)) {
+                throw e.getCause();
+            }
+        } catch (IOException e) {
+            throw e;
+        }
+    }
+
+    private LocalDateTime read(ObjectReader reader, final String json) throws IOException {
+        return reader.readValue(aposToQuotes(json));
+    }
+
+    private void notNull(Object value) {
+        assertNotNull("The value should not be null.", value);
+    }
+
+    private void expect(Object exp, Object value) {
+        assertEquals("The value is not correct.", exp,  value);
     }
 }

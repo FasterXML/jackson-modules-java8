@@ -49,6 +49,11 @@ Adrian Palanques (devdevx@github)
   * Reported #78: (datetime) Year deserialization ignores `@JsonFormat` pattern
    (2.9.7)
 
+Craig Pardey (pards@github)
+  * Contributed #80: Feature request: Support case-insensitive `LocalDate` formats
+    (MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES)
+   (2.10.0)
+
 Andriy Plokhotnyuk (plokhotnyuk@github)
   * Reported #90 (datetime): Performance issue with malicious `BigDecimal` input,
    `InstantDeserializer`, `DurationDeserializer`
