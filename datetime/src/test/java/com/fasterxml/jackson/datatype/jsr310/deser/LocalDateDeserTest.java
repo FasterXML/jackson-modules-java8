@@ -241,6 +241,12 @@ public class LocalDateDeserTest extends ModuleTestBase
         assertNull(read(READER, "[]"));
     }
 
+    /*
+    /**********************************************************************
+    /* Case-insensitive tests
+    /**********************************************************************
+     */
+    
     @Test
     public void testDeserializationCaseInsensitiveEnabledOnValue() throws Throwable
     {
