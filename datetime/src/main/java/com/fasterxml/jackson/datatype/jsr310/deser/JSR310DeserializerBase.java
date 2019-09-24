@@ -18,6 +18,7 @@ package com.fasterxml.jackson.datatype.jsr310.deser;
 
 import java.io.IOException;
 import java.time.DateTimeException;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -57,20 +58,19 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
     {
         context.reportWrongTokenException((JsonDeserializer<?>)this, exp,
                 "Expected %s for '%s' of %s value",
-                        exp.name(), unit, ClassUtil.nameOf(handledType()));
+                        exp.name(), unit, ClassUtil.getClassDescription(handledType()));
         return null;
     }
 
     protected <BOGUS> BOGUS _reportWrongToken(JsonParser parser, DeserializationContext context,
             JsonToken... expTypes) throws IOException
     {
-        // 20-Apr-2016, tatu: No multiple-expected-types handler yet, construct message
-        //    here
+        // 20-Apr-2016, tatu: No multiple-expected-types handler yet, construct message here
         return context.reportInputMismatch(handledType(),
                 "Unexpected token (%s), expected one of %s for %s value",
                 parser.currentToken(),
                 Arrays.asList(expTypes).toString(),
-                handledType().getName());
+                ClassUtil.getClassDescription(handledType()));
     }
 
     @SuppressWarnings("unchecked")
@@ -80,7 +80,7 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
         try {
             return (R) context.handleWeirdStringValue(handledType(), value,
                     "Failed to deserialize %s: (%s) %s",
-                    ClassUtil.nameOf(handledType()), e0.getClass().getName(), e0.getMessage());
+                    ClassUtil.getClassDescription(handledType()), e0.getClass().getName(), e0.getMessage());
         } catch (JsonMappingException e) {
             e.initCause(e0);
             throw e;
@@ -92,6 +92,28 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
         }
     }
 
+    // @since 3.0
+    @SuppressWarnings("unchecked")
+    protected <R> R _handleDateTimeFormatException(DeserializationContext context,
+              DateTimeException e0, DateTimeFormatter format, String value) throws JsonMappingException
+    {
+        final String formatterDesc = (format == null) ? "[default format]" : format.toString();
+        try {
+            return (R) context.handleWeirdStringValue(handledType(), value,
+                    "Failed to deserialize %s (with format '%s'): (%s) %s",
+                    ClassUtil.getClassDescription(handledType()),
+                    formatterDesc, e0.getClass().getName(), e0.getMessage());
+        } catch (JsonMappingException e) {
+            e.initCause(e0);
+            throw e;
+        } catch (IOException e) {
+            if (null == e.getCause()) {
+                e.initCause(e0);
+            }
+            throw JsonMappingException.fromUnexpectedIOE(e);
+        }
+    }
+    
     @SuppressWarnings("unchecked")
     protected <R> R _handleUnexpectedToken(DeserializationContext ctxt,
               JsonParser parser, String message, Object... args) throws JsonMappingException {
@@ -111,7 +133,7 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
                 "Unexpected token (%s), expected one of %s for %s value",
                 parser.currentToken(),
                 Arrays.asList(expTypes),
-                ClassUtil.nameOf(handledType()));
+                ClassUtil.getClassDescription(handledType()));
     }
 
     /**

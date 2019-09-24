@@ -43,7 +43,7 @@ public class MonthDayDeserializer extends JSR310DateTimeDeserializerBase<MonthDa
                 }
                 return MonthDay.parse(string, _formatter);
             } catch (DateTimeException e) {
-                return _handleDateTimeException(context, e, string);
+                return _handleDateTimeFormatException(context, e, _formatter, string);
             }
         }
         if (parser.isExpectedStartArrayToken()) {

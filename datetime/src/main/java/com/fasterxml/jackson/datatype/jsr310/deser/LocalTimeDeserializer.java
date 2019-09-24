@@ -64,7 +64,7 @@ public class LocalTimeDeserializer extends JSR310DateTimeDeserializerBase<LocalT
             if (string.length() == 0) {
                 return null;
             }
-            DateTimeFormatter format = _formatter;
+            final DateTimeFormatter format = _formatter;
             try {
                 if (format == DEFAULT_FORMATTER) {
                     if (string.contains("T")) {
@@ -73,7 +73,7 @@ public class LocalTimeDeserializer extends JSR310DateTimeDeserializerBase<LocalT
                 }
                 return LocalTime.parse(string, format);
             } catch (DateTimeException e) {
-                return _handleDateTimeException(context, e, string);
+                return _handleDateTimeFormatException(context, e, format, string);
             }
         }
         if (parser.isExpectedStartArrayToken()) {

@@ -64,7 +64,7 @@ public class OffsetTimeDeserializer extends JSR310DateTimeDeserializerBase<Offse
             try {
                 return OffsetTime.parse(string, _formatter);
             } catch (DateTimeException e) {
-                return _handleDateTimeException(context, e, string);
+                return _handleDateTimeFormatException(context, e, _formatter, string);
             }
         }
         if (!parser.isExpectedStartArrayToken()) {

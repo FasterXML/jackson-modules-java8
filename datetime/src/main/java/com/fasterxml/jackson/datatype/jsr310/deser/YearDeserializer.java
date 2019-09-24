@@ -66,7 +66,7 @@ public class YearDeserializer extends JSR310DateTimeDeserializerBase<Year>
                 }
                 return Year.parse(string, _formatter);
             } catch (DateTimeException e) {
-                return _handleDateTimeException(context, e, string);
+                return _handleDateTimeFormatException(context, e, _formatter, string);
             }
         }
         if (t == JsonToken.VALUE_NUMBER_INT) {

@@ -92,7 +92,7 @@ public class LocalDateTimeDeserializer
 
                 return LocalDateTime.parse(string, _formatter);
             } catch (DateTimeException e) {
-                return _handleDateTimeException(context, e, string);
+                return _handleDateTimeFormatException(context, e, _formatter, string);
             }
         }
         if (parser.isExpectedStartArrayToken()) {
