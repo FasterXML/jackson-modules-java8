@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -61,6 +62,13 @@ public class LocalDateDeserializer extends JSR310DateTimeDeserializerBase<LocalD
         super(base, leniency);
     }
 
+    /**
+     * Since 2.9.10
+     */
+    protected LocalDateDeserializer(LocalDateDeserializer base, JsonFormat.Shape shape) {
+        super(base, shape);
+    }
+
     @Override
     protected LocalDateDeserializer withDateFormat(DateTimeFormatter dtf) {
         return new LocalDateDeserializer(this, dtf);
@@ -70,6 +78,9 @@ public class LocalDateDeserializer extends JSR310DateTimeDeserializerBase<LocalD
     protected LocalDateDeserializer withLeniency(Boolean leniency) {
         return new LocalDateDeserializer(this, leniency);
     }
+
+    @Override
+    protected JSR310DateTimeDeserializerBase<LocalDate> withShape(JsonFormat.Shape shape) { return new LocalDateDeserializer(this, shape); }
 
     @Override
     public LocalDate deserialize(JsonParser parser, DeserializationContext context) throws IOException
@@ -134,10 +145,11 @@ public class LocalDateDeserializer extends JSR310DateTimeDeserializerBase<LocalD
         }
         // 06-Jan-2018, tatu: Is this actually safe? Do users expect such coercion?
         if (parser.hasToken(JsonToken.VALUE_NUMBER_INT)) {
-            if (!isLenient()) {
-                return _failForNotLenient(parser, context, JsonToken.VALUE_STRING);
+            // issue 58 - also check for NUMBER_INT, which needs to be specified when serializing.
+            if (_shape == JsonFormat.Shape.NUMBER_INT || isLenient()) {
+                return LocalDate.ofEpochDay(parser.getLongValue());
             }
-            return LocalDate.ofEpochDay(parser.getLongValue());
+            return _failForNotLenient(parser, context, JsonToken.VALUE_STRING);
         }
         return _handleUnexpectedToken(context, parser, "Expected array or string.");
     }

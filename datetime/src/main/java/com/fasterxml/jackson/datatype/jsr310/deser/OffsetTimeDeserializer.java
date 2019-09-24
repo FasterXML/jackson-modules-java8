@@ -22,6 +22,7 @@ import java.time.OffsetTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.*;
 
@@ -52,6 +53,9 @@ public class OffsetTimeDeserializer extends JSR310DateTimeDeserializerBase<Offse
     protected OffsetTimeDeserializer withLeniency(Boolean leniency) {
         return this;
     }
+
+    @Override
+    protected JSR310DateTimeDeserializerBase<OffsetTime> withShape(JsonFormat.Shape shape) { return this; }
 
     @Override
     public OffsetTime deserialize(JsonParser parser, DeserializationContext context) throws IOException

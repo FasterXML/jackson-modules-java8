@@ -34,10 +34,17 @@ public abstract class JSR310DateTimeDeserializerBase<T>
      */
     protected final boolean _isLenient;
 
+    /**
+     * Flag that indicates the {@link JsonFormat.Shape} annotation.
+     *
+     */
+    protected final JsonFormat.Shape _shape;
+
     protected JSR310DateTimeDeserializerBase(Class<T> supportedType, DateTimeFormatter f) {
         super(supportedType);
         _formatter = f;
         _isLenient = true;
+        _shape = null;
     }
 
     protected JSR310DateTimeDeserializerBase(JSR310DateTimeDeserializerBase<T> base,
@@ -45,17 +52,28 @@ public abstract class JSR310DateTimeDeserializerBase<T>
         super(base);
         _formatter = f;
         _isLenient = base._isLenient;
+        _shape = base._shape;
     }
 
     protected JSR310DateTimeDeserializerBase(JSR310DateTimeDeserializerBase<T> base,
             Boolean leniency) {
         super(base);
         _formatter = base._formatter;
+        _shape = base._shape;
         _isLenient = !Boolean.FALSE.equals(leniency);
+    }
+
+    protected JSR310DateTimeDeserializerBase(JSR310DateTimeDeserializerBase<T> base,
+                                             JsonFormat.Shape shape) {
+        super(base);
+        _formatter = base._formatter;
+        _shape = shape;
+        _isLenient = base._isLenient;
     }
 
     protected abstract JSR310DateTimeDeserializerBase<T> withDateFormat(DateTimeFormatter dtf);
     protected abstract JSR310DateTimeDeserializerBase<T> withLeniency(Boolean leniency);
+    protected abstract JSR310DateTimeDeserializerBase<T> withShape(JsonFormat.Shape shape);
 
     @Override
     public JsonDeserializer<?> createContextual(DeserializationContext ctxt,
@@ -92,6 +110,12 @@ public abstract class JSR310DateTimeDeserializerBase<T>
                     deser = deser.withLeniency(leniency);
                 }
             }
+            //if (format.hasShape()) {
+                JsonFormat.Shape shape = format.getShape();
+                if (shape != null) {
+                    deser = deser.withShape(shape);
+                }
+            //}
             // any use for TimeZone?
         }
         return deser;

@@ -161,7 +161,7 @@ public class LocalDateDeserTest extends ModuleTestBase
 
     // But with alternate setting, not so
     @Test
-    public void testStricDeserializeFromInt() throws Exception
+    public void testStrictDeserializeFromInt() throws Exception
     {
         ObjectMapper mapper = mapperBuilder()
                 .withConfigOverride(LocalDate.class,
@@ -178,6 +178,30 @@ public class LocalDateDeserTest extends ModuleTestBase
 
         // 17-Aug-2019, tatu: Should possibly test other mechanism too, but for now let's
         //    be content with just one...
+    }
+
+    @Test
+    public void testLenientDeserializeFromNumberInt() throws Exception
+    {
+        ObjectMapper mapper = newMapperBuilder()
+                .withConfigOverride(LocalDate.class,
+                        o -> o.setFormat(JsonFormat.Value.forShape(JsonFormat.Shape.NUMBER_INT)))
+                .build();
+
+        assertEquals("The value is not correct.", LocalDate.of(1970, Month.MAY, 04),
+                mapper.readValue("123", LocalDate.class));
+    }
+
+    @Test
+    public void testStrictDeserializeFromNumberInt() throws Exception
+    {
+        ObjectMapper mapper = newMapperBuilder()
+                .withConfigOverride(LocalDate.class,
+                        o -> o.setFormat(JsonFormat.Value.forShape(JsonFormat.Shape.NUMBER_INT)))
+                .build();
+
+        assertEquals("The value is not correct.", LocalDate.of(1970, Month.MAY, 04),
+                mapper.readValue("123", LocalDate.class));
     }
 
     /*
