@@ -420,9 +420,9 @@ public class LocalDateTimeDeserTest
     public void testDeserializationCaseInsensitiveEnabledOnValue() throws Throwable
     {
         final ObjectMapper mapper = newMapperBuilder()
-                .withConfigOverride(LocalDateTime.class, o -> JsonFormat.Value
+                .withConfigOverride(LocalDateTime.class, o -> o.setFormat(JsonFormat.Value
                         .forPattern("dd-MMM-yyyy HH:mm")
-                        .withFeature(Feature.ACCEPT_CASE_INSENSITIVE_VALUES))
+                        .withFeature(Feature.ACCEPT_CASE_INSENSITIVE_VALUES)))
                 .build();
         ObjectReader reader = mapper.readerFor(LocalDateTime.class);
         String[] jsons = new String[] {"'01-Jan-2000 13:14'","'01-JAN-2000 13:14'", "'01-jan-2000 13:14'"};
@@ -436,7 +436,8 @@ public class LocalDateTimeDeserTest
     {
         final ObjectMapper mapper = newMapperBuilder()
                 .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES, true)
-                .withConfigOverride(LocalDateTime.class, o -> JsonFormat.Value.forPattern("dd-MMM-yyyy HH:mm"))
+                .withConfigOverride(LocalDateTime.class, o -> o.setFormat(
+                        JsonFormat.Value.forPattern("dd-MMM-yyyy HH:mm")))
                 .build();
         ObjectReader reader = mapper.readerFor(LocalDateTime.class);
         String[] jsons = new String[] {"'01-Jan-2000 13:45'","'01-JAN-2000 13:45'", "'01-jan-2000 13:45'"};
@@ -450,7 +451,8 @@ public class LocalDateTimeDeserTest
     {
         final ObjectMapper mapper = newMapperBuilder()
                 .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES, false)
-                .withConfigOverride(LocalDateTime.class, o -> JsonFormat.Value.forPattern("dd-MMM-yyyy HH:mm"))
+                .withConfigOverride(LocalDateTime.class, o -> o.setFormat(
+                        JsonFormat.Value.forPattern("dd-MMM-yyyy HH:mm")))
                 .build();
         ObjectReader reader = mapper.readerFor(LocalDateTime.class);
         expectSuccess(reader, LocalDateTime.of(2000, Month.JANUARY, 1, 13, 45), quote("01-Jan-2000 13:45"));
@@ -461,7 +463,8 @@ public class LocalDateTimeDeserTest
     {
         final ObjectMapper mapper = newMapperBuilder()
                 .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES, false)
-                .withConfigOverride(LocalDateTime.class, o -> JsonFormat.Value.forPattern("dd-MMM-yyyy"))
+                .withConfigOverride(LocalDateTime.class, o -> o.setFormat(
+                        JsonFormat.Value.forPattern("dd-MMM-yyyy")))
                 .build();
         ObjectReader reader = mapper.readerFor(LocalDateTime.class);
         String[] jsons = new String[] {"'01-JAN-2000'", "'01-jan-2000'"};

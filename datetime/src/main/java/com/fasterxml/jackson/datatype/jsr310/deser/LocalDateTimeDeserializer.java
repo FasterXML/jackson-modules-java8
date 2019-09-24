@@ -79,17 +79,16 @@ public class LocalDateTimeDeserializer
             }
 
             try {
-	            if (_formatter == DEFAULT_FORMATTER) {
-	                // JavaScript by default includes time and zone in JSON serialized Dates (UTC/ISO instant format).
-	                if (string.length() > 10 && string.charAt(10) == 'T') {
+	           if (_formatter == DEFAULT_FORMATTER) {
+	               // JavaScript by default includes time and zone in JSON serialized Dates (UTC/ISO instant format).
+	               if (string.length() > 10 && string.charAt(10) == 'T') {
 	                   if (string.endsWith("Z")) {
 	                       return LocalDateTime.ofInstant(Instant.parse(string), ZoneOffset.UTC);
 	                   } else {
 	                       return LocalDateTime.parse(string, DEFAULT_FORMATTER);
 	                   }
-	                }
-	            }
-
+	               }
+	           }
                 return LocalDateTime.parse(string, _formatter);
             } catch (DateTimeException e) {
                 return _handleDateTimeFormatException(context, e, _formatter, string);
