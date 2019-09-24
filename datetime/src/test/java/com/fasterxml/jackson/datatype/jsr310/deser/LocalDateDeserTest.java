@@ -127,7 +127,20 @@ public class LocalDateDeserTest extends ModuleTestBase
             verifyException(e, "from String \"");
         }
     }
-    
+
+    @Test
+    public void testDeserializationWithTypeInfo01() throws Exception
+    {
+        ObjectMapper mapper = mapperBuilder()
+               .addMixIn(Temporal.class, MockObjectConfiguration.class)
+               .build();
+        LocalDate date = LocalDate.of(2005, Month.NOVEMBER, 5);
+        Temporal value = mapper.readValue(
+                "[\"" + LocalDate.class.getName() + "\",\"" + date.toString() + "\"]", Temporal.class
+                );
+        assertEquals("The value is not correct.", date, value);
+    }
+
     /*
     /**********************************************************
     /* Deserialization from alternate representation: int (number
@@ -228,7 +241,7 @@ public class LocalDateDeserTest extends ModuleTestBase
     public void testDeserializationAsArrayDisabled() throws Throwable
     {
         try {
-            read(READER, "[\"2000-01-01\"]");
+            READER.readValue("[\"2000-01-01\"]");
             fail("expected MismatchedInputException");
         } catch (MismatchedInputException e) {
             verifyException(e, "Unexpected token (VALUE_STRING) within Array");
@@ -239,68 +252,7 @@ public class LocalDateDeserTest extends ModuleTestBase
     public void testDeserializationAsEmptyArrayDisabled() throws Throwable
     {
         // works even without the feature enabled
-        assertNull(read(READER, "[]"));
-    }
-
-    /*
-    /**********************************************************************
-    /* Case-insensitive tests
-    /**********************************************************************
-     */
-    
-    @Test
-    public void testDeserializationCaseInsensitiveEnabledOnValue() throws Throwable
-    {
-        ObjectMapper mapper = newMapperBuilder()
-                .withConfigOverride(LocalDate.class, o -> JsonFormat.Value
-                        .forPattern("dd-MMM-yyyy")
-                        .withFeature(Feature.ACCEPT_CASE_INSENSITIVE_VALUES)
-                )
-                .build();
-        ObjectReader reader = mapper.readerFor(LocalDate.class);
-        String[] jsons = new String[] {"'01-Jan-2000'","'01-JAN-2000'", "'01-jan-2000'"};
-        for(String json : jsons) {
-            expectSuccess(reader, LocalDate.of(2000, Month.JANUARY, 1), json);
-        }
-    }
-    
-    @Test
-    public void testDeserializationCaseInsensitiveEnabled() throws Throwable
-    {
-        ObjectMapper mapper = newMapperBuilder()
-                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES, true)
-                .withConfigOverride(LocalDate.class, o -> JsonFormat.Value.forPattern("dd-MMM-yyyy"))
-                .build();
-        ObjectReader reader = mapper.readerFor(LocalDate.class);
-        String[] jsons = new String[] {"'01-Jan-2000'","'01-JAN-2000'", "'01-jan-2000'"};
-        for(String json : jsons) {
-            expectSuccess(reader, LocalDate.of(2000, Month.JANUARY, 1), json);
-        }
-    }
-    
-    @Test
-    public void testDeserializationCaseInsensitiveDisabled() throws Throwable
-    {
-        ObjectMapper mapper =newMapperBuilder()
-                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES, false)
-                .withConfigOverride(LocalDate.class, o -> JsonFormat.Value.forPattern("dd-MMM-yyyy"))
-                .build();
-        ObjectReader reader = mapper.readerFor(LocalDate.class);
-        expectSuccess(reader, LocalDate.of(2000, Month.JANUARY, 1), "'01-Jan-2000'");
-    }
-    
-    @Test
-    public void testDeserializationCaseInsensitiveDisabled_InvalidDate() throws Throwable
-    {
-        ObjectMapper mapper = newMapperBuilder()
-                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES, false)
-                .withConfigOverride(LocalDate.class, o -> JsonFormat.Value.forPattern("dd-MMM-yyyy"))
-                .build();
-        ObjectReader reader = mapper.readerFor(LocalDate.class);
-        String[] jsons = new String[] {"'01-JAN-2000'", "'01-jan-2000'"};
-        for(String json : jsons) {
-        	expectFailure(reader, json);
-        }
+        assertNull(READER.readValue("[]"));
     }
 
     @Test
@@ -321,53 +273,6 @@ public class LocalDateDeserTest extends ModuleTestBase
                 .readValue("[]");
         assertNull(value);
     }
-    
-    private void expectFailure(ObjectReader reader, String json) throws Throwable {
-        try {
-            read(reader, json);
-            fail("expected DateTimeParseException");
-        } catch (JsonProcessingException e) {
-            if (e.getCause() == null) {
-                throw e;
-            }
-            if (!(e.getCause() instanceof DateTimeParseException)) {
-                throw e.getCause();
-            }
-        } catch (IOException e) {
-            throw e;
-        }
-    }
-
-    private void expectSuccess(ObjectReader reader, Object exp, String json) throws IOException {
-        final LocalDate value = read(reader, json);
-        notNull(value);
-        expect(exp, value);
-    }
-
-    private LocalDate read(ObjectReader reader, final String json) throws IOException {
-        return reader.readValue(aposToQuotes(json));
-    }
-
-    private static void notNull(Object value) {
-        assertNotNull("The value should not be null.", value);
-    }
-
-    private static void expect(Object exp, Object value) {
-        assertEquals("The value is not correct.", exp,  value);
-    }
-
-    @Test
-    public void testDeserializationWithTypeInfo01() throws Exception
-    {
-        ObjectMapper mapper = mapperBuilder()
-               .addMixIn(Temporal.class, MockObjectConfiguration.class)
-               .build();
-        LocalDate date = LocalDate.of(2005, Month.NOVEMBER, 5);
-        Temporal value = mapper.readValue(
-                "[\"" + LocalDate.class.getName() + "\",\"" + date.toString() + "\"]", Temporal.class
-                );
-        assertEquals("The value is not correct.", date, value);
-    }
 
     /*
     /**********************************************************
@@ -383,7 +288,87 @@ public class LocalDateDeserTest extends ModuleTestBase
         LocalDate date = w.value; 
         assertEquals(28, date.getDayOfMonth());
     }
+
+    /*
+    /**********************************************************************
+    /* Case-insensitive tests
+    /**********************************************************************
+     */
+    
+    @Test
+    public void testDeserializationCaseInsensitiveEnabledOnValue() throws Throwable
+    {
+        ObjectMapper mapper = newMapperBuilder()
+                .withConfigOverride(LocalDate.class, o -> JsonFormat.Value
+                        .forPattern("dd-MMM-yyyy")
+                        .withFeature(Feature.ACCEPT_CASE_INSENSITIVE_VALUES)
+                )
+                .build();
+        ObjectReader reader = mapper.readerFor(LocalDate.class);
+        String[] jsons = new String[] { quote("01-Jan-2000"), quote("01-JAN-2000"),
+                quote("01-jan-2000")};
+        for(String json : jsons) {
+            expectSuccess(reader, LocalDate.of(2000, Month.JANUARY, 1), json);
+        }
+    }
+    
+    @Test
+    public void testDeserializationCaseInsensitiveEnabled() throws Throwable
+    {
+        final ObjectMapper mapper = newMapperBuilder()
+                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES, true)
+                .withConfigOverride(LocalDate.class, o -> JsonFormat.Value.forPattern("dd-MMM-yyyy"))
+                .build();
+        ObjectReader reader = mapper.readerFor(LocalDate.class);
+        String[] jsons = new String[] { quote("01-Jan-2000"), quote("01-JAN-2000"),
+                quote("01-jan-2000")};
+        for(String json : jsons) {
+            expectSuccess(reader, LocalDate.of(2000, Month.JANUARY, 1), json);
+        }
+    }
+    
+    @Test
+    public void testDeserializationCaseInsensitiveDisabled() throws Throwable
+    {
+        final ObjectMapper mapper = newMapperBuilder()
+                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES, false)
+                .withConfigOverride(LocalDate.class, o -> JsonFormat.Value.forPattern("dd-MMM-yyyy"))
+                .build();
+        ObjectReader reader = mapper.readerFor(LocalDate.class);
+        expectSuccess(reader, LocalDate.of(2000, Month.JANUARY, 1), quote("01-Jan-2000"));
+    }
+    
+    @Test
+    public void testDeserializationCaseInsensitiveDisabled_InvalidDate() throws Throwable
+    {
+        ObjectMapper mapper = newMapperBuilder()
+                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES, false)
+                .withConfigOverride(LocalDate.class, o -> JsonFormat.Value.forPattern("dd-MMM-yyyy"))
+                .build();
+        ObjectReader reader = mapper.readerFor(LocalDate.class);
+        String[] jsons = new String[] { quote("01-JAN-2000"), quote("01-jan-2000")};
+        for(String json : jsons) {
+            expectFailure(reader, json);
+        }
+    }
+
+    private void expectFailure(ObjectReader reader, String json) throws Throwable {
+        try {
+            reader.readValue(aposToQuotes(json));
+            fail("expected DateTimeParseException");
+        } catch (JsonProcessingException e) {
+            if (e.getCause() == null) {
+                throw e;
+            }
+            if (!(e.getCause() instanceof DateTimeParseException)) {
+                throw e.getCause();
+            }
+        }
+    }
+
+    private void expectSuccess(ObjectReader reader, Object exp, String json) throws IOException {
+        final LocalDate value = reader.readValue(aposToQuotes(json));
+        assertNotNull("The value should not be null.", value);
+        assertEquals("The value is not correct.", exp,  value);
+    }
 }
-
-
-
