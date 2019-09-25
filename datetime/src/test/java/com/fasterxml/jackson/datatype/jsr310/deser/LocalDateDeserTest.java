@@ -44,7 +44,15 @@ public class LocalDateDeserTest extends ModuleTestBase
         public Wrapper() { }
         public Wrapper(LocalDate v) { value = v; }
     }
-    
+
+    final static class ShapeWrapper {
+        @JsonFormat(shape=JsonFormat.Shape.NUMBER_INT)
+        public LocalDate date;
+
+        public ShapeWrapper() { }
+        public ShapeWrapper(LocalDate v) { date = v; }
+    }
+
     /*
     /**********************************************************
     /* Deserialization from Int array representation
@@ -197,11 +205,27 @@ public class LocalDateDeserTest extends ModuleTestBase
     {
         ObjectMapper mapper = newMapperBuilder()
                 .withConfigOverride(LocalDate.class,
-                        o -> o.setFormat(JsonFormat.Value.forShape(JsonFormat.Shape.NUMBER_INT)))
+                        c -> c.setFormat(JsonFormat.Value.forLeniency(false))
+                )
                 .build();
 
+        ShapeWrapper w = mapper.readValue("{\"date\":123}", ShapeWrapper.class);
+        LocalDate localDate = w.date;
+
         assertEquals("The value is not correct.", LocalDate.of(1970, Month.MAY, 04),
-                mapper.readValue("123", LocalDate.class));
+                localDate);
+    }
+
+    @Test(expected = MismatchedInputException.class)
+    public void testStrictDeserializeFromString() throws Exception
+    {
+        ObjectMapper mapper = newMapperBuilder()
+                .withConfigOverride(LocalDate.class,
+                        c -> c.setFormat(JsonFormat.Value.forLeniency(false))
+                )
+                .build();
+
+        mapper.readValue("{\"value\":123}", Wrapper.class);
     }
 
     /*
