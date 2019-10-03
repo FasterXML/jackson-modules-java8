@@ -8,6 +8,11 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
+2.10.1 (not yet released)
+
+#127: ZonedDateTime in map keys ignores option to write Zone IDs
+ (reported by Michał Ż, fixed by Vetle L-R)
+
 2.10.0 (26-Sep-2019)
 
 #51: `YearKeyDeserializer` doesn't work with non-padded year values
