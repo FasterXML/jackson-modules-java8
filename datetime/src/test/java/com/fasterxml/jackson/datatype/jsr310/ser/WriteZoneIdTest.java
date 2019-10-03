@@ -5,9 +5,11 @@ import static org.junit.Assert.assertEquals;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.HashMap;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
@@ -40,7 +42,7 @@ public class WriteZoneIdTest extends ModuleTestBase
         String value = MAPPER.writeValueAsString(id);
         assertEquals("The value is not correct.", "\"America/Chicago\"", value);
     }
-    
+
     @Test
     public void testSerialization02() throws Exception
     {
@@ -48,7 +50,7 @@ public class WriteZoneIdTest extends ModuleTestBase
         String value = MAPPER.writeValueAsString(id);
         assertEquals("The value is not correct.", "\"America/Anchorage\"", value);
     }
-    
+
     @Test
     public void testSerializationWithTypeInfo01() throws Exception
     {
@@ -79,5 +81,17 @@ public class WriteZoneIdTest extends ModuleTestBase
         if (!json.contains(match)) {
             Assert.fail("Should contain zone id "+match+", does not: "+json);
         }
+    }
+
+    @Test
+    public void testMapSerialization() throws Exception {
+        final ZonedDateTime datetime = ZonedDateTime.parse("2007-12-03T10:15:30+01:00[Europe/Warsaw]");
+        final HashMap<ZonedDateTime, String> map = new HashMap<>();
+        map.put(datetime, "");
+
+        ObjectMapper mapper = newMapperBuilder()
+            .enable(SerializationFeature.WRITE_DATES_WITH_ZONE_ID).build();
+        String json = mapper.writeValueAsString(map);
+        Assert.assertEquals("{\"2007-12-03T10:15:30+01:00[Europe/Warsaw]\":\"\"}", json);
     }
 }
