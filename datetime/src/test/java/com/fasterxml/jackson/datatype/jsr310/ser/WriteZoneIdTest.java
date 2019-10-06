@@ -1,7 +1,5 @@
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
-import static org.junit.Assert.assertEquals;
-
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -10,7 +8,6 @@ import java.util.HashMap;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
@@ -18,10 +15,10 @@ import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 import org.junit.Assert;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 public class WriteZoneIdTest extends ModuleTestBase
 {
-    private final ObjectMapper MAPPER = newMapper();
-
     static class DummyClassWithDate {
         @JsonFormat(shape = JsonFormat.Shape.STRING,
                 pattern = "dd-MM-yyyy hh:mm:ss Z",
@@ -34,6 +31,8 @@ public class WriteZoneIdTest extends ModuleTestBase
             this.date = date;
         }
     }
+
+    private static ObjectMapper MAPPER = newMapper();
 
     @Test
     public void testSerialization01() throws Exception
@@ -55,7 +54,7 @@ public class WriteZoneIdTest extends ModuleTestBase
     public void testSerializationWithTypeInfo01() throws Exception
     {
         ZoneId id = ZoneId.of("America/Denver");
-        ObjectMapper mapper = JsonMapper.builder()
+        ObjectMapper mapper = mapperBuilder()
                 .addMixIn(ZoneId.class, MockObjectConfiguration.class)
                 .addModule(new JavaTimeModule())
                 .build();
@@ -88,10 +87,9 @@ public class WriteZoneIdTest extends ModuleTestBase
         final ZonedDateTime datetime = ZonedDateTime.parse("2007-12-03T10:15:30+01:00[Europe/Warsaw]");
         final HashMap<ZonedDateTime, String> map = new HashMap<>();
         map.put(datetime, "");
-
-        ObjectMapper mapper = newMapperBuilder()
-            .enable(SerializationFeature.WRITE_DATES_WITH_ZONE_ID).build();
-        String json = mapper.writeValueAsString(map);
+        String json = MAPPER.writer()
+                .with(SerializationFeature.WRITE_DATES_WITH_ZONE_ID)
+                .writeValueAsString(map);
         Assert.assertEquals("{\"2007-12-03T10:15:30+01:00[Europe/Warsaw]\":\"\"}", json);
     }
 }

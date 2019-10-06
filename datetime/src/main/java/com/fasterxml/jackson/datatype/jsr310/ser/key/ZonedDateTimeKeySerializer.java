@@ -21,11 +21,10 @@ public class ZonedDateTimeKeySerializer extends JsonSerializer<ZonedDateTime> {
     @Override
     public void serialize(ZonedDateTime value, JsonGenerator gen, SerializerProvider serializers) throws IOException,
             JsonProcessingException {
-        /*
-         * Serialization of timezone data is disabled by default, but can be turned on by enabling
-         * SerializationFeature.WRITE_DATES_WITH_ZONE_ID
+        /* [modules-java8#127]: Serialization of timezone data is disabled by default, but can be
+         * turned on by enabling `SerializationFeature.WRITE_DATES_WITH_ZONE_ID`
          */
-        if (serializers.getConfig().isEnabled(SerializationFeature.WRITE_DATES_WITH_ZONE_ID)) {
+        if (serializers.isEnabled(SerializationFeature.WRITE_DATES_WITH_ZONE_ID)) {
             gen.writeFieldName(DateTimeFormatter.ISO_ZONED_DATE_TIME.format(value));
         } else {
             gen.writeFieldName(DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(value));
