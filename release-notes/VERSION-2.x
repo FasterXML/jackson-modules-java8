@@ -8,6 +8,10 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
+2.11.0 (not yet released)
+
+-
+
 2.10.0 (26-Sep-2019)
 
 #51: `YearKeyDeserializer` doesn't work with non-padded year values
