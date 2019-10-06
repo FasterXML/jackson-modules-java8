@@ -73,3 +73,11 @@ Michael O'Keeffe (kupci@github)
   * Constributed fix for #114: Prevent deserialization of "" as `null` for `LocalDate`,
     `LocalDateTime` in "strict" (non-lenient) mode
    (2.10.0)
+
+Michał Żmuda (zmumi@github)
+  * Reported #127: ZonedDateTime in map keys ignores option to write Zone IDs
+   (2.10.1)
+
+Vetle Leinonen-Roeim (vetler@github)
+  * Contributed fix for #127: ZonedDateTime in map keys ignores option to write Zone IDs
+   (2.10.1)
