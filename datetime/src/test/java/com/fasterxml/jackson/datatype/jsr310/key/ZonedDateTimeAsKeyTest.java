@@ -9,6 +9,7 @@ import java.util.Map;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
 import org.junit.Assert;
@@ -20,6 +21,7 @@ public class ZonedDateTimeAsKeyTest extends ModuleTestBase
     };
     private static final ZonedDateTime DATE_TIME_0 = ZonedDateTime.ofInstant(Instant.ofEpochSecond(0), ZoneOffset.UTC);
     private static final String DATE_TIME_0_STRING = "1970-01-01T00:00:00Z";
+    private static final Instant DATE_TIME_0_INSTANT = DATE_TIME_0.toInstant();
 
     private static final ZonedDateTime DATE_TIME_1 = ZonedDateTime.of(
             2015, 3, 14, 9, 26, 53, 590 * 1000 * 1000, ZoneOffset.UTC);
@@ -71,5 +73,22 @@ public class ZonedDateTimeAsKeyTest extends ModuleTestBase
     public void testDeserialization2() throws Exception {
         Assert.assertEquals("Value is incorrect", asMap(DATE_TIME_2_OFFSET, "test"),
                 READER.readValue(mapAsString(DATE_TIME_2_STRING, "test")));
+    }
+
+    @Test
+    public void testSerializationToInstantWithNanos() throws Exception {
+        String value = newMapperBuilder().enable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS).build()
+            .writerFor(TYPE_REF).writeValueAsString(asMap(DATE_TIME_1, "test"));
+        Assert.assertEquals("Value is incorrect",
+            mapAsString(String.valueOf(DATE_TIME_1.toEpochSecond()) + '.' + DATE_TIME_1.getNano(), "test"), value);
+    }
+
+    @Test
+    public void testSerializationToInstantWithoutNanos() throws Exception {
+        String value = newMapperBuilder().enable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS)
+            .disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS).build()
+            .writerFor(TYPE_REF).writeValueAsString(asMap(DATE_TIME_1, "test"));
+        Assert.assertEquals("Value is incorrect",
+            mapAsString(String.valueOf(DATE_TIME_1.toInstant().toEpochMilli()), "test"), value);
     }
 }
