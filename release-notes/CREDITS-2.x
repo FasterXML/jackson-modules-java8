@@ -77,7 +77,11 @@ Michael O'Keeffe (kupci@github)
 Michał Żmuda (zmumi@github)
   * Reported #127: ZonedDateTime in map keys ignores option to write Zone IDs
    (2.10.1)
+  * Reported #128: Timestamp keys from `ZonedDateTime`
+   (2.11.0)
 
 Vetle Leinonen-Roeim (vetler@github)
   * Contributed fix for #127: ZonedDateTime in map keys ignores option to write Zone IDs
    (2.10.1)
+  * Contributed fix for #128: Timestamp keys from `ZonedDateTime`
+   (2.11.0)
