@@ -10,7 +10,8 @@ Modules:
 
 2.11.0 (not yet released)
 
--
+#128: Timestamp keys from `ZonedDateTime`
+ (reported by Michał Ż, fixed by Vetle L-R)
 
 2.10.1 (not yet released)
 

@@ -77,7 +77,7 @@ public class ZonedDateTimeAsKeyTest extends ModuleTestBase
 
     @Test
     public void testSerializationToInstantWithNanos() throws Exception {
-        String value = newMapperBuilder().enable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS).build()
+        String value = mapperBuilder().enable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS).build()
             .writerFor(TYPE_REF).writeValueAsString(asMap(DATE_TIME_1, "test"));
         Assert.assertEquals("Value is incorrect",
             mapAsString(String.valueOf(DATE_TIME_1.toEpochSecond()) + '.' + DATE_TIME_1.getNano(), "test"), value);
@@ -85,7 +85,7 @@ public class ZonedDateTimeAsKeyTest extends ModuleTestBase
 
     @Test
     public void testSerializationToInstantWithoutNanos() throws Exception {
-        String value = newMapperBuilder().enable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS)
+        String value = mapperBuilder().enable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS)
             .disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS).build()
             .writerFor(TYPE_REF).writeValueAsString(asMap(DATE_TIME_1, "test"));
         Assert.assertEquals("Value is incorrect",
