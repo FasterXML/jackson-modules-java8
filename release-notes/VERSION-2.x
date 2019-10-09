@@ -10,6 +10,9 @@ Modules:
 
 2.11.0 (not yet released)
 
+#58: Should not parse `LocalDate`s from number (timestamp), or at least
+  should have an option preventing
+ (reported by Bill O'N, fixed by Mike [kupci@github])
 #128: Timestamp keys from `ZonedDateTime`
  (reported by Michał Ż, fixed by Vetle L-R)
 
