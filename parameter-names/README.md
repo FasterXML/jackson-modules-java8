@@ -82,7 +82,7 @@ Preconditions:
   - if class Person has a single argument constructor, its argument needs to be annotated with `@JsonProperty("propertyName")`. This is to preserve legacy behavior, see [FasterXML/jackson-databind/#1498][3]
 ## More
 
-See [Wiki](../../wiki) for more information (javadocs, downloads).
+See [Wiki](../../../wiki) for more information (javadocs, downloads).
 
 [1]: http://jackson.codehaus.org/1.1.2/javadoc/org/codehaus/jackson/annotate/JsonProperty.html
 [2]: http://docs.oracle.com/javase/tutorial/reflect/member/methodparameterreflection.html

@@ -67,7 +67,7 @@ After either of these, functionality is available for all normal Jackson operati
 
 ## More
 
-See [Wiki](../../wiki) for more information
+See [Wiki](../../../wiki) for more information
 (JavaDocs, downloads).
 
 Also: there is [JDK 1.7 backport](https://github.com/joschi/jackson-datatype-threetenbp) datatype module!
