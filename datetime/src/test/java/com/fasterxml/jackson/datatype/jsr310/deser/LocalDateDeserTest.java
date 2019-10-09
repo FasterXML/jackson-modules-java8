@@ -372,9 +372,10 @@ public class LocalDateDeserTest extends ModuleTestBase
     */
     @Test
     public void testLenientDeserializeFromNumberInt() throws Exception {
-        ObjectMapper mapper = newMapper();
-        mapper.configOverride(LocalDate.class)
-                        .setFormat(JsonFormat.Value.forShape(JsonFormat.Shape.NUMBER_INT));
+        ObjectMapper mapper = newMapperBuilder()
+                .withConfigOverride(LocalDate.class,
+                        o -> o.setFormat(JsonFormat.Value.forShape(JsonFormat.Shape.NUMBER_INT)))
+                .build();
 
         assertEquals("The value is not correct.", LocalDate.of(1970, Month.MAY, 04),
                 mapper.readValue("123", LocalDate.class));
@@ -383,9 +384,10 @@ public class LocalDateDeserTest extends ModuleTestBase
     @Test
     public void testStrictDeserializeFromNumberInt() throws Exception
     {
-        ObjectMapper mapper = newMapper();
-        mapper.configOverride(LocalDate.class)
-                .setFormat(JsonFormat.Value.forLeniency(false));
+        ObjectMapper mapper = newMapperBuilder()
+                .withConfigOverride(LocalDate.class,
+                        o -> o.setFormat(JsonFormat.Value.forLeniency(false)))
+                .build();
 
         ShapeWrapper w = mapper.readValue("{\"date\":123}", ShapeWrapper.class);
         LocalDate localDate = w.date;
@@ -397,10 +399,10 @@ public class LocalDateDeserTest extends ModuleTestBase
     @Test(expected = MismatchedInputException.class)
     public void testStrictDeserializeFromString() throws Exception
     {
-        ObjectMapper mapper = newMapper();
-        mapper.configOverride(LocalDate.class)
-                .setFormat(JsonFormat.Value.forLeniency(false));
-
+        ObjectMapper mapper = newMapperBuilder()
+                .withConfigOverride(LocalDate.class,
+                        o -> o.setFormat(JsonFormat.Value.forLeniency(false)))
+                .build();
         mapper.readValue("{\"value\":123}", Wrapper.class);
     }
 
