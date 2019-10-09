@@ -164,7 +164,10 @@ public class InstantDeserializer<T extends Temporal>
     protected InstantDeserializer<T> withLeniency(Boolean leniency) {
         return this;
     }
-    
+
+    @Override
+    protected InstantDeserializer<T> withShape(JsonFormat.Shape shape) { return this; }
+
     @SuppressWarnings("unchecked")
     @Override
     public T deserialize(JsonParser parser, DeserializationContext context) throws IOException
