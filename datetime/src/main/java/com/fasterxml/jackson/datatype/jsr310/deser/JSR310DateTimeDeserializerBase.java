@@ -7,6 +7,7 @@ import java.util.Locale;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Feature;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.BeanProperty;
@@ -34,10 +35,24 @@ public abstract class JSR310DateTimeDeserializerBase<T>
      */
     protected final boolean _isLenient;
 
+    /**
+     * Setting that indicates the {@Link JsonFormat.Shape} specified for this deserializer
+     * as a {@link JsonFormat.Shape} annotation on property or class, or due to per-type
+     * "config override", or from global settings:
+     * If Shape is NUMBER_INT, the input value is considered to be epoch days. If not a
+     * NUMBER_INT, and the deserializer was not specified with the leniency setting of true,
+     * then an exception will be thrown.
+     * @see [jackson-modules-java8#58] for more info
+     *
+     * @since 2.11
+     */
+    protected final Shape _shape;
+
     protected JSR310DateTimeDeserializerBase(Class<T> supportedType, DateTimeFormatter f) {
         super(supportedType);
         _formatter = f;
         _isLenient = true;
+        _shape = null;
     }
 
     protected JSR310DateTimeDeserializerBase(JSR310DateTimeDeserializerBase<T> base,
@@ -45,6 +60,7 @@ public abstract class JSR310DateTimeDeserializerBase<T>
         super(base);
         _formatter = f;
         _isLenient = base._isLenient;
+        _shape = base._shape;
     }
 
     protected JSR310DateTimeDeserializerBase(JSR310DateTimeDeserializerBase<T> base,
@@ -52,10 +68,29 @@ public abstract class JSR310DateTimeDeserializerBase<T>
         super(base);
         _formatter = base._formatter;
         _isLenient = !Boolean.FALSE.equals(leniency);
+        _shape = base._shape;
     }
+
+    /**
+     * @since 2.11
+     */
+    protected JSR310DateTimeDeserializerBase(JSR310DateTimeDeserializerBase<T> base,
+                                             Shape shape) {
+        super(base);
+        _formatter = base._formatter;
+        _shape = shape;
+        _isLenient = base._isLenient;
+    }
+
 
     protected abstract JSR310DateTimeDeserializerBase<T> withDateFormat(DateTimeFormatter dtf);
     protected abstract JSR310DateTimeDeserializerBase<T> withLeniency(Boolean leniency);
+
+    /**
+     * @since 2.11
+     */
+    protected abstract JSR310DateTimeDeserializerBase<T> withShape(Shape shape);
+
 
     @Override
     public JsonDeserializer<?> createContextual(DeserializationContext ctxt,
@@ -91,6 +126,12 @@ public abstract class JSR310DateTimeDeserializerBase<T>
                 if (leniency != null) {
                     deser = deser.withLeniency(leniency);
                 }
+            }
+            //Issue #58: For LocalDate deserializers we need to configure the formatter with
+            //a shape picked up from JsonFormat annotation, to decide if the value is EpochSeconds
+            JsonFormat.Shape shape = format.getShape();
+            if (shape != null && shape != _shape) {
+                deser = deser.withShape(shape);
             }
             // any use for TimeZone?
         }

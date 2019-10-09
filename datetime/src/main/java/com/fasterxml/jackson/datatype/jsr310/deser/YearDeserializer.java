@@ -16,6 +16,7 @@
 
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -53,6 +54,9 @@ public class YearDeserializer extends JSR310DateTimeDeserializerBase<Year>
     protected YearDeserializer withLeniency(Boolean leniency) {
         return this;
     }
+
+    @Override
+    protected YearDeserializer withShape(JsonFormat.Shape shape) { return this; }
 
     @Override
     public Year deserialize(JsonParser parser, DeserializationContext context) throws IOException

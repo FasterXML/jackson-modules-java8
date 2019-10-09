@@ -21,6 +21,7 @@ import java.time.DateTimeException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -55,6 +56,9 @@ public class LocalTimeDeserializer extends JSR310DateTimeDeserializerBase<LocalT
     protected LocalTimeDeserializer withLeniency(Boolean leniency) {
         return this;
     }
+
+    @Override
+    protected LocalTimeDeserializer withShape(JsonFormat.Shape shape) { return this; }
 
     @Override
     public LocalTime deserialize(JsonParser parser, DeserializationContext context) throws IOException

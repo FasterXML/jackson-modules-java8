@@ -21,6 +21,7 @@ import java.time.DateTimeException;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -56,6 +57,9 @@ public class YearMonthDeserializer extends JSR310DateTimeDeserializerBase<YearMo
     protected YearMonthDeserializer withLeniency(Boolean leniency) {
         return this;
     }
+
+    @Override
+    protected YearMonthDeserializer withShape(JsonFormat.Shape shape) { return this; }
 
     @Override
     public YearMonth deserialize(JsonParser parser, DeserializationContext context) throws IOException

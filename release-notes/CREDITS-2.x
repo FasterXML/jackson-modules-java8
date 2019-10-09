@@ -67,6 +67,8 @@ Michael O'Keeffe (kupci@github)
   * Contributed fix for #51: `YearKeyDeserializer` doesn't work with non-padded
     year values
    (2.10.0)
+  * Contributed fix for #58: Should not parse `LocalDate`s from number (timestamp),
+   (2.11.0)
   * Contributed fix for #69: `ZonedDateTime` for times before the epoch do not
     serialize correctly
    (2.10.0)
@@ -84,4 +86,8 @@ Vetle Leinonen-Roeim (vetler@github)
   * Contributed fix for #127: ZonedDateTime in map keys ignores option to write Zone IDs
    (2.10.1)
   * Contributed fix for #128: Timestamp keys from `ZonedDateTime`
+   (2.11.0)
+
+Bill O'Neil (billoneil@github)
+  * Reported #58: Should not parse `LocalDate`s from number (timestamp),
    (2.11.0)

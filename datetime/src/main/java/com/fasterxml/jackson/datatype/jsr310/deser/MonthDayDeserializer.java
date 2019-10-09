@@ -5,6 +5,7 @@ import java.time.DateTimeException;
 import java.time.MonthDay;
 import java.time.format.DateTimeFormatter;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -31,6 +32,9 @@ public class MonthDayDeserializer extends JSR310DateTimeDeserializerBase<MonthDa
     protected MonthDayDeserializer withLeniency(Boolean leniency) {
         return this;
     }
+
+    @Override
+    protected MonthDayDeserializer withShape(JsonFormat.Shape shape) { return this; }
 
     @Override
     public MonthDay deserialize(JsonParser parser, DeserializationContext context) throws IOException
