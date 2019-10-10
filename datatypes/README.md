@@ -73,4 +73,4 @@ System.out.println(withEmailJson);
 
 ## More
 
-See [Wiki](../../wiki) for more information (javadocs, downloads).
+See [Wiki](../../../wiki) for more information (javadocs, downloads).
