@@ -2,8 +2,12 @@ package com.fasterxml.jackson.datatype.jsr310.deser;
 
 import java.math.BigInteger;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.temporal.TemporalAmount;
+import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -23,6 +27,8 @@ import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 public class DurationDeserTest extends ModuleTestBase
 {
     private final ObjectReader READER = newMapper().readerFor(Duration.class);
+
+    private final TypeReference<Map<String, Duration>> MAP_TYPE_REF = new TypeReference<Map<String, Duration>>() { };
 
     @Test
     public void testDeserializationAsFloat01() throws Exception
@@ -370,5 +376,47 @@ public class DurationDeserTest extends ModuleTestBase
     			.configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true)
     			.readerFor(Duration.class).readValue(aposToQuotes(json));
     	assertNull(value);
+    }
+
+    @Test
+    public void testLenientDeserializeFromEmptyString() throws Exception {
+
+        String key = "duration";
+        ObjectMapper mapper = newMapper();
+        ObjectReader objectReader = mapper.readerFor(MAP_TYPE_REF);
+
+        String dateValAsNullStr = null;
+        String dateValAsEmptyStr = "";
+
+        String valueFromNullStr = mapper.writeValueAsString(asMap(key, dateValAsNullStr));
+        Map<String, Duration> actualMapFromNullStr = objectReader.readValue(valueFromNullStr);
+        Duration actualDateFromNullStr = actualMapFromNullStr.get(key);
+        assertNull(actualDateFromNullStr);
+
+        String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, dateValAsEmptyStr));
+        Map<String, Duration> actualMapFromEmptyStr = objectReader.readValue(valueFromEmptyStr);
+        Duration actualDateFromEmptyStr = actualMapFromEmptyStr.get(key);
+        assertEquals("empty string failed to deserialize to null with lenient setting", null, actualDateFromEmptyStr);
+    }
+
+    @Test ( expected =  MismatchedInputException.class)
+    public void testStrictDeserializeFromEmptyString() throws Exception {
+
+        final String key = "duration";
+        final ObjectMapper mapper = mapperBuilder().build();
+        mapper.configOverride(Duration.class)
+                .setFormat(JsonFormat.Value.forLeniency(false));
+
+        final ObjectReader objectReader = mapper.readerFor(MAP_TYPE_REF);
+        final String dateValAsNullStr = null;
+
+        // even with strict, null value should be deserialized without throwing an exception
+        String valueFromNullStr = mapper.writeValueAsString(asMap(key, dateValAsNullStr));
+        Map<String, Duration> actualMapFromNullStr = objectReader.readValue(valueFromNullStr);
+        assertNull(actualMapFromNullStr.get(key));
+
+        String dateValAsEmptyStr = "";
+        String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, dateValAsEmptyStr));
+        objectReader.readValue(valueFromEmptyStr);
     }
 }

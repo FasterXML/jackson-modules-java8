@@ -72,6 +72,12 @@ public class JSR310StringParsableDeserializer
     }
 
     @Override
+    protected JSR310StringParsableDeserializer withLeniency(Boolean leniency) {
+        // TODO: implement!
+        return null;
+    }
+
+    @Override
     public Object deserialize(JsonParser parser, DeserializationContext context) throws IOException
     {
         if (parser.hasToken(JsonToken.VALUE_STRING)) {

@@ -186,7 +186,9 @@ public class InstantDeserializer<T extends Temporal>
             {
                 String string = parser.getText().trim();
                 if (string.length() == 0) {
-                    return null;
+                    if (!isLenient()) {
+                        return _failForNotLenient(parser, context, JsonToken.VALUE_STRING);
+                    }
                 }
                 // only check for other parsing modes if we are using default formatter
                 if (_formatter == DateTimeFormatter.ISO_INSTANT ||
