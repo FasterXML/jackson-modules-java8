@@ -189,6 +189,7 @@ public class InstantDeserializer<T extends Temporal>
                     if (!isLenient()) {
                         return _failForNotLenient(parser, context, JsonToken.VALUE_STRING);
                     }
+                    return null;
                 }
                 // only check for other parsing modes if we are using default formatter
                 if (_formatter == DateTimeFormatter.ISO_INSTANT ||

@@ -378,6 +378,12 @@ public class DurationDeserTest extends ModuleTestBase
     	assertNull(value);
     }
 
+    /*
+    /**********************************************************
+    /* Tests for empty string handling
+    /**********************************************************
+     */
+
     @Test
     public void testLenientDeserializeFromEmptyString() throws Exception {
 
