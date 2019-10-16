@@ -32,7 +32,6 @@ import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
  * Serializer for Java 8 temporal {@link LocalDateTime}s.
  *
  * @author Nick Williams
- * @since 2.2
  */
 public class LocalDateTimeSerializer extends JSR310FormattedSerializerBase<LocalDateTime>
 {
@@ -79,14 +78,14 @@ public class LocalDateTimeSerializer extends JSR310FormattedSerializerBase<Local
     }
 
     @Override
-    public void serializeWithType(LocalDateTime value, JsonGenerator g, SerializerProvider provider,
+    public void serializeWithType(LocalDateTime value, JsonGenerator g, SerializerProvider ctxt,
             TypeSerializer typeSer) throws IOException
     {
-        WritableTypeId typeIdDef = typeSer.writeTypePrefix(g,
-                typeSer.typeId(value, serializationShape(provider)));
+        WritableTypeId typeIdDef = typeSer.writeTypePrefix(g, ctxt,
+                typeSer.typeId(value, serializationShape(ctxt)));
         // need to write out to avoid double-writing array markers
         if (typeIdDef.valueShape == JsonToken.START_ARRAY) {
-            _serializeAsArrayContents(value, g, provider);
+            _serializeAsArrayContents(value, g, ctxt);
         } else {
             DateTimeFormatter dtf = _formatter;
             if (dtf == null) {
@@ -94,7 +93,7 @@ public class LocalDateTimeSerializer extends JSR310FormattedSerializerBase<Local
             }
             g.writeString(value.format(dtf));
         }
-        typeSer.writeTypeSuffix(g, typeIdDef);
+        typeSer.writeTypeSuffix(g, ctxt, typeIdDef);
     }
 
     private final void _serializeAsArrayContents(LocalDateTime value, JsonGenerator g,

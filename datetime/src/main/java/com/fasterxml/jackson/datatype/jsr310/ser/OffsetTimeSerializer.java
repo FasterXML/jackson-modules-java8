@@ -72,19 +72,19 @@ public class OffsetTimeSerializer extends JSR310FormattedSerializerBase<OffsetTi
     }
 
     @Override
-    public void serializeWithType(OffsetTime value, JsonGenerator g, SerializerProvider provider,
+    public void serializeWithType(OffsetTime value, JsonGenerator g, SerializerProvider ctxt,
             TypeSerializer typeSer) throws IOException
     {
-        WritableTypeId typeIdDef = typeSer.writeTypePrefix(g,
-                typeSer.typeId(value, serializationShape(provider)));
+        WritableTypeId typeIdDef = typeSer.writeTypePrefix(g, ctxt,
+                typeSer.typeId(value, serializationShape(ctxt)));
         // need to write out to avoid double-writing array markers
         if (typeIdDef.valueShape == JsonToken.START_ARRAY) {
-            _serializeAsArrayContents(value, g, provider);
+            _serializeAsArrayContents(value, g, ctxt);
         } else {
             String str = (_formatter == null) ? value.toString() : value.format(_formatter);
             g.writeString(str);
         }
-        typeSer.writeTypeSuffix(g, typeIdDef);
+        typeSer.writeTypeSuffix(g, ctxt, typeIdDef);
     }
 
     private final void _serializeAsArrayContents(OffsetTime value, JsonGenerator g,

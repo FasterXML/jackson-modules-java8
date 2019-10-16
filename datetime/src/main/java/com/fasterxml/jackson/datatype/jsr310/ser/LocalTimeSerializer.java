@@ -85,13 +85,13 @@ public class LocalTimeSerializer extends JSR310FormattedSerializerBase<LocalTime
 
     @Override
     public void serializeWithType(LocalTime value, JsonGenerator g,
-            SerializerProvider provider, TypeSerializer typeSer) throws IOException
+            SerializerProvider ctxt, TypeSerializer typeSer) throws IOException
     {
-        WritableTypeId typeIdDef = typeSer.writeTypePrefix(g,
-                typeSer.typeId(value, serializationShape(provider)));
+        WritableTypeId typeIdDef = typeSer.writeTypePrefix(g, ctxt,
+                typeSer.typeId(value, serializationShape(ctxt)));
         // need to write out to avoid double-writing array markers
         if (typeIdDef.valueShape == JsonToken.START_ARRAY) {
-            _serializeAsArrayContents(value, g, provider);
+            _serializeAsArrayContents(value, g, ctxt);
         } else {
             DateTimeFormatter dtf = _formatter;
             if (dtf == null) {
@@ -99,7 +99,7 @@ public class LocalTimeSerializer extends JSR310FormattedSerializerBase<LocalTime
             }
             g.writeString(value.format(dtf));
         }
-        typeSer.writeTypeSuffix(g, typeIdDef);
+        typeSer.writeTypeSuffix(g, ctxt, typeIdDef);
     }
 
     private final void _serializeAsArrayContents(LocalTime value, JsonGenerator g,
@@ -122,7 +122,7 @@ public class LocalTimeSerializer extends JSR310FormattedSerializerBase<LocalTime
         }
     }
 
-    @Override // since 2.9
+    @Override
     protected JsonToken serializationShape(SerializerProvider provider) {
         return useTimestamp(provider) ? JsonToken.START_ARRAY : JsonToken.VALUE_STRING;
     }

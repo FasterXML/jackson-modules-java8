@@ -75,19 +75,19 @@ public class YearMonthSerializer extends JSR310FormattedSerializerBase<YearMonth
 
     @Override
     public void serializeWithType(YearMonth value, JsonGenerator g,
-            SerializerProvider provider, TypeSerializer typeSer) throws IOException
+            SerializerProvider ctxt, TypeSerializer typeSer) throws IOException
     {
-        WritableTypeId typeIdDef = typeSer.writeTypePrefix(g,
-                typeSer.typeId(value, serializationShape(provider)));
+        WritableTypeId typeIdDef = typeSer.writeTypePrefix(g, ctxt,
+                typeSer.typeId(value, serializationShape(ctxt)));
         // need to write out to avoid double-writing array markers
         if (typeIdDef.valueShape == JsonToken.START_ARRAY) {
-            _serializeAsArrayContents(value, g, provider);
+            _serializeAsArrayContents(value, g, ctxt);
         } else {
             g.writeString((_formatter == null) ? value.toString() : value.format(_formatter));
         }
-        typeSer.writeTypeSuffix(g, typeIdDef);
+        typeSer.writeTypeSuffix(g, ctxt, typeIdDef);
     }
-    
+
     protected void _serializeAsArrayContents(YearMonth value, JsonGenerator g,
             SerializerProvider provider) throws IOException
     {

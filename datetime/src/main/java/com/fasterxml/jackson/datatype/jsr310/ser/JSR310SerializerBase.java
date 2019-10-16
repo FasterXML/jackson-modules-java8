@@ -16,20 +16,18 @@ import java.io.IOException;
  */
 abstract class JSR310SerializerBase<T> extends StdSerializer<T>
 {
-    private static final long serialVersionUID = 1L;
-
     protected JSR310SerializerBase(Class<?> supportedType) {
         super(supportedType);
     }
 
     @Override
-    public void serializeWithType(T value, JsonGenerator g, SerializerProvider provider,
+    public void serializeWithType(T value, JsonGenerator g, SerializerProvider ctxt,
             TypeSerializer typeSer) throws IOException
     {
-        WritableTypeId typeIdDef = typeSer.writeTypePrefix(g,
-                typeSer.typeId(value, serializationShape(provider)));
-        serialize(value, g, provider);
-        typeSer.writeTypeSuffix(g, typeIdDef);
+        WritableTypeId typeIdDef = typeSer.writeTypePrefix(g, ctxt,
+                typeSer.typeId(value, serializationShape(ctxt)));
+        serialize(value, g, ctxt);
+        typeSer.writeTypeSuffix(g, ctxt, typeIdDef);
     }
 
     /**

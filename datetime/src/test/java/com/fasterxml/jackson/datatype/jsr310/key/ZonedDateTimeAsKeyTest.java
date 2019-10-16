@@ -21,7 +21,7 @@ public class ZonedDateTimeAsKeyTest extends ModuleTestBase
     };
     private static final ZonedDateTime DATE_TIME_0 = ZonedDateTime.ofInstant(Instant.ofEpochSecond(0), ZoneOffset.UTC);
     private static final String DATE_TIME_0_STRING = "1970-01-01T00:00:00Z";
-    private static final Instant DATE_TIME_0_INSTANT = DATE_TIME_0.toInstant();
+//    private static final Instant DATE_TIME_0_INSTANT = DATE_TIME_0.toInstant();
 
     private static final ZonedDateTime DATE_TIME_1 = ZonedDateTime.of(
             2015, 3, 14, 9, 26, 53, 590 * 1000 * 1000, ZoneOffset.UTC);

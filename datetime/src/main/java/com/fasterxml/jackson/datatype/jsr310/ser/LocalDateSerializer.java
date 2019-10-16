@@ -76,14 +76,14 @@ public class LocalDateSerializer extends JSR310FormattedSerializerBase<LocalDate
 
     @Override
     public void serializeWithType(LocalDate value, JsonGenerator g,
-            SerializerProvider provider, TypeSerializer typeSer) throws IOException
+            SerializerProvider ctxt, TypeSerializer typeSer) throws IOException
     {
-        WritableTypeId typeIdDef = typeSer.writeTypePrefix(g,
-                typeSer.typeId(value, serializationShape(provider)));
+        WritableTypeId typeIdDef = typeSer.writeTypePrefix(g, ctxt,
+                typeSer.typeId(value, serializationShape(ctxt)));
         // need to write out to avoid double-writing array markers
         switch (typeIdDef.valueShape) {
         case START_ARRAY:
-            _serializeAsArrayContents(value, g, provider);
+            _serializeAsArrayContents(value, g, ctxt);
             break;
         case VALUE_NUMBER_INT:
             g.writeNumber(value.toEpochDay());
@@ -91,7 +91,7 @@ public class LocalDateSerializer extends JSR310FormattedSerializerBase<LocalDate
         default:
             g.writeString((_formatter == null) ? value.toString() : value.format(_formatter));
         }
-        typeSer.writeTypeSuffix(g, typeIdDef);
+        typeSer.writeTypeSuffix(g, ctxt, typeIdDef);
     }
 
     protected void _serializeAsArrayContents(LocalDate value, JsonGenerator g,
