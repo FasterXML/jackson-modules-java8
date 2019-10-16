@@ -49,15 +49,21 @@ public class YearMonthDeserializer extends JSR310DateTimeDeserializerBase<YearMo
         super(YearMonth.class, formatter);
     }
 
+    /**
+     * Since 2.11
+     */
+    protected YearMonthDeserializer(YearMonthDeserializer base, Boolean leniency) {
+        super(base, leniency);
+    }
+
     @Override
     protected YearMonthDeserializer withDateFormat(DateTimeFormatter dtf)  {
         return new YearMonthDeserializer(dtf);
     }
 
-    // !!! TODO: lenient vs strict?
     @Override
     protected YearMonthDeserializer withLeniency(Boolean leniency) {
-        return this;
+        return new YearMonthDeserializer(this, leniency);
     }
 
     @Override
@@ -69,6 +75,9 @@ public class YearMonthDeserializer extends JSR310DateTimeDeserializerBase<YearMo
         if (parser.hasToken(JsonToken.VALUE_STRING)) {
             String string = parser.getText().trim();
             if (string.length() == 0) {
+                if (!isLenient()) {
+                    return _failForNotLenient(parser, context, JsonToken.VALUE_STRING);
+                }
                 return null;
             }
             try {
