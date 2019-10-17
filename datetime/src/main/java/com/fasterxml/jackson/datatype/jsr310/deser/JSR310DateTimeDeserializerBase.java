@@ -3,7 +3,6 @@ package com.fasterxml.jackson.datatype.jsr310.deser;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
-import java.time.temporal.Temporal;
 import java.util.Locale;
 
 import com.fasterxml.jackson.annotation.JsonFormat;

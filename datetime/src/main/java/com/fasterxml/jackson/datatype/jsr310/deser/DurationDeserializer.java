@@ -20,7 +20,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.JsonTokenId;
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.BeanProperty;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 
@@ -28,9 +32,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.DateTimeException;
 import java.time.Duration;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.util.Locale;
+
 
 /**
  * Deserializer for Java 8 temporal {@link Duration}s.
@@ -52,7 +54,7 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration> imple
     /**
      * Since 2.11
      */
-    public DurationDeserializer(DurationDeserializer base, Boolean leniency) {
+    protected DurationDeserializer(DurationDeserializer base, Boolean leniency) {
         super(base, leniency);
     }
 
