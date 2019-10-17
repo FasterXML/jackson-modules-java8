@@ -18,12 +18,15 @@ package com.fasterxml.jackson.datatype.jsr310.deser;
 
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,6 +41,7 @@ public class ZoneOffsetDeserTest extends ModuleTestBase
 {
     private final static ObjectMapper MAPPER = newMapper();
     private final static ObjectReader READER = MAPPER.readerFor(ZoneOffset.class);
+    private final TypeReference<Map<String, ZoneOffset>> MAP_TYPE_REF = new TypeReference<Map<String, ZoneOffset>>() { };
 
     @Test
     public void testDeserializationFromString() throws Exception
@@ -121,4 +125,48 @@ public class ZoneOffsetDeserTest extends ModuleTestBase
                .readValue("[]");
         assertNull(value);
     }
+
+        /*
+    /**********************************************************
+    /* Tests for empty string handling
+    /**********************************************************
+     */
+
+    @Test
+    public void testLenientDeserializeFromEmptyString() throws Exception {
+
+        String key = "zoneOffset";
+        ObjectMapper mapper = newMapper();
+        ObjectReader objectReader = mapper.readerFor(MAP_TYPE_REF);
+
+        String valueFromNullStr = mapper.writeValueAsString(asMap(key, null));
+        Map<String, ZoneOffset> actualMapFromNullStr = objectReader.readValue(valueFromNullStr);
+        ZoneId actualDateFromNullStr = actualMapFromNullStr.get(key);
+        assertNull(actualDateFromNullStr);
+
+        String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, ""));
+        Map<String, ZoneOffset> actualMapFromEmptyStr = objectReader.readValue(valueFromEmptyStr);
+        ZoneId actualDateFromEmptyStr = actualMapFromEmptyStr.get(key);
+        assertEquals("empty string failed to deserialize to null with lenient setting", null, actualDateFromEmptyStr);
+    }
+
+    @Test ( expected =  MismatchedInputException.class)
+    public void testStrictDeserializeFromEmptyString() throws Exception {
+
+        final String key = "zoneOffset";
+        final ObjectMapper mapper = mapperBuilder().build();
+        mapper.configOverride(ZoneOffset.class)
+                .setFormat(JsonFormat.Value.forLeniency(false));
+
+        final ObjectReader objectReader = mapper.readerFor(MAP_TYPE_REF);
+        final String dateValAsNullStr = null;
+
+        String valueFromNullStr = mapper.writeValueAsString(asMap(key, null));
+        Map<String, ZoneOffset> actualMapFromNullStr = objectReader.readValue(valueFromNullStr);
+        assertNull(actualMapFromNullStr.get(key));
+
+        String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, ""));
+        objectReader.readValue(valueFromEmptyStr);
+    }
+
 }

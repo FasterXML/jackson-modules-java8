@@ -242,7 +242,7 @@ public class LocalTimeDeserTest extends ModuleTestBase
     }
 
     @Test( expected =  MismatchedInputException.class)
-    public void testStrictDeserializFromEmptyString() throws Exception {
+    public void testStrictDeserializeFromEmptyString() throws Exception {
 
         final String key = "localTime";
         final ObjectMapper mapper = mapperBuilder().build();
