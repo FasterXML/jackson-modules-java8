@@ -263,11 +263,11 @@ public class InstantDeserializer<T extends Temporal>
             JsonFormat.Value val = findFormatOverrides(ctxt, property, handledType());
             if (val != null) {
                 deserializer = new InstantDeserializer<>(deserializer, val.getFeature(JsonFormat.Feature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE));
-            }
-            if (val.hasLenient()) {
-                Boolean leniency = val.getLenient();
-                if (leniency != null) {
-                    deserializer = deserializer.withLeniency(leniency);
+                if (val.hasLenient()) {
+                    Boolean leniency = val.getLenient();
+                    if (leniency != null) {
+                        deserializer = deserializer.withLeniency(leniency);
+                    }
                 }
             }
         }
