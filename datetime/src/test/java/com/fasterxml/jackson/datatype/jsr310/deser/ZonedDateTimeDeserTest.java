@@ -130,7 +130,7 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
     @Test ( expected =  MismatchedInputException.class)
     public void testStrictDeserializeFromEmptyString() throws Exception {
 
-        final String key = "ZonedDateTime";
+        final String key = "zonedDateTime";
         final ObjectMapper mapper = mapperBuilder().build();
         mapper.configOverride(ZonedDateTime.class)
                 .setFormat(JsonFormat.Value.forLeniency(false));

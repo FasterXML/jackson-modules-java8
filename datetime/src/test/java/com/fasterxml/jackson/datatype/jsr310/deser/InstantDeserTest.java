@@ -508,21 +508,18 @@ public class InstantDeserTest extends ModuleTestBase
     @Test ( expected =  MismatchedInputException.class)
     public void testStrictDeserializeFromEmptyString() throws Exception {
 
-        final String key = "duration";
+        final String key = "instant";
         final ObjectMapper mapper = mapperBuilder().build();
-        mapper.configOverride(Duration.class)
+        mapper.configOverride(Instant.class)
                 .setFormat(JsonFormat.Value.forLeniency(false));
 
         final ObjectReader objectReader = mapper.readerFor(MAP_TYPE_REF);
-        final String dateValAsNullStr = null;
 
-        // even with strict, null value should be deserialized without throwing an exception
-        String valueFromNullStr = mapper.writeValueAsString(asMap(key, dateValAsNullStr));
-        Map<String, Duration> actualMapFromNullStr = objectReader.readValue(valueFromNullStr);
+        String valueFromNullStr = mapper.writeValueAsString(asMap(key, null));
+        Map<String, Instant> actualMapFromNullStr = objectReader.readValue(valueFromNullStr);
         assertNull(actualMapFromNullStr.get(key));
 
-        String dateValAsEmptyStr = "";
-        String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, dateValAsEmptyStr));
+        String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, ""));
         objectReader.readValue(valueFromEmptyStr);
     }
 }

@@ -3,6 +3,7 @@ package com.fasterxml.jackson.datatype.jsr310.deser;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.Temporal;
 import java.util.Locale;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -61,6 +62,16 @@ public abstract class JSR310DateTimeDeserializerBase<T>
     }
 
     /**
+     * @since 2.11
+     */
+    public JSR310DateTimeDeserializerBase(Class<T> supportedType, DateTimeFormatter f, Boolean leniency) {
+        super(supportedType);
+        _formatter = f;
+        _isLenient = !Boolean.FALSE.equals(leniency);
+        _shape = null;
+    }
+
+    /**
      * @since 2.10
      */
     protected JSR310DateTimeDeserializerBase(JSR310DateTimeDeserializerBase<T> base,
@@ -92,7 +103,6 @@ public abstract class JSR310DateTimeDeserializerBase<T>
         _shape = shape;
         _isLenient = base._isLenient;
     }
-
 
     protected abstract JSR310DateTimeDeserializerBase<T> withDateFormat(DateTimeFormatter dtf);
 

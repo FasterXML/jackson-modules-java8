@@ -151,6 +151,18 @@ public class InstantDeserializer<T extends Temporal>
         _adjustToContextTZOverride = adjustToContextTimezoneOverride;
     }
 
+    @SuppressWarnings("unchecked")
+    protected InstantDeserializer(InstantDeserializer<T> base, DateTimeFormatter f, Boolean leniency)
+    {
+        super((Class<T>) base.handledType(), f, leniency);
+        parsedToValue = base.parsedToValue;
+        fromMilliseconds = base.fromMilliseconds;
+        fromNanoseconds = base.fromNanoseconds;
+        adjust = base.adjust;
+        replaceZeroOffsetAsZ = (_formatter == DateTimeFormatter.ISO_INSTANT);
+        _adjustToContextTZOverride = base._adjustToContextTZOverride;
+    }
+
     @Override
     protected InstantDeserializer<T> withDateFormat(DateTimeFormatter dtf) {
         if (dtf == _formatter) {
@@ -159,10 +171,12 @@ public class InstantDeserializer<T extends Temporal>
         return new InstantDeserializer<T>(this, dtf);
     }
 
-    // !!! TODO: lenient vs strict?
     @Override
     protected InstantDeserializer<T> withLeniency(Boolean leniency) {
-        return this;
+        if (_isLenient == !Boolean.FALSE.equals(leniency)) {
+            return this;
+        }
+        return new InstantDeserializer<T>(this, _formatter, leniency);
     }
 
     @Override
@@ -248,10 +262,16 @@ public class InstantDeserializer<T extends Temporal>
         if (deserializer != this) {
             JsonFormat.Value val = findFormatOverrides(ctxt, property, handledType());
             if (val != null) {
-                return  new InstantDeserializer<>(deserializer, val.getFeature(JsonFormat.Feature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE));
+                deserializer = new InstantDeserializer<>(deserializer, val.getFeature(JsonFormat.Feature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE));
+            }
+            if (val.hasLenient()) {
+                Boolean leniency = val.getLenient();
+                if (leniency != null) {
+                    deserializer = deserializer.withLeniency(leniency);
+                }
             }
         }
-        return this;
+        return deserializer;
     }
 
     protected boolean shouldAdjustToContextTimezone(DeserializationContext context) {
