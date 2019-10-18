@@ -4,6 +4,7 @@ Java 8 module
 
 Nick Williams (beamerblvd@github): author of Java 8 date/time module
 Tatu Saloranta (cowtowncoder@github): author (other modules)
+Michael O'Keeffe (kupci@github): co-author (since 2.10)
 
 Louis-Rémi Paquet (lrpg@github)
   #15: Optional<Long> and OptionalLong deserialization not consistent when
@@ -75,6 +76,9 @@ Michael O'Keeffe (kupci@github)
   * Constributed fix for #114: Prevent deserialization of "" as `null` for `LocalDate`,
     `LocalDateTime` in "strict" (non-lenient) mode
    (2.10.0)
+  * Implemented #138: Prevent deserialization of "" as `null` for `Duration`, `Instant`,
+    `LocalTime`, `OffsetTime` and `YearMonth` in "strict" (non-lenient) mode
+   (2.11.0)
 
 Michał Żmuda (zmumi@github)
   * Reported #127: ZonedDateTime in map keys ignores option to write Zone IDs
