@@ -3,6 +3,7 @@ package com.fasterxml.jackson.datatype.jsr310.deser;
 import java.time.ZoneId;
 import java.util.Map;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.*;
@@ -39,25 +40,6 @@ public class ZoneIdDeserTest extends ModuleTestBase
                 MAPPER.readValue("\"America/Anchorage\"", ZoneId.class));
     }
 
-    @Test
-    public void testZoneOffsetDeserFromEmpty() throws Exception
-    {
-        // by default, should be fine
-        assertNull(MAPPER.readValue(quote("  "), ZoneId.class));
-        // but fail if coercion illegal
-        try {
-            newMapperBuilder()
-                .disable(MapperFeature.ALLOW_COERCION_OF_SCALARS)
-                .build()
-                .readValue(quote(" "), ZoneId.class);
-            fail("Should not pass");
-        } catch (MismatchedInputException e) {
-            verifyException(e, "Cannot coerce");
-            verifyException(e, ZoneId.class.getName());
-            verifyException(e, "enable `MapperFeature.ALLOW_COERCION_OF_SCALARS`");
-        }
-    }
-    
     @Test
     public void testPolymorphicZoneIdDeser() throws Exception
     {
@@ -131,4 +113,26 @@ public class ZoneIdDeserTest extends ModuleTestBase
         String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, ""));
         objectReader.readValue(valueFromEmptyStr);
     }
+
+    // [module-java8#68]: Was to prevent it but... conflicts with [#138]
+    @Ignore
+    @Test
+    public void testZoneOffsetDeserFromEmpty() throws Exception
+    {
+        // by default, should be fine
+        assertNull(MAPPER.readValue(quote("  "), ZoneId.class));
+        // but fail if coercion illegal
+        try {
+            newMapperBuilder()
+                .disable(MapperFeature.ALLOW_COERCION_OF_SCALARS)
+                .build()
+                .readValue(quote(" "), ZoneId.class);
+            fail("Should not pass");
+        } catch (MismatchedInputException e) {
+            verifyException(e, "Cannot coerce");
+            verifyException(e, ZoneId.class.getName());
+            verifyException(e, "enable `MapperFeature.ALLOW_COERCION_OF_SCALARS`");
+        }
+    }
+
 }

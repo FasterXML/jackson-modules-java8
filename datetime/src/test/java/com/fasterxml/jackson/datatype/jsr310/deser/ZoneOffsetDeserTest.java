@@ -36,6 +36,7 @@ import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ZoneOffsetDeserTest extends ModuleTestBase
@@ -55,26 +56,6 @@ public class ZoneOffsetDeserTest extends ModuleTestBase
                 READER.readValue("\"-06:30\""));
     }
 
-    @Test
-    public void testZoneOffsetDeserFromEmpty() throws Exception
-    {
-        // by default, should be fine
-        assertNull(MAPPER.readValue(quote("  "), ZoneOffset.class));
-        // but fail if coercion illegal
-        try {
-            newMapperBuilder()
-                .disable(MapperFeature.ALLOW_COERCION_OF_SCALARS)
-                .build()
-                .readerFor(ZoneOffset.class)
-                .readValue(quote(" "));
-            fail("Should not pass");
-        } catch (MismatchedInputException e) {
-            verifyException(e, "Cannot coerce");
-            verifyException(e, ZoneOffset.class.getName());
-            verifyException(e, "enable `MapperFeature.ALLOW_COERCION_OF_SCALARS`");
-        }
-    }
-    
     @Test
     public void testPolymorphicZoneOffsetDeser() throws Exception
     {
@@ -201,4 +182,25 @@ public class ZoneOffsetDeserTest extends ModuleTestBase
         objectReader.readValue(valueFromEmptyStr);
     }
 
+    // [module-java8#68]: Was to prevent it but... conflicts with [#138]
+    @Ignore
+    @Test
+    public void testZoneOffsetDeserFromEmpty() throws Exception
+    {
+        // by default, should be fine
+        assertNull(MAPPER.readValue(quote("  "), ZoneOffset.class));
+        // but fail if coercion illegal
+        try {
+            newMapperBuilder()
+                .disable(MapperFeature.ALLOW_COERCION_OF_SCALARS)
+                .build()
+                .readerFor(ZoneOffset.class)
+                .readValue(quote(" "));
+            fail("Should not pass");
+        } catch (MismatchedInputException e) {
+            verifyException(e, "Cannot coerce");
+            verifyException(e, ZoneOffset.class.getName());
+            verifyException(e, "enable `MapperFeature.ALLOW_COERCION_OF_SCALARS`");
+        }
+    }
 }
