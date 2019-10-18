@@ -1,35 +1,34 @@
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
+import java.util.Map;
 import java.util.TimeZone;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertNull;
 
 public class OffsetDateTimeDeserTest
     extends ModuleTestBase
 {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-
+    private final TypeReference<Map<String, OffsetDateTime>> MAP_TYPE_REF = new TypeReference<Map<String, OffsetDateTime>>() { };
     private static final ZoneId UTC = ZoneId.of("UTC");
 
     private static final ZoneId Z1 = ZoneId.of("America/Chicago");
@@ -521,6 +520,50 @@ public class OffsetDateTimeDeserTest
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue(json);
         assertEquals(givenInstant.atOffset(ZoneOffset.UTC), actual);
+    }
+
+    /*
+    /**********************************************************
+    /* Tests for empty string handling
+    /**********************************************************
+     */
+
+    @Test
+    public void testLenientDeserializeFromEmptyString() throws Exception {
+
+        String key = "OffsetDateTime";
+        ObjectMapper mapper = newMapper();
+        ObjectReader objectReader = mapper.readerFor(MAP_TYPE_REF);
+
+        String valueFromNullStr = mapper.writeValueAsString(asMap(key, null));
+        Map<String, OffsetDateTime> actualMapFromNullStr = objectReader.readValue(valueFromNullStr);
+        OffsetDateTime actualDateFromNullStr = actualMapFromNullStr.get(key);
+        assertNull(actualDateFromNullStr);
+
+        String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, ""));
+        Map<String, OffsetDateTime> actualMapFromEmptyStr = objectReader.readValue(valueFromEmptyStr);
+        OffsetDateTime actualDateFromEmptyStr = actualMapFromEmptyStr.get(key);
+        assertEquals("empty string failed to deserialize to null with lenient setting", null, actualDateFromEmptyStr);
+    }
+
+    @Test ( expected =  MismatchedInputException.class)
+    public void testStrictDeserializeFromEmptyString() throws Exception {
+
+        final String key = "OffsetDateTime";
+        final ObjectMapper mapper = mapperBuilder()
+                .withConfigOverride(OffsetDateTime.class,
+                        o -> o.setFormat(JsonFormat.Value.forLeniency(false)))
+            .build();
+
+        final ObjectReader objectReader = mapper.readerFor(MAP_TYPE_REF);
+        final String dateValAsNullStr = null;
+
+        String valueFromNullStr = mapper.writeValueAsString(asMap(key, null));
+        Map<String, OffsetDateTime> actualMapFromNullStr = objectReader.readValue(valueFromNullStr);
+        assertNull(actualMapFromNullStr.get(key));
+
+        String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, ""));
+        objectReader.readValue(valueFromEmptyStr);
     }
 
     private static void assertIsEqual(OffsetDateTime expected, OffsetDateTime actual)

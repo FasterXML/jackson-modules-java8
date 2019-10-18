@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.Temporal;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -27,7 +28,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -41,6 +44,7 @@ public class LocalTimeDeserTest extends ModuleTestBase
 {
     private final ObjectMapper MAPPER = newMapper();
     private final ObjectReader READER = MAPPER.readerFor(LocalTime.class);
+    private final TypeReference<Map<String, LocalTime>> MAP_TYPE_REF = new TypeReference<Map<String, LocalTime>>() { };
 
     @Test
     public void testDeserializationAsTimestamp01() throws Exception
@@ -204,6 +208,50 @@ public class LocalTimeDeserTest extends ModuleTestBase
                 );
         assertTrue("The value should be a LocalTime.", value instanceof LocalTime);
         assertEquals("The value is not correct.", time, value);
+    }
+
+    /*
+    /**********************************************************
+    /* Tests for empty string handling
+    /**********************************************************
+     */
+
+    @Test
+    public void testLenientDeserializeFromEmptyString() throws Exception {
+
+        String key = "localTime";
+        ObjectMapper mapper = newMapper();
+        ObjectReader objectReader = mapper.readerFor(MAP_TYPE_REF);
+
+        String dateValAsEmptyStr = "";
+
+        String valueFromNullStr = mapper.writeValueAsString(asMap(key, null));
+        Map<String, LocalTime> actualMapFromNullStr = objectReader.readValue(valueFromNullStr);
+        LocalTime actualDateFromNullStr = actualMapFromNullStr.get(key);
+        assertNull(actualDateFromNullStr);
+
+        String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, dateValAsEmptyStr));
+        Map<String, LocalTime> actualMapFromEmptyStr = objectReader.readValue(valueFromEmptyStr);
+        LocalTime actualDateFromEmptyStr = actualMapFromEmptyStr.get(key);
+        assertEquals("empty string failed to deserialize to null with lenient setting",null, actualDateFromEmptyStr);
+    }
+
+    @Test( expected =  MismatchedInputException.class)
+    public void testStrictDeserializeFromEmptyString() throws Exception {
+
+        final String key = "localTime";
+        final ObjectMapper mapper = mapperBuilder()
+                .withConfigOverride(LocalTime.class,
+                        c -> c.setFormat(JsonFormat.Value.forLeniency(false)))
+                .build();
+        final ObjectReader objectReader = mapper.readerFor(MAP_TYPE_REF);
+
+        String valueFromNullStr = mapper.writeValueAsString(asMap(key, null));
+        Map<String, LocalTime> actualMapFromNullStr = objectReader.readValue(valueFromNullStr);
+        assertNull(actualMapFromNullStr.get(key));
+
+        String valueFromEmptyStr = mapper.writeValueAsString(asMap("date", ""));
+        objectReader.readValue(valueFromEmptyStr);
     }
 
     private void expectFailure(String aposJson) throws Throwable {

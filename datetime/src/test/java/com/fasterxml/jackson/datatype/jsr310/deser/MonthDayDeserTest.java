@@ -5,11 +5,14 @@ import java.time.Month;
 import java.time.MonthDay;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAccessor;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
@@ -24,6 +27,7 @@ public class MonthDayDeserTest extends ModuleTestBase
 {
     private final ObjectMapper MAPPER = newMapper();
     private final ObjectReader READER = MAPPER.readerFor(MonthDay.class);
+    private final TypeReference<Map<String, MonthDay>> MAP_TYPE_REF = new TypeReference<Map<String, MonthDay>>() { };
 
     static class Wrapper {
         @JsonFormat(pattern="MM/dd")
@@ -145,6 +149,28 @@ public class MonthDayDeserTest extends ModuleTestBase
         // 13-May-2019, tatu: [modules-java#107] not fully implemented so can't yet test
         WrapperAsArray output = MAPPER.readValue(json, WrapperAsArray.class);
         assertEquals(input.value, output.value);
+    }
+
+    /*
+    /**********************************************************
+    /* Tests for empty string handling
+    /**********************************************************
+     */
+
+    @Test( expected =  MismatchedInputException.class)
+    public void testStrictDeserializeFromEmptyString() throws Exception {
+
+        final String key = "monthDay";
+        final ObjectMapper mapper = mapperBuilder().build();
+        // leniency has no effect here because MonthDayDeser passes through to Java API MonthDay.parse method...
+        final ObjectReader objectReader = mapper.readerFor(MAP_TYPE_REF);
+
+        String valueFromNullStr = mapper.writeValueAsString(asMap(key, null));
+        Map<String, MonthDay> actualMapFromNullStr = objectReader.readValue(valueFromNullStr);
+        assertNull(actualMapFromNullStr.get(key));
+
+        String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, ""));
+        objectReader.readValue(valueFromEmptyStr);
     }
 
     private void expectFailure(String aposJson) throws Throwable {

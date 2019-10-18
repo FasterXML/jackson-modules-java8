@@ -15,6 +15,9 @@ Modules:
  (reported by Bill O'N, fixed by Mike [kupci@github])
 #128: Timestamp keys from `ZonedDateTime`
  (reported by Michał Ż, fixed by Vetle L-R)
+#138: Prevent deserialization of "" as `null` for `Duration`, `Instant`, `LocalTime`, `OffsetTime`
+   and `YearMonth` in "strict" (non-lenient) mode
+ (contributed by Mike [kupci@github])
 
 2.10.1 (not yet released)
 

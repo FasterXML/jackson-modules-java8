@@ -216,7 +216,7 @@ public class LocalDateDeserTest extends ModuleTestBase
     }
 
     @Test( expected =  MismatchedInputException.class)
-    public void testStrictDeserializFromEmptyString() throws Exception {
+    public void testStrictDeserializeFromEmptyString() throws Exception {
 
         final String key = "date";
         final ObjectMapper mapper = mapperBuilder()

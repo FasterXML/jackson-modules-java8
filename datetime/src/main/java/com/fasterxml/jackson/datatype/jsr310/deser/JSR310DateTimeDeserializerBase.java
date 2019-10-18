@@ -33,7 +33,7 @@ public abstract class JSR310DateTimeDeserializerBase<T>
      * and has to be explicitly change to force strict handling: this is to keep backwards
      * compatibility with earlier versions.
      */
-    protected final boolean _isLenient;
+//    protected final boolean _isLenient;
 
     /**
      * Setting that indicates the {@Link JsonFormat.Shape} specified for this deserializer
@@ -43,15 +43,20 @@ public abstract class JSR310DateTimeDeserializerBase<T>
      * NUMBER_INT, and the deserializer was not specified with the leniency setting of true,
      * then an exception will be thrown.
      * @see [jackson-modules-java8#58] for more info
-     *
-     * @since 2.11
      */
     protected final Shape _shape;
 
     protected JSR310DateTimeDeserializerBase(Class<T> supportedType, DateTimeFormatter f) {
         super(supportedType);
         _formatter = f;
-        _isLenient = true;
+//        _isLenient = true;
+        _shape = null;
+    }
+
+    public JSR310DateTimeDeserializerBase(Class<T> supportedType, DateTimeFormatter f, Boolean leniency) {
+        super(supportedType, leniency);
+        _formatter = f;
+//        _isLenient = !Boolean.FALSE.equals(leniency);
         _shape = null;
     }
 
@@ -59,15 +64,15 @@ public abstract class JSR310DateTimeDeserializerBase<T>
             DateTimeFormatter f) {
         super(base);
         _formatter = f;
-        _isLenient = base._isLenient;
+//        _isLenient = base._isLenient;
         _shape = base._shape;
     }
 
     protected JSR310DateTimeDeserializerBase(JSR310DateTimeDeserializerBase<T> base,
             Boolean leniency) {
-        super(base);
+        super(base, leniency);
         _formatter = base._formatter;
-        _isLenient = !Boolean.FALSE.equals(leniency);
+//        _isLenient = !Boolean.FALSE.equals(leniency);
         _shape = base._shape;
     }
 
@@ -79,9 +84,8 @@ public abstract class JSR310DateTimeDeserializerBase<T>
         super(base);
         _formatter = base._formatter;
         _shape = shape;
-        _isLenient = base._isLenient;
+//        _isLenient = base._isLenient;
     }
-
 
     protected abstract JSR310DateTimeDeserializerBase<T> withDateFormat(DateTimeFormatter dtf);
     protected abstract JSR310DateTimeDeserializerBase<T> withLeniency(Boolean leniency);

@@ -1,10 +1,7 @@
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
-
 import java.time.ZoneId;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -13,12 +10,22 @@ import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 public class ZoneIdDeserTest extends ModuleTestBase
 {
     private final ObjectMapper MAPPER = newMapper();
+    private final TypeReference<Map<String, ZoneId>> MAP_TYPE_REF = new TypeReference<Map<String, ZoneId>>() { };
+
     private final ObjectMapper MOCK_OBJECT_MIXIN_MAPPER = mapperBuilder()
             .addMixIn(ZoneId.class, MockObjectConfiguration.class)
             .build();
@@ -81,5 +88,47 @@ public class ZoneIdDeserTest extends ModuleTestBase
     {
         ZoneId value = MOCK_OBJECT_MIXIN_MAPPER.readValue("[\"" + ZoneId.class.getName() + "\",\"America/Denver\"]", ZoneId.class);
         assertEquals("The value is not correct.", ZoneId.of("America/Denver"), value);
+    }
+
+    /*
+    /**********************************************************
+    /* Tests for empty string handling
+    /**********************************************************
+     */
+
+    @Test
+    public void testLenientDeserializeFromEmptyString() throws Exception {
+
+        String key = "zoneId";
+        ObjectMapper mapper = newMapper();
+        ObjectReader objectReader = mapper.readerFor(MAP_TYPE_REF);
+
+        String valueFromNullStr = mapper.writeValueAsString(asMap(key, null));
+        Map<String, ZoneId> actualMapFromNullStr = objectReader.readValue(valueFromNullStr);
+        ZoneId actualDateFromNullStr = actualMapFromNullStr.get(key);
+        assertNull(actualDateFromNullStr);
+
+        String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, ""));
+        Map<String, ZoneId> actualMapFromEmptyStr = objectReader.readValue(valueFromEmptyStr);
+        ZoneId actualDateFromEmptyStr = actualMapFromEmptyStr.get(key);
+        assertEquals("empty string failed to deserialize to null with lenient setting", null, actualDateFromEmptyStr);
+    }
+
+    @Test ( expected =  MismatchedInputException.class)
+    public void testStrictDeserializeFromEmptyString() throws Exception {
+
+        final String key = "zoneId";
+        final ObjectMapper mapper = mapperBuilder()
+                .withConfigOverride(ZoneId.class,
+                        o -> o.setFormat(JsonFormat.Value.forLeniency(false)))
+            .build();
+        final ObjectReader objectReader = mapper.readerFor(MAP_TYPE_REF);
+
+        String valueFromNullStr = mapper.writeValueAsString(asMap(key, null));
+        Map<String, ZoneId> actualMapFromNullStr = objectReader.readValue(valueFromNullStr);
+        assertNull(actualMapFromNullStr.get(key));
+
+        String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, ""));
+        objectReader.readValue(valueFromEmptyStr);
     }
 }

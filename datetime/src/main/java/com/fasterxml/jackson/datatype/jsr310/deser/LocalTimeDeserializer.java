@@ -46,15 +46,21 @@ public class LocalTimeDeserializer extends JSR310DateTimeDeserializerBase<LocalT
         super(LocalTime.class, formatter);
     }
 
+    /**
+     * Since 2.11
+     */
+    protected LocalTimeDeserializer(LocalTimeDeserializer base, Boolean leniency) {
+        super(base, leniency);
+    }
+
     @Override
     protected LocalTimeDeserializer withDateFormat(DateTimeFormatter formatter) {
         return new LocalTimeDeserializer(formatter);
     }
 
-    // !!! TODO: lenient vs strict?
     @Override
     protected LocalTimeDeserializer withLeniency(Boolean leniency) {
-        return this;
+        return new LocalTimeDeserializer(this, leniency);
     }
 
     @Override
@@ -66,6 +72,9 @@ public class LocalTimeDeserializer extends JSR310DateTimeDeserializerBase<LocalT
         if (parser.hasToken(JsonToken.VALUE_STRING)) {
             String string = parser.getText().trim();
             if (string.length() == 0) {
+                if (!isLenient()) {
+                    return _failForNotLenient(parser, context, JsonToken.VALUE_STRING);
+                }
                 return null;
             }
             final DateTimeFormatter format = _formatter;

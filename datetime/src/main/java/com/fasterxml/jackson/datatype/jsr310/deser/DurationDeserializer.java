@@ -16,11 +16,16 @@
 
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.JsonTokenId;
+import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 
 import java.io.IOException;
@@ -28,18 +33,31 @@ import java.math.BigDecimal;
 import java.time.DateTimeException;
 import java.time.Duration;
 
+
 /**
  * Deserializer for Java 8 temporal {@link Duration}s.
  *
  * @author Nick Williams
  */
-public class DurationDeserializer extends JSR310DeserializerBase<Duration>
+public class DurationDeserializer extends JSR310DeserializerBase<Duration> implements ContextualDeserializer
 {
     public static final DurationDeserializer INSTANCE = new DurationDeserializer();
 
     private DurationDeserializer()
     {
         super(Duration.class);
+    }
+
+    /**
+     * Since 2.11
+     */
+    protected DurationDeserializer(DurationDeserializer base, Boolean leniency) {
+        super(base, leniency);
+    }
+
+    @Override
+    protected DurationDeserializer withLeniency(Boolean leniency) {
+        return new DurationDeserializer(this, leniency);
     }
 
     @Override
@@ -60,6 +78,9 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
             case JsonTokenId.ID_STRING:
                 String string = parser.getText().trim();
                 if (string.length() == 0) {
+                    if (!isLenient()) {
+                        return _failForNotLenient(parser, context, JsonToken.VALUE_STRING);
+                    }
                     return null;
                 }
                 try {
@@ -77,5 +98,22 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
         }
         return _handleUnexpectedToken(context, parser, JsonToken.VALUE_STRING,
                 JsonToken.VALUE_NUMBER_INT, JsonToken.VALUE_NUMBER_FLOAT);
+    }
+
+    @Override
+    public JsonDeserializer<?> createContextual(DeserializationContext ctxt,
+                                                BeanProperty property) throws JsonMappingException
+    {
+        JsonFormat.Value format = findFormatOverrides(ctxt, property, handledType());
+        DurationDeserializer deser = this;
+        if (format != null) {
+            if (format.hasLenient()) {
+                Boolean leniency = format.getLenient();
+                if (leniency != null) {
+                    deser = deser.withLeniency(leniency);
+                }
+            }
+        }
+        return deser;
     }
 }

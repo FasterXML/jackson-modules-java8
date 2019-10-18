@@ -37,12 +37,49 @@ import com.fasterxml.jackson.databind.util.ClassUtil;
  */
 abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
 {
+    /**
+     * Flag that indicates what leniency setting is enabled for this deserializer (either
+     * due {@link JsonFormat} annotation on property or class, or due to per-type
+     * "config override", or from global settings): leniency/strictness has effect
+     * on accepting some non-default input value representations (such as integer values
+     * for dates).
+     *<p>
+     * Note that global default setting is for leniency to be enabled, for Jackson 2.x,
+     * and has to be explicitly change to force strict handling: this is to keep backwards
+     * compatibility with earlier versions.
+     *
+     * @since 2.11
+     */
+    protected final boolean _isLenient;
+
     protected JSR310DeserializerBase(Class<T> supportedType) {
         super(supportedType);
+        _isLenient = true;
     }
 
-    protected JSR310DeserializerBase(JSR310DeserializerBase<?> base) {
+    protected JSR310DeserializerBase(Class<T> supportedType,
+                                     Boolean leniency) {
+        super(supportedType);
+        _isLenient = !Boolean.FALSE.equals(leniency);
+    }
+
+    protected JSR310DeserializerBase(JSR310DeserializerBase<T> base) {
         super(base);
+        _isLenient = base._isLenient;
+    }
+
+    protected JSR310DeserializerBase(JSR310DeserializerBase<T> base, Boolean leniency) {
+        super(base);
+        _isLenient = !Boolean.FALSE.equals(leniency);
+    }
+
+    protected abstract JSR310DeserializerBase<T> withLeniency(Boolean leniency);
+
+    /**
+     * @return {@code true} if lenient handling is enabled; {code false} if not (strict mode)
+     */
+    protected boolean isLenient() {
+        return _isLenient;
     }
     
     @Override
@@ -136,6 +173,20 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
                 ClassUtil.getClassDescription(handledType()));
     }
 
+    @SuppressWarnings("unchecked")
+    protected T _failForNotLenient(JsonParser p, DeserializationContext ctxt,
+                                   JsonToken expToken) throws IOException
+    {
+        return (T) ctxt.handleUnexpectedToken(getValueType(ctxt), expToken, p,
+                "Cannot deserialize instance of %s out of %s token: not allowed because 'strict' mode set for property or type (enable 'lenient' handling to allow)",
+                ClassUtil.nameOf(handledType()), p.currentToken());
+    }
+
+    /*
+    public Object handleUnexpectedToken(Class<?> instClass, JsonToken t,
+            JsonParser p, String msg, Object... msgArgs)
+     */
+    
     /**
      * Helper method used to peel off spurious wrappings of DateTimeException
      *

@@ -22,12 +22,15 @@ import java.time.Period;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonParser;
 
 import com.fasterxml.jackson.core.JsonToken;
 
+import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
 
 /**
@@ -63,9 +66,27 @@ public class JSR310StringParsableDeserializer
         _typeSelector = type;
     }
 
+    /**
+     * Since 2.11
+     */
+    protected JSR310StringParsableDeserializer(JSR310StringParsableDeserializer base, Boolean leniency) {
+        super(base, leniency);
+        _typeSelector = base._typeSelector;
+    }
+
     @SuppressWarnings("unchecked")
     protected static <T> JsonDeserializer<T> createDeserializer(Class<T> type, int typeId) {
         return (JsonDeserializer<T>) new JSR310StringParsableDeserializer(type, typeId);
+    }
+
+    @Override
+    protected JSR310StringParsableDeserializer withLeniency(Boolean leniency) {
+        if (_isLenient == !Boolean.FALSE.equals(leniency)) {
+            return this;
+        }
+        // TODO: or should this be casting as above in createDeserializer? But then in createContext, we need to
+        // call the withLeniency method in this class. (See if we can follow InstantDeser convention here?)
+        return new JSR310StringParsableDeserializer(this, leniency);
     }
 
     @Override
@@ -74,7 +95,10 @@ public class JSR310StringParsableDeserializer
         if (parser.hasToken(JsonToken.VALUE_STRING)) {
             String string = parser.getText().trim();
             if (string.isEmpty()) {
-                return _coerceEmptyString(context, false);
+                if (!isLenient()) {
+                    return _failForNotLenient(parser, context, JsonToken.VALUE_STRING);
+                }
+                return null;
             }
             try {
                 switch (_typeSelector) {
@@ -113,5 +137,22 @@ public class JSR310StringParsableDeserializer
             return deserialize(parser, context);
         }
         return deserializer.deserializeTypedFromAny(parser, context);
+    }
+
+    @Override
+    public JsonDeserializer<?> createContextual(DeserializationContext ctxt,
+                                                BeanProperty property) throws JsonMappingException
+    {
+        JsonFormat.Value format = findFormatOverrides(ctxt, property, handledType());
+        JSR310StringParsableDeserializer deser = this;
+        if (format != null) {
+            if (format.hasLenient()) {
+                Boolean leniency = format.getLenient();
+                if (leniency != null) {
+                    deser = this.withLeniency(leniency);
+                }
+            }
+        }
+        return deser;
     }
 }
