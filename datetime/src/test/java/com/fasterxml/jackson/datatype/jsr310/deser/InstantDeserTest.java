@@ -1,19 +1,13 @@
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.time.DateTimeException;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
+import java.util.Map;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import org.junit.Test;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -25,10 +19,14 @@ import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertNull;
+
 public class InstantDeserTest extends ModuleTestBase
 {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_INSTANT;
     private static final String CUSTOM_PATTERN = "yyyy-MM-dd HH:mm:ss";
+    private final TypeReference<Map<String, Instant>> MAP_TYPE_REF = new TypeReference<Map<String, Instant>>() { };
 
     static class Wrapper {
         @JsonFormat(
@@ -478,5 +476,50 @@ public class InstantDeserTest extends ModuleTestBase
         Instant actual = mapper.readValue(json, Instant.class);
 
         assertEquals(givenInstant, actual);
+    }
+
+        /*
+    /**********************************************************
+    /* Tests for empty string handling
+    /**********************************************************
+     */
+
+    @Test
+    public void testLenientDeserializeFromEmptyString() throws Exception {
+
+        String key = "duration";
+        ObjectMapper mapper = newMapper();
+        ObjectReader objectReader = mapper.readerFor(MAP_TYPE_REF);
+
+        String dateValAsNullStr = null;
+        String dateValAsEmptyStr = "";
+
+        String valueFromNullStr = mapper.writeValueAsString(asMap(key, dateValAsNullStr));
+        Map<String, Duration> actualMapFromNullStr = objectReader.readValue(valueFromNullStr);
+        Duration actualDateFromNullStr = actualMapFromNullStr.get(key);
+        assertNull(actualDateFromNullStr);
+
+        String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, dateValAsEmptyStr));
+        Map<String, Duration> actualMapFromEmptyStr = objectReader.readValue(valueFromEmptyStr);
+        Duration actualDateFromEmptyStr = actualMapFromEmptyStr.get(key);
+        assertEquals("empty string failed to deserialize to null with lenient setting", null, actualDateFromEmptyStr);
+    }
+
+    @Test ( expected =  MismatchedInputException.class)
+    public void testStrictDeserializeFromEmptyString() throws Exception {
+
+        final String key = "instant";
+        final ObjectMapper mapper = mapperBuilder().build();
+        mapper.configOverride(Instant.class)
+                .setFormat(JsonFormat.Value.forLeniency(false));
+
+        final ObjectReader objectReader = mapper.readerFor(MAP_TYPE_REF);
+
+        String valueFromNullStr = mapper.writeValueAsString(asMap(key, null));
+        Map<String, Instant> actualMapFromNullStr = objectReader.readValue(valueFromNullStr);
+        assertNull(actualMapFromNullStr.get(key));
+
+        String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, ""));
+        objectReader.readValue(valueFromEmptyStr);
     }
 }

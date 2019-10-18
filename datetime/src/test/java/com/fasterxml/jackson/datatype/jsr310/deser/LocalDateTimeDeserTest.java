@@ -208,7 +208,7 @@ public class LocalDateTimeDeserTest
     }
 
     @Test( expected =  MismatchedInputException.class)
-    public void testStrictDeserializFromEmptyString() throws Exception {
+    public void testStrictDeserializeFromEmptyString() throws Exception {
 
         final String key = "datetime";
         final ObjectMapper mapper = mapperBuilder().build();

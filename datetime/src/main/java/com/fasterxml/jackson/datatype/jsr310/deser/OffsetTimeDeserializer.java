@@ -45,15 +45,21 @@ public class OffsetTimeDeserializer extends JSR310DateTimeDeserializerBase<Offse
         super(OffsetTime.class, dtf);
     }
 
+    /**
+     * Since 2.11
+     */
+    protected OffsetTimeDeserializer(OffsetTimeDeserializer base, Boolean leniency) {
+        super(base, leniency);
+    }
+
     @Override
     protected OffsetTimeDeserializer withDateFormat(DateTimeFormatter dtf) {
         return new OffsetTimeDeserializer(dtf);
     }
 
-    // !!! TODO: lenient vs strict?
     @Override
     protected OffsetTimeDeserializer withLeniency(Boolean leniency) {
-        return this;
+        return new OffsetTimeDeserializer(this, leniency);
     }
 
     @Override
@@ -65,6 +71,9 @@ public class OffsetTimeDeserializer extends JSR310DateTimeDeserializerBase<Offse
         if (parser.hasToken(JsonToken.VALUE_STRING)) {
             String string = parser.getText().trim();
             if (string.length() == 0) {
+                if (!isLenient()) {
+                    return _failForNotLenient(parser, context, JsonToken.VALUE_STRING);
+                }
                 return null;
             }
             try {
