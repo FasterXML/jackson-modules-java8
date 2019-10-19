@@ -15,6 +15,8 @@ due to number of types.
 
 3.0.0 (not yet released)
 
+- #68: Parsing of `ZoneId` should respect `ALLOW_COERCION_OF_SCALARS`
+  wrt empty String
 - Deprecate "paramater names" and "datatypes" modules as functionality
   now included directly in `jackson-databind`
 - Remove legacy `JSR310Module`
