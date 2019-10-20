@@ -182,8 +182,7 @@ public class ZoneOffsetDeserTest extends ModuleTestBase
         objectReader.readValue(valueFromEmptyStr);
     }
 
-    // [module-java8#68]: Was to prevent it but... conflicts with [#138]
-    @Ignore
+    // [module-java8#68]
     @Test
     public void testZoneOffsetDeserFromEmpty() throws Exception
     {

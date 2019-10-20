@@ -98,7 +98,7 @@ public class JSR310StringParsableDeserializer
                 if (!isLenient()) {
                     return _failForNotLenient(parser, context, JsonToken.VALUE_STRING);
                 }
-                return null;
+                return _coerceEmptyString(context, false);
             }
             try {
                 switch (_typeSelector) {
