@@ -62,13 +62,13 @@ public class JSR310StringParsableDeserializer
     public static final JsonDeserializer<ZoneOffset> ZONE_OFFSET =
         createDeserializer(ZoneOffset.class, TYPE_ZONE_OFFSET);
 
-    protected final int _valueType;
+    protected final int _typeSelector;
 
     @SuppressWarnings("unchecked")
-    protected JSR310StringParsableDeserializer(Class<?> supportedType, int valueId)
+    protected JSR310StringParsableDeserializer(Class<?> supportedType, int typeSelector)
     {
         super((Class<Object>)supportedType);
-        _valueType = valueId;
+        _typeSelector = typeSelector;
     }
 
     /**
@@ -76,7 +76,7 @@ public class JSR310StringParsableDeserializer
      */
     protected JSR310StringParsableDeserializer(JSR310StringParsableDeserializer base, Boolean leniency) {
         super(base, leniency);
-        _valueType = base._valueType;
+        _typeSelector = base._typeSelector;
     }
 
     @SuppressWarnings("unchecked")
@@ -106,7 +106,7 @@ public class JSR310StringParsableDeserializer
                 return null;
             }
             try {
-                switch (_valueType) {
+                switch (_typeSelector) {
                 case TYPE_PERIOD:
                     return Period.parse(string);
                 case TYPE_ZONE_ID:
