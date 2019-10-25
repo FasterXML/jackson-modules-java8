@@ -29,8 +29,6 @@ import java.time.format.DateTimeFormatter;
  */
 public class InstantSerializer extends InstantSerializerBase<Instant>
 {
-    private static final long serialVersionUID = 1L;
-
     public static final InstantSerializer INSTANCE = new InstantSerializer();
 
     protected InstantSerializer() {

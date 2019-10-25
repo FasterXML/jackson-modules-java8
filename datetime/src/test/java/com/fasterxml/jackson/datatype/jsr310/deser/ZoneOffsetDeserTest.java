@@ -36,7 +36,6 @@ import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class ZoneOffsetDeserTest extends ModuleTestBase

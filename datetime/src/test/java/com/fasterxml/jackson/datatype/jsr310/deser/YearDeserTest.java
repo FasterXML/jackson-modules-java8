@@ -18,7 +18,6 @@ package com.fasterxml.jackson.datatype.jsr310.deser;
 
 import java.io.IOException;
 import java.time.Year;
-import java.time.YearMonth;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.Temporal;
 import java.util.Map;

@@ -9,31 +9,16 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Feature;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.util.ClassUtil;
 
 public abstract class JSR310DateTimeDeserializerBase<T>
     extends JSR310DeserializerBase<T>
 {
     protected final DateTimeFormatter _formatter;
-
-    /**
-     * Flag that indicates what leniency setting is enabled for this deserializer (either
-     * due {@link JsonFormat} annotation on property or class, or due to per-type
-     * "config override", or from global settings): leniency/strictness has effect
-     * on accepting some non-default input value representations (such as integer values
-     * for dates).
-     *<p>
-     * Note that global default setting is for leniency to be enabled, for Jackson 2.x,
-     * and has to be explicitly change to force strict handling: this is to keep backwards
-     * compatibility with earlier versions.
-     */
-//    protected final boolean _isLenient;
 
     /**
      * Setting that indicates the {@Link JsonFormat.Shape} specified for this deserializer
@@ -49,14 +34,12 @@ public abstract class JSR310DateTimeDeserializerBase<T>
     protected JSR310DateTimeDeserializerBase(Class<T> supportedType, DateTimeFormatter f) {
         super(supportedType);
         _formatter = f;
-//        _isLenient = true;
         _shape = null;
     }
 
     public JSR310DateTimeDeserializerBase(Class<T> supportedType, DateTimeFormatter f, Boolean leniency) {
         super(supportedType, leniency);
         _formatter = f;
-//        _isLenient = !Boolean.FALSE.equals(leniency);
         _shape = null;
     }
 
@@ -64,7 +47,6 @@ public abstract class JSR310DateTimeDeserializerBase<T>
             DateTimeFormatter f) {
         super(base);
         _formatter = f;
-//        _isLenient = base._isLenient;
         _shape = base._shape;
     }
 
@@ -72,27 +54,21 @@ public abstract class JSR310DateTimeDeserializerBase<T>
             Boolean leniency) {
         super(base, leniency);
         _formatter = base._formatter;
-//        _isLenient = !Boolean.FALSE.equals(leniency);
         _shape = base._shape;
     }
 
-    /**
-     * @since 2.11
-     */
     protected JSR310DateTimeDeserializerBase(JSR310DateTimeDeserializerBase<T> base,
                                              Shape shape) {
         super(base);
         _formatter = base._formatter;
         _shape = shape;
-//        _isLenient = base._isLenient;
     }
 
     protected abstract JSR310DateTimeDeserializerBase<T> withDateFormat(DateTimeFormatter dtf);
+
+    @Override
     protected abstract JSR310DateTimeDeserializerBase<T> withLeniency(Boolean leniency);
 
-    /**
-     * @since 2.11
-     */
     protected abstract JSR310DateTimeDeserializerBase<T> withShape(Shape shape);
 
 
@@ -147,6 +123,7 @@ public abstract class JSR310DateTimeDeserializerBase<T>
      *
      * @since 2.10
      */
+    @Override
     protected boolean isLenient() {
         return _isLenient;
     }
@@ -168,6 +145,7 @@ public abstract class JSR310DateTimeDeserializerBase<T>
 p.getNumberValue(), handledType().getName());
     }
 
+    /*
     @SuppressWarnings("unchecked")
     protected T _failForNotLenient(JsonParser p, DeserializationContext ctxt,
             JsonToken expToken) throws IOException
@@ -176,4 +154,5 @@ p.getNumberValue(), handledType().getName());
 "Cannot deserialize instance of %s out of %s token: not allowed because 'strict' mode set for property or type (enable 'lenient' handling to allow)",
                ClassUtil.nameOf(handledType()), p.currentToken());
     }
+    */
 }
