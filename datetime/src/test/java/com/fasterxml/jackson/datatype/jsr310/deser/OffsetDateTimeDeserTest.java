@@ -556,7 +556,6 @@ public class OffsetDateTimeDeserTest
             .build();
 
         final ObjectReader objectReader = mapper.readerFor(MAP_TYPE_REF);
-        final String dateValAsNullStr = null;
 
         String valueFromNullStr = mapper.writeValueAsString(asMap(key, null));
         Map<String, OffsetDateTime> actualMapFromNullStr = objectReader.readValue(valueFromNullStr);

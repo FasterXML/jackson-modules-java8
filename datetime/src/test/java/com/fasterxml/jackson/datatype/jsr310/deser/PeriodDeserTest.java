@@ -16,9 +16,7 @@
 
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
-import java.time.Instant;
 import java.time.Period;
-import java.time.YearMonth;
 import java.time.temporal.TemporalAmount;
 import java.util.Map;
 
