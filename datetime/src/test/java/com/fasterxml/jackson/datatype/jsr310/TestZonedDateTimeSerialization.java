@@ -606,12 +606,8 @@ public class TestZonedDateTimeSerialization
 
     @Test
     public void testDeserializationAsString04AdjustZone() throws Exception {
-
-
         ObjectMapper mapper = newMapper();
-
         ObjectReader objectReader = mapper.readerFor(ZonedDateTime.class);
-
         assertEquals("The value is not correct.",
                 ZonedDateTime.of(1999, 12, 31, 21, 59, 59, 0, UTC),
                 objectReader.readValue(quote("1999-12-31T23:59:59+02:00")));
@@ -621,13 +617,10 @@ public class TestZonedDateTimeSerialization
     public void testDeserializationAsString05KeepOriginalZone() throws Exception {
         ZoneId testZone = ZoneId.of("+02:00");
         ObjectMapper mapper = newMapper();
-
         ObjectReader objectReader = mapper.readerFor(ZonedDateTime.class);
-
         assertEquals("The value is not correct.",
                 ZonedDateTime.of(1999, 12, 31, 23, 59, 59, 0, testZone),
                 objectReader.without(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE).readValue(quote("1999-12-31T23:59:59+02:00")));
-
     }
 
     @Test
