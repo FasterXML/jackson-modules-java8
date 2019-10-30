@@ -749,7 +749,6 @@ public class TestZonedDateTimeSerialization
         assertTrue("The value should be an ZonedDateTime.", value instanceof ZonedDateTime);
         assertIsEqual(date, (ZonedDateTime) value);
         assertEquals("The time zone is not correct.", ZoneId.systemDefault(), ((ZonedDateTime) value).getZone());
-        System.out.println(((ZonedDateTime) value).getZone());
     }
 
     @Test
