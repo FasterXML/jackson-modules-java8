@@ -9,9 +9,6 @@ import org.junit.Test;
 
 import java.time.LocalDate;
 
-/**
- *
- */
 public class LocalDateDeserTest extends ModuleTestBase {
     private final ObjectMapper MAPPER = newMapper();
 
