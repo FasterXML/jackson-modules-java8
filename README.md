@@ -81,9 +81,9 @@ ObjectMapper mapper = new ObjectMapper()
 
 // with 3.0 (or with 2.10 as alternative)
 ObjectMapper mapper = JsonMapper.builder() // or different mapper for other format
-   .registerModule(new ParameterNamesModule())
-   .registerModule(new Jdk8Module())
-   .registerModule(new JavaTimeModule())
+   .addModule(new ParameterNamesModule())
+   .addModule(new Jdk8Module())
+   .addModule(new JavaTimeModule())
    // and possibly other configuration, modules, then:
    .build();
 ```
