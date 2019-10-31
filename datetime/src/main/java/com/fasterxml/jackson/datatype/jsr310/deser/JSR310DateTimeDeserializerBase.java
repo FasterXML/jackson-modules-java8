@@ -3,6 +3,7 @@ package com.fasterxml.jackson.datatype.jsr310.deser;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.ResolverStyle;
 import java.util.Locale;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -137,6 +138,11 @@ public abstract class JSR310DateTimeDeserializerBase<T>
                 } else {
                     df = builder.toFormatter(locale);
                 }
+
+                if (format.hasLenient() && !format.isLenient()) {
+                    df = df.withResolverStyle(ResolverStyle.STRICT);
+                }
+
                 //Issue #69: For instant serializers/deserializers we need to configure the formatter with
                 //a time zone picked up from JsonFormat annotation, otherwise serialization might not work
                 if (format.hasTimeZone()) {

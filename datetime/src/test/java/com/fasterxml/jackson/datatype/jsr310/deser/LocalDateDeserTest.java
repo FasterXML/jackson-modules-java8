@@ -15,6 +15,8 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.Temporal;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.OptBoolean;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.junit.Test;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -52,6 +54,15 @@ public class LocalDateDeserTest extends ModuleTestBase
 
         public ShapeWrapper() { }
         public ShapeWrapper(LocalDate v) { date = v; }
+    }
+
+    final static class StrictWrapper {
+        @JsonFormat(pattern="yyyy-MM-dd",
+                lenient = OptBoolean.FALSE)
+        public LocalDate value;
+
+        public StrictWrapper() { }
+        public StrictWrapper(LocalDate v) { value = v; }
     }
 
     /*
@@ -293,6 +304,20 @@ public class LocalDateDeserTest extends ModuleTestBase
         Wrapper w = MAPPER.readValue("{\"value\":\"2015_07_28T13:53+0300\"}", Wrapper.class);
         LocalDate date = w.value; 
         assertEquals(28, date.getDayOfMonth());
+    }
+
+
+    /*
+    /**********************************************************
+    /* Strict Custom format
+    /**********************************************************
+     */
+
+    // for [modules-java8#148]
+    @Test(expected = InvalidFormatException.class)
+    public void testStrictCustomFormat() throws Exception
+    {
+        StrictWrapper w = MAPPER.readValue("{\"value\":\"2019-11-31\"}", StrictWrapper.class);
     }
 
     /*
