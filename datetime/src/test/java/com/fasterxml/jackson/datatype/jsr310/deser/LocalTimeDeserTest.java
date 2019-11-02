@@ -17,7 +17,6 @@
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;

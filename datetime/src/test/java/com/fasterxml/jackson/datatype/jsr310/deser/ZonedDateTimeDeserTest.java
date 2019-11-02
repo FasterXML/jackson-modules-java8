@@ -13,7 +13,6 @@ import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
@@ -136,7 +135,6 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
                 .setFormat(JsonFormat.Value.forLeniency(false));
 
         final ObjectReader objectReader = mapper.readerFor(MAP_TYPE_REF);
-        final String dateValAsNullStr = null;
 
         String valueFromNullStr = mapper.writeValueAsString(asMap(key, null));
         Map<String, ZonedDateTime> actualMapFromNullStr = objectReader.readValue(valueFromNullStr);

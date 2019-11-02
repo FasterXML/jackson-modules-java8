@@ -18,6 +18,8 @@ Modules:
 #138: Prevent deserialization of "" as `null` for `Duration`, `Instant`, `LocalTime`, `OffsetTime`
    and `YearMonth` in "strict" (non-lenient) mode
  (contributed by Mike [kupci@github])
+#148: Allow strict `LocalDate` parsing
+ (requested by by Arturas G, fix contributed by Samantha W)
 
 2.10.1 (not yet released)
 

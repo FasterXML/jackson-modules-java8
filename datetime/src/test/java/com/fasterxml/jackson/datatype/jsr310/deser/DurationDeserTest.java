@@ -2,7 +2,6 @@ package com.fasterxml.jackson.datatype.jsr310.deser;
 
 import java.math.BigInteger;
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.time.temporal.TemporalAmount;
 import java.util.Map;
 

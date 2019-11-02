@@ -15,7 +15,6 @@ import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.time.LocalTime;
 import java.time.Month;
 import java.time.MonthDay;
 import java.time.format.DateTimeParseException;

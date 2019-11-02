@@ -95,3 +95,11 @@ Vetle Leinonen-Roeim (vetler@github)
 Bill O'Neil (billoneil@github)
   * Reported #58: Should not parse `LocalDate`s from number (timestamp),
    (2.11.0)
+
+Arturas Gusevas (agusevas@github)
+  * Requested #148: Allow strict `LocalDate` parsing
+   (2.11.0)
+
+Samantha Williamson (samwill@github)
+  * Contributed fix to #148: Allow strict `LocalDate` parsing
+   (2.11.0)

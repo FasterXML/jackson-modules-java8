@@ -20,7 +20,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
