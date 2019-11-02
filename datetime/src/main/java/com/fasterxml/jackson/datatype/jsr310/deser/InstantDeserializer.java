@@ -173,9 +173,6 @@ public class InstantDeserializer<T extends Temporal>
 
     @Override
     protected InstantDeserializer<T> withLeniency(Boolean leniency) {
-        if (_isLenient == !Boolean.FALSE.equals(leniency)) {
-            return this;
-        }
         return new InstantDeserializer<T>(this, _formatter, leniency);
     }
 

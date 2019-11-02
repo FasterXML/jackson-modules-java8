@@ -269,7 +269,7 @@ public class LocalTimeDeserTest extends ModuleTestBase
         objectReader.readValue(valueFromEmptyStr);
     }
 
-        /*
+    /*
     /**********************************************************************
     /* Strict JsonFormat tests
     /**********************************************************************
@@ -280,7 +280,7 @@ public class LocalTimeDeserTest extends ModuleTestBase
     @Test(expected = InvalidFormatException.class)
     public void testStrictCustomFormatInvalidTime() throws Exception
     {
-        StrictWrapper w = MAPPER.readValue("{\"value\":\"25:45\"}", StrictWrapper.class);
+        /*StrictWrapper w =*/ MAPPER.readValue("{\"value\":\"25:45\"}", StrictWrapper.class);
     }
 
     private void expectFailure(String aposJson) throws Throwable {

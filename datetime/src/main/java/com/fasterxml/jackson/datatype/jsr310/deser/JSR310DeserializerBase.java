@@ -70,7 +70,7 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
 
     protected JSR310DeserializerBase(JSR310DeserializerBase<T> base) {
         super(base);
-        _isLenient = true;
+        _isLenient = base._isLenient;
     }
 
     protected JSR310DeserializerBase(JSR310DeserializerBase<T> base, Boolean leniency) {
@@ -155,7 +155,6 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
         }
     }
 
-    @SuppressWarnings("unchecked")
     protected <R> R _handleUnexpectedToken(DeserializationContext context,
               JsonParser parser, JsonToken... expTypes) throws JsonMappingException {
         return _handleUnexpectedToken(context, parser,

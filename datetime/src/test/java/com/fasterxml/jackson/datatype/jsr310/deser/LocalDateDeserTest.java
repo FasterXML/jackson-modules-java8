@@ -317,7 +317,7 @@ public class LocalDateDeserTest extends ModuleTestBase
     @Test(expected = InvalidFormatException.class)
     public void testStrictCustomFormat() throws Exception
     {
-        StrictWrapper w = MAPPER.readValue("{\"value\":\"2019-11-31\"}", StrictWrapper.class);
+        /*StrictWrapper w =*/ MAPPER.readValue("{\"value\":\"2019-11-31\"}", StrictWrapper.class);
     }
 
     /*
@@ -379,9 +379,9 @@ public class LocalDateDeserTest extends ModuleTestBase
     /*
      * Tests for issue 58 - NUMBER_INT should be specified when deserializing
      * LocalDate as EpochDays
+     *
+     /**********************************************************************
      */
-    /**********************************************************************
-    */
     @Test
     public void testLenientDeserializeFromNumberInt() throws Exception {
         ObjectMapper mapper = newMapper();
@@ -420,7 +420,7 @@ public class LocalDateDeserTest extends ModuleTestBase
     /**********************************************************************
     /* Helper methods
     /**********************************************************************
-    */
+     */
     private void expectFailure(ObjectReader reader, String json) throws Throwable {
         try {
             reader.readValue(aposToQuotes(json));
