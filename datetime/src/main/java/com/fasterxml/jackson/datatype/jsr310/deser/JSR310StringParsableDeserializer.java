@@ -60,10 +60,10 @@ public class JSR310StringParsableDeserializer
     protected final int _typeSelector;
 
     @SuppressWarnings("unchecked")
-    protected JSR310StringParsableDeserializer(Class<?> supportedType, int type)
+    protected JSR310StringParsableDeserializer(Class<?> supportedType, int typeSelector)
     {
         super((Class<Object>)supportedType);
-        _typeSelector = type;
+        _typeSelector = typeSelector;
     }
 
     /**

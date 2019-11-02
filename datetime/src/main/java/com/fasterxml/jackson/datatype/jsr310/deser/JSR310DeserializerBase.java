@@ -47,8 +47,6 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
      * Note that global default setting is for leniency to be enabled, for Jackson 2.x,
      * and has to be explicitly change to force strict handling: this is to keep backwards
      * compatibility with earlier versions.
-     *
-     * @since 2.11
      */
     protected final boolean _isLenient;
 

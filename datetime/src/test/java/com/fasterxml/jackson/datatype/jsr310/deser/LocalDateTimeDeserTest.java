@@ -16,20 +16,6 @@
 
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonFormat.Feature;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.deser.DeserializationProblemHandler;
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
-import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -42,6 +28,21 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TimeZone;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Feature;
+import com.fasterxml.jackson.annotation.OptBoolean;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.deser.DeserializationProblemHandler;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
+import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
+import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 public class LocalDateTimeDeserTest
@@ -50,6 +51,15 @@ public class LocalDateTimeDeserTest
     private final static ObjectMapper MAPPER = newMapper();
     private final static ObjectReader READER = MAPPER.readerFor(LocalDateTime.class);
     private final TypeReference<Map<String, LocalDateTime>> MAP_TYPE_REF = new TypeReference<Map<String, LocalDateTime>>() { };
+
+    final static class StrictWrapper {
+        @JsonFormat(pattern="yyyy-MM-dd HH:mm",
+                lenient = OptBoolean.FALSE)
+        public LocalDateTime value;
+
+        public StrictWrapper() { }
+        public StrictWrapper(LocalDateTime v) { value = v; }
+    }
 
     /*
     /**********************************************************
@@ -472,6 +482,32 @@ public class LocalDateTimeDeserTest
             expectFailure(reader, json);
         }
     }
+
+    /*
+    /**********************************************************************
+    /* Strict JsonFormat tests
+    /**********************************************************************
+     */
+
+    // [modules-java8#148]: handle strict deserializaiton for date/time
+    @Test(expected = InvalidFormatException.class)
+    public void testStrictCustomFormatInvalidDate() throws Exception
+    {
+        /*StrictWrapper w =*/ MAPPER.readValue("{\"value\":\"2019-11-31 15:45\"}", StrictWrapper.class);
+    }
+
+    @Test(expected = InvalidFormatException.class)
+    public void testStrictCustomFormatInvalidTime() throws Exception
+    {
+        /*StrictWrapper w =*/ MAPPER.readValue("{\"value\":\"2019-11-30 25:45\"}", StrictWrapper.class);
+    }
+
+    @Test(expected = InvalidFormatException.class)
+    public void testStrictCustomFormatInvalidDateAndTime() throws Exception
+    {
+        /*StrictWrapper w =*/ MAPPER.readValue("{\"value\":\"2019-11-31 25:45\"}", StrictWrapper.class);
+    }
+
 
     private void expectSuccess(ObjectReader reader, Object exp, String json) throws IOException {
         final LocalDateTime value = reader.readValue(aposToQuotes(json));

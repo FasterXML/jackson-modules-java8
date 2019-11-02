@@ -29,11 +29,13 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.OptBoolean;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
@@ -44,7 +46,16 @@ public class LocalTimeDeserTest extends ModuleTestBase
 {
     private final ObjectMapper MAPPER = newMapper();
     private final ObjectReader READER = MAPPER.readerFor(LocalTime.class);
+
     private final TypeReference<Map<String, LocalTime>> MAP_TYPE_REF = new TypeReference<Map<String, LocalTime>>() { };
+
+    final static class StrictWrapper {
+        @JsonFormat(pattern="HH:mm", lenient = OptBoolean.FALSE)
+        public LocalTime value;
+
+        public StrictWrapper() { }
+        public StrictWrapper(LocalTime v) { value = v; }
+    }
 
     @Test
     public void testDeserializationAsTimestamp01() throws Exception
@@ -252,6 +263,20 @@ public class LocalTimeDeserTest extends ModuleTestBase
 
         String valueFromEmptyStr = mapper.writeValueAsString(asMap("date", ""));
         objectReader.readValue(valueFromEmptyStr);
+    }
+
+    /*
+    /**********************************************************************
+    /* Strict JsonFormat tests
+    /**********************************************************************
+     */
+
+    // [modules-java8#148]: handle strict deserializaiton for date/time
+
+    @Test(expected = InvalidFormatException.class)
+    public void testStrictCustomFormatInvalidTime() throws Exception
+    {
+        /*StrictWrapper w =*/ MAPPER.readValue("{\"value\":\"25:45\"}", StrictWrapper.class);
     }
 
     private void expectFailure(String aposJson) throws Throwable {
