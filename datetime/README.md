@@ -30,6 +30,7 @@ values. If the JSON value contains more than one element in the array, deseriali
 as null value for regular POJOs ("beans") with data-binding
     
 Some exceptions to this standard serialization/deserialization rule:
+* [`Instant`](https://docs.oracle.com/javase/8/docs/api/java/time/Instant.html), which always has the UTC time zone when `ADJUST_DATES_TO_CONTEXT_TIME_ZONE` is enabled.
 * [`Period`](https://docs.oracle.com/javase/8/docs/api/java/time/Period.html), which always results in an ISO-8601 format
 because Periods must be represented in years, months, and/or days.
 * [`Year`](https://docs.oracle.com/javase/8/docs/api/java/time/Year.html), which only contains a year and cannot be
