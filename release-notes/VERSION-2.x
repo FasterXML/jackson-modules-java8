@@ -8,7 +8,7 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
-2.10.1 (not yet released)
+2.10.1 (09-Nov-2019)
 
 #127: ZonedDateTime in map keys ignores option to write Zone IDs
  (reported by Michał Ż, fixed by Vetle L-R)
