@@ -21,7 +21,16 @@ fractional second timestamps with up-to-nanosecond resolution, since the meaning
 more ambiguous integer types are read as fractional seconds without a decimal point if
 `READ_DATE_TIMESTAMPS_AS_NANOSECONDS` is enabled (it is by default), and otherwise they are read as milliseconds.
 
+For TimeZone handling, `ADJUST_DATES_TO_CONTEXT_TIME_ZONE` (default: true) specifies whether the context provided by `java.time.TimeZone` 
+'SerializedProvider#getTimeZone()' should be used to adjust Date/Time values on deserialization, even if the value itself
+contains timezone information. If disabled, it will only be used if the value itself does not contain any TimeZone information.
+
+Finally, there are two features that apply to array handling. `UNWRAP_SINGLE_VALUE_ARRAYS` (default: false) allows auto-conversion from single-element arrays to non-JSON-array 
+values. If the JSON value contains more than one element in the array, deserialization will still fail. `ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT` (default: false) determines whether empty Array value ("[ ]" in JSON) is accepted 
+as null value for regular POJOs ("beans") with data-binding
+    
 Some exceptions to this standard serialization/deserialization rule:
+* [`Instant`](https://docs.oracle.com/javase/8/docs/api/java/time/Instant.html), which always has the UTC time zone when `ADJUST_DATES_TO_CONTEXT_TIME_ZONE` is enabled.
 * [`Period`](https://docs.oracle.com/javase/8/docs/api/java/time/Period.html), which always results in an ISO-8601 format
 because Periods must be represented in years, months, and/or days.
 * [`Year`](https://docs.oracle.com/javase/8/docs/api/java/time/Year.html), which only contains a year and cannot be
