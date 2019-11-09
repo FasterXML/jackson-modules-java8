@@ -41,6 +41,7 @@ final class OptionalDeserializer
 
     @Override
     public Optional<?> getNullValue(DeserializationContext ctxt) throws JsonMappingException {
+        // 07-May-2019, tatu: [databind#2303], needed for nested ReferenceTypes
         return Optional.ofNullable(_valueDeserializer.getNullValue(ctxt));
     }
 
