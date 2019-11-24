@@ -54,6 +54,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.OffsetDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.OffsetTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.YearMonthSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.YearSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.ZoneIdSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.ZonedDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.key.ZonedDateTimeKeySerializer;
 
@@ -139,7 +140,7 @@ public final class JavaTimeModule
             .addDeserializer(ZoneId.class, JSR310StringParsableDeserializer.ZONE_ID)
             .addDeserializer(ZoneOffset.class, JSR310StringParsableDeserializer.ZONE_OFFSET)
         );
-        
+
         // then serializers:
         context.addSerializers(new SimpleSerializers()
             .addSerializer(Duration.class, DurationSerializer.INSTANCE)
@@ -156,9 +157,10 @@ public final class JavaTimeModule
 
             .addSerializer(ZonedDateTime.class, ZonedDateTimeSerializer.INSTANCE)
 
-            // note: actual concrete type is `ZoneRegion`, but that's not visible:
-            .addSerializer(ZoneId.class, new ToStringSerializer(ZoneId.class))
-    
+            // Need to override Type Id handling
+            // (actual concrete type is `ZoneRegion`, but that's not visible)
+            .addSerializer(ZoneId.class, new ZoneIdSerializer())
+
             .addSerializer(ZoneOffset.class, new ToStringSerializer(ZoneOffset.class))
         );
 

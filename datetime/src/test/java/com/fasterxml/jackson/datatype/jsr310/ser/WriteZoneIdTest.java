@@ -59,7 +59,7 @@ public class WriteZoneIdTest extends ModuleTestBase
                 .addModule(new JavaTimeModule())
                 .build();
         String value = mapper.writeValueAsString(id);
-        assertEquals("The value is not correct.", "[\"java.time.ZoneRegion\",\"America/Denver\"]", value);
+        assertEquals("The value is not correct.", "[\"java.time.ZoneId\",\"America/Denver\"]", value);
     }
 
     @Test

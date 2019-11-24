@@ -35,14 +35,17 @@ public class DefaultTypingTest extends ModuleTestBase
     {
         ZoneId exp = ZoneId.of("America/Chicago");
         String json = TYPING_MAPPER.writeValueAsString(exp);
-        assertEquals(exp, TYPING_MAPPER.readValue(json, ZoneId.class));
+        ZoneId act = TYPING_MAPPER.readValue(json, ZoneId.class);
+        assertEquals(exp, act);
     }
 
+    // This one WILL add type info, since `ZoneId` is abstract type:
     @Test
     public void testZoneWithForcedBaseType() throws Exception
     {
         ZoneId exp = ZoneId.of("America/Chicago");
         String json = TYPING_MAPPER.writerFor(ZoneId.class).writeValueAsString(exp);
-        assertEquals(exp, TYPING_MAPPER.readValue(json, ZoneId.class));
+        ZoneId act = TYPING_MAPPER.readValue(json, ZoneId.class);
+        assertEquals(exp, act);
     }
 }

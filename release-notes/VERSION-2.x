@@ -20,8 +20,10 @@ Modules:
  (contributed by Mike [kupci@github])
 #148: Allow strict `LocalDate` parsing
  (requested by by Arturas G, fix contributed by Samantha W)
+- (datetime) Add explicit `ZoneId` serializer to force use of `ZoneId` as Type Id, and
+  not inaccessible subtype (`ZoneRegion`): this to avoid JDK9+ Module Access problem
 
-2.10.1 (not yet released)
+2.10.1 (09-Nov-2019)
 
 #127: ZonedDateTime in map keys ignores option to write Zone IDs
  (reported by Michał Ż, fixed by Vetle L-R)

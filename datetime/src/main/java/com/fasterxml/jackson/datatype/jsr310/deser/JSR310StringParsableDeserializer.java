@@ -66,9 +66,6 @@ public class JSR310StringParsableDeserializer
         _typeSelector = typeSelector;
     }
 
-    /**
-     * Since 2.11
-     */
     protected JSR310StringParsableDeserializer(JSR310StringParsableDeserializer base, Boolean leniency) {
         super(base, leniency);
         _typeSelector = base._typeSelector;
@@ -90,13 +87,14 @@ public class JSR310StringParsableDeserializer
     }
 
     @Override
-    public Object deserialize(JsonParser parser, DeserializationContext context) throws IOException
+    public Object deserialize(JsonParser p, DeserializationContext context) throws IOException
     {
-        if (parser.hasToken(JsonToken.VALUE_STRING)) {
-            String string = parser.getText().trim();
+        String string = p.getValueAsString();
+        if (string != null) {
+            string = string.trim();
             if (string.isEmpty()) {
                 if (!isLenient()) {
-                    return _failForNotLenient(parser, context, JsonToken.VALUE_STRING);
+                    return _failForNotLenient(p, context, JsonToken.VALUE_STRING);
                 }
                 return _coerceEmptyString(context, false);
             }
@@ -113,30 +111,30 @@ public class JSR310StringParsableDeserializer
                 return _handleDateTimeException(context, e, string);
             }
         }
-        if (parser.hasToken(JsonToken.VALUE_EMBEDDED_OBJECT)) {
+        if (p.hasToken(JsonToken.VALUE_EMBEDDED_OBJECT)) {
             // 20-Apr-2016, tatu: Related to [databind#1208], can try supporting embedded
             //    values quite easily
-            return parser.getEmbeddedObject();
+            return p.getEmbeddedObject();
         }
-        if (parser.hasToken(JsonToken.START_ARRAY)){
-        	return _deserializeFromArray(parser, context);
+        if (p.hasToken(JsonToken.START_ARRAY)){
+            return _deserializeFromArray(p, context);
         }
         
-        throw context.wrongTokenException(parser, handledType(), JsonToken.VALUE_STRING, null);
+        throw context.wrongTokenException(p, handledType(), JsonToken.VALUE_STRING, null);
     }
 
     @Override
-    public Object deserializeWithType(JsonParser parser, DeserializationContext context,
+    public Object deserializeWithType(JsonParser p, DeserializationContext context,
             TypeDeserializer deserializer)
         throws IOException
     {
         // This is a nasty kludge right here, working around issues like
         // [datatype-jsr310#24]. But should work better than not having the work-around.
-        JsonToken t = parser.currentToken();
+        JsonToken t = p.currentToken();
         if ((t != null) && t.isScalarValue()) {
-            return deserialize(parser, context);
+            return deserialize(p, context);
         }
-        return deserializer.deserializeTypedFromAny(parser, context);
+        return deserializer.deserializeTypedFromAny(p, context);
     }
 
     @Override
