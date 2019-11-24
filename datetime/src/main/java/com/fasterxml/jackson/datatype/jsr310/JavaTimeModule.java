@@ -50,6 +50,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.OffsetDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.OffsetTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.YearMonthSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.YearSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.ZoneIdSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.ZonedDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.key.ZonedDateTimeKeySerializer;
 
@@ -152,9 +153,9 @@ public final class JavaTimeModule extends SimpleModule
          */
         addSerializer(ZonedDateTime.class, ZonedDateTimeSerializer.INSTANCE);
         
-        // note: actual concrete type is `ZoneRegion`, but that's not visible:
-        addSerializer(ZoneId.class, new ToStringSerializer(ZoneId.class));
-
+        // since 2.11: need to override Type Id handling
+        // (actual concrete type is `ZoneRegion`, but that's not visible)
+        addSerializer(ZoneId.class, new ZoneIdSerializer());
         addSerializer(ZoneOffset.class, new ToStringSerializer(ZoneOffset.class));
 
         // key serializers

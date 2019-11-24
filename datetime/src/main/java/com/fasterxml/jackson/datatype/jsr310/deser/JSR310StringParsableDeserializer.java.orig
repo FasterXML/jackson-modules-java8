@@ -95,14 +95,13 @@ public class JSR310StringParsableDeserializer
     }
 
     @Override
-    public Object deserialize(JsonParser p, DeserializationContext context) throws IOException
+    public Object deserialize(JsonParser parser, DeserializationContext context) throws IOException
     {
-        String string = p.getValueAsString();
-        if (string != null) {
-            string = string.trim();
+        if (parser.hasToken(JsonToken.VALUE_STRING)) {
+            String string = parser.getText().trim();
             if (string.length() == 0) {
                 if (!isLenient()) {
-                    return _failForNotLenient(p, context, JsonToken.VALUE_STRING);
+                    return _failForNotLenient(parser, context, JsonToken.VALUE_STRING);
                 }
                 return null;
             }
@@ -119,16 +118,16 @@ public class JSR310StringParsableDeserializer
                 return _handleDateTimeException(context, e, string);
             }
         }
-        if (p.hasToken(JsonToken.VALUE_EMBEDDED_OBJECT)) {
+        if (parser.hasToken(JsonToken.VALUE_EMBEDDED_OBJECT)) {
             // 20-Apr-2016, tatu: Related to [databind#1208], can try supporting embedded
             //    values quite easily
-            return p.getEmbeddedObject();
+            return parser.getEmbeddedObject();
         }
-        if (p.hasToken(JsonToken.START_ARRAY)){
-            return _deserializeFromArray(p, context);
+        if (parser.hasToken(JsonToken.START_ARRAY)){
+        	return _deserializeFromArray(parser, context);
         }
         
-        throw context.wrongTokenException(p, handledType(), JsonToken.VALUE_STRING, null);
+        throw context.wrongTokenException(parser, handledType(), JsonToken.VALUE_STRING, null);
     }
 
     @Override
@@ -136,8 +135,9 @@ public class JSR310StringParsableDeserializer
             TypeDeserializer deserializer)
         throws IOException
     {
-        // This is a nasty kludge right here, working around issues like
-        // [datatype-jsr310#24]. But should work better than not having the work-around.
+        /* This is a nasty kludge right here, working around issues like
+         * [datatype-jsr310#24]. But should work better than not having the work-around.
+         */
         JsonToken t = parser.getCurrentToken();
         if ((t != null) && t.isScalarValue()) {
             return deserialize(parser, context);

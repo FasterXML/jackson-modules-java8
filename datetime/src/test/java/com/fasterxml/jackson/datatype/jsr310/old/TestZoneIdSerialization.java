@@ -67,7 +67,7 @@ public class TestZoneIdSerialization extends ModuleTestBase
         String value = this.mapper.writeValueAsString(id);
 
         assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[\"java.time.ZoneRegion\",\"America/Denver\"]", value);
+        assertEquals("The value is not correct.", "[\"java.time.ZoneId\",\"America/Denver\"]", value);
     }
 
     @Test
