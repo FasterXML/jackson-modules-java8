@@ -23,6 +23,10 @@ Modules:
 - (datetime) Add explicit `ZoneId` serializer to force use of `ZoneId` as Type Id, and
   not inaccessible subtype (`ZoneRegion`): this to avoid JDK9+ Module Access problem
 
+2.10.2 (05-Jan-2020)
+
+No changes since 2.10.1
+
 2.10.1 (09-Nov-2019)
 
 #127: ZonedDateTime in map keys ignores option to write Zone IDs
