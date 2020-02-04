@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.*;
 import org.junit.*;
 
-import java.io.IOException;
-
 import static org.assertj.core.api.BDDAssertions.*;
 
 public class JsonCreatorTest
@@ -25,11 +23,10 @@ public class JsonCreatorTest
 	}
 
 	@Test
-	public void shouldDeserializeUsingDefaultPropertyCreatorSetting() throws IOException {
+	public void shouldDeserializeUsingDefaultPropertyCreatorSetting() throws Exception {
 		// given
 		ObjectMapper objectMapper = new ObjectMapper();
-		objectMapper.registerModule(new ParameterNamesModule());
-		objectMapper.configure(MapperFeature.SET_PROPERTY_CREATOR_AS_DEFAULT, true);
+		objectMapper.registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
 		int givenValue = 1;
 
 		// when

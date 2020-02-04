@@ -78,7 +78,7 @@ public class ParameterNamesAnnotationIntrospector extends NopAnnotationIntrospec
             }
             return mode;
         }
-        return null;
+        return creatorBinding;
     }
 
     @Override
