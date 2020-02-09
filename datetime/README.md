@@ -9,6 +9,18 @@ string representation. ISO-8601 specifies formats for representing offset dates 
 local dates and times, periods, durations, zones, and more. All JSR-310 types have built-in translation to and from
 ISO-8601 formats.
 
+For string representation default formats for deserialization are:
+|  Java type | Format  |
+|------------|---------|
+|[`Instant`](https://docs.oracle.com/javase/8/docs/api/java/time/Instant.html)|[`DateTimeFormatter.ISO_INSTANT`](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#ISO_INSTANT)|
+|[`OffsetDateTime`](https://docs.oracle.com/javase/8/docs/api/java/time/OffsetDateTime.html)|[`DateTimeFormatter.ISO_OFFSET_DATE_TIME`](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#ISO_OFFSET_DATE_TIME)|
+|[`ZonedDateTime`](https://docs.oracle.com/javase/8/docs/api/java/time/ZonedDateTime.html)|[`DateTimeFormatter.ISO_ZONED_DATE_TIME`](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#ISO_ZONED_DATE_TIME)|
+|[`LocalDateTime`](https://docs.oracle.com/javase/8/docs/api/java/time/LocalDateTime.html)|[`DateTimeFormatter.ISO_LOCAL_DATE_TIME`](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#ISO_LOCAL_DATE_TIME)|
+|[`LocalDate`](https://docs.oracle.com/javase/8/docs/api/java/time/LocalDate.html)|[`DateTimeFormatter.ISO_LOCAL_DATE`](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#ISO_LOCAL_DATE)|
+|[`LocalTime`](https://docs.oracle.com/javase/8/docs/api/java/time/LocalTime.html)|[`DateTimeFormatter.ISO_LOCAL_TIME`](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#ISO_LOCAL_TIME)|
+|[`OffsetTime`](https://docs.oracle.com/javase/8/docs/api/java/time/OffsetTime.html)|[`DateTimeFormatter.ISO_OFFSET_TIME`](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#ISO_OFFSET_TIME)|
+|[`YearMonth`](https://docs.oracle.com/javase/8/docs/api/java/time/YearMonth.html)|[`DateTimeFormatter.ofPattern("uuuu-MM")`](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#ofPattern-java.lang.String-)|
+
 Granularity of timestamps is controlled through the companion features
 [`SerializationFeature#WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS`](http://fasterxml.github.com/jackson-databind/javadoc/2.2.0/com/fasterxml/jackson/databind/SerializationFeature.html#WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
 and
