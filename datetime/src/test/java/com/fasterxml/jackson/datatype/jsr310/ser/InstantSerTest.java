@@ -16,6 +16,9 @@
 
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
@@ -172,5 +175,59 @@ public class InstantSerTest extends ModuleTestBase
         String value = m.writeValueAsString(date);
         assertEquals("The value is not correct.",
                 "[\"" + Instant.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", value);
+    }
+
+    /**
+     * When {@link
+     * com.fasterxml.jackson.code.jackson-databind.WRITE_TIMESTAMPS_WITHOUT_FRACTION}
+     * is enabled no fraction is added to the serialized string.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testSerializationWithFractionFlag() throws Exception
+    {
+        class TempClass {
+            @JsonProperty("registered_at")
+            @JsonFormat(shape = JsonFormat.Shape.NUMBER)
+            private Instant registeredAt;
+
+            public TempClass(long seconds, int nanos) {
+                this.registeredAt = Instant.ofEpochSecond(seconds, nanos);
+            }
+        }
+
+        String value = MAPPER.writer()
+          .with(SerializationFeature.WRITE_TIMESTAMPS_WITHOUT_FRACTION)
+          .writeValueAsString(new TempClass(1420324047L, 123456));
+        assertEquals("The value should not include any decimals.", "{\"registered_at\":1420324047}", value);
+    }
+
+    /**
+     * When both WRITE_TIMESTAMPS_WITHOUT_FRACTION and
+     * WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS from {@link
+     * com.fasterxml.jackson.code.jackson-databind} are enabled the former one
+     * has priority.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testSerializationFractionPriority() throws Exception
+    {
+        class TempClass {
+            @JsonProperty("registered_at")
+            @JsonFormat(shape = JsonFormat.Shape.NUMBER)
+            private Instant registeredAt;
+
+            public TempClass(long seconds, int nanos) {
+                this.registeredAt = Instant.ofEpochSecond(seconds, nanos);
+            }
+        }
+
+        String value = MAPPER.writer()
+          .with(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
+          .with(SerializationFeature.WRITE_TIMESTAMPS_WITHOUT_FRACTION)
+          .writeValueAsString(new TempClass(1420324047L, 123456));
+        assertEquals("The value does not include any decimals.", "{\"registered_at\":1420324047}", value);
     }
 }

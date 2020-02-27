@@ -80,7 +80,9 @@ public class DurationSerializer extends JSR310FormattedSerializerBase<Duration>
             SerializerProvider provider) throws IOException
     {
         if (useTimestamp(provider)) {
-            if (useNanoseconds(provider)) {
+             if (withoutFraction(provider)) {
+                generator.writeNumber(duration.toMillis()/1000);
+            } else if (useNanoseconds(provider)) {
                 generator.writeNumber(DecimalUtils.toBigDecimal(
                         duration.getSeconds(), duration.getNano()
                 ));
