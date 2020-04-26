@@ -8,6 +8,10 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
+2.11.1 (not yet released)
+
+-
+
 2.11.0 (26-Apr-2020)
 
 #58: (datetime) Should not parse `LocalDate`s from number (timestamp), or at least

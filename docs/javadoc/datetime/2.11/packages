@@ -1,0 +1,5 @@
+com.fasterxml.jackson.datatype.jsr310.deser
+com.fasterxml.jackson.datatype.jsr310.deser.key
+com.fasterxml.jackson.datatype.jsr310
+com.fasterxml.jackson.datatype.jsr310.ser
+com.fasterxml.jackson.datatype.jsr310.ser.key
