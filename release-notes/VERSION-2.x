@@ -16,7 +16,7 @@ No changes since 2.9.8
 2.9.8 (15-Dec-2018)
 
 #90 (datetime): Performance issue with malicious `BigDecimal` input,
-   `InstantDeserializer`, `DurationDeserializer`
+   `InstantDeserializer`, `DurationDeserializer` (CVE-2018-1000873)
  (reported by Andriy P, fix contributed by Todd J)
 
 2.9.7 (19-Sep-2018)
