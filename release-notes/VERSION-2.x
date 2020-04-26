@@ -8,17 +8,17 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
-2.11.0 (not yet released)
+2.11.0 (26-Apr-2020)
 
-#58: Should not parse `LocalDate`s from number (timestamp), or at least
+#58: (datetime) Should not parse `LocalDate`s from number (timestamp), or at least
   should have an option preventing
  (reported by Bill O'N, fixed by Mike [kupci@github])
-#128: Timestamp keys from `ZonedDateTime`
+#128: (datetime) Timestamp keys from `ZonedDateTime`
  (reported by Michał Ż, fixed by Vetle L-R)
-#138: Prevent deserialization of "" as `null` for `Duration`, `Instant`, `LocalTime`, `OffsetTime`
+#138: (datetime) Prevent deserialization of "" as `null` for `Duration`, `Instant`, `LocalTime`, `OffsetTime`
    and `YearMonth` in "strict" (non-lenient) mode
  (contributed by Mike [kupci@github])
-#148: Allow strict `LocalDate` parsing
+#148: (datetime) Allow strict `LocalDate` parsing
  (requested by by Arturas G, fix contributed by Samantha W)
 - (datetime) Add explicit `ZoneId` serializer to force use of `ZoneId` as Type Id, and
   not inaccessible subtype (`ZoneRegion`): this to avoid JDK9+ Module Access problem
