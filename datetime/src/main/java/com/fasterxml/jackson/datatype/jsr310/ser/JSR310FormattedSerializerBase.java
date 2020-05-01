@@ -240,4 +240,9 @@ abstract class JSR310FormattedSerializerBase<T>
         return (provider != null)
                 && provider.isEnabled(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS);
     }
+
+    protected boolean withoutFraction(SerializerProvider provider) {
+        return (provider != null)
+                && provider.isEnabled(SerializationFeature.WRITE_TIMESTAMPS_WITHOUT_FRACTION);
+    }
 }

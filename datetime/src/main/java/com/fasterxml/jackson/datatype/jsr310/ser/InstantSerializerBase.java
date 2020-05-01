@@ -81,13 +81,16 @@ public abstract class InstantSerializerBase<T extends Temporal>
     public void serialize(T value, JsonGenerator generator, SerializerProvider provider) throws IOException
     {
         if (useTimestamp(provider)) {
-            if (useNanoseconds(provider)) {
+             if (withoutFraction(provider)) {
+                generator.writeNumber(getEpochMillis.applyAsLong(value) / 1000);
+                return;
+            } else if (useNanoseconds(provider)) {
                 generator.writeNumber(DecimalUtils.toBigDecimal(
                         getEpochSeconds.applyAsLong(value), getNanoseconds.applyAsInt(value)
                 ));
                 return;
             }
-            generator.writeNumber(getEpochMillis.applyAsLong(value));
+        generator.writeNumber(getEpochMillis.applyAsLong(value));
             return;
         }
         String str;
