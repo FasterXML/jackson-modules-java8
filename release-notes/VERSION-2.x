@@ -27,6 +27,7 @@ Modules:
 - (datetime) Add explicit `ZoneId` serializer to force use of `ZoneId` as Type Id, and
   not inaccessible subtype (`ZoneRegion`): this to avoid JDK9+ Module Access problem
 
+2.10.4 (03-May-2020)
 2.10.3 (03-Mar-2020)
 2.10.2 (05-Jan-2020)
 
