@@ -478,19 +478,19 @@ public class LocalDateTimeDeserTest
     @Test(expected = InvalidFormatException.class)
     public void testStrictCustomFormatInvalidDate() throws Exception
     {
-        StrictWrapper w = MAPPER.readValue("{\"value\":\"2019-11-31 15:45\"}", StrictWrapper.class);
+        /*StrictWrapper w =*/ MAPPER.readValue("{\"value\":\"2019-11-31 15:45\"}", StrictWrapper.class);
     }
 
     @Test(expected = InvalidFormatException.class)
     public void testStrictCustomFormatInvalidTime() throws Exception
     {
-        StrictWrapper w = MAPPER.readValue("{\"value\":\"2019-11-30 25:45\"}", StrictWrapper.class);
+        /*StrictWrapper w =*/ MAPPER.readValue("{\"value\":\"2019-11-30 25:45\"}", StrictWrapper.class);
     }
 
     @Test(expected = InvalidFormatException.class)
     public void testStrictCustomFormatInvalidDateAndTime() throws Exception
     {
-        StrictWrapper w = MAPPER.readValue("{\"value\":\"2019-11-31 25:45\"}", StrictWrapper.class);
+        /*StrictWrapper w =*/ MAPPER.readValue("{\"value\":\"2019-11-31 25:45\"}", StrictWrapper.class);
     }
 
 

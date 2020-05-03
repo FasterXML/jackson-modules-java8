@@ -95,7 +95,6 @@ public class ZoneIdDeserTest extends ModuleTestBase
                 .setFormat(JsonFormat.Value.forLeniency(false));
 
         final ObjectReader objectReader = mapper.readerFor(MAP_TYPE_REF);
-        final String dateValAsNullStr = null;
 
         String valueFromNullStr = mapper.writeValueAsString(asMap(key, null));
         Map<String, ZoneId> actualMapFromNullStr = objectReader.readValue(valueFromNullStr);

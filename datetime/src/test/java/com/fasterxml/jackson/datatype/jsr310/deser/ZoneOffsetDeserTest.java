@@ -82,8 +82,7 @@ public class ZoneOffsetDeserTest extends ModuleTestBase
             READER.readValue("[\"+0300\"]");
             fail("expected MismatchedInputException");
         } catch (MismatchedInputException e) {
-            verifyException(e, "Cannot deserialize");
-            verifyException(e, "out of START_ARRAY");
+            verifyException(e, "Cannot deserialize value of type `java.time.ZoneOffset` from Array value");
         }
     }
 
@@ -94,8 +93,7 @@ public class ZoneOffsetDeserTest extends ModuleTestBase
             READER.readValue("[]");
             fail("expected MismatchedInputException");
         } catch (MismatchedInputException e) {
-            verifyException(e, "Cannot deserialize");
-            verifyException(e, "out of START_ARRAY");
+            verifyException(e, "Cannot deserialize value of type `java.time.ZoneOffset` from Array value");
         }
         try {
             READER
@@ -159,7 +157,6 @@ public class ZoneOffsetDeserTest extends ModuleTestBase
                 .setFormat(JsonFormat.Value.forLeniency(false));
 
         final ObjectReader objectReader = mapper.readerFor(MAP_TYPE_REF);
-        final String dateValAsNullStr = null;
 
         String valueFromNullStr = mapper.writeValueAsString(asMap(key, null));
         Map<String, ZoneOffset> actualMapFromNullStr = objectReader.readValue(valueFromNullStr);
@@ -168,5 +165,4 @@ public class ZoneOffsetDeserTest extends ModuleTestBase
         String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, ""));
         objectReader.readValue(valueFromEmptyStr);
     }
-
 }

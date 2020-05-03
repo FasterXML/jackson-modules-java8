@@ -317,7 +317,6 @@ public class DurationDeserTest extends ModuleTestBase
         mapper.addMixIn(TemporalAmount.class, MockObjectConfiguration.class);
         TemporalAmount value = mapper.readValue(prefix + '"' + duration.toString() + "\"]", TemporalAmount.class);
 
-        assertNotNull("The value should not be null.", value);
         assertTrue("The value should be a Duration.", value instanceof Duration);
         assertEquals("The value is not correct.", duration, value);
     }
@@ -341,9 +340,7 @@ public class DurationDeserTest extends ModuleTestBase
             READER.readValue("[]");
             fail("expected MismatchedInputException");
         } catch (MismatchedInputException e) {
-            verifyException(e, "Cannot deserialize instance of");
-            verifyException(e, "java.time.Duration");
-            verifyException(e, "out of START_ARRAY");
+            verifyException(e, "Cannot deserialize value of type `java.time.Duration` from Array value");
         }
         try {
             newMapper()
@@ -362,7 +359,6 @@ public class DurationDeserTest extends ModuleTestBase
       			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
       			.readerFor(Duration.class).readValue("[\"" + exp.toString() + "\"]");
 
-          assertNotNull("The value should not be null.", value);
           assertEquals("The value is not correct.", exp,  value);
     }
    

@@ -647,7 +647,6 @@ public class OffsetDateTimeDeserTest
                 .setFormat(JsonFormat.Value.forLeniency(false));
 
         final ObjectReader objectReader = mapper.readerFor(MAP_TYPE_REF);
-        final String dateValAsNullStr = null;
 
         String valueFromNullStr = mapper.writeValueAsString(asMap(key, null));
         Map<String, OffsetDateTime> actualMapFromNullStr = objectReader.readValue(valueFromNullStr);
