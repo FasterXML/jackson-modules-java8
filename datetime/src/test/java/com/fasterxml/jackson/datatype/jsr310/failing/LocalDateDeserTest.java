@@ -24,6 +24,6 @@ public class LocalDateDeserTest extends ModuleTestBase {
     @Test(expected = InvalidFormatException.class)
     public void testStrictCustomFormat() throws Exception
     {
-        StrictWrapper w = MAPPER.readValue("{\"value\":\"2019-11-31\"}", StrictWrapper.class);
+        /*StrictWrapper w =*/ MAPPER.readValue("{\"value\":\"2019-11-31\"}", StrictWrapper.class);
     }
 }

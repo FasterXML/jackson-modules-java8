@@ -95,8 +95,7 @@ public class ZoneOffsetDeserTest extends ModuleTestBase
             READER.readValue("[\"+0300\"]");
             fail("expected MismatchedInputException");
         } catch (MismatchedInputException e) {
-            verifyException(e, "Cannot deserialize");
-            verifyException(e, "out of START_ARRAY");
+            verifyException(e, "Cannot deserialize value of type `java.time.ZoneOffset` from Array value");
         }
     }
 
@@ -107,8 +106,7 @@ public class ZoneOffsetDeserTest extends ModuleTestBase
             READER.readValue("[]");
             fail("expected MismatchedInputException");
         } catch (MismatchedInputException e) {
-            verifyException(e, "Cannot deserialize");
-            verifyException(e, "out of START_ARRAY");
+            verifyException(e, "Cannot deserialize value of type `java.time.ZoneOffset` from Array value");
         }
         try {
             READER

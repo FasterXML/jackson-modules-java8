@@ -133,8 +133,7 @@ public class TestOffsetDateTimeDeserialization extends ModuleTestBase
             READER.readValue("['2000-01-01T12:00+00']");
     		    fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
-            verifyException(e, "Cannot deserialize");
-            verifyException(e, "START_ARRAY token");
+            verifyException(e, "Cannot deserialize value of type `java.time.OffsetDateTime` from Array value");
         }
     }
     
@@ -145,8 +144,7 @@ public class TestOffsetDateTimeDeserialization extends ModuleTestBase
             READER.readValue("[]");
             fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
-            verifyException(e, "Cannot deserialize");
-            verifyException(e, "START_ARRAY token");
+            verifyException(e, "Cannot deserialize value of type `java.time.OffsetDateTime` from Array value");
         }
         try {
     		    READER.with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
