@@ -29,11 +29,7 @@ import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.DateTimeException;
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAccessor;
@@ -69,7 +65,15 @@ public class InstantDeserializer<T extends Temporal>
             OffsetDateTime::from,
             a -> OffsetDateTime.ofInstant(Instant.ofEpochMilli(a.value), a.zoneId),
             a -> OffsetDateTime.ofInstant(Instant.ofEpochSecond(a.integer, a.fraction), a.zoneId),
-            (d, z) -> d.withOffsetSameInstant(z.getRules().getOffset(d.toLocalDateTime())),
+            (d, z) -> {
+                ZoneOffset o = z.getRules().getOffset(d.toLocalDateTime());
+                // Only adjust the OffsetDateTime when it is normalizable
+                if (isAdjustable(d, o)) {
+                    return d.withOffsetSameInstant(o);
+                } else {
+                    return d;
+                }
+            },
             true // yes, replace zero offset with Z
     );
 
@@ -318,6 +322,24 @@ public class InstantDeserializer<T extends Temporal>
         }
 
         return text;
+    }
+
+    /**
+     * Checks whether an {@link OffsetDateTime} is normalizable to a certain
+     * {@link ZoneOffset}. See [jackson-modules-java8#166].
+     *
+     * @param d The {@link OffsetDateTime} to normalize
+     * @param o The desired {@link ZoneOffset} of the normalization
+     * @return true, when the {@link OffsetDateTime} can be normalized to the
+     *         given {@link ZoneOffset}, false else
+     */
+    private static boolean isAdjustable(OffsetDateTime d, ZoneOffset o)
+    {
+        OffsetDateTime lowerBoundEx = OffsetDateTime.MIN
+                .plusHours(18).minusSeconds(o.getTotalSeconds()).minusNanos(1);
+        OffsetDateTime upperBoundEx = OffsetDateTime.MAX
+                .minusHours(18).minusSeconds(o.getTotalSeconds()).plusNanos(1);
+        return d.isAfter(lowerBoundEx) && d.isBefore(upperBoundEx);
     }
 
     public static class FromIntegerArguments // since 2.8.3
