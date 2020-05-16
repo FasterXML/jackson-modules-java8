@@ -615,6 +615,79 @@ public class OffsetDateTimeDeserTest
     }
 
     /*
+     * Tests for the deserialization of OffsetDateTimes that cannot be
+     * normalized with ADJUST_DATES_TO_CONTEXT_TIME_ZONE enabled. The expected
+     * behaviour is that normalization is skipped for those OffsetDateTimes
+     * that cannot be normalized. See [jackson-modules-java8#166].
+     */
+
+    @Test
+    public void testDeserializationOfOffsetDateTimeMin() throws Exception
+    {
+        OffsetDateTime date = OffsetDateTime.MIN;
+        OffsetDateTime value = MAPPER.readerFor(OffsetDateTime.class)
+                .with(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+                .readValue('"' + FORMATTER.format(date) + '"');
+        assertIsEqual(date, value);
+        assertNotEquals("The time zone has been normalized.", ZoneOffset.UTC, value.getOffset());
+    }
+
+    @Test
+    public void testDeserializationOfUnadjustableOffsetDateTimeNearMin() throws Exception
+    {
+        OffsetDateTime date = OffsetDateTime.MIN.plusHours(36).minusNanos(1);
+        OffsetDateTime value = MAPPER.readerFor(OffsetDateTime.class)
+                .with(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+                .readValue('"' + FORMATTER.format(date) + '"');
+        assertIsEqual(date, value);
+        assertNotEquals("The time zone has been normalized.", ZoneOffset.UTC, value.getOffset());
+    }
+
+    @Test
+    public void testDeserializationOfAdjustableOffsetDateTimeNearMin() throws Exception
+    {
+        OffsetDateTime date = OffsetDateTime.MIN.plusHours(36);
+        OffsetDateTime value = MAPPER.readerFor(OffsetDateTime.class)
+                .with(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+                .readValue('"' + FORMATTER.format(date) + '"');
+        assertIsEqual(date, value);
+        assertEquals("The time zone is not correct.", ZoneOffset.UTC, value.getOffset());
+    }
+
+    @Test
+    public void testDeserializationOfOffsetDateTimeMax() throws Exception
+    {
+        OffsetDateTime date = OffsetDateTime.MAX;
+        OffsetDateTime value = MAPPER.readerFor(OffsetDateTime.class)
+                .with(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+                .readValue('"' + FORMATTER.format(date) + '"');
+        assertIsEqual(date, value);
+        assertNotEquals("The time zone has been normalized.", ZoneOffset.UTC, value.getOffset());
+    }
+
+    @Test
+    public void testDeserializationOfUnadjustableOffsetDateTimeNearMax() throws Exception
+    {
+        OffsetDateTime date = OffsetDateTime.MAX.minusHours(36).plusNanos(1);
+        OffsetDateTime value = MAPPER.readerFor(OffsetDateTime.class)
+                .with(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+                .readValue('"' + FORMATTER.format(date) + '"');
+        assertIsEqual(date, value);
+        assertNotEquals("The time zone has been normalized.", ZoneOffset.UTC, value.getOffset());
+    }
+
+    @Test
+    public void testDeserializationOfAdjustableOffsetDateTimeNearMax() throws Exception
+    {
+        OffsetDateTime date = OffsetDateTime.MAX.minusHours(36);
+        OffsetDateTime value = MAPPER.readerFor(OffsetDateTime.class)
+                .with(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+                .readValue('"' + FORMATTER.format(date) + '"');
+        assertIsEqual(date, value);
+        assertEquals("The time zone is not correct.", ZoneOffset.UTC, value.getOffset());
+    }
+
+    /*
     /**********************************************************
     /* Tests for empty string handling
     /**********************************************************

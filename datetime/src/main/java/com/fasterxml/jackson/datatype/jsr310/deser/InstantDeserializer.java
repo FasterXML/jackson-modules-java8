@@ -59,6 +59,18 @@ public class InstantDeserializer<T extends Temporal>
      */
     private static final Pattern ISO8601_UTC_ZERO_OFFSET_SUFFIX_REGEX = Pattern.compile("\\+00:?(00)?$");
 
+    /**
+     * Constant that defines the lower bound for {@link OffsetDateTime}s being adjustable to any
+     * other time zone. See [jackson-modules-java8#166].
+     */
+    private static final OffsetDateTime OFFSET_DATE_TIME_MIN_ADJ = OffsetDateTime.MIN.plusHours(36);
+
+    /**
+     * Constant that defines the upper bound for {@link OffsetDateTime}s being adjustable to any
+     * other time zone. See [jackson-modules-java8#166].
+     */
+    private static final OffsetDateTime OFFSET_DATE_TIME_MAX_ADJ = OffsetDateTime.MAX.minusHours(36);
+
     public static final InstantDeserializer<Instant> INSTANT = new InstantDeserializer<>(
             Instant.class, DateTimeFormatter.ISO_INSTANT,
             Instant::from,
@@ -73,7 +85,7 @@ public class InstantDeserializer<T extends Temporal>
             OffsetDateTime::from,
             a -> OffsetDateTime.ofInstant(Instant.ofEpochMilli(a.value), a.zoneId),
             a -> OffsetDateTime.ofInstant(Instant.ofEpochSecond(a.integer, a.fraction), a.zoneId),
-            (d, z) -> d.withOffsetSameInstant(z.getRules().getOffset(d.toLocalDateTime())),
+            (d, z) -> isAdjustable(d) ? d.withOffsetSameInstant(z.getRules().getOffset(d.toLocalDateTime())) : d,
             true // yes, replace zero offset with Z
     );
 
@@ -324,6 +336,22 @@ public class InstantDeserializer<T extends Temporal>
         }
 
         return text;
+    }
+
+    /**
+     * Checks whether an {@link OffsetDateTime} is adjustable to any other time offset. We can
+     * safely regard an {@link OffsetDateTime} as adjustable to all time zones when it's geq than
+     * OffsetDateTime.MIN + 36 hours and leq than OffsetDateTime.MAX - 36 hours.
+     * See [jackson-modules-java8#166].
+     *
+     * @param d The {@link OffsetDateTime} that should be adjusted
+     * @return true, when the {@link OffsetDateTime} can be adjusted to any other time zone, false else
+     */
+    private static boolean isAdjustable(OffsetDateTime d)
+    {
+        return (d.isAfter(OFFSET_DATE_TIME_MIN_ADJ) && d.isBefore(OFFSET_DATE_TIME_MAX_ADJ))
+                || d.isEqual(OFFSET_DATE_TIME_MIN_ADJ)
+                || d.isEqual(OFFSET_DATE_TIME_MAX_ADJ);
     }
 
     public static class FromIntegerArguments // since 2.8.3
