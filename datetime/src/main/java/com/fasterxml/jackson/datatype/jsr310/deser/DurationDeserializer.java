@@ -66,7 +66,7 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration> imple
     @Override
     public Duration deserialize(JsonParser parser, DeserializationContext context) throws IOException
     {
-        switch (parser.getCurrentTokenId())
+        switch (parser.currentTokenId())
         {
             case JsonTokenId.ID_NUMBER_FLOAT:
                 BigDecimal value = parser.getDecimalValue();

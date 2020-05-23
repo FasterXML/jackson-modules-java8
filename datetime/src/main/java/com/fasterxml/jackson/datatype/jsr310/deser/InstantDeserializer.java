@@ -185,7 +185,7 @@ public class InstantDeserializer<T extends Temporal>
     {
         //NOTE: Timestamps contain no timezone info, and are always in configured TZ. Only
         //string values have to be adjusted to the configured TZ.
-        switch (parser.getCurrentTokenId())
+        switch (parser.currentTokenId())
         {
             case JsonTokenId.ID_NUMBER_FLOAT:
                 return _fromDecimal(context, parser.getDecimalValue());

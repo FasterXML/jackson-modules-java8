@@ -25,7 +25,7 @@ public class OptionalIntDeserializer extends BaseScalarOptionalDeserializer<Opti
         if (p.hasToken(JsonToken.VALUE_NUMBER_INT)) {
             return OptionalInt.of(p.getIntValue());
         }
-        switch (p.getCurrentTokenId()) {
+        switch (p.currentTokenId()) {
         case JsonTokenId.ID_STRING:
             String text = p.getText().trim();
             if ((text.length() == 0)) {

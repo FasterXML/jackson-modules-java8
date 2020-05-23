@@ -26,7 +26,7 @@ public class OptionalLongDeserializer extends BaseScalarOptionalDeserializer<Opt
         if (p.hasToken(JsonToken.VALUE_NUMBER_INT)) {
             return OptionalLong.of(p.getLongValue());
         }
-        switch (p.getCurrentTokenId()) {
+        switch (p.currentTokenId()) {
         case JsonTokenId.ID_STRING:
             String text = p.getText().trim();
             if ((text.length() == 0)) {
