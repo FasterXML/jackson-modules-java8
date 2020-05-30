@@ -40,7 +40,8 @@ import java.time.Duration;
  * @author Nick Williams
  * @since 2.2.0
  */
-public class DurationDeserializer extends JSR310DeserializerBase<Duration> implements ContextualDeserializer
+public class DurationDeserializer extends JSR310DeserializerBase<Duration>
+    implements ContextualDeserializer
 {
     private static final long serialVersionUID = 1L;
 

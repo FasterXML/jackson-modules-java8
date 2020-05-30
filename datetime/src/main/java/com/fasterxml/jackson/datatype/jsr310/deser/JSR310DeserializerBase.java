@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.deser.std.StdScalarDeserializer;
 import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
+import com.fasterxml.jackson.databind.type.LogicalType;
 import com.fasterxml.jackson.databind.util.ClassUtil;
 
 /**
@@ -49,6 +50,9 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
      * Note that global default setting is for leniency to be enabled, for Jackson 2.x,
      * and has to be explicitly change to force strict handling: this is to keep backwards
      * compatibility with earlier versions.
+     *<p>
+     * Note that with 2.12 and later coercion settings are moving to {@code CoercionConfig},
+     * instead of simple yes/no leniency setting.
      *
      * @since 2.11
      */
@@ -91,6 +95,10 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
     protected boolean isLenient() {
         return _isLenient;
     }
+
+    // Presumably all types here are Date/Time oriented ones?
+    @Override
+    public LogicalType logicalType() { return LogicalType.DateTime; }
     
     @Override
     public Object deserializeWithType(JsonParser parser, DeserializationContext context,

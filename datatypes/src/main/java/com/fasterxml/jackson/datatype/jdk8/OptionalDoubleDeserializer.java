@@ -8,6 +8,7 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.JsonTokenId;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.type.LogicalType;
 
 class OptionalDoubleDeserializer extends BaseScalarOptionalDeserializer<OptionalDouble>
 {
@@ -19,6 +20,9 @@ class OptionalDoubleDeserializer extends BaseScalarOptionalDeserializer<Optional
         super(OptionalDouble.class, OptionalDouble.empty());
     }
 
+    @Override
+    public LogicalType logicalType() { return LogicalType.Float; }
+    
     @Override
     public OptionalDouble deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         // minor optimization, first, for common case
