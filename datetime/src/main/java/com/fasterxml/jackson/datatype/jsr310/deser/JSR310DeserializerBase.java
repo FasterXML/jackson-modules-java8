@@ -27,6 +27,7 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.deser.std.StdScalarDeserializer;
 import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
+import com.fasterxml.jackson.databind.type.LogicalType;
 import com.fasterxml.jackson.databind.util.ClassUtil;
 
 /**
@@ -79,6 +80,10 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
     protected boolean isLenient() {
         return _isLenient;
     }
+
+    // Presumably all types here are Date/Time oriented ones?
+    @Override
+    public LogicalType logicalType() { return LogicalType.DateTime; }
     
     @Override
     public Object deserializeWithType(JsonParser parser, DeserializationContext context,
