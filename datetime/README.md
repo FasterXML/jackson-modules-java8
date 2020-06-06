@@ -23,7 +23,7 @@ more ambiguous integer types are read as fractional seconds without a decimal po
 
 For TimeZone handling, `ADJUST_DATES_TO_CONTEXT_TIME_ZONE` (default: true) specifies whether the context provided by `java.time.TimeZone` 
 'SerializedProvider#getTimeZone()' should be used to adjust Date/Time values on deserialization, even if the value itself
-contains timezone information. If disabled, it will only be used if the value itself does not contain any TimeZone information.
+contains timezone information. If the value is `OffsetDateTime.MIN` or `OffsetDateTime.MAX`, the Date/Time value will not be adjusted. If disabled, it will only be used if the value itself does not contain any TimeZone information.
 
 Finally, there are two features that apply to array handling. `UNWRAP_SINGLE_VALUE_ARRAYS` (default: false) allows auto-conversion from single-element arrays to non-JSON-array 
 values. If the JSON value contains more than one element in the array, deserialization will still fail. `ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT` (default: false) determines whether empty Array value ("[ ]" in JSON) is accepted 
