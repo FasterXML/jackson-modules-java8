@@ -565,6 +565,45 @@ public class OffsetDateTimeDeserTest
         objectReader.readValue(valueFromEmptyStr);
     }
 
+    // [module-java8#166]
+    @Test
+    public void testDeserializationNoAdjustIfMIN() throws Exception
+    {
+        OffsetDateTime date = OffsetDateTime.MIN;
+        ObjectMapper m = newMapper()
+                .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, true)
+                .setTimeZone(TimeZone.getTimeZone(Z1))
+                .addMixIn(Temporal.class, MockObjectConfiguration.class);
+        Temporal value = m.readValue(
+                "[\"" + OffsetDateTime.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", Temporal.class
+        );
+
+        assertNotNull("The value should not be null.", value);
+        assertTrue("The value should be an OffsetDateTime.", value instanceof OffsetDateTime);
+        OffsetDateTime actualValue = (OffsetDateTime) value;
+        assertIsEqual(date, actualValue);
+        assertEquals(date.getOffset(),actualValue.getOffset());
+    }
+
+    @Test
+    public void testDeserializationNoAdjustIfMAX() throws Exception
+    {
+        OffsetDateTime date = OffsetDateTime.MAX;
+        ObjectMapper m = newMapper()
+                .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, true)
+                .setTimeZone(TimeZone.getTimeZone(Z1))
+                .addMixIn(Temporal.class, MockObjectConfiguration.class);
+        Temporal value = m.readValue(
+                "[\"" + OffsetDateTime.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", Temporal.class
+        );
+
+        assertNotNull("The value should not be null.", value);
+        assertTrue("The value should be an OffsetDateTime.", value instanceof OffsetDateTime);
+        OffsetDateTime actualValue = (OffsetDateTime) value;
+        assertIsEqual(date, actualValue);
+        assertEquals(date.getOffset(),actualValue.getOffset());
+    }
+
     private static void assertIsEqual(OffsetDateTime expected, OffsetDateTime actual)
     {
         assertTrue("The value is not correct. Expected timezone-adjusted <" + expected + ">, actual <" + actual + ">.",
