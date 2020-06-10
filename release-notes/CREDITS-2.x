@@ -106,4 +106,5 @@ Samantha Williamson (samwill@github)
 
 Moritz Orth (morth@github.com)
   * Reported and suggested fix for #166: Cannot deserialize OffsetDateTime.MIN and
-   OffsetDateTime.MAX with ADJUST_DATES_TO_CONTEXT_TIME_ZONE enabled (2.12)
+   OffsetDateTime.MAX with ADJUST_DATES_TO_CONTEXT_TIME_ZONE enabled
+   (2.12.0)
