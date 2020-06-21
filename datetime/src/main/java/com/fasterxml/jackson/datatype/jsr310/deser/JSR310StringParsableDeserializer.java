@@ -31,6 +31,7 @@ import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.cfg.CoercionAction;
 import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
 
 /**
@@ -87,28 +88,29 @@ public class JSR310StringParsableDeserializer
     }
 
     @Override
-    public Object deserialize(JsonParser p, DeserializationContext context) throws IOException
+    public Object deserialize(JsonParser p, DeserializationContext ctxt) throws IOException
     {
-        String string = p.getValueAsString();
-        if (string != null) {
-            string = string.trim();
-            if (string.isEmpty()) {
-                if (!isLenient()) {
-                    return _failForNotLenient(p, context, JsonToken.VALUE_STRING);
-                }
-                return _coerceEmptyString(context, false);
+        if (p.hasToken(JsonToken.VALUE_STRING)) {
+            String text = p.getValueAsString();
+            CoercionAction act = _checkFromStringCoercion(ctxt, text);
+            if (act == CoercionAction.AsNull) {
+                return getNullValue(ctxt);
             }
+            if (act == CoercionAction.AsEmpty) {
+                return getEmptyValue(ctxt);
+            }
+            text = text.trim();
             try {
                 switch (_typeSelector) {
                 case TYPE_PERIOD:
-                    return Period.parse(string);
+                    return Period.parse(text);
                 case TYPE_ZONE_ID:
-                    return ZoneId.of(string);
+                    return ZoneId.of(text);
                 case TYPE_ZONE_OFFSET:
-                    return ZoneOffset.of(string);
+                    return ZoneOffset.of(text);
                 }
             } catch (DateTimeException e) {
-                return _handleDateTimeException(context, e, string);
+                return _handleDateTimeException(ctxt, e, text);
             }
         }
         if (p.hasToken(JsonToken.VALUE_EMBEDDED_OBJECT)) {
@@ -117,10 +119,10 @@ public class JSR310StringParsableDeserializer
             return p.getEmbeddedObject();
         }
         if (p.hasToken(JsonToken.START_ARRAY)){
-            return _deserializeFromArray(p, context);
+            return _deserializeFromArray(p, ctxt);
         }
         
-        throw context.wrongTokenException(p, handledType(), JsonToken.VALUE_STRING, null);
+        throw ctxt.wrongTokenException(p, handledType(), JsonToken.VALUE_STRING, null);
     }
 
     @Override
@@ -139,7 +141,7 @@ public class JSR310StringParsableDeserializer
 
     @Override
     public JsonDeserializer<?> createContextual(DeserializationContext ctxt,
-                                                BeanProperty property) throws JsonMappingException
+            BeanProperty property) throws JsonMappingException
     {
         JsonFormat.Value format = findFormatOverrides(ctxt, property, handledType());
         JSR310StringParsableDeserializer deser = this;

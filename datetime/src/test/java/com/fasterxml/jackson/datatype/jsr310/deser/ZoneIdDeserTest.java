@@ -10,8 +10,9 @@ import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.annotation.JsonFormat;
+
 import com.fasterxml.jackson.core.type.TypeReference;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
@@ -100,8 +101,7 @@ public class ZoneIdDeserTest extends ModuleTestBase
 
         final String key = "zoneId";
         final ObjectMapper mapper = mapperBuilder()
-                .withConfigOverride(ZoneId.class,
-                        o -> o.setFormat(JsonFormat.Value.forLeniency(false)))
+                .disable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
             .build();
         final ObjectReader objectReader = mapper.readerFor(MAP_TYPE_REF);
 

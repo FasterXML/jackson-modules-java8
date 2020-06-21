@@ -114,7 +114,7 @@ public class ZoneOffsetDeserTest extends ModuleTestBase
                 .readValue("[]");
             fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
-            verifyException(e, "Unexpected token (END_ARRAY)");
+            verifyException(e, "Cannot deserialize value of type `java.time.ZoneOffset` from Array value");
         }
     }
 

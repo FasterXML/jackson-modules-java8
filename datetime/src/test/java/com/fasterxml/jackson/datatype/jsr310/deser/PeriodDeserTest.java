@@ -20,8 +20,8 @@ import java.time.Period;
 import java.time.temporal.TemporalAmount;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
@@ -95,13 +95,12 @@ public class PeriodDeserTest extends ModuleTestBase
         assertEquals("empty string failed to deserialize to null with lenient setting",null, actualDateFromEmptyStr);
     }
 
-    @Test( expected =  MismatchedInputException.class)
+    @Test
     public void testStrictDeserializeFromEmptyString() throws Exception {
 
         final String key = "period";
         final ObjectMapper mapper = mapperBuilder()
-                .withConfigOverride(Period.class,
-                        o -> o.setFormat(JsonFormat.Value.forLeniency(false)))
+                .disable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
                 .build();
         final ObjectReader objectReader = mapper.readerFor(MAP_TYPE_REF);
 
@@ -110,6 +109,11 @@ public class PeriodDeserTest extends ModuleTestBase
         assertNull(actualMapFromNullStr.get(key));
 
         String valueFromEmptyStr = mapper.writeValueAsString(asMap("date", ""));
-        objectReader.readValue(valueFromEmptyStr);
+        try {
+            objectReader.readValue(valueFromEmptyStr);
+            fail("Should not pass");
+        } catch (MismatchedInputException e) {
+            verifyException(e, "foo");
+        }
     }
 }

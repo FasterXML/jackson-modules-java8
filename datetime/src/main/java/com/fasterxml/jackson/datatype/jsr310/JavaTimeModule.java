@@ -189,7 +189,7 @@ public final class JavaTimeModule
 
         context.addValueInstantiators(new ValueInstantiators.Base() {
             @Override
-            public ValueInstantiator findValueInstantiator(DeserializationConfig config,
+            public ValueInstantiator modifyValueInstantiator(DeserializationConfig config,
                     BeanDescription beanDesc, ValueInstantiator defaultInstantiator)
             {
                 JavaType type = beanDesc.getType();
