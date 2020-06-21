@@ -6,8 +6,9 @@ import java.util.OptionalLong;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.JsonTokenId;
+
 import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.cfg.CoercionAction;
 import com.fasterxml.jackson.databind.type.LogicalType;
 
 public class OptionalLongDeserializer extends BaseScalarOptionalDeserializer<OptionalLong>
@@ -30,34 +31,30 @@ public class OptionalLongDeserializer extends BaseScalarOptionalDeserializer<Opt
         if (p.hasToken(JsonToken.VALUE_NUMBER_INT)) {
             return OptionalLong.of(p.getLongValue());
         }
+        CoercionAction act;
         switch (p.currentTokenId()) {
         case JsonTokenId.ID_STRING:
-            String text = p.getText().trim();
-            if ((text.length() == 0)) {
-                _coerceEmptyString(ctxt, false);
+            String text = p.getText();
+            act = _checkFromStringCoercion(ctxt, text);
+            // null and empty both same
+            if ((act == CoercionAction.AsNull) || (act == CoercionAction.AsEmpty)) {
                 return _empty;
             }
-            if (_hasTextualNull(text)) {
-                _coerceTextualNull(ctxt, false);
-                return _empty;
-            }
+            text = text.trim();
+            // 21-Jun-2020, tatu: Should this also accept "textual null" similar
+            //   to regular Integers?
             return OptionalLong.of(_parseLongPrimitive(ctxt, text));
-        case JsonTokenId.ID_NUMBER_FLOAT:
-            if (!ctxt.isEnabled(DeserializationFeature.ACCEPT_FLOAT_AS_INT)) {
-                _failDoubleToIntCoercion(p, ctxt, "long");
+        case JsonTokenId.ID_NUMBER_FLOAT: // coercing may work too
+            act = _checkFloatToIntCoercion(p, ctxt, _valueClass);
+            if ((act == CoercionAction.AsNull) || (act == CoercionAction.AsEmpty)) {
+                return _empty;
             }
             return OptionalLong.of(p.getValueAsLong());
         case JsonTokenId.ID_NULL:
             return _empty;
         case JsonTokenId.ID_START_ARRAY:
-            if (ctxt.isEnabled(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)) {
-                p.nextToken();
-                final OptionalLong parsed = deserialize(p, ctxt);
-                _verifyEndArrayForSingle(p, ctxt);
-                return parsed;
-            }
-            break;
+            return _deserializeFromArray(p, ctxt);
         }
-        return (OptionalLong) ctxt.handleUnexpectedToken(_valueClass, p);
+        return (OptionalLong) ctxt.handleUnexpectedToken(getValueType(ctxt), p);
     }
 }

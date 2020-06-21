@@ -148,8 +148,8 @@ public class TestOffsetDateTimeDeserialization extends ModuleTestBase
     		        .readValue("[]");
     		    fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
-            // 25-Jul-2017, tatu: Ideally should note it's really missing value but...
-            verifyException(e, "Unexpected token (END_ARRAY)");
+            verifyException(e, "Cannot deserialize value of type `");
+            verifyException(e, "from Array value");
         }
     }
 

@@ -348,7 +348,7 @@ public class DurationDeserTest extends ModuleTestBase
         	        .readerFor(Duration.class).readValue(aposToQuotes("[]"));
             fail("expected MismatchedInputException");
         } catch (MismatchedInputException e) {
-            verifyException(e, "Unexpected token (END_ARRAY), expected one of");
+            verifyException(e, "Cannot deserialize value of type `java.time.Duration` from Array value");
         }
     }
 
