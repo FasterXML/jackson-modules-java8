@@ -30,6 +30,8 @@ import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.cfg.CoercionAction;
+import com.fasterxml.jackson.databind.cfg.CoercionInputShape;
 import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
 import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
 
@@ -95,15 +97,27 @@ public class JSR310StringParsableDeserializer
     }
 
     @Override
-    public Object deserialize(JsonParser p, DeserializationContext context) throws IOException
+    public Object deserialize(JsonParser p, DeserializationContext ctxt) throws IOException
     {
-        String string = p.getValueAsString();
-        if (string != null) {
-            string = string.trim();
+        if (p.hasToken(JsonToken.VALUE_STRING)) {
+            String string = p.getValueAsString().trim();
             if (string.length() == 0) {
-                if (!isLenient()) {
-                    return _failForNotLenient(p, context, JsonToken.VALUE_STRING);
+                CoercionAction act = ctxt.findCoercionAction(logicalType(), _valueClass,
+                        CoercionInputShape.EmptyString);
+                if (act == CoercionAction.Fail) {
+                    ctxt.reportInputMismatch(this,
+        "Cannot coerce empty String (\"\") to %s (but could if enabling coercion using `CoercionConfig`)",
+        _coercedTypeDesc());
                 }
+                // 21-Jun-2020, tatu: As of 2.12, leniency considered legacy setting,
+                //    but still supported.
+                if (!isLenient()) {
+                    return _failForNotLenient(p, ctxt, JsonToken.VALUE_STRING);
+                }
+                if (act == CoercionAction.AsEmpty) {
+                    return getEmptyValue(ctxt);
+                }
+                // None of the types has specific null value
                 return null;
             }
             try {
@@ -116,7 +130,7 @@ public class JSR310StringParsableDeserializer
                     return ZoneOffset.of(string);
                 }
             } catch (DateTimeException e) {
-                return _handleDateTimeException(context, e, string);
+                return _handleDateTimeException(ctxt, e, string);
             }
         }
         if (p.hasToken(JsonToken.VALUE_EMBEDDED_OBJECT)) {
@@ -125,10 +139,10 @@ public class JSR310StringParsableDeserializer
             return p.getEmbeddedObject();
         }
         if (p.hasToken(JsonToken.START_ARRAY)){
-            return _deserializeFromArray(p, context);
+            return _deserializeFromArray(p, ctxt);
         }
         
-        throw context.wrongTokenException(p, handledType(), JsonToken.VALUE_STRING, null);
+        throw ctxt.wrongTokenException(p, handledType(), JsonToken.VALUE_STRING, null);
     }
 
     @Override
