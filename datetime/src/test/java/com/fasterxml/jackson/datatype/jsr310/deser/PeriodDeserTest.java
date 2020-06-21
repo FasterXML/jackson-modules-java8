@@ -21,10 +21,14 @@ import java.time.temporal.TemporalAmount;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.cfg.CoercionAction;
+import com.fasterxml.jackson.databind.cfg.CoercionInputShape;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import com.fasterxml.jackson.databind.type.LogicalType;
+
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
@@ -100,7 +104,8 @@ public class PeriodDeserTest extends ModuleTestBase
 
         final String key = "period";
         final ObjectMapper mapper = mapperBuilder()
-                .disable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
+                .withCoercionConfig(LogicalType.DateTime,
+                        cfg -> cfg.setCoercion(CoercionInputShape.EmptyString, CoercionAction.Fail))
                 .build();
         final ObjectReader objectReader = mapper.readerFor(MAP_TYPE_REF);
 
@@ -113,7 +118,7 @@ public class PeriodDeserTest extends ModuleTestBase
             objectReader.readValue(valueFromEmptyStr);
             fail("Should not pass");
         } catch (MismatchedInputException e) {
-            verifyException(e, "foo");
+            verifyException(e, "Cannot coerce empty String");
         }
     }
 }

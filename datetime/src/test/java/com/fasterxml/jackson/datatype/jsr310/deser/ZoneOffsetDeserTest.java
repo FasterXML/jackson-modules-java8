@@ -25,14 +25,18 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import com.fasterxml.jackson.core.type.TypeReference;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.cfg.CoercionAction;
+import com.fasterxml.jackson.databind.cfg.CoercionInputShape;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import com.fasterxml.jackson.databind.type.LogicalType;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
@@ -161,14 +165,14 @@ public class ZoneOffsetDeserTest extends ModuleTestBase
         assertEquals("empty string failed to deserialize to null with lenient setting", null, actualDateFromEmptyStr);
     }
 
-    @Test ( expected =  MismatchedInputException.class)
+    @Test
     public void testStrictDeserializeFromEmptyString() throws Exception {
 
         final String key = "zoneOffset";
         final ObjectMapper mapper = mapperBuilder()
-            .withConfigOverride(ZoneOffset.class,
-                    o -> o.setFormat(JsonFormat.Value.forLeniency(false)))
-            .build();
+                .withCoercionConfig(LogicalType.DateTime,
+                        cfg -> cfg.setCoercion(CoercionInputShape.EmptyString, CoercionAction.Fail))
+                .build();
         final ObjectReader objectReader = mapper.readerFor(MAP_TYPE_REF);
 
         String valueFromNullStr = mapper.writeValueAsString(asMap(key, null));
@@ -176,7 +180,13 @@ public class ZoneOffsetDeserTest extends ModuleTestBase
         assertNull(actualMapFromNullStr.get(key));
 
         String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, ""));
-        objectReader.readValue(valueFromEmptyStr);
+        try {
+            objectReader.readValue(valueFromEmptyStr);
+            fail("Should not pass");
+        } catch (MismatchedInputException e) {
+            verifyException(e, "Cannot coerce empty String");
+            verifyException(e, ZoneOffset.class.getName());
+        }
     }
 
     // [module-java8#68]
@@ -186,17 +196,17 @@ public class ZoneOffsetDeserTest extends ModuleTestBase
         // by default, should be fine
         assertNull(MAPPER.readValue(quote("  "), ZoneOffset.class));
         // but fail if coercion illegal
+        final ObjectMapper mapper = mapperBuilder()
+                .withCoercionConfig(LogicalType.DateTime,
+                        cfg -> cfg.setCoercion(CoercionInputShape.EmptyString, CoercionAction.Fail))
+                .build();
         try {
-            newMapperBuilder()
-                .disable(MapperFeature.ALLOW_COERCION_OF_SCALARS)
-                .build()
-                .readerFor(ZoneOffset.class)
+            mapper.readerFor(ZoneOffset.class)
                 .readValue(quote(" "));
             fail("Should not pass");
         } catch (MismatchedInputException e) {
-            verifyException(e, "Cannot coerce");
+            verifyException(e, "Cannot coerce empty String");
             verifyException(e, ZoneOffset.class.getName());
-            verifyException(e, "enable `MapperFeature.ALLOW_COERCION_OF_SCALARS`");
         }
     }
 }

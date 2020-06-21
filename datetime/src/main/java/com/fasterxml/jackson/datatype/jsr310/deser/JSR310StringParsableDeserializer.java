@@ -32,6 +32,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.cfg.CoercionAction;
+import com.fasterxml.jackson.databind.cfg.CoercionInputShape;
 import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
 
 /**
@@ -91,15 +92,21 @@ public class JSR310StringParsableDeserializer
     public Object deserialize(JsonParser p, DeserializationContext ctxt) throws IOException
     {
         if (p.hasToken(JsonToken.VALUE_STRING)) {
-            String text = p.getValueAsString();
-            CoercionAction act = _checkFromStringCoercion(ctxt, text);
-            if (act == CoercionAction.AsNull) {
-                return getNullValue(ctxt);
+            final String text = p.getText().trim();
+            if (text.length() == 0) {
+                CoercionAction act = ctxt.findCoercionAction(logicalType(), _valueClass,
+                        CoercionInputShape.EmptyString);
+                if (act == CoercionAction.Fail) {
+                    ctxt.reportInputMismatch(this,
+        "Cannot coerce empty String (\"\") to %s (but could if enabling coercion using `CoercionConfig`)",
+        _coercedTypeDesc());
+                }
+                if (act == CoercionAction.AsEmpty) {
+                    return getEmptyValue(ctxt);
+                }
+                // None of the types has specific null value
+                return null;
             }
-            if (act == CoercionAction.AsEmpty) {
-                return getEmptyValue(ctxt);
-            }
-            text = text.trim();
             try {
                 switch (_typeSelector) {
                 case TYPE_PERIOD:
