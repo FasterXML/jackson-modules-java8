@@ -14,9 +14,9 @@ Modules:
    `ADJUST_DATES_TO_CONTEXT_TIME_ZONE` enabled
  (reported, fix suggested by Moritz O)
 
-2.11.1 (not yet released)
+2.11.1 (25-Jun-2020)
 
--
+No changes since 2.11.0
 
 2.11.0 (26-Apr-2020)
 
