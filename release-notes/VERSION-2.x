@@ -13,6 +13,7 @@ Modules:
 #166: Cannot deserialize `OffsetDateTime.MIN` or `OffsetDateTime.MAX` with
    `ADJUST_DATES_TO_CONTEXT_TIME_ZONE` enabled
  (reported, fix suggested by Moritz O)
+- Add Gradle Module Metadata (https://blog.gradle.org/alignment-with-gradle-module-metadata)
 
 2.11.1 (25-Jun-2020)
 
