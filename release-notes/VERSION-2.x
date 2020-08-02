@@ -15,6 +15,7 @@ Modules:
  (reported, fix suggested by Moritz O)
 - Add Gradle Module Metadata (https://blog.gradle.org/alignment-with-gradle-module-metadata)
 
+2.11.2 (02-Aug-2020)
 2.11.1 (25-Jun-2020)
 
 No changes since 2.11.0
