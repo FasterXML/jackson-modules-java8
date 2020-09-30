@@ -73,18 +73,7 @@ public class YearMonthDeserializer extends JSR310DateTimeDeserializerBase<YearMo
     public YearMonth deserialize(JsonParser parser, DeserializationContext context) throws IOException
     {
         if (parser.hasToken(JsonToken.VALUE_STRING)) {
-            String string = parser.getText().trim();
-            if (string.length() == 0) {
-                if (!isLenient()) {
-                    return _failForNotLenient(parser, context, JsonToken.VALUE_STRING);
-                }
-                return null;
-            }
-            try {
-                return YearMonth.parse(string, _formatter);
-            } catch (DateTimeException e) {
-                return _handleDateTimeException(context, e, string);
-            }
+            return _fromString(parser, context, parser.getText());
         }
         if (parser.isExpectedStartArrayToken()) {
             JsonToken t = parser.nextToken();
@@ -121,5 +110,22 @@ public class YearMonthDeserializer extends JSR310DateTimeDeserializerBase<YearMo
         }
         return _handleUnexpectedToken(context, parser,
                 JsonToken.VALUE_STRING, JsonToken.START_ARRAY);
+    }
+
+    protected YearMonth _fromString(JsonParser p, DeserializationContext ctxt,
+            String string)  throws IOException
+    {
+        string = string.trim();
+        if (string.length() == 0) {
+            if (!isLenient()) {
+                return _failForNotLenient(p, ctxt, JsonToken.VALUE_STRING);
+            }
+            return null;
+        }
+        try {
+            return YearMonth.parse(string, _formatter);
+        } catch (DateTimeException e) {
+            return _handleDateTimeException(ctxt, e, string);
+        }
     }
 }

@@ -69,18 +69,7 @@ public class OffsetTimeDeserializer extends JSR310DateTimeDeserializerBase<Offse
     public OffsetTime deserialize(JsonParser parser, DeserializationContext context) throws IOException
     {
         if (parser.hasToken(JsonToken.VALUE_STRING)) {
-            String string = parser.getText().trim();
-            if (string.length() == 0) {
-                if (!isLenient()) {
-                    return _failForNotLenient(parser, context, JsonToken.VALUE_STRING);
-                }
-                return null;
-            }
-            try {
-                return OffsetTime.parse(string, _formatter);
-            } catch (DateTimeException e) {
-                return _handleDateTimeException(context, e, string);
-            }
+            return _fromString(parser, context, parser.getText());
         }
         if (!parser.isExpectedStartArrayToken()) {
             if (parser.hasToken(JsonToken.VALUE_EMBEDDED_OBJECT)) {
@@ -143,5 +132,22 @@ public class OffsetTimeDeserializer extends JSR310DateTimeDeserializerBase<Offse
         }
         throw context.wrongTokenException(parser, handledType(), JsonToken.VALUE_STRING,
                 "Expected string for TimeZone after numeric values");
+    }
+
+    protected OffsetTime _fromString(JsonParser p, DeserializationContext ctxt,
+            String string)  throws IOException
+    {
+        string = string.trim();
+        if (string.length() == 0) {
+            if (!isLenient()) {
+                return _failForNotLenient(p, ctxt, JsonToken.VALUE_STRING);
+            }
+            return null;
+        }
+        try {
+            return OffsetTime.parse(string, _formatter);
+        } catch (DateTimeException e) {
+            return _handleDateTimeException(ctxt, e, string);
+        }
     }
 }

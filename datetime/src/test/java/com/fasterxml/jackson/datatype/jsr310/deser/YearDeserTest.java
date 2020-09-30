@@ -37,13 +37,13 @@ import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class YearDeserTest extends ModuleTestBase
 {
-
     private final TypeReference<Map<String, Year>> MAP_TYPE_REF = new TypeReference<Map<String, Year>>() { };
 
     static class FormattedYear {
@@ -121,12 +121,12 @@ public class YearDeserTest extends ModuleTestBase
     @Test
     public void testDeserializationAsEmptyArrayEnabled() throws Throwable
     {
-     String json="[]";
-     Year value= newMapper()
-               .configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
-               .configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true)
-               .readerFor(Year.class).readValue(aposToQuotes(json));
-     assertNull(value);
+        String json="[]";
+        Year value= newMapper()
+                .configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
+                .configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true)
+                .readerFor(Year.class).readValue(aposToQuotes(json));
+        assertNull(value);
     }
 
     @Test
@@ -216,20 +216,34 @@ public class YearDeserTest extends ModuleTestBase
     /**********************************************************
      */
 
-    @Test( expected =  MismatchedInputException.class)
-    public void testStrictDeserializeFromEmptyString() throws Exception {
-
+    // minor changes in 2.12
+    @Test
+    public void testDeserializeFromEmptyString() throws Exception
+    {
         final String key = "Year";
-        final ObjectMapper mapper = mapperBuilder().build();
-        // YearDeserializer is always strict as far as empty strings, so lenient/strict has no effect
-        final ObjectReader objectReader = mapper.readerFor(MAP_TYPE_REF);
+        final ObjectReader objectReader = MAPPER.readerFor(MAP_TYPE_REF);
 
-        String valueFromNullStr = mapper.writeValueAsString(asMap(key, null));
-        Map<String, Year> actualMapFromNullStr = objectReader.readValue(valueFromNullStr);
+        // First: by default, lenient, so empty String fine
+        String doc = MAPPER.writeValueAsString(asMap(key, null));
+        Map<String, Year> actualMapFromNullStr = objectReader.readValue(doc);
         assertNull(actualMapFromNullStr.get(key));
 
-        String valueFromEmptyStr = mapper.writeValueAsString(asMap("date", ""));
-        objectReader.readValue(valueFromEmptyStr);
+        doc = MAPPER.writeValueAsString(asMap("date", ""));
+        Map<String, Year> actualMapFromEmptyStr = objectReader.readValue(doc);
+        assertNotNull(actualMapFromEmptyStr);
+
+        // But can make strict:
+        final ObjectMapper strictMapper = mapperBuilder().build();
+        strictMapper.configOverride(Year.class)
+                .setFormat(JsonFormat.Value.forLeniency(false));
+        doc = strictMapper.writeValueAsString(asMap("date", ""));
+        try {
+            actualMapFromEmptyStr = strictMapper.readerFor(MAP_TYPE_REF)
+                    .readValue(doc);
+            fail("Should not pass");
+        } catch (MismatchedInputException e) {
+            verifyException(e, "not allowed because 'strict' mode set for");
+        }
     }
 
     /*

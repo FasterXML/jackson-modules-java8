@@ -16,15 +16,15 @@
 
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.DeserializationContext;
-
 import java.io.IOException;
 import java.time.DateTimeException;
 import java.time.Year;
 import java.time.format.DateTimeFormatter;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
 
 /**
  * Deserializer for Java 8 temporal {@link Year}s.
@@ -37,8 +37,7 @@ public class YearDeserializer extends JSR310DateTimeDeserializerBase<Year>
 
     public static final YearDeserializer INSTANCE = new YearDeserializer();
 
-    private YearDeserializer()
-    {
+    private YearDeserializer() {
         this(null);
     }
 
@@ -46,15 +45,21 @@ public class YearDeserializer extends JSR310DateTimeDeserializerBase<Year>
         super(Year.class, formatter);
     }
 
+    /**
+     * Since 2.12
+     */
+    protected YearDeserializer(YearDeserializer base, Boolean leniency) {
+        super(base, leniency);
+    }
+
     @Override
     protected YearDeserializer withDateFormat(DateTimeFormatter dtf) {
         return new YearDeserializer(dtf);
     }
 
-    // !!! TODO: lenient vs strict?
     @Override
     protected YearDeserializer withLeniency(Boolean leniency) {
-        return this;
+        return new YearDeserializer(this, leniency);
     }
 
     @Override
@@ -65,15 +70,7 @@ public class YearDeserializer extends JSR310DateTimeDeserializerBase<Year>
     {
         JsonToken t = parser.getCurrentToken();
         if (t == JsonToken.VALUE_STRING) {
-            String string = parser.getValueAsString().trim();
-            try {
-                if (_formatter == null) {
-                    return Year.parse(string);
-                }
-                return Year.parse(string, _formatter);
-            } catch (DateTimeException e) {
-                return _handleDateTimeException(context, e, string);
-            }
+            return _fromString(parser, context, parser.getText());
         }
         if (t == JsonToken.VALUE_NUMBER_INT) {
             return Year.of(parser.getIntValue());
@@ -85,5 +82,25 @@ public class YearDeserializer extends JSR310DateTimeDeserializerBase<Year>
             return _deserializeFromArray(parser, context);
         }
         return _handleUnexpectedToken(context, parser, JsonToken.VALUE_STRING, JsonToken.VALUE_NUMBER_INT);
+    }
+
+    protected Year _fromString(JsonParser p, DeserializationContext ctxt,
+            String string)  throws IOException
+    {
+        string = string.trim();
+        if (string.length() == 0) {
+            if (!isLenient()) {
+                return _failForNotLenient(p, ctxt, JsonToken.VALUE_STRING);
+            }
+            return null;
+        }
+        try {
+            if (_formatter == null) {
+                return Year.parse(string);
+            }
+            return Year.parse(string, _formatter);
+        } catch (DateTimeException e) {
+            return _handleDateTimeException(ctxt, e, string);
+        }
     }
 }

@@ -88,31 +88,7 @@ public class LocalDateDeserializer extends JSR310DateTimeDeserializerBase<LocalD
     public LocalDate deserialize(JsonParser parser, DeserializationContext context) throws IOException
     {
         if (parser.hasToken(JsonToken.VALUE_STRING)) {
-            String string = parser.getText().trim();
-            if (string.length() == 0) {
-                if (!isLenient()) {
-                    return _failForNotLenient(parser, context, JsonToken.VALUE_STRING);
-                }
-                return null;
-            }
-            // as per [datatype-jsr310#37], only check for optional (and, incorrect...) time marker 'T'
-            // if we are using default formatter
-            DateTimeFormatter format = _formatter;
-            try {
-                if (format == DEFAULT_FORMATTER) {
-                    // JavaScript by default includes time in JSON serialized Dates (UTC/ISO instant format).
-                    if (string.length() > 10 && string.charAt(10) == 'T') {
-                       if (string.endsWith("Z")) {
-                           return LocalDateTime.ofInstant(Instant.parse(string), ZoneOffset.UTC).toLocalDate();
-                       } else {
-                           return LocalDate.parse(string, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-                       }
-                    }
-                }
-                return LocalDate.parse(string, format);
-            } catch (DateTimeException e) {
-                return _handleDateTimeException(context, e, string);
-            }
+            return _fromString(parser, context, parser.getText());
         }
         if (parser.isExpectedStartArrayToken()) {
             JsonToken t = parser.nextToken();
@@ -154,5 +130,35 @@ public class LocalDateDeserializer extends JSR310DateTimeDeserializerBase<LocalD
             return _failForNotLenient(parser, context, JsonToken.VALUE_STRING);
         }
         return _handleUnexpectedToken(context, parser, "Expected array or string.");
+    }
+
+    protected LocalDate _fromString(JsonParser p, DeserializationContext ctxt,
+            String string)  throws IOException
+    {
+        string = string.trim();
+        if (string.length() == 0) {
+            if (!isLenient()) {
+                return _failForNotLenient(p, ctxt, JsonToken.VALUE_STRING);
+            }
+            return null;
+        }
+        try {
+            // as per [datatype-jsr310#37], only check for optional (and, incorrect...) time marker 'T'
+            // if we are using default formatter
+            DateTimeFormatter format = _formatter;
+            if (format == DEFAULT_FORMATTER) {
+                // JavaScript by default includes time in JSON serialized Dates (UTC/ISO instant format).
+                if (string.length() > 10 && string.charAt(10) == 'T') {
+                   if (string.endsWith("Z")) {
+                       return LocalDateTime.ofInstant(Instant.parse(string), ZoneOffset.UTC).toLocalDate();
+                   } else {
+                       return LocalDate.parse(string, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                   }
+                }
+            }
+            return LocalDate.parse(string, format);
+        } catch (DateTimeException e) {
+            return _handleDateTimeException(ctxt, e, string);
+        }
     }
 }

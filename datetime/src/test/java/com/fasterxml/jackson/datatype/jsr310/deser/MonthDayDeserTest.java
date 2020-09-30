@@ -1,8 +1,10 @@
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,6 +19,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.time.Month;
 import java.time.MonthDay;
+import java.time.Year;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAccessor;
 import java.util.Map;
@@ -161,20 +164,34 @@ public class MonthDayDeserTest extends ModuleTestBase
     /**********************************************************
      */
 
-    @Test( expected =  MismatchedInputException.class)
-    public void testStrictDeserializeFromEmptyString() throws Exception {
-
+    // minor changes in 2.12
+    @Test
+    public void testDeserializeFromEmptyString() throws Exception
+    {
         final String key = "monthDay";
-        final ObjectMapper mapper = mapperBuilder().build();
-        // leniency has no effect here because MonthDayDeser passes through to Java API MonthDay.parse method...
-        final ObjectReader objectReader = mapper.readerFor(MAP_TYPE_REF);
 
-        String valueFromNullStr = mapper.writeValueAsString(asMap(key, null));
-        Map<String, MonthDay> actualMapFromNullStr = objectReader.readValue(valueFromNullStr);
+        // First: by default, lenient, so empty String fine
+        final ObjectReader objectReader = MAPPER.readerFor(MAP_TYPE_REF);
+
+        String doc = MAPPER.writeValueAsString(asMap(key, null));
+        Map<String, MonthDay> actualMapFromNullStr = objectReader.readValue(doc);
         assertNull(actualMapFromNullStr.get(key));
 
-        String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, ""));
-        objectReader.readValue(valueFromEmptyStr);
+        doc = MAPPER.writeValueAsString(asMap(key, ""));
+        assertNotNull(objectReader.readValue(doc));
+
+        // But can make strict:
+        final ObjectMapper strictMapper = mapperBuilder().build();
+        strictMapper.configOverride(MonthDay.class)
+                .setFormat(JsonFormat.Value.forLeniency(false));
+        doc = strictMapper.writeValueAsString(asMap("date", ""));
+        try {
+            strictMapper.readerFor(MAP_TYPE_REF)
+                    .readValue(doc);
+            fail("Should not pass");
+        } catch (MismatchedInputException e) {
+            verifyException(e, "not allowed because 'strict' mode set for");
+        }
     }
 
     private void expectFailure(String aposJson) throws Throwable {
