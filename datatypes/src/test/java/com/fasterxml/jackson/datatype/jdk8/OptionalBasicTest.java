@@ -17,7 +17,7 @@ public class OptionalBasicTest extends ModuleTestBase
 
     @JsonAutoDetect(fieldVisibility = Visibility.ANY)
     public static final class OptionalGenericData<T> {
-        private Optional<T> myData;
+        Optional<T> myData;
     }
 	
     @JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class)

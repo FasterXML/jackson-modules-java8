@@ -6,8 +6,9 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 
 public class NamingStrategy67Test extends ModuleTestBase
 {
@@ -24,7 +25,7 @@ public class NamingStrategy67Test extends ModuleTestBase
         public final int a;
         public final int b;
 
-        private ClassWithTwoProperties(@JsonProperty("a") int a, @JsonProperty("b") int b) {
+        ClassWithTwoProperties(@JsonProperty("a") int a, @JsonProperty("b") int b) {
             this.a = a+1;
             this.b = b+1;
         }
@@ -34,7 +35,7 @@ public class NamingStrategy67Test extends ModuleTestBase
     public void testSnakeCaseNaming() throws Exception
     {
         ObjectMapper mapper = newMapper()
-                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+                .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
                 ;
         final String MSG = "1st";
         ClassWithOneProperty actual = mapper.readValue(
@@ -49,7 +50,7 @@ public class NamingStrategy67Test extends ModuleTestBase
     public void testPrivateConstructorWithPropertyAnnotations() throws Exception
     {
         ObjectMapper mapper = newMapper()
-                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+                .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
         ClassWithTwoProperties actual = mapper.readValue("{\"a\":1, \"b\": 2}",
                 ClassWithTwoProperties.class);
 

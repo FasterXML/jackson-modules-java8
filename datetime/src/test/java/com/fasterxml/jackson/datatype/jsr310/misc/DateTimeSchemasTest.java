@@ -16,9 +16,9 @@ import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 public class DateTimeSchemasTest extends ModuleTestBase
 {
     static class VisitorWrapper implements JsonFormatVisitorWrapper {
-        private SerializerProvider serializerProvider;
-        private final String baseName;
-        private final Map<String, String> traversedProperties;
+        SerializerProvider serializerProvider;
+        final String baseName;
+        final Map<String, String> traversedProperties;
 
         public VisitorWrapper(SerializerProvider serializerProvider, String baseName, Map<String, String> traversedProperties) {
             this.serializerProvider = serializerProvider;
@@ -26,7 +26,7 @@ public class DateTimeSchemasTest extends ModuleTestBase
             this.traversedProperties = traversedProperties;
         }
 
-        private VisitorWrapper createSubtraverser(String bn) {
+        VisitorWrapper createSubtraverser(String bn) {
             return new VisitorWrapper(getProvider(), bn, traversedProperties);
         }
 

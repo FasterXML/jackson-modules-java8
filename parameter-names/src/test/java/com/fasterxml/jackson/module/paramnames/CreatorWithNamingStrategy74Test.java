@@ -25,7 +25,7 @@ public class CreatorWithNamingStrategy74Test
     @Test
     public void testPrivateConstructorWithAnnotations() throws Exception {
         verifyObjectDeserializationWithNamingStrategy(
-                PropertyNamingStrategy.SNAKE_CASE,
+                PropertyNamingStrategies.SNAKE_CASE,
                 "{\"a\":1, \"b\": 2}",
                 new ClassWithTwoProperties(1, 2));
     }
