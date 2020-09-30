@@ -50,6 +50,11 @@ public class MonthDayDeserializer extends JSR310DateTimeDeserializerBase<MonthDa
         if (parser.hasToken(JsonToken.VALUE_STRING)) {
             return _fromString(parser, context, parser.getText());
         }
+        // 30-Sep-2020, tatu: New! "Scalar from Object" (mostly for XML)
+        if (parser.isExpectedStartObjectToken()) {
+            return _fromString(parser, context,
+                    context.extractScalarFromObject(parser, this, handledType()));
+        }
         if (parser.isExpectedStartArrayToken()) {
             JsonToken t = parser.nextToken();
             if (t == JsonToken.END_ARRAY) {

@@ -71,6 +71,11 @@ public class OffsetTimeDeserializer extends JSR310DateTimeDeserializerBase<Offse
         if (parser.hasToken(JsonToken.VALUE_STRING)) {
             return _fromString(parser, context, parser.getText());
         }
+        // 30-Sep-2020, tatu: New! "Scalar from Object" (mostly for XML)
+        if (parser.isExpectedStartObjectToken()) {
+            return _fromString(parser, context,
+                    context.extractScalarFromObject(parser, this, handledType()));
+        }
         if (!parser.isExpectedStartArrayToken()) {
             if (parser.hasToken(JsonToken.VALUE_EMBEDDED_OBJECT)) {
                 return (OffsetTime) parser.getEmbeddedObject();
