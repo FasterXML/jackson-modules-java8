@@ -20,6 +20,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.JsonTokenId;
+import com.fasterxml.jackson.core.StreamReadCapability;
+import com.fasterxml.jackson.core.io.NumberInput;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -84,12 +86,8 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
             case JsonTokenId.ID_NUMBER_FLOAT:
                 BigDecimal value = parser.getDecimalValue();
                 return DecimalUtils.extractSecondsAndNanos(value, Duration::ofSeconds);
-
             case JsonTokenId.ID_NUMBER_INT:
-                if(context.isEnabled(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)) {
-                    return Duration.ofSeconds(parser.getLongValue());
-                }
-                return Duration.ofMillis(parser.getLongValue());
+                return _fromTimestamp(context, parser.getLongValue());
             case JsonTokenId.ID_STRING:
                 return _fromString(parser, context, parser.getText());
             // 30-Sep-2020, tatu: New! "Scalar from Object" (mostly for XML)
@@ -108,21 +106,35 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
                 JsonToken.VALUE_NUMBER_INT, JsonToken.VALUE_NUMBER_FLOAT);
     }
 
-    protected Duration _fromString(JsonParser parser, DeserializationContext context,
-            String string)  throws IOException
+    protected Duration _fromString(JsonParser parser, DeserializationContext ctxt,
+            String value)  throws IOException
     {
-        string = string.trim();
-        if (string.length() == 0) {
+        value = value.trim();
+        if (value.length() == 0) {
             if (!isLenient()) {
-                return _failForNotLenient(parser, context, JsonToken.VALUE_STRING);
+                return _failForNotLenient(parser, ctxt, JsonToken.VALUE_STRING);
             }
             return null;
         }
+        // 30-Sep-2020: Should allow use of "Timestamp as String" for
+        //     some textual formats
+        if (ctxt.isEnabled(StreamReadCapability.UNTYPED_SCALARS)
+                && _isValidTimestampString(value)) {
+            return _fromTimestamp(ctxt, NumberInput.parseLong(value));
+        }
+
         try {
-            return Duration.parse(string);
+            return Duration.parse(value);
         } catch (DateTimeException e) {
             // null format -> "default formatter"
-            return _handleDateTimeFormatException(context, e, null, string);
+            return _handleDateTimeFormatException(ctxt, e, null, value);
         }
+    }
+
+    protected Duration _fromTimestamp(DeserializationContext ctxt, long ts) {
+        if (ctxt.isEnabled(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)) {
+            return Duration.ofSeconds(ts);
+        }
+        return Duration.ofMillis(ts);
     }
 }
