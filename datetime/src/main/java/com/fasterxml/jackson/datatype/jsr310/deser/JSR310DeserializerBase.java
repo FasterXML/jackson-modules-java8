@@ -22,6 +22,7 @@ import java.util.Arrays;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.io.NumberInput;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -106,6 +107,14 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
         throws IOException
     {
         return typeDeserializer.deserializeTypedFromAny(parser, context);
+    }
+
+    // @since 2.12
+    protected boolean _isValidTimestampString(String str) {
+        // 30-Sep-2020, tatu: Need to support "numbers as Strings" for data formats
+        //    that only have String values for scalars (CSV, Properties, XML)
+        // NOTE: we do allow negative values, but has to fit in 64-bits:
+        return _isIntNumber(str) && NumberInput.inLongRange(str, (str.charAt(0) == '-'));
     }
 
     protected <BOGUS> BOGUS _reportWrongToken(DeserializationContext context,
