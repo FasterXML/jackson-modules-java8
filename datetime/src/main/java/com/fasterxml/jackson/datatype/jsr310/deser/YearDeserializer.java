@@ -24,6 +24,8 @@ import java.time.format.DateTimeFormatter;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.StreamReadCapability;
+import com.fasterxml.jackson.core.io.NumberInput;
 import com.fasterxml.jackson.databind.DeserializationContext;
 
 /**
@@ -68,7 +70,7 @@ public class YearDeserializer extends JSR310DateTimeDeserializerBase<Year>
     @Override
     public Year deserialize(JsonParser parser, DeserializationContext context) throws IOException
     {
-        JsonToken t = parser.getCurrentToken();
+        JsonToken t = parser.currentToken();
         if (t == JsonToken.VALUE_STRING) {
             return _fromString(parser, context, parser.getText());
         }
@@ -78,7 +80,7 @@ public class YearDeserializer extends JSR310DateTimeDeserializerBase<Year>
                     context.extractScalarFromObject(parser, this, handledType()));
         }
         if (t == JsonToken.VALUE_NUMBER_INT) {
-            return Year.of(parser.getIntValue());
+            return _fromNumber(context, parser.getIntValue());
         }
         if (t == JsonToken.VALUE_EMBEDDED_OBJECT) {
             return (Year) parser.getEmbeddedObject();
@@ -90,22 +92,31 @@ public class YearDeserializer extends JSR310DateTimeDeserializerBase<Year>
     }
 
     protected Year _fromString(JsonParser p, DeserializationContext ctxt,
-            String string)  throws IOException
+            String value)  throws IOException
     {
-        string = string.trim();
-        if (string.length() == 0) {
+        value = value.trim();
+        if (value.length() == 0) {
             if (!isLenient()) {
                 return _failForNotLenient(p, ctxt, JsonToken.VALUE_STRING);
             }
             return null;
         }
+        // 30-Sep-2020: Should allow use of "Timestamp as String" for XML/CSV
+        if (ctxt.isEnabled(StreamReadCapability.UNTYPED_SCALARS)
+                && _isValidTimestampString(value)) {
+            return _fromNumber(ctxt, NumberInput.parseInt(value));
+        }
         try {
             if (_formatter == null) {
-                return Year.parse(string);
+                return Year.parse(value);
             }
-            return Year.parse(string, _formatter);
+            return Year.parse(value, _formatter);
         } catch (DateTimeException e) {
-            return _handleDateTimeException(ctxt, e, string);
+            return _handleDateTimeException(ctxt, e, value);
         }
+    }
+
+    protected Year _fromNumber(DeserializationContext ctxt, int value) {
+        return Year.of(value);
     }
 }

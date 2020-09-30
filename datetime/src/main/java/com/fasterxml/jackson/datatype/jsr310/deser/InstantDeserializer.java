@@ -42,7 +42,8 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 
 /**
- * Deserializer for Java 8 temporal {@link Instant}s, {@link OffsetDateTime}, and {@link ZonedDateTime}s.
+ * Deserializer for Java 8 temporal {@link Instant}s, {@link OffsetDateTime},
+ * and {@link ZonedDateTime}s.
  *
  * @author Nick Williams
  * @since 2.2
