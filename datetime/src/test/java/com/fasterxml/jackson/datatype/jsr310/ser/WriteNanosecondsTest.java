@@ -15,8 +15,8 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.assertThat;
 
 public class WriteNanosecondsTest extends ModuleTestBase {
     public static final ZoneId UTC = ZoneId.of("UTC");

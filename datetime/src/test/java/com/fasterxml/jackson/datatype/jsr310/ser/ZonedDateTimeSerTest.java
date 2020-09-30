@@ -40,7 +40,7 @@ import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
 import org.junit.Test;
 
-public class TestZonedDateTimeSerialization
+public class ZonedDateTimeSerTest
     extends ModuleTestBase
 {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
