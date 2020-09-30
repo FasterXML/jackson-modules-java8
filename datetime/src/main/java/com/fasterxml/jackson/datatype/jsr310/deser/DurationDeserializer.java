@@ -121,7 +121,8 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
         try {
             return Duration.parse(string);
         } catch (DateTimeException e) {
-            return _handleDateTimeException(context, e, string);
+            // null format -> "default formatter"
+            return _handleDateTimeFormatException(context, e, null, string);
         }
     }
 }

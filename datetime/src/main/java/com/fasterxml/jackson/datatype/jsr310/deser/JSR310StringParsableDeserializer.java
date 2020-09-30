@@ -176,7 +176,7 @@ _coercedTypeDesc());
                 return ZoneOffset.of(string);
             }
         } catch (DateTimeException e) {
-            return _handleDateTimeException(ctxt, e, string);
+            return _handleDateTimeFormatException(ctxt, e, null, string);
         }
         VersionUtil.throwInternal();
         return null;

@@ -70,24 +70,7 @@ public class LocalTimeDeserializer extends JSR310DateTimeDeserializerBase<LocalT
     public LocalTime deserialize(JsonParser parser, DeserializationContext context) throws IOException
     {
         if (parser.hasToken(JsonToken.VALUE_STRING)) {
-            String string = parser.getText().trim();
-            if (string.length() == 0) {
-                if (!isLenient()) {
-                    return _failForNotLenient(parser, context, JsonToken.VALUE_STRING);
-                }
-                return null;
-            }
-            final DateTimeFormatter format = _formatter;
-            try {
-                if (format == DEFAULT_FORMATTER) {
-                    if (string.contains("T")) {
-                        return LocalTime.parse(string, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-                    }
-                }
-                return LocalTime.parse(string, format);
-            } catch (DateTimeException e) {
-                return _handleDateTimeFormatException(context, e, format, string);
-            }
+            return _fromString(parser, context, parser.getText());
         }
         if (parser.isExpectedStartArrayToken()) {
             JsonToken t = parser.nextToken();
@@ -143,5 +126,28 @@ public class LocalTimeDeserializer extends JSR310DateTimeDeserializerBase<LocalT
             _throwNoNumericTimestampNeedTimeZone(parser, context);
         }
         return _handleUnexpectedToken(context, parser, "Expected array or string.");
+    }
+
+    protected LocalTime _fromString(JsonParser p, DeserializationContext ctxt,
+            String string)  throws IOException
+    {
+        string = string.trim();
+        if (string.length() == 0) {
+            if (!isLenient()) {
+                return _failForNotLenient(p, ctxt, JsonToken.VALUE_STRING);
+            }
+            return null;
+        }
+        final DateTimeFormatter format = _formatter;
+        try {
+            if (format == DEFAULT_FORMATTER) {
+                if (string.contains("T")) {
+                    return LocalTime.parse(string, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                }
+            }
+            return LocalTime.parse(string, format);
+        } catch (DateTimeException e) {
+            return _handleDateTimeFormatException(ctxt, e, format, string);
+        }
     }
 }

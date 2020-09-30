@@ -74,29 +74,7 @@ public class LocalDateTimeDeserializer
     public LocalDateTime deserialize(JsonParser parser, DeserializationContext context) throws IOException
     {
         if (parser.hasTokenId(JsonTokenId.ID_STRING)) {
-            String string = parser.getText().trim();
-            if (string.length() == 0) {
-                if (!isLenient()) {
-                    return _failForNotLenient(parser, context, JsonToken.VALUE_STRING);
-                }
-                return null;
-            }
-
-            try {
-	           if (_formatter == DEFAULT_FORMATTER) {
-	               // JavaScript by default includes time and zone in JSON serialized Dates (UTC/ISO instant format).
-	               if (string.length() > 10 && string.charAt(10) == 'T') {
-	                   if (string.endsWith("Z")) {
-	                       return LocalDateTime.ofInstant(Instant.parse(string), ZoneOffset.UTC);
-	                   } else {
-	                       return LocalDateTime.parse(string, DEFAULT_FORMATTER);
-	                   }
-	               }
-	           }
-                return LocalDateTime.parse(string, _formatter);
-            } catch (DateTimeException e) {
-                return _handleDateTimeFormatException(context, e, _formatter, string);
-            }
+            return _fromString(parser, context, parser.getText());
         }
         if (parser.isExpectedStartArrayToken()) {
             JsonToken t = parser.nextToken();
@@ -153,5 +131,32 @@ public class LocalDateTimeDeserializer
             _throwNoNumericTimestampNeedTimeZone(parser, context);
         }
         return _handleUnexpectedToken(context, parser, "Expected array or string.");
+    }
+
+    protected LocalDateTime _fromString(JsonParser p, DeserializationContext ctxt,
+            String string)  throws IOException
+    {
+        string = string.trim();
+        if (string.length() == 0) {
+            if (!isLenient()) {
+                return _failForNotLenient(p, ctxt, JsonToken.VALUE_STRING);
+            }
+            return null;
+        }
+        final DateTimeFormatter format = _formatter;
+        try {
+            if (format == DEFAULT_FORMATTER) {
+                // JavaScript by default includes time and zone in JSON serialized Dates (UTC/ISO instant format).
+                if (string.length() > 10 && string.charAt(10) == 'T') {
+                   if (string.endsWith("Z")) {
+                       return LocalDateTime.ofInstant(Instant.parse(string), ZoneOffset.UTC);
+                   }
+                   return LocalDateTime.parse(string, DEFAULT_FORMATTER);
+                }
+            }
+            return LocalDateTime.parse(string, format);
+        } catch (DateTimeException e) {
+            return _handleDateTimeFormatException(ctxt, e, format, string);
+        }
     }
 }

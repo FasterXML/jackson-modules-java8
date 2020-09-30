@@ -27,10 +27,16 @@ public class MonthDayDeserializer extends JSR310DateTimeDeserializerBase<MonthDa
         return new MonthDayDeserializer(dtf);
     }
 
-    // !!! TODO: lenient vs strict?
+    /**
+     * Since 2.12
+     */
+    protected MonthDayDeserializer(MonthDayDeserializer base, Boolean leniency) {
+        super(base, leniency);
+    }
+
     @Override
     protected MonthDayDeserializer withLeniency(Boolean leniency) {
-        return this;
+        return new MonthDayDeserializer(this, leniency);
     }
 
     @Override
@@ -40,15 +46,7 @@ public class MonthDayDeserializer extends JSR310DateTimeDeserializerBase<MonthDa
     public MonthDay deserialize(JsonParser parser, DeserializationContext context) throws IOException
     {
         if (parser.hasToken(JsonToken.VALUE_STRING)) {
-            String string = parser.getValueAsString().trim();
-            try {
-                if (_formatter == null) {
-                    return MonthDay.parse(string);
-                }
-                return MonthDay.parse(string, _formatter);
-            } catch (DateTimeException e) {
-                return _handleDateTimeFormatException(context, e, _formatter, string);
-            }
+            return _fromString(parser, context, parser.getText());
         }
         if (parser.isExpectedStartArrayToken()) {
             JsonToken t = parser.nextToken();
@@ -85,5 +83,25 @@ public class MonthDayDeserializer extends JSR310DateTimeDeserializerBase<MonthDa
         }
         return _handleUnexpectedToken(context, parser,
                 JsonToken.VALUE_STRING, JsonToken.START_ARRAY);
+    }
+
+    protected MonthDay _fromString(JsonParser p, DeserializationContext ctxt,
+            String string)  throws IOException
+    {
+        string = string.trim();
+        if (string.length() == 0) {
+            if (!isLenient()) {
+                return _failForNotLenient(p, ctxt, JsonToken.VALUE_STRING);
+            }
+            return null;
+        }
+        try {
+            if (_formatter == null) {
+                return MonthDay.parse(string);
+            }
+            return MonthDay.parse(string, _formatter);
+        } catch (DateTimeException e) {
+            return _handleDateTimeFormatException(ctxt, e, _formatter, string);
+        }
     }
 }
