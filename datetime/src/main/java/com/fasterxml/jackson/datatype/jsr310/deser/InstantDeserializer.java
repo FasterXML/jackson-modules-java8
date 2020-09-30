@@ -181,76 +181,6 @@ public class InstantDeserializer<T extends Temporal>
 
     @SuppressWarnings("unchecked")
     @Override
-    public T deserialize(JsonParser parser, DeserializationContext context) throws IOException
-    {
-        //NOTE: Timestamps contain no timezone info, and are always in configured TZ. Only
-        //string values have to be adjusted to the configured TZ.
-        switch (parser.currentTokenId())
-        {
-            case JsonTokenId.ID_NUMBER_FLOAT:
-                return _fromDecimal(context, parser.getDecimalValue());
-
-            case JsonTokenId.ID_NUMBER_INT:
-                return _fromLong(context, parser.getLongValue());
-
-            case JsonTokenId.ID_STRING:
-            {
-                String string = parser.getText().trim();
-                if (string.length() == 0) {
-                    if (!isLenient()) {
-                        return _failForNotLenient(parser, context, JsonToken.VALUE_STRING);
-                    }
-                    return null;
-                }
-                // only check for other parsing modes if we are using default formatter
-                if (_formatter == DateTimeFormatter.ISO_INSTANT ||
-                    _formatter == DateTimeFormatter.ISO_OFFSET_DATE_TIME ||
-                    _formatter == DateTimeFormatter.ISO_ZONED_DATE_TIME) {
-                    // 22-Jan-2016, [datatype-jsr310#16]: Allow quoted numbers too
-                    int dots = _countPeriods(string);
-                    if (dots >= 0) { // negative if not simple number
-                        try {
-                            if (dots == 0) {
-                                return _fromLong(context, Long.parseLong(string));
-                            }
-                            if (dots == 1) {
-                                return _fromDecimal(context, new BigDecimal(string));
-                            }
-                        } catch (NumberFormatException e) {
-                            // fall through to default handling, to get error there
-                        }
-                    }
-
-                    string = replaceZeroOffsetAsZIfNecessary(string);
-                }
-
-                T value;
-                try {
-                    TemporalAccessor acc = _formatter.parse(string);
-                    value = parsedToValue.apply(acc);
-                    if (shouldAdjustToContextTimezone(context)) {
-                        return adjust.apply(value, this.getZone(context));
-                    }
-                } catch (DateTimeException e) {
-                    value = _handleDateTimeException(context, e, string);
-                }
-                return value;
-            }
-
-            case JsonTokenId.ID_EMBEDDED_OBJECT:
-                // 20-Apr-2016, tatu: Related to [databind#1208], can try supporting embedded
-                //    values quite easily
-                return (T) parser.getEmbeddedObject();
-
-            case JsonTokenId.ID_START_ARRAY:
-            	return _deserializeFromArray(parser, context);
-        }
-        return _handleUnexpectedToken(context, parser, JsonToken.VALUE_STRING,
-                JsonToken.VALUE_NUMBER_INT, JsonToken.VALUE_NUMBER_FLOAT);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
     public JsonDeserializer<T> createContextual(DeserializationContext ctxt,
             BeanProperty property) throws JsonMappingException
     {
@@ -269,6 +199,36 @@ public class InstantDeserializer<T extends Temporal>
             }
         }
         return deserializer;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public T deserialize(JsonParser parser, DeserializationContext context) throws IOException
+    {
+        //NOTE: Timestamps contain no timezone info, and are always in configured TZ. Only
+        //string values have to be adjusted to the configured TZ.
+        switch (parser.currentTokenId())
+        {
+            case JsonTokenId.ID_NUMBER_FLOAT:
+                return _fromDecimal(context, parser.getDecimalValue());
+            case JsonTokenId.ID_NUMBER_INT:
+                return _fromLong(context, parser.getLongValue());
+            case JsonTokenId.ID_STRING:
+                return _fromString(parser, context, parser.getText());
+            // 30-Sep-2020, tatu: New! "Scalar from Object" (mostly for XML)
+            case JsonTokenId.ID_START_OBJECT:
+                return _fromString(parser, context,
+                        context.extractScalarFromObject(parser, this, handledType()));
+            case JsonTokenId.ID_EMBEDDED_OBJECT:
+                // 20-Apr-2016, tatu: Related to [databind#1208], can try supporting embedded
+                //    values quite easily
+                return (T) parser.getEmbeddedObject();
+
+            case JsonTokenId.ID_START_ARRAY:
+            	return _deserializeFromArray(parser, context);
+        }
+        return _handleUnexpectedToken(context, parser, JsonToken.VALUE_STRING,
+                JsonToken.VALUE_NUMBER_INT, JsonToken.VALUE_NUMBER_FLOAT);
     }
 
     protected boolean shouldAdjustToContextTimezone(DeserializationContext context) {
@@ -291,6 +251,51 @@ public class InstantDeserializer<T extends Temporal>
             }
         }
         return commas;
+    }
+
+    protected T _fromString(JsonParser parser, DeserializationContext context,
+            String string)  throws IOException
+    {
+        string = string.trim();
+        if (string.length() == 0) {
+            if (!isLenient()) {
+                return _failForNotLenient(parser, context, JsonToken.VALUE_STRING);
+            }
+            return null;
+        }
+        // only check for other parsing modes if we are using default formatter
+        if (_formatter == DateTimeFormatter.ISO_INSTANT ||
+            _formatter == DateTimeFormatter.ISO_OFFSET_DATE_TIME ||
+            _formatter == DateTimeFormatter.ISO_ZONED_DATE_TIME) {
+            // 22-Jan-2016, [datatype-jsr310#16]: Allow quoted numbers too
+            int dots = _countPeriods(string);
+            if (dots >= 0) { // negative if not simple number
+                try {
+                    if (dots == 0) {
+                        return _fromLong(context, Long.parseLong(string));
+                    }
+                    if (dots == 1) {
+                        return _fromDecimal(context, new BigDecimal(string));
+                    }
+                } catch (NumberFormatException e) {
+                    // fall through to default handling, to get error there
+                }
+            }
+
+            string = replaceZeroOffsetAsZIfNecessary(string);
+        }
+
+        T value;
+        try {
+            TemporalAccessor acc = _formatter.parse(string);
+            value = parsedToValue.apply(acc);
+            if (shouldAdjustToContextTimezone(context)) {
+                return adjust.apply(value, this.getZone(context));
+            }
+        } catch (DateTimeException e) {
+            value = _handleDateTimeException(context, e, string);
+        }
+        return value;
     }
 
     protected T _fromLong(DeserializationContext context, long timestamp)
@@ -331,7 +336,7 @@ public class InstantDeserializer<T extends Temporal>
         public final long value;
         public final ZoneId zoneId;
 
-        private FromIntegerArguments(long value, ZoneId zoneId)
+        FromIntegerArguments(long value, ZoneId zoneId)
         {
             this.value = value;
             this.zoneId = zoneId;
@@ -344,7 +349,7 @@ public class InstantDeserializer<T extends Temporal>
         public final int fraction;
         public final ZoneId zoneId;
 
-        private FromDecimalArguments(long integer, int fraction, ZoneId zoneId)
+        FromDecimalArguments(long integer, int fraction, ZoneId zoneId)
         {
             this.integer = integer;
             this.fraction = fraction;
