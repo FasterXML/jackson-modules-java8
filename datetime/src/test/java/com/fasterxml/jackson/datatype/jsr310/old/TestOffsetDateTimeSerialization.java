@@ -42,6 +42,8 @@ public class TestOffsetDateTimeSerialization extends ModuleTestBase
 {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
+    private static final DateTimeFormatter FORMATTER_UTC = FORMATTER.withZone(ZoneOffset.UTC);
+
     private static final ZoneId Z1 = ZoneId.of("America/Chicago");
 
     private static final ZoneId Z2 = ZoneId.of("America/Anchorage");
@@ -143,7 +145,7 @@ public class TestOffsetDateTimeSerialization extends ModuleTestBase
         String value = this.mapper.writeValueAsString(date);
 
         assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", '"' + FORMATTER.format(date) + '"', value);
+        assertEquals("The value is not correct.", '"' + FORMATTER_UTC.format(date) + '"', value);
     }
 
     @Test
@@ -155,7 +157,7 @@ public class TestOffsetDateTimeSerialization extends ModuleTestBase
         String value = this.mapper.writeValueAsString(date);
 
         assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", '"' + FORMATTER.format(date) + '"', value);
+        assertEquals("The value is not correct.", '"' + FORMATTER_UTC.format(date) + '"', value);
     }
 
     @Test
@@ -165,6 +167,48 @@ public class TestOffsetDateTimeSerialization extends ModuleTestBase
 
         this.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         String value = this.mapper.writeValueAsString(date);
+
+        assertNotNull("The value should not be null.", value);
+        assertEquals("The value is not correct.", '"' + FORMATTER_UTC.format(date) + '"', value);
+    }
+
+    @Test
+    public void testSerializationAsStringWithMapperTimeZone01() throws Exception
+    {
+        OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(0L), Z1);
+
+        String value = newMapper()
+                .setTimeZone(TimeZone.getTimeZone(Z1))
+                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                .writeValueAsString(date);
+
+        assertNotNull("The value should not be null.", value);
+        assertEquals("The value is not correct.", '"' + FORMATTER.format(date) + '"', value);
+    }
+
+    @Test
+    public void testSerializationAsStringWithMapperTimeZone02() throws Exception
+    {
+        OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 183917322), Z2);
+
+        String value = newMapper()
+                .setTimeZone(TimeZone.getTimeZone(Z2))
+                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                .writeValueAsString(date);
+
+        assertNotNull("The value should not be null.", value);
+        assertEquals("The value is not correct.", '"' + FORMATTER.format(date) + '"', value);
+    }
+
+    @Test
+    public void testSerializationAsStringWithMapperTimeZone03() throws Exception
+    {
+        OffsetDateTime date = OffsetDateTime.now(Z3);
+
+        String value = newMapper()
+                .setTimeZone(TimeZone.getTimeZone(Z3))
+                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                .writeValueAsString(date);
 
         assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.", '"' + FORMATTER.format(date) + '"', value);
@@ -211,7 +255,23 @@ public class TestOffsetDateTimeSerialization extends ModuleTestBase
 
         assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.",
-                "[\"" + OffsetDateTime.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", value);
+                "[\"" + OffsetDateTime.class.getName() + "\",\"" + FORMATTER_UTC.format(date) + "\"]", value);
+    }
+
+    @Test
+    public void testSerializationWithTypeInfoAndMapperTimeZone() throws Exception
+    {
+        OffsetDateTime date = OffsetDateTime.now(Z3);
+
+        String value = newMapper()
+                .setTimeZone(TimeZone.getTimeZone(Z3))
+                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
+                .writeValueAsString(date);
+
+        assertNotNull("The value should not be null.", value);
+        assertEquals("The value is not correct.",
+            "[\"" + OffsetDateTime.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", value);
     }
 
     @Test
