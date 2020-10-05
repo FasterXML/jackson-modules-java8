@@ -121,8 +121,7 @@ public abstract class InstantSerializerBase<T extends Temporal>
     }
 
     @Override // since 2.9
-    protected JsonToken serializationShape(SerializerProvider provider)
-    {
+    protected JsonToken serializationShape(SerializerProvider provider) {
         if (useTimestamp(provider)) {
             if (useNanoseconds(provider)) {
                 return JsonToken.VALUE_NUMBER_FLOAT;
@@ -142,11 +141,10 @@ public abstract class InstantSerializerBase<T extends Temporal>
         }
 
         ZoneId zone = provider.getTimeZone().toZoneId();
-        if (formatter != null && formatter.getZone() != null) {
-            zone = formatter.getZone();
-        }
-
         if (formatter != null) {
+            if (formatter.getZone() != null) {
+                zone = formatter.getZone();
+            }
             return formatter.withZone(zone).format(value);
         }
 
