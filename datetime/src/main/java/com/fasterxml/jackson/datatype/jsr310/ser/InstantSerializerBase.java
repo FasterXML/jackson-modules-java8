@@ -36,7 +36,8 @@ import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonNumberFormatVisitor
 import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 
 /**
- * Base class for serializers used for {@link java.time.Instant}.
+ * Base class for serializers used for {@link java.time.Instant} and
+ * other {@link Temporal} subtypes.
  */
 @SuppressWarnings("serial")
 public abstract class InstantSerializerBase<T extends Temporal>
@@ -98,8 +99,7 @@ public abstract class InstantSerializerBase<T extends Temporal>
             return;
         }
 
-        String str = formatValue(value, provider);
-        generator.writeString(str);
+        generator.writeString(formatValue(value, provider));
     }
 
     // Overridden to ensure that our timestamp handling is as expected
@@ -131,7 +131,8 @@ public abstract class InstantSerializerBase<T extends Temporal>
         return JsonToken.VALUE_STRING;
     }
 
-    private String formatValue(T value, SerializerProvider provider)
+    // @since 2.12
+    protected String formatValue(T value, SerializerProvider provider)
     {
         DateTimeFormatter formatter = null;
         if (_formatter != null) {
@@ -140,10 +141,10 @@ public abstract class InstantSerializerBase<T extends Temporal>
             formatter = defaultFormat;
         }
 
-        ZoneId zone = provider.getTimeZone().toZoneId();
         if (formatter != null) {
-            if (formatter.getZone() != null) {
-                zone = formatter.getZone();
+            ZoneId zone = formatter.getZone();
+            if (zone == null) {
+                zone = provider.getTimeZone().toZoneId();
             }
             return formatter.withZone(zone).format(value);
         }

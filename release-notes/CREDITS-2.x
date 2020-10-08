@@ -108,3 +108,13 @@ Moritz Orth (morth@github.com)
   * Reported and suggested fix for #166: Cannot deserialize OffsetDateTime.MIN and
    OffsetDateTime.MAX with ADJUST_DATES_TO_CONTEXT_TIME_ZONE enabled
    (2.12.0)
+
+Erwan Leroux (ErwanLeroux@github)
+  * Reported #175: ObjectMapper#setTimeZone ignored by jsr-310/datetime
+    types during serialization when using `@JsonFormat` annotation
+   (2.12.0)
+
+Ferenc Csaky (ferenc-csaky@github)
+  * Contributed fix to #175: ObjectMapper#setTimeZone ignored by jsr-310/datetime
+    types during serialization when using `@JsonFormat` annotation
+   (2.12.0)

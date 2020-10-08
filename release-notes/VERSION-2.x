@@ -13,6 +13,9 @@ Modules:
 #166: Cannot deserialize `OffsetDateTime.MIN` or `OffsetDateTime.MAX` with
    `ADJUST_DATES_TO_CONTEXT_TIME_ZONE` enabled
  (reported, fix suggested by Moritz O)
+#175: ObjectMapper#setTimeZone ignored by jsr-310/datetime types during serialization
+  when using `@JsonFormat` annotation
+ (reported by Erwan L; fix contributed by Ferenc C)
 - Add Gradle Module Metadata (https://blog.gradle.org/alignment-with-gradle-module-metadata)
 
 2.11.3 (02-Oct-2020)
