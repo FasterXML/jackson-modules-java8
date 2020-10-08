@@ -18,6 +18,7 @@ package com.fasterxml.jackson.datatype.jsr310.ser;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.io.IOException;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 import java.util.function.ToIntFunction;
@@ -42,7 +43,7 @@ public abstract class InstantSerializerBase<T extends Temporal>
     extends JSR310FormattedSerializerBase<T>
 {
     private final DateTimeFormatter defaultFormat;
-    
+
     private final ToLongFunction<T> getEpochMillis;
 
     private final ToLongFunction<T> getEpochSeconds;
@@ -96,15 +97,8 @@ public abstract class InstantSerializerBase<T extends Temporal>
             generator.writeNumber(getEpochMillis.applyAsLong(value));
             return;
         }
-        String str;
-        
-        if (_formatter != null) {
-            str = _formatter.format(value);;
-        } else if (defaultFormat != null) {
-            str = defaultFormat.format(value);;
-        } else {
-            str = value.toString();
-        }
+
+        String str = formatValue(value, provider);
         generator.writeString(str);
     }
 
@@ -135,5 +129,25 @@ public abstract class InstantSerializerBase<T extends Temporal>
             return JsonToken.VALUE_NUMBER_INT;
         }
         return JsonToken.VALUE_STRING;
+    }
+
+    private String formatValue(T value, SerializerProvider provider)
+    {
+        DateTimeFormatter formatter = null;
+        if (_formatter != null) {
+            formatter = _formatter;
+        } else if (defaultFormat != null) {
+            formatter = defaultFormat;
+        }
+
+        ZoneId zone = provider.getTimeZone().toZoneId();
+        if (formatter != null) {
+            if (formatter.getZone() != null) {
+                zone = formatter.getZone();
+            }
+            return formatter.withZone(zone).format(value);
+        }
+
+        return value.toString();
     }
 }

@@ -22,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.time.Instant;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
@@ -43,6 +44,8 @@ public class ZonedDateTimeSerTest
     extends ModuleTestBase
 {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+
+    private static final DateTimeFormatter FORMATTER_UTC = FORMATTER.withZone(ZoneOffset.UTC);
 
     private static final ZoneId Z1 = ZoneId.of("America/Chicago");
 
@@ -175,7 +178,7 @@ public class ZonedDateTimeSerTest
         String value = MAPPER.writer()
                 .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.", '"' + FORMATTER.format(date) + '"', value);
+        assertEquals("The value is not correct.", '"' + FORMATTER_UTC.format(date) + '"', value);
     }
 
     @Test
@@ -185,7 +188,7 @@ public class ZonedDateTimeSerTest
         String value = MAPPER.writer()
                 .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.", '"' + FORMATTER.format(date) + '"', value);
+        assertEquals("The value is not correct.", '"' + FORMATTER_UTC.format(date) + '"', value);
     }
 
     @Test
@@ -195,16 +198,64 @@ public class ZonedDateTimeSerTest
         String value = MAPPER.writer()
                 .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .writeValueAsString(date);
+        assertEquals("The value is not correct.", '"' + FORMATTER_UTC.format(date) + '"', value);
+    }
+
+    @Test
+    public void testSerializationAsStringWithMapperTimeZone01() throws Exception
+    {
+        ZonedDateTime date = ZonedDateTime.ofInstant(Instant.ofEpochSecond(0L), Z1);
+        String value = newMapper()
+                .setTimeZone(TimeZone.getTimeZone(Z1))
+                .writer()
+                .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .writeValueAsString(date);
+        assertEquals("The value is not correct.", '"' + FORMATTER.format(date) + '"', value);
+    }
+
+    @Test
+    public void testSerializationAsStringWithMapperTimeZone02() throws Exception
+    {
+        ZonedDateTime date = ZonedDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 183917322), Z2);
+        String value = newMapper()
+                .setTimeZone(TimeZone.getTimeZone(Z2))
+                .writer()
+                .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .writeValueAsString(date);
+        assertEquals("The value is not correct.", '"' + FORMATTER.format(date) + '"', value);
+    }
+
+    @Test
+    public void testSerializationAsStringWithMapperTimeZone03() throws Exception
+    {
+        ZonedDateTime date = ZonedDateTime.now(Z3);
+        String value = newMapper()
+                .setTimeZone(TimeZone.getTimeZone(Z3))
+                .writer()
+                .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .writeValueAsString(date);
         assertEquals("The value is not correct.", '"' + FORMATTER.format(date) + '"', value);
     }
 
     @Test
     public void testSerializationAsStringWithZoneIdOff() throws Exception {
         ZonedDateTime date = ZonedDateTime.now(Z3);
-        MAPPER.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        MAPPER.configure(SerializationFeature.WRITE_DATES_WITH_ZONE_ID, false);
+        String value = newMapper()
+                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                .configure(SerializationFeature.WRITE_DATES_WITH_ZONE_ID, false)
+                .writeValueAsString(date);
 
-        String value = this.MAPPER.writeValueAsString(date);
+        assertEquals("The value is incorrect.", "\"" + FORMATTER_UTC.format(date) + "\"", value);
+    }
+
+    @Test
+    public void testSerializationAsStringWithZoneIdOffAndMapperTimeZone() throws Exception {
+        ZonedDateTime date = ZonedDateTime.now(Z3);
+        String value = newMapper()
+                .setTimeZone(TimeZone.getTimeZone(Z3))
+                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                .configure(SerializationFeature.WRITE_DATES_WITH_ZONE_ID, false)
+                .writeValueAsString(date);
 
         assertEquals("The value is incorrect.", "\"" + FORMATTER.format(date) + "\"", value);
     }
@@ -259,7 +310,23 @@ public class ZonedDateTimeSerTest
 
         assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.",
-                "[\"" + ZonedDateTime.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", value);
+                "[\"" + ZonedDateTime.class.getName() + "\",\"" + FORMATTER_UTC.format(date) + "\"]", value);
+    }
+
+    @Test
+    public void testSerializationWithTypeInfoAndMapperTimeZone() throws Exception
+    {
+        ZonedDateTime date = ZonedDateTime.now(Z3);
+
+        String value = newMapper()
+                .setTimeZone(TimeZone.getTimeZone(Z3))
+                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                .addMixIn(Temporal.class, MockObjectConfiguration.class)
+                .writeValueAsString(date);
+
+        assertNotNull("The value should not be null.", value);
+        assertEquals("The value is not correct.",
+            "[\"" + ZonedDateTime.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", value);
     }
 
     @Test
