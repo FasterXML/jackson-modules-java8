@@ -18,6 +18,7 @@ package com.fasterxml.jackson.datatype.jsr310.ser;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.io.IOException;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 import java.util.function.ToIntFunction;
@@ -35,13 +36,14 @@ import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonNumberFormatVisitor
 import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 
 /**
- * Base class for serializers used for {@link java.time.Instant}.
+ * Base class for serializers used for {@link java.time.Instant} and
+ * other {@link Temporal} subtypes.
  */
 public abstract class InstantSerializerBase<T extends Temporal>
     extends JSR310FormattedSerializerBase<T>
 {
     private final DateTimeFormatter defaultFormat;
-    
+
     private final ToLongFunction<T> getEpochMillis;
 
     private final ToLongFunction<T> getEpochSeconds;
@@ -90,16 +92,8 @@ public abstract class InstantSerializerBase<T extends Temporal>
             generator.writeNumber(getEpochMillis.applyAsLong(value));
             return;
         }
-        String str;
-        
-        if (_formatter != null) {
-            str = _formatter.format(value);;
-        } else if (defaultFormat != null) {
-            str = defaultFormat.format(value);;
-        } else {
-            str = value.toString();
-        }
-        generator.writeString(str);
+
+        generator.writeString(formatValue(value, provider));
     }
 
     // Overridden to ensure that our timestamp handling is as expected
@@ -129,5 +123,26 @@ public abstract class InstantSerializerBase<T extends Temporal>
             return JsonToken.VALUE_NUMBER_INT;
         }
         return JsonToken.VALUE_STRING;
+    }
+
+    // @since 2.12
+    protected String formatValue(T value, SerializerProvider provider)
+    {
+        DateTimeFormatter formatter = null;
+        if (_formatter != null) {
+            formatter = _formatter;
+        } else if (defaultFormat != null) {
+            formatter = defaultFormat;
+        }
+
+        if (formatter != null) {
+            ZoneId zone = formatter.getZone();
+            if (zone == null) {
+                zone = provider.getTimeZone().toZoneId();
+            }
+            return formatter.withZone(zone).format(value);
+        }
+
+        return value.toString();
     }
 }

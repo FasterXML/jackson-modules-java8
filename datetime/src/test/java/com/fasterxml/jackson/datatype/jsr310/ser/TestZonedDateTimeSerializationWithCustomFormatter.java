@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -28,7 +29,8 @@ public class TestZonedDateTimeSerializationWithCustomFormatter {
     @Test
     public void testSerialization() throws Exception {
         ZonedDateTime zonedDateTime = ZonedDateTime.now();
-        assertThat(serializeWith(zonedDateTime, formatter), containsString(zonedDateTime.format(formatter)));
+        assertThat(serializeWith(zonedDateTime, formatter),
+                containsString(zonedDateTime.format(formatter.withZone(ZoneOffset.UTC))));
     }
 
     private String serializeWith(ZonedDateTime zonedDateTime, DateTimeFormatter f) throws Exception {
