@@ -43,7 +43,7 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
 
     /**
      * Flag that indicates what leniency setting is enabled for this deserializer (either
-     * due {@link JsonFormat} annotation on property or class, or due to per-type
+     * due {@link com.fasterxml.jackson.annotation.JsonFormat.Shape} annotation on property or class, or due to per-type
      * "config override", or from global settings): leniency/strictness has effect
      * on accepting some non-default input value representations (such as integer values
      * for dates).

@@ -28,12 +28,11 @@ public abstract class JSR310DateTimeDeserializerBase<T>
 
     /**
      * Setting that indicates the {@Link JsonFormat.Shape} specified for this deserializer
-     * as a {@link JsonFormat.Shape} annotation on property or class, or due to per-type
-     * "config override", or from global settings:
+     * as a {@link com.fasterxml.jackson.annotation.JsonFormat.Shape} annotation on
+     * property or class, or due to per-type "config override", or from global settings:
      * If Shape is NUMBER_INT, the input value is considered to be epoch days. If not a
      * NUMBER_INT, and the deserializer was not specified with the leniency setting of true,
      * then an exception will be thrown.
-     * @see [jackson-modules-java8#58] for more info
      *
      * @since 2.11
      */
