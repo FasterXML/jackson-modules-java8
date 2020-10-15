@@ -3,12 +3,18 @@ package com.fasterxml.jackson.module.paramnames;
 import java.util.Arrays;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 
 public class ModuleTestBase
 {
     protected static ObjectMapper newMapper() {
         return new ObjectMapper()
                 .registerModule(new ParameterNamesModule());
+    }
+
+    protected static JsonMapper.Builder mapperBuilder() {
+        return JsonMapper.builder()
+                .addModule(new ParameterNamesModule());
     }
 
     protected String quote(String value) {
