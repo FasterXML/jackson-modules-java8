@@ -64,10 +64,16 @@ timestamps and are instead represented as arrays when `WRITE_DATES_AS_TIMESTAMPS
 
 ### Registering module
 
-Starting with Jackson 2.2, `Module`s can be automatically discovered using the Java 6 Service Provider Interface (SPI) feature.
+Starting with Jackson 2.2, `Module`s can be automatically discovered using the 
+Service Provider Interface (SPI) feature.
 You can activate this by instructing an `ObjectMapper` to find and register all `Module`s:
 
 ```java
+// Jackson 2.10 and later
+ObjectMapper mapper = JsonMapper.builder()
+    .findAndAddModules()
+    .build();
+// or, 2.x before 2.9
 ObjectMapper mapper = new ObjectMapper();
 mapper.findAndRegisterModules();
 ```
@@ -80,6 +86,11 @@ If you prefer to selectively register this module, this is done as follows, with
 `findAndRegisterModules()`:
 
 ```java
+// Jackson 2.10 and later:
+ObjectMapper mapper = JsonMapper.builder()
+    .addModule(new JavaTimeModule())
+    .build();
+// or, 2.x before 2.9
 ObjectMapper mapper = new ObjectMapper();
 mapper.registerModule(new JavaTimeModule());
 ```
