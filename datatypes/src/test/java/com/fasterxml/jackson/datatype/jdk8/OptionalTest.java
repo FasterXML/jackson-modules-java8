@@ -11,15 +11,11 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.deser.std.StdScalarDeserializer;
 import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer;
-import com.fasterxml.jackson.databind.type.TypeBindings;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
 public class OptionalTest extends ModuleTestBase
@@ -256,17 +252,15 @@ public class OptionalTest extends ModuleTestBase
     public void testTypeResolution() throws Exception
     {
         // Should be able to construct using parametric `constructType()`
+        // 19-Oct-2020, tatu: should not try to use TypeBindings, use different
+        //   method
         final TypeFactory tf = MAPPER.getTypeFactory();
-        JavaType t = tf.constructType(Optional.class, TypeBindings.create(Optional.class, new JavaType[] {
-                tf.constructType(Set.class, TypeBindings.create(Set.class, new JavaType[] {
-                        tf.constructType(Integer.class)
-                }))
-            }));
+        JavaType t = tf.constructType(Optional.class);
         assertEquals(Optional.class, t.getRawClass());
         assertTrue(t.isReferenceType());
+        // without parameterization, defaults to `java.lang.Object`
         JavaType t2 = t.getReferencedType();
-        assertEquals(Set.class, t2.getRawClass());
-        assertTrue(t2.isCollectionLikeType());
+        assertEquals(Object.class, t2.getRawClass());
 
         // as well as:
         t = tf.constructParametricType(Optional.class,
