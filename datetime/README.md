@@ -47,6 +47,20 @@ times but are supported with this module nonetheless.
 [`LocalDateTime`](https://docs.oracle.com/javase/8/docs/api/java/time/LocalDateTime.html), and
 [`OffsetTime`](https://docs.oracle.com/javase/8/docs/api/java/time/OffsetTime.html), which cannot portably be converted to
 timestamps and are instead represented as arrays when `WRITE_DATES_AS_TIMESTAMPS` is enabled.
+* [`Duration`](https://docs.oracle.com/javase/8/docs/api/java/time/Duration.html), which unit can be configured in `JsonFormat` using a subset of [`ChronoUnit`](https://docs.oracle.com/javase/8/docs/api/java/time/temporal/ChronoUnit.html) as `pattern`. 
+As the underlying implementation is based on `Duration::of` supported units are: `NANOS`, `MICROS`, `MILLIS`, `SECONDS`, `MINUTES`, `HOURS`, `HALF_DAYS` and `DAYS`.
+For instance:
+
+    ```java
+    @JsonFormat(pattern="MILLIS")
+    long millis;
+    
+    @JsonFormat(pattern="SECONDS")
+    long seconds;
+    
+    @JsonFormat(pattern="DAYS")
+    long days;
+    ```
 
 ## Usage
 

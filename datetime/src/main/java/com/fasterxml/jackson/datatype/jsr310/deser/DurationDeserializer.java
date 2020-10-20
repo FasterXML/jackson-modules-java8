@@ -34,6 +34,13 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.DateTimeException;
 import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 
 /**
@@ -49,8 +56,17 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
 
     public static final DurationDeserializer INSTANCE = new DurationDeserializer();
 
-    private DurationDeserializer()
-    {
+    /**
+     * Since 2.12
+     * When set, integer values will be deserialized using the specified unit. Using this parser will tipically
+     * override the value specified in {@link DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS} as it is
+     * considered that the unit set in {@link JsonFormat#pattern()} has precedence since is more specific.
+     *
+     * @see [jackson-modules-java8#184] for more info
+     */
+    private DurationUnitParser _durationUnitParser;
+
+    private DurationDeserializer() {
         super(Duration.class);
     }
 
@@ -59,6 +75,11 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
      */
     protected DurationDeserializer(DurationDeserializer base, Boolean leniency) {
         super(base, leniency);
+    }
+
+    protected DurationDeserializer(DurationDeserializer base, DurationUnitParser durationUnitParser) {
+        super(base, base._isLenient);
+        _durationUnitParser = durationUnitParser;
     }
 
     @Override
@@ -79,8 +100,17 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
                     deser = deser.withLeniency(leniency);
                 }
             }
+            if (format.hasPattern()) {
+                deser = DurationUnitParser.from(format.getPattern())
+                        .map(deser::withPattern)
+                        .orElse(deser);
+            }
         }
         return deser;
+    }
+
+    private DurationDeserializer withPattern(DurationUnitParser pattern) {
+        return new DurationDeserializer(this, pattern);
     }
 
     @Override
@@ -92,7 +122,11 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
                 BigDecimal value = parser.getDecimalValue();
                 return DecimalUtils.extractSecondsAndNanos(value, Duration::ofSeconds);
             case JsonTokenId.ID_NUMBER_INT:
-                return _fromTimestamp(context, parser.getLongValue());
+                long intValue = parser.getLongValue();
+                if (_durationUnitParser != null) {
+                    return _durationUnitParser.parse(intValue);
+                }
+                return _fromTimestamp(context, intValue);
             case JsonTokenId.ID_STRING:
                 return _fromString(parser, context, parser.getText());
             // 30-Sep-2020, tatu: New! "Scalar from Object" (mostly for XML)
@@ -103,9 +137,9 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
                 // 20-Apr-2016, tatu: Related to [databind#1208], can try supporting embedded
                 //    values quite easily
                 return (Duration) parser.getEmbeddedObject();
-                
+
             case JsonTokenId.ID_START_ARRAY:
-            	return _deserializeFromArray(parser, context);
+                return _deserializeFromArray(parser, context);
         }
         return _handleUnexpectedToken(context, parser, JsonToken.VALUE_STRING,
                 JsonToken.VALUE_NUMBER_INT, JsonToken.VALUE_NUMBER_FLOAT);
@@ -140,5 +174,34 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
             return Duration.ofSeconds(ts);
         }
         return Duration.ofMillis(ts);
+    }
+
+    protected static class DurationUnitParser {
+        final static Set<ChronoUnit> PARSEABLE_UNITS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+                ChronoUnit.NANOS,
+                ChronoUnit.MICROS,
+                ChronoUnit.MILLIS,
+                ChronoUnit.SECONDS,
+                ChronoUnit.MINUTES,
+                ChronoUnit.HOURS,
+                ChronoUnit.HALF_DAYS,
+                ChronoUnit.DAYS
+        )));
+        final TemporalUnit unit;
+
+        DurationUnitParser(TemporalUnit unit) {
+            this.unit = unit;
+        }
+
+        Duration parse(long value) {
+            return Duration.of(value, unit);
+        }
+
+        static Optional<DurationUnitParser> from(String unit) {
+            return PARSEABLE_UNITS.stream()
+                    .filter(u -> u.name().equals(unit))
+                    .map(DurationUnitParser::new)
+                    .findFirst();
+        }
     }
 }
