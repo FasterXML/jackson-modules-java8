@@ -310,13 +310,12 @@ public class ZonedDateTimeSerTest
     {
         ZonedDateTime date = ZonedDateTime.now(Z3);
         ObjectMapper mapper = newMapperBuilder()
-                .defaultTimeZone(TimeZone.getDefault())
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
                 .addMixIn(Temporal.class, MockObjectConfiguration.class)
                 .build();
         String value = mapper.writeValueAsString(date);
         assertEquals("The value is not correct.",
-                "[\"" + ZonedDateTime.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", value);
+                "[\"" + ZonedDateTime.class.getName() + "\",\"" + FORMATTER_UTC.format(date) + "\"]", value);
     }
 
     @Test
