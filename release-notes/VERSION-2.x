@@ -10,6 +10,8 @@ Modules:
 
 2.12.0 (not yet released)
 
+#165: Problem in serializing negative Duration values
+ (reported by Joni S)
 #166: Cannot deserialize `OffsetDateTime.MIN` or `OffsetDateTime.MAX` with
    `ADJUST_DATES_TO_CONTEXT_TIME_ZONE` enabled
  (reported, fix suggested by Moritz O)

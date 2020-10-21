@@ -32,8 +32,6 @@ public class DurationSerTest extends ModuleTestBase
                 .with(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
                 .with(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .writeValueAsString(duration);
-
-        assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.", "60"+NO_NANOSECS_SUFFIX, value);
     }
 
@@ -45,34 +43,47 @@ public class DurationSerTest extends ModuleTestBase
                 .with(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
                 .with(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .writeValueAsString(duration);
-
-        assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.", "13498.000008374", value);
     }
 
+    // [modules-java8#165]
+    @Test
+    public void testSerializationAsTimestampNanoseconds03() throws Exception
+    {
+        ObjectWriter w = WRITER
+                .with(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
+                .with(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS);
+
+        // 20-Oct-2020, tatu: Very weird, but "use nanoseconds" actually results
+        //   in unit being seconds, with fractions (with nanosec precision)
+        String value = w.writeValueAsString(Duration.ofMillis(1L));
+        assertEquals("The value is not correct.", "0.001000000", value);
+
+        value = w.writeValueAsString(Duration.ofMillis(-1L));
+        assertEquals("The value is not correct.", "-0.001000000", value);
+    }
+    
     @Test
     public void testSerializationAsTimestampMilliseconds01() throws Exception
     {
-        Duration duration = Duration.ofSeconds(60L, 0);
-        String value = WRITER
+        final ObjectWriter w = WRITER
                 .with(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
-                .without(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
-                .writeValueAsString(duration);
+                .without(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS);
+        String value = w.writeValueAsString(Duration.ofSeconds(45L, 0));
+        assertEquals("The value is not correct.", "45000", value);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "60000", value);
+        // and with negative value too
+        value = w.writeValueAsString(Duration.ofSeconds(-32L, 0));
+        assertEquals("The value is not correct.", "-32000", value);
     }
 
     @Test
     public void testSerializationAsTimestampMilliseconds02() throws Exception
     {
-        Duration duration = Duration.ofSeconds(13498L, 8374);
         String value = WRITER
                 .with(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
                 .without(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
-                .writeValueAsString(duration);
-
-        assertNotNull("The value should not be null.", value);
+                .writeValueAsString(Duration.ofSeconds(13498L, 8374));
         assertEquals("The value is not correct.", "13498000", value);
     }
 
@@ -84,8 +95,6 @@ public class DurationSerTest extends ModuleTestBase
                 .with(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
                 .without(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .writeValueAsString(duration);
-
-        assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.", "13498837", value);
     }
 
@@ -96,8 +105,6 @@ public class DurationSerTest extends ModuleTestBase
         String value = WRITER
                 .without(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
                 .writeValueAsString(duration);
-
-        assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.", '"' + duration.toString() + '"', value);
     }
 
@@ -108,8 +115,6 @@ public class DurationSerTest extends ModuleTestBase
         String value = WRITER
                 .without(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
                 .writeValueAsString(duration);
-
-        assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.", '"' + duration.toString() + '"', value);
     }
 
@@ -117,14 +122,13 @@ public class DurationSerTest extends ModuleTestBase
     public void testSerializationWithTypeInfo01() throws Exception
     {
         ObjectMapper mapper = newMapperBuilder()
+                .addMixIn(TemporalAmount.class, MockObjectConfiguration.class)
                 .enable(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS,
                         SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
-                .addMixIn(TemporalAmount.class, MockObjectConfiguration.class)
                 .build();
         Duration duration = Duration.ofSeconds(13498L, 8374);
         String value = mapper.writeValueAsString(duration);
 
-        assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.",
                 "[\"" + Duration.class.getName() + "\",13498.000008374]", value);
     }
@@ -133,14 +137,13 @@ public class DurationSerTest extends ModuleTestBase
     public void testSerializationWithTypeInfo02() throws Exception
     {
         ObjectMapper mapper = newMapperBuilder()
+                .addMixIn(TemporalAmount.class, MockObjectConfiguration.class)
                 .enable(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
                 .disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
-                .addMixIn(TemporalAmount.class, MockObjectConfiguration.class)
                 .build();
         Duration duration = Duration.ofSeconds(13498L, 837481723);
         String value = mapper.writeValueAsString(duration);
 
-        assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.",
                 "[\"" + Duration.class.getName() + "\",13498837]", value);
     }
@@ -149,13 +152,12 @@ public class DurationSerTest extends ModuleTestBase
     public void testSerializationWithTypeInfo03() throws Exception
     {
         ObjectMapper mapper = newMapperBuilder()
-                .disable(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
                 .addMixIn(TemporalAmount.class, MockObjectConfiguration.class)
+                .disable(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
                 .build();
         Duration duration = Duration.ofSeconds(13498L, 8374);
         String value = mapper.writeValueAsString(duration);
 
-        assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.",
                 "[\"" + Duration.class.getName() + "\",\"" + duration.toString() + "\"]", value);
     }
