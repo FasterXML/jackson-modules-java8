@@ -16,38 +16,32 @@
 
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.core.JsonTokenId;
-import com.fasterxml.jackson.core.StreamReadCapability;
-import com.fasterxml.jackson.core.io.NumberInput;
-import com.fasterxml.jackson.databind.BeanProperty;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.DateTimeException;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.JsonTokenId;
+import com.fasterxml.jackson.core.StreamReadCapability;
+import com.fasterxml.jackson.core.io.NumberInput;
+
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 
 /**
  * Deserializer for Java 8 temporal {@link Duration}s.
  *
  * @author Nick Williams
- * @since 2.2.0
+ * @since 2.2
  */
 public class DurationDeserializer extends JSR310DeserializerBase<Duration>
     implements ContextualDeserializer
@@ -57,29 +51,38 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
     public static final DurationDeserializer INSTANCE = new DurationDeserializer();
 
     /**
-     * Since 2.12
-     * When set, integer values will be deserialized using the specified unit. Using this parser will tipically
-     * override the value specified in {@link DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS} as it is
-     * considered that the unit set in {@link JsonFormat#pattern()} has precedence since is more specific.
+     * When defined (not {@code null}) integer values will be converted into duration
+     * unit configured for the converter.
+     * Using this converter will typically override the value specified in
+     * {@link DeserializationFeature#READ_DATE_TIMESTAMPS_AS_NANOSECONDS} as it is
+     * considered that the unit set in {@link JsonFormat#pattern()} has precedence
+     * since it is more specific.
+     *<p>
+     * See [jackson-modules-java8#184] for more info.
      *
-     * @see [jackson-modules-java8#184] for more info
+     * @since 2.12
      */
-    private DurationUnitParser _durationUnitParser;
+    protected final DurationUnitConverter _durationUnitConverter;
 
-    private DurationDeserializer() {
+    public DurationDeserializer() {
         super(Duration.class);
+        _durationUnitConverter = null;
     }
 
     /**
-     * Since 2.11
+     * @since 2.11
      */
     protected DurationDeserializer(DurationDeserializer base, Boolean leniency) {
         super(base, leniency);
+        _durationUnitConverter = base._durationUnitConverter;
     }
 
-    protected DurationDeserializer(DurationDeserializer base, DurationUnitParser durationUnitParser) {
+    /**
+     * @since 2.12
+     */
+    protected DurationDeserializer(DurationDeserializer base, DurationUnitConverter converter) {
         super(base, base._isLenient);
-        _durationUnitParser = durationUnitParser;
+        _durationUnitConverter = converter;
     }
 
     @Override
@@ -87,9 +90,13 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
         return new DurationDeserializer(this, leniency);
     }
 
+    protected DurationDeserializer withConverter(DurationUnitConverter pattern) {
+        return new DurationDeserializer(this, pattern);
+    }
+
     @Override
     public JsonDeserializer<?> createContextual(DeserializationContext ctxt,
-                                                BeanProperty property) throws JsonMappingException
+            BeanProperty property) throws JsonMappingException
     {
         JsonFormat.Value format = findFormatOverrides(ctxt, property, handledType());
         DurationDeserializer deser = this;
@@ -101,16 +108,18 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
                 }
             }
             if (format.hasPattern()) {
-                deser = DurationUnitParser.from(format.getPattern())
-                        .map(deser::withPattern)
-                        .orElse(deser);
+                final String pattern = format.getPattern();
+                DurationUnitConverter p = DurationUnitConverter.from(pattern);
+                if (p == null) {
+                    ctxt.reportBadDefinition(getValueType(ctxt),
+                            String.format(
+"Bad 'pattern' definition (\"%s\") for `Duration`: expected one of [%s]",
+pattern, DurationUnitConverter.descForAllowed()));
+                }
+                deser = deser.withConverter(p);
             }
         }
         return deser;
-    }
-
-    private DurationDeserializer withPattern(DurationUnitParser pattern) {
-        return new DurationDeserializer(this, pattern);
     }
 
     @Override
@@ -122,11 +131,7 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
                 BigDecimal value = parser.getDecimalValue();
                 return DecimalUtils.extractSecondsAndNanos(value, Duration::ofSeconds);
             case JsonTokenId.ID_NUMBER_INT:
-                long intValue = parser.getLongValue();
-                if (_durationUnitParser != null) {
-                    return _durationUnitParser.parse(intValue);
-                }
-                return _fromTimestamp(context, intValue);
+                return _fromTimestamp(context, parser.getLongValue());
             case JsonTokenId.ID_STRING:
                 return _fromString(parser, context, parser.getText());
             // 30-Sep-2020, tatu: New! "Scalar from Object" (mostly for XML)
@@ -170,14 +175,22 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
     }
 
     protected Duration _fromTimestamp(DeserializationContext ctxt, long ts) {
+        if (_durationUnitConverter != null) {
+            return _durationUnitConverter.convert(ts);
+        }
+        // 20-Oct-2020, tatu: This makes absolutely no sense but... somehow
+        //   became the default handling.
         if (ctxt.isEnabled(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)) {
             return Duration.ofSeconds(ts);
         }
         return Duration.ofMillis(ts);
     }
 
-    protected static class DurationUnitParser {
-        final static Set<ChronoUnit> PARSEABLE_UNITS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+    protected static class DurationUnitConverter {
+        private final static Map<String, ChronoUnit> PARSEABLE_UNITS;
+        static {
+            Map<String, ChronoUnit> units = new LinkedHashMap<>();
+            for (ChronoUnit unit : new ChronoUnit[] {
                 ChronoUnit.NANOS,
                 ChronoUnit.MICROS,
                 ChronoUnit.MILLIS,
@@ -186,22 +199,35 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
                 ChronoUnit.HOURS,
                 ChronoUnit.HALF_DAYS,
                 ChronoUnit.DAYS
-        )));
+            }) {
+                units.put(unit.name(), unit);
+            }
+            PARSEABLE_UNITS = units;
+        }
+
         final TemporalUnit unit;
 
-        DurationUnitParser(TemporalUnit unit) {
+        DurationUnitConverter(TemporalUnit unit) {
             this.unit = unit;
         }
 
-        Duration parse(long value) {
+        public Duration convert(long value) {
             return Duration.of(value, unit);
         }
 
-        static Optional<DurationUnitParser> from(String unit) {
-            return PARSEABLE_UNITS.stream()
-                    .filter(u -> u.name().equals(unit))
-                    .map(DurationUnitParser::new)
-                    .findFirst();
+        /**
+         * @return Description of all allowed valued as a sequence of
+         *    double-quoted values separated by comma
+         */
+        public static String descForAllowed() {
+            return "\"" + PARSEABLE_UNITS.keySet().stream()
+                    .collect(Collectors.joining("\", \""))
+                    +"\"";
+        }
+
+        static DurationUnitConverter from(String unit) {
+            ChronoUnit chr = PARSEABLE_UNITS.get(unit);
+            return (chr == null) ? null : new DurationUnitConverter(chr);
         }
     }
 }

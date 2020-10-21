@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
@@ -429,6 +430,12 @@ public class DurationDeserTest extends ModuleTestBase
         objectReader.readValue(valueFromEmptyStr);
     }
 
+    /*
+    /**********************************************************
+    /* Tests for custom patterns (modules-java8#184)
+    /**********************************************************
+     */
+
     @Test
     public void shouldDeserializeInNanos_whenNanosUnitAsPattern_andValueIsInteger() throws Exception {
         ObjectMapper mapper = newMapper();
@@ -550,15 +557,19 @@ public class DurationDeserTest extends ModuleTestBase
     }
 
     @Test
-    public void shouldIgnoreUnitPattern_whenUnitPatternDoesNotMatchExactly() throws Exception {
+    public void shouldFailForInvalidPattern() throws Exception {
         ObjectMapper mapper = newMapper();
         mapper.configOverride(Duration.class)
                 .setFormat(JsonFormat.Value.forPattern("Nanos"));
         ObjectReader reader = mapper.readerFor(MAP_TYPE_REF);
 
-        Wrapper wrapper = reader.readValue(wrapperPayload(25), Wrapper.class);
-
-        assertEquals(Duration.ofSeconds(25),  wrapper.value);
+        try {
+            /*Wrapper wrapper =*/ reader.readValue(wrapperPayload(25), Wrapper.class);
+            fail("Should not allow invalid 'pattern'");
+        } catch (InvalidDefinitionException e) {
+            verifyException(e, "Bad 'pattern' definition (\"Nanos\")");
+            verifyException(e, "expected one of [");
+        }
     }
 
     private String wrapperPayload(Number number) {

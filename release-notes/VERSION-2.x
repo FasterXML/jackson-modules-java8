@@ -16,6 +16,9 @@ Modules:
 #175: ObjectMapper#setTimeZone ignored by jsr-310/datetime types during serialization
   when using `@JsonFormat` annotation
  (reported by Erwan L; fix contributed by Ferenc C)
+#184: `DurationDeserializer` should use `@JsonFormat.pattern` (and config override)
+  to support configurable `ChronoUnit`
+ (requested by Philipp D, fix contributed by Oriol B)
 - Add Gradle Module Metadata (https://blog.gradle.org/alignment-with-gradle-module-metadata)
 
 2.11.3 (02-Oct-2020)

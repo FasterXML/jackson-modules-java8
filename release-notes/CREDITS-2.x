@@ -118,3 +118,13 @@ Ferenc Csaky (ferenc-csaky@github)
   * Contributed fix to #175: ObjectMapper#setTimeZone ignored by jsr-310/datetime
     types during serialization when using `@JsonFormat` annotation
    (2.12.0)
+
+Philipp Dargel (chisui@github)
+  * Requested #184: `DurationDeserializer` should use `@JsonFormat.pattern` (and
+    config override) to support configurable `ChronoUnit`
+   (2.12.0)
+
+Oriol Barcelona (obarcelonap@github)
+  * Contributed fix for #184: `DurationDeserializer` should use `@JsonFormat.pattern`
+    (and config override) to support configurable `ChronoUnit`
+   (2.12.0)
