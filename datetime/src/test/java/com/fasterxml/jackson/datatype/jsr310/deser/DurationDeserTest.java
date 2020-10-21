@@ -438,21 +438,15 @@ public class DurationDeserTest extends ModuleTestBase
 
     @Test
     public void shouldDeserializeInNanos_whenNanosUnitAsPattern_andValueIsInteger() throws Exception {
-        ObjectMapper mapper = newMapper();
-        mapper.configOverride(Duration.class)
-                .setFormat(JsonFormat.Value.forPattern("NANOS"));
+        ObjectMapper mapper = _mapperForPatternOverride("NANOS");
         ObjectReader reader = mapper.readerFor(MAP_TYPE_REF);
-
         Wrapper wrapper = reader.readValue(wrapperPayload(25), Wrapper.class);
-
         assertEquals(Duration.ofNanos(25),  wrapper.value);
     }
 
     @Test
     public void shouldDeserializeInMicros_whenMicrosUnitAsPattern_andValueIsInteger() throws Exception {
-        ObjectMapper mapper = newMapper();
-        mapper.configOverride(Duration.class)
-                .setFormat(JsonFormat.Value.forPattern("MICROS"));
+        ObjectMapper mapper = _mapperForPatternOverride("MICROS");
         ObjectReader reader = mapper.readerFor(MAP_TYPE_REF);
 
         Wrapper wrapper = reader.readValue(wrapperPayload(25), Wrapper.class);
@@ -462,9 +456,7 @@ public class DurationDeserTest extends ModuleTestBase
 
     @Test
     public void shouldDeserializeInMillis_whenMillisUnitAsPattern_andValueIsInteger() throws Exception {
-        ObjectMapper mapper = newMapper();
-        mapper.configOverride(Duration.class)
-                .setFormat(JsonFormat.Value.forPattern("MILLIS"));
+        ObjectMapper mapper = _mapperForPatternOverride("MILLIS");
         ObjectReader reader = mapper.readerFor(MAP_TYPE_REF);
 
         Wrapper wrapper = reader.readValue(wrapperPayload(25), Wrapper.class);
@@ -474,9 +466,7 @@ public class DurationDeserTest extends ModuleTestBase
 
     @Test
     public void shouldDeserializeInSeconds_whenSecondsUnitAsPattern_andValueIsInteger() throws Exception {
-        ObjectMapper mapper = newMapper();
-        mapper.configOverride(Duration.class)
-                .setFormat(JsonFormat.Value.forPattern("SECONDS"));
+        ObjectMapper mapper = _mapperForPatternOverride("SECONDS");
         ObjectReader reader = mapper.readerFor(MAP_TYPE_REF);
 
         Wrapper wrapper = reader.readValue(wrapperPayload(25), Wrapper.class);
@@ -486,9 +476,7 @@ public class DurationDeserTest extends ModuleTestBase
 
     @Test
     public void shouldDeserializeInMinutes_whenMinutesUnitAsPattern_andValueIsInteger() throws Exception {
-        ObjectMapper mapper = newMapper();
-        mapper.configOverride(Duration.class)
-                .setFormat(JsonFormat.Value.forPattern("MINUTES"));
+        ObjectMapper mapper = _mapperForPatternOverride("MINUTES");
         ObjectReader reader = mapper.readerFor(MAP_TYPE_REF);
 
         Wrapper wrapper = reader.readValue(wrapperPayload(25), Wrapper.class);
@@ -498,9 +486,7 @@ public class DurationDeserTest extends ModuleTestBase
 
     @Test
     public void shouldDeserializeInHours_whenHoursUnitAsPattern_andValueIsInteger() throws Exception {
-        ObjectMapper mapper = newMapper();
-        mapper.configOverride(Duration.class)
-                .setFormat(JsonFormat.Value.forPattern("HOURS"));
+        ObjectMapper mapper = _mapperForPatternOverride("HOURS");
         ObjectReader reader = mapper.readerFor(MAP_TYPE_REF);
 
         Wrapper wrapper = reader.readValue(wrapperPayload(25), Wrapper.class);
@@ -510,9 +496,7 @@ public class DurationDeserTest extends ModuleTestBase
 
     @Test
     public void shouldDeserializeInHalfDays_whenHalfDaysUnitAsPattern_andValueIsInteger() throws Exception {
-        ObjectMapper mapper = newMapper();
-        mapper.configOverride(Duration.class)
-                .setFormat(JsonFormat.Value.forPattern("HALF_DAYS"));
+        ObjectMapper mapper = _mapperForPatternOverride("HALF_DAYS");
         ObjectReader reader = mapper.readerFor(MAP_TYPE_REF);
 
         Wrapper wrapper = reader.readValue(wrapperPayload(25), Wrapper.class);
@@ -522,9 +506,7 @@ public class DurationDeserTest extends ModuleTestBase
 
     @Test
     public void shouldDeserializeInDays_whenDaysUnitAsPattern_andValueIsInteger() throws Exception {
-        ObjectMapper mapper = newMapper();
-        mapper.configOverride(Duration.class)
-                .setFormat(JsonFormat.Value.forPattern("DAYS"));
+        ObjectMapper mapper = _mapperForPatternOverride("DAYS");
         ObjectReader reader = mapper.readerFor(MAP_TYPE_REF);
 
         Wrapper wrapper = reader.readValue(wrapperPayload(25), Wrapper.class);
@@ -534,9 +516,7 @@ public class DurationDeserTest extends ModuleTestBase
 
     @Test
     public void shouldIgnoreUnitPattern_whenValueIsFloat() throws Exception {
-        ObjectMapper mapper = newMapper();
-        mapper.configOverride(Duration.class)
-                .setFormat(JsonFormat.Value.forPattern("MINUTES"));
+        ObjectMapper mapper = _mapperForPatternOverride("MINUTES");
         ObjectReader reader = mapper.readerFor(MAP_TYPE_REF);
 
         Wrapper wrapper = reader.readValue(wrapperPayload(25.5), Wrapper.class);
@@ -546,9 +526,7 @@ public class DurationDeserTest extends ModuleTestBase
 
     @Test
     public void shouldIgnoreUnitPattern_whenValueIsString() throws Exception {
-        ObjectMapper mapper = newMapper();
-        mapper.configOverride(Duration.class)
-                .setFormat(JsonFormat.Value.forPattern("MINUTES"));
+        ObjectMapper mapper = _mapperForPatternOverride("MINUTES");
         ObjectReader reader = mapper.readerFor(MAP_TYPE_REF);
 
         Wrapper wrapper = reader.readValue("{\"value\":\"PT25S\"}", Wrapper.class);
@@ -574,5 +552,12 @@ public class DurationDeserTest extends ModuleTestBase
 
     private String wrapperPayload(Number number) {
         return "{\"value\":" + number + "}";
+    }
+
+    private ObjectMapper _mapperForPatternOverride(String patternStr) {
+        ObjectMapper mapper = newMapper();
+        mapper.configOverride(Duration.class)
+            .setFormat(JsonFormat.Value.forPattern(patternStr));
+        return mapper;
     }
 }
