@@ -36,6 +36,7 @@ import com.fasterxml.jackson.core.io.NumberInput;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
+import com.fasterxml.jackson.datatype.jsr310.util.DurationUnitConverter;
 
 /**
  * Deserializer for Java 8 temporal {@link Duration}s.
@@ -90,8 +91,8 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
         return new DurationDeserializer(this, leniency);
     }
 
-    protected DurationDeserializer withConverter(DurationUnitConverter pattern) {
-        return new DurationDeserializer(this, pattern);
+    protected DurationDeserializer withConverter(DurationUnitConverter converter) {
+        return new DurationDeserializer(this, converter);
     }
 
     @Override
@@ -113,8 +114,8 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
                 if (p == null) {
                     ctxt.reportBadDefinition(getValueType(ctxt),
                             String.format(
-"Bad 'pattern' definition (\"%s\") for `Duration`: expected one of [%s]",
-pattern, DurationUnitConverter.descForAllowed()));
+                                    "Bad 'pattern' definition (\"%s\") for `Duration`: expected one of [%s]",
+                                    pattern, DurationUnitConverter.descForAllowed()));
                 }
                 deser = deser.withConverter(p);
             }
@@ -184,50 +185,5 @@ pattern, DurationUnitConverter.descForAllowed()));
             return Duration.ofSeconds(ts);
         }
         return Duration.ofMillis(ts);
-    }
-
-    protected static class DurationUnitConverter {
-        private final static Map<String, ChronoUnit> PARSEABLE_UNITS;
-        static {
-            Map<String, ChronoUnit> units = new LinkedHashMap<>();
-            for (ChronoUnit unit : new ChronoUnit[] {
-                ChronoUnit.NANOS,
-                ChronoUnit.MICROS,
-                ChronoUnit.MILLIS,
-                ChronoUnit.SECONDS,
-                ChronoUnit.MINUTES,
-                ChronoUnit.HOURS,
-                ChronoUnit.HALF_DAYS,
-                ChronoUnit.DAYS
-            }) {
-                units.put(unit.name(), unit);
-            }
-            PARSEABLE_UNITS = units;
-        }
-
-        final TemporalUnit unit;
-
-        DurationUnitConverter(TemporalUnit unit) {
-            this.unit = unit;
-        }
-
-        public Duration convert(long value) {
-            return Duration.of(value, unit);
-        }
-
-        /**
-         * @return Description of all allowed valued as a sequence of
-         *    double-quoted values separated by comma
-         */
-        public static String descForAllowed() {
-            return "\"" + PARSEABLE_UNITS.keySet().stream()
-                    .collect(Collectors.joining("\", \""))
-                    +"\"";
-        }
-
-        static DurationUnitConverter from(String unit) {
-            ChronoUnit chr = PARSEABLE_UNITS.get(unit);
-            return (chr == null) ? null : new DurationUnitConverter(chr);
-        }
     }
 }
