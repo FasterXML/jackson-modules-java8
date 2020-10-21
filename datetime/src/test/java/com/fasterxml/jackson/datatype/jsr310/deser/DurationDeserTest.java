@@ -1,13 +1,23 @@
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
-import java.math.BigInteger;
-import java.time.Duration;
-import java.time.temporal.TemporalAmount;
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
+import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 import org.junit.Test;
+
+import java.math.BigInteger;
+import java.time.Duration;
+import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAmount;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -15,19 +25,19 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
-import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
-
 public class DurationDeserTest extends ModuleTestBase
 {
     private final ObjectReader READER = newMapper().readerFor(Duration.class);
 
     private final TypeReference<Map<String, Duration>> MAP_TYPE_REF = new TypeReference<Map<String, Duration>>() { };
+
+    final static class Wrapper {
+        public Duration value;
+
+        public Wrapper() { }
+        public Wrapper(Duration v) { value = v; }
+    }
+
 
     @Test
     public void testDeserializationAsFloat01() throws Exception
@@ -406,5 +416,152 @@ public class DurationDeserTest extends ModuleTestBase
         String dateValAsEmptyStr = "";
         String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, dateValAsEmptyStr));
         objectReader.readValue(valueFromEmptyStr);
+    }
+
+    /*
+    /**********************************************************
+    /* Tests for custom patterns (modules-java8#184)
+    /**********************************************************
+     */
+
+    @Test
+    public void shouldDeserializeInNanos_whenNanosUnitAsPattern_andValueIsInteger() throws Exception {
+        mapper.configOverride(Duration.class)
+                .setFormat(JsonFormat.Value.forPattern("NANOS"));
+        ObjectReader reader = mapper.readerFor(MAP_TYPE_REF);
+
+        Wrapper wrapper = reader.readValue(wrapperPayload(25), Wrapper.class);
+
+        assertEquals(Duration.ofNanos(25),  wrapper.value);
+    }
+
+    @Test
+    public void shouldDeserializeInMicros_whenMicrosUnitAsPattern_andValueIsInteger() throws Exception {
+        ObjectMapper mapper = mapperBuilder()
+                .withConfigOverride(Duration.class,
+        mapper.configOverride(Duration.class)
+                .setFormat(JsonFormat.Value.forPattern("MICROS"));
+        ObjectReader reader = mapper.readerFor(MAP_TYPE_REF);
+
+        Wrapper wrapper = reader.readValue(wrapperPayload(25), Wrapper.class);
+
+        assertEquals(Duration.of(25, ChronoUnit.MICROS),  wrapper.value);
+    }
+
+    @Test
+    public void shouldDeserializeInMillis_whenMillisUnitAsPattern_andValueIsInteger() throws Exception {
+        ObjectMapper mapper = mapperBuilder()
+                .withConfigOverride(Duration.class,
+        mapper.configOverride(Duration.class)
+                .setFormat(JsonFormat.Value.forPattern("MILLIS"));
+        ObjectReader reader = mapper.readerFor(MAP_TYPE_REF);
+
+        Wrapper wrapper = reader.readValue(wrapperPayload(25), Wrapper.class);
+
+        assertEquals(Duration.ofMillis(25),  wrapper.value);
+    }
+
+    @Test
+    public void shouldDeserializeInSeconds_whenSecondsUnitAsPattern_andValueIsInteger() throws Exception {
+        ObjectMapper mapper = mapperBuilder()
+                .withConfigOverride(Duration.class,
+                .setFormat(JsonFormat.Value.forPattern("SECONDS"));
+        ObjectReader reader = mapper.readerFor(MAP_TYPE_REF);
+
+        Wrapper wrapper = reader.readValue(wrapperPayload(25), Wrapper.class);
+
+        assertEquals(Duration.ofSeconds(25),  wrapper.value);
+    }
+
+    @Test
+    public void shouldDeserializeInMinutes_whenMinutesUnitAsPattern_andValueIsInteger() throws Exception {
+        ObjectMapper mapper = newMapper();
+        mapper.configOverride(Duration.class)
+                .setFormat(JsonFormat.Value.forPattern("MINUTES"));
+        ObjectReader reader = mapper.readerFor(MAP_TYPE_REF);
+
+        Wrapper wrapper = reader.readValue(wrapperPayload(25), Wrapper.class);
+
+        assertEquals(Duration.ofMinutes(25),  wrapper.value);
+    }
+
+    @Test
+    public void shouldDeserializeInHours_whenHoursUnitAsPattern_andValueIsInteger() throws Exception {
+        ObjectMapper mapper = newMapper();
+        mapper.configOverride(Duration.class)
+                .setFormat(JsonFormat.Value.forPattern("HOURS"));
+        ObjectReader reader = mapper.readerFor(MAP_TYPE_REF);
+
+        Wrapper wrapper = reader.readValue(wrapperPayload(25), Wrapper.class);
+
+        assertEquals(Duration.ofHours(25),  wrapper.value);
+    }
+
+    @Test
+    public void shouldDeserializeInHalfDays_whenHalfDaysUnitAsPattern_andValueIsInteger() throws Exception {
+        ObjectMapper mapper = newMapper();
+        mapper.configOverride(Duration.class)
+                .setFormat(JsonFormat.Value.forPattern("HALF_DAYS"));
+        ObjectReader reader = mapper.readerFor(MAP_TYPE_REF);
+
+        Wrapper wrapper = reader.readValue(wrapperPayload(25), Wrapper.class);
+
+        assertEquals(Duration.of(25, ChronoUnit.HALF_DAYS),  wrapper.value);
+    }
+
+    @Test
+    public void shouldDeserializeInDays_whenDaysUnitAsPattern_andValueIsInteger() throws Exception {
+        ObjectMapper mapper = newMapper();
+        mapper.configOverride(Duration.class)
+                .setFormat(JsonFormat.Value.forPattern("DAYS"));
+        ObjectReader reader = mapper.readerFor(MAP_TYPE_REF);
+
+        Wrapper wrapper = reader.readValue(wrapperPayload(25), Wrapper.class);
+
+        assertEquals(Duration.ofDays(25),  wrapper.value);
+    }
+
+    @Test
+    public void shouldIgnoreUnitPattern_whenValueIsFloat() throws Exception {
+        ObjectMapper mapper = newMapper();
+        mapper.configOverride(Duration.class)
+                .setFormat(JsonFormat.Value.forPattern("MINUTES"));
+        ObjectReader reader = mapper.readerFor(MAP_TYPE_REF);
+
+        Wrapper wrapper = reader.readValue(wrapperPayload(25.5), Wrapper.class);
+
+        assertEquals(Duration.parse("PT25.5S"),  wrapper.value);
+    }
+
+    @Test
+    public void shouldIgnoreUnitPattern_whenValueIsString() throws Exception {
+        ObjectMapper mapper = newMapper();
+        mapper.configOverride(Duration.class)
+                .setFormat(JsonFormat.Value.forPattern("MINUTES"));
+        ObjectReader reader = mapper.readerFor(MAP_TYPE_REF);
+
+        Wrapper wrapper = reader.readValue("{\"value\":\"PT25S\"}", Wrapper.class);
+
+        assertEquals(Duration.parse("PT25S"),  wrapper.value);
+    }
+
+    @Test
+    public void shouldFailForInvalidPattern() throws Exception {
+        ObjectMapper mapper = newMapper();
+        mapper.configOverride(Duration.class)
+                .setFormat(JsonFormat.Value.forPattern("Nanos"));
+        ObjectReader reader = mapper.readerFor(MAP_TYPE_REF);
+
+        try {
+            /*Wrapper wrapper =*/ reader.readValue(wrapperPayload(25), Wrapper.class);
+            fail("Should not allow invalid 'pattern'");
+        } catch (InvalidDefinitionException e) {
+            verifyException(e, "Bad 'pattern' definition (\"Nanos\")");
+            verifyException(e, "expected one of [");
+        }
+    }
+
+    private String wrapperPayload(Number number) {
+        return "{\"value\":" + number + "}";
     }
 }

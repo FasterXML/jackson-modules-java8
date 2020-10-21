@@ -16,44 +16,63 @@
 
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.time.DateTimeException;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
+import java.util.*;
+import java.util.stream.Collectors;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.JsonTokenId;
 import com.fasterxml.jackson.core.StreamReadCapability;
 import com.fasterxml.jackson.core.io.NumberInput;
-import com.fasterxml.jackson.databind.BeanProperty;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.time.DateTimeException;
-import java.time.Duration;
-
 
 /**
  * Deserializer for Java 8 temporal {@link Duration}s.
- *
- * @author Nick Williams
  */
 public class DurationDeserializer extends JSR310DeserializerBase<Duration>
 {
     public static final DurationDeserializer INSTANCE = new DurationDeserializer();
 
-    private DurationDeserializer()
-    {
+    /**
+     * When defined (not {@code null}) integer values will be converted into duration
+     * unit configured for the converter.
+     * Using this converter will typically override the value specified in
+     * {@link DeserializationFeature#READ_DATE_TIMESTAMPS_AS_NANOSECONDS} as it is
+     * considered that the unit set in {@link JsonFormat#pattern()} has precedence
+     * since it is more specific.
+     *<p>
+     * See [jackson-modules-java8#184] for more info.
+     */
+    protected final DurationUnitConverter _durationUnitConverter;
+
+    public DurationDeserializer() {
         super(Duration.class);
+        _durationUnitConverter = null;
     }
 
     /**
-     * Since 2.11
+     * @since 2.11
      */
     protected DurationDeserializer(DurationDeserializer base, Boolean leniency) {
         super(base, leniency);
+        _durationUnitConverter = base._durationUnitConverter;
+    }
+
+    /**
+     * @since 2.12
+     */
+    protected DurationDeserializer(DurationDeserializer base, DurationUnitConverter converter) {
+        super(base, base._isLenient);
+        _durationUnitConverter = converter;
     }
 
     @Override
@@ -61,9 +80,13 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
         return new DurationDeserializer(this, leniency);
     }
 
+    protected DurationDeserializer withConverter(DurationUnitConverter pattern) {
+        return new DurationDeserializer(this, pattern);
+    }
+
     @Override
     public JsonDeserializer<?> createContextual(DeserializationContext ctxt,
-                                                BeanProperty property) throws JsonMappingException
+            BeanProperty property) throws JsonMappingException
     {
         JsonFormat.Value format = findFormatOverrides(ctxt, property, handledType());
         DurationDeserializer deser = this;
@@ -73,6 +96,17 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
                 if (leniency != null) {
                     deser = deser.withLeniency(leniency);
                 }
+            }
+            if (format.hasPattern()) {
+                final String pattern = format.getPattern();
+                DurationUnitConverter p = DurationUnitConverter.from(pattern);
+                if (p == null) {
+                    ctxt.reportBadDefinition(getValueType(ctxt),
+                            String.format(
+"Bad 'pattern' definition (\"%s\") for `Duration`: expected one of [%s]",
+pattern, DurationUnitConverter.descForAllowed()));
+                }
+                deser = deser.withConverter(p);
             }
         }
         return deser;
@@ -98,9 +132,9 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
                 // 20-Apr-2016, tatu: Related to [databind#1208], can try supporting embedded
                 //    values quite easily
                 return (Duration) parser.getEmbeddedObject();
-                
+
             case JsonTokenId.ID_START_ARRAY:
-            	return _deserializeFromArray(parser, context);
+                return _deserializeFromArray(parser, context);
         }
         return _handleUnexpectedToken(context, parser, JsonToken.VALUE_STRING,
                 JsonToken.VALUE_NUMBER_INT, JsonToken.VALUE_NUMBER_FLOAT);
@@ -132,9 +166,59 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
     }
 
     protected Duration _fromTimestamp(DeserializationContext ctxt, long ts) {
+        if (_durationUnitConverter != null) {
+            return _durationUnitConverter.convert(ts);
+        }
+        // 20-Oct-2020, tatu: This makes absolutely no sense but... somehow
+        //   became the default handling.
         if (ctxt.isEnabled(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)) {
             return Duration.ofSeconds(ts);
         }
         return Duration.ofMillis(ts);
+    }
+
+    protected static class DurationUnitConverter {
+        private final static Map<String, ChronoUnit> PARSEABLE_UNITS;
+        static {
+            Map<String, ChronoUnit> units = new LinkedHashMap<>();
+            for (ChronoUnit unit : new ChronoUnit[] {
+                ChronoUnit.NANOS,
+                ChronoUnit.MICROS,
+                ChronoUnit.MILLIS,
+                ChronoUnit.SECONDS,
+                ChronoUnit.MINUTES,
+                ChronoUnit.HOURS,
+                ChronoUnit.HALF_DAYS,
+                ChronoUnit.DAYS
+            }) {
+                units.put(unit.name(), unit);
+            }
+            PARSEABLE_UNITS = units;
+        }
+
+        final TemporalUnit unit;
+
+        DurationUnitConverter(TemporalUnit unit) {
+            this.unit = unit;
+        }
+
+        public Duration convert(long value) {
+            return Duration.of(value, unit);
+        }
+
+        /**
+         * @return Description of all allowed valued as a sequence of
+         *    double-quoted values separated by comma
+         */
+        public static String descForAllowed() {
+            return "\"" + PARSEABLE_UNITS.keySet().stream()
+                    .collect(Collectors.joining("\", \""))
+                    +"\"";
+        }
+
+        static DurationUnitConverter from(String unit) {
+            ChronoUnit chr = PARSEABLE_UNITS.get(unit);
+            return (chr == null) ? null : new DurationUnitConverter(chr);
+        }
     }
 }
