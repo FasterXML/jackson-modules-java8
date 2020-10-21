@@ -104,6 +104,10 @@ Samantha Williamson (samwill@github)
   * Contributed fix to #148: Allow strict `LocalDate` parsing
    (2.11.0)
 
+Joni Syri (jpsyri@github)
+  * Reported #165: Problem in serializing negative Duration values
+   (2.12.0)
+
 Moritz Orth (morth@github.com)
   * Reported and suggested fix for #166: Cannot deserialize OffsetDateTime.MIN and
    OffsetDateTime.MAX with ADJUST_DATES_TO_CONTEXT_TIME_ZONE enabled
@@ -128,3 +132,4 @@ Oriol Barcelona (obarcelonap@github)
   * Contributed fix for #184: `DurationDeserializer` should use `@JsonFormat.pattern`
     (and config override) to support configurable `ChronoUnit`
    (2.12.0)
+

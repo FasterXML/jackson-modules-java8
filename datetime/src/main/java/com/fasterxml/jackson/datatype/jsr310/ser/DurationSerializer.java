@@ -31,6 +31,7 @@ import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonValueFormat;
 import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 
@@ -81,9 +82,20 @@ public class DurationSerializer extends JSR310FormattedSerializerBase<Duration>
     {
         if (useTimestamp(provider)) {
             if (useNanoseconds(provider)) {
-                generator.writeNumber(DecimalUtils.toBigDecimal(
-                        duration.getSeconds(), duration.getNano()
-                ));
+                // 20-Oct-2020, tatu: [modules-java8#165] Need to take care of
+                //    negative values too, and without work-around values
+                //    returned are wonky wrt conversions
+                BigDecimal bd;
+                if (duration.isNegative()) {
+                    duration = duration.abs();
+                    bd = DecimalUtils.toBigDecimal(duration.getSeconds(),
+                            duration.getNano())
+                        .negate();
+                } else {
+                    bd = DecimalUtils.toBigDecimal(duration.getSeconds(),
+                            duration.getNano());
+                }
+                generator.writeNumber(bd);
             } else {
                 generator.writeNumber(duration.toMillis());
             }
