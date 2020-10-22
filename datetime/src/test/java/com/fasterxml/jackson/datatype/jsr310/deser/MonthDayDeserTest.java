@@ -93,7 +93,7 @@ public class MonthDayDeserTest extends ModuleTestBase
     {
         MonthDay value = newMapper()
                 .configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
-                .readerFor(MonthDay.class).readValue(aposToQuotes("['--01-01']"));
+                .readerFor(MonthDay.class).readValue(a2q("['--01-01']"));
         notNull(value);
         expect(MonthDay.of(Month.JANUARY, 1), value);
     }
@@ -216,7 +216,7 @@ public class MonthDayDeserTest extends ModuleTestBase
     }
 
     private MonthDay read(final String aposJson) throws IOException {
-        return READER.readValue(aposToQuotes(aposJson));
+        return READER.readValue(a2q(aposJson));
     }
 
     private static void notNull(Object value) {

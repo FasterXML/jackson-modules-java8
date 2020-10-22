@@ -849,7 +849,7 @@ public class ZonedDateTimeSerTest
         ZonedDateTime inputValue = ZonedDateTime.ofInstant(Instant.ofEpochSecond(0L), UTC);
         final Wrapper input = new Wrapper(inputValue);
         String json = MAPPER.writeValueAsString(input);
-        assertEquals(aposToQuotes("{'value':'1970_01_01 00:00:00(+0000)'}"), json);
+        assertEquals(a2q("{'value':'1970_01_01 00:00:00(+0000)'}"), json);
 
         Wrapper result = MAPPER.readerFor(Wrapper.class)
                 .without(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
@@ -865,7 +865,7 @@ public class ZonedDateTimeSerTest
         final WrapperNumeric input = new WrapperNumeric(inputValue);
 
         String json = MAPPER.writeValueAsString(input);
-        assertEquals(aposToQuotes("{'value':'19700101000000'}"), json);
+        assertEquals(a2q("{'value':'19700101000000'}"), json);
 
         WrapperNumeric result = MAPPER.readValue(json, WrapperNumeric.class);
         assertEquals(input.value.toInstant(), result.value.toInstant());

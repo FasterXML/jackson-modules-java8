@@ -147,7 +147,7 @@ public class LocalTimeDeserTest extends ModuleTestBase
     public void testDeserializationAsArrayDisabled() throws Throwable
     {
         try {
-            reader.readValue(aposToQuotes("['12:00']"));
+            reader.readValue(a2q("['12:00']"));
             fail("expected MismatchedInputException");
         } catch (MismatchedInputException e) {
             verifyException(e, "Unexpected token (VALUE_STRING) within Array");
@@ -163,7 +163,7 @@ public class LocalTimeDeserTest extends ModuleTestBase
     {
         LocalTime value= newMapper()
                .configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
-               .readerFor(LocalTime.class).readValue(aposToQuotes("['12:00']"));
+               .readerFor(LocalTime.class).readValue(a2q("['12:00']"));
         expect(LocalTime.of(12, 0), value);
     }
 
@@ -173,7 +173,7 @@ public class LocalTimeDeserTest extends ModuleTestBase
         LocalTime value= newMapper()
                .configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
                .configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true)
-               .readerFor(LocalTime.class).readValue(aposToQuotes("[]"));
+               .readerFor(LocalTime.class).readValue(a2q("[]"));
         assertNull(value);
     }    
 
@@ -285,7 +285,7 @@ public class LocalTimeDeserTest extends ModuleTestBase
 
     private void expectFailure(String aposJson) throws Throwable {
         try {
-            reader.readValue(aposToQuotes(aposJson));
+            reader.readValue(a2q(aposJson));
             fail("expected DateTimeParseException");
         } catch (JsonProcessingException e) {
             if (e.getCause() == null) {
@@ -298,7 +298,7 @@ public class LocalTimeDeserTest extends ModuleTestBase
     }
 
     private void expectSuccess(Object exp, String aposJson) throws IOException {
-        final LocalTime value = reader.readValue(aposToQuotes(aposJson));
+        final LocalTime value = reader.readValue(a2q(aposJson));
         notNull(value);
         expect(exp, value);
     }

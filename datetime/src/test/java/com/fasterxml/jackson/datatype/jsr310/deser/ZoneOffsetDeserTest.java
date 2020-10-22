@@ -49,7 +49,7 @@ public class ZoneOffsetDeserTest extends ModuleTestBase
         assertEquals("The value is not correct.", ZoneOffset.of("Z"),
                 READER.readValue("\"Z\""));
         assertEquals("The value is not correct.", ZoneOffset.of("+0300"),
-                READER.readValue(quote("+0300")));
+                READER.readValue(q("+0300")));
         assertEquals("The value is not correct.", ZoneOffset.of("-0630"),
                 READER.readValue("\"-06:30\""));
     }

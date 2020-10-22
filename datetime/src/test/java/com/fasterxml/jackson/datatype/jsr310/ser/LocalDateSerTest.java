@@ -134,7 +134,7 @@ public class LocalDateSerTest
         ObjectMapper mapper = newMapper();
         final LocalDate localDate = LocalDate.of(2017, 12, 5);
         String json = mapper.writeValueAsString(new Holder46(localDate, localDate));
-        assertEquals(aposToQuotes("{\"localDate\":[2017,12,5],\"object\":{\"java.time.LocalDate\":[2017,12,5]}}"),
+        assertEquals(a2q("{\"localDate\":[2017,12,5],\"object\":{\"java.time.LocalDate\":[2017,12,5]}}"),
                 json);
     }
     

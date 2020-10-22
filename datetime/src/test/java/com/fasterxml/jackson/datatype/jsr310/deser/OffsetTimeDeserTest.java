@@ -146,7 +146,7 @@ public class OffsetTimeDeserTest extends ModuleTestBase
     @Test
     public void testBadDeserializationFromString01() throws Throwable
     {
-        expectFailure(quote("notanoffsettime"));
+        expectFailure(q("notanoffsettime"));
     }
     
     @Test
@@ -201,7 +201,7 @@ public class OffsetTimeDeserTest extends ModuleTestBase
     @Test
     public void testDeserOfArrayOf() throws Exception
     {
-        final String JSON = aposToQuotes
+        final String JSON = a2q
                 ("{'name':'test','objects':[{'partDate':[2015,10,13],'starttime':[15,7,'+0'],'endtime':[2,14,'+0'],'comments':'in the comments'}]}");
         Pojo45s result = READER.forType(Pojo45s.class).readValue(JSON);
         assertNotNull(result);
@@ -231,7 +231,7 @@ public class OffsetTimeDeserTest extends ModuleTestBase
     public void testDeserializationAsArrayEnabled() throws Throwable
     {
         OffsetTime value = READER.with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
-    			.readValue(aposToQuotes("['12:00Z']"));
+    			.readValue(a2q("['12:00Z']"));
         expect(OffsetTime.of(12, 0, 0, 0, ZoneOffset.UTC), value);
     }
 
@@ -307,7 +307,7 @@ public class OffsetTimeDeserTest extends ModuleTestBase
     }
 
     private OffsetTime read(final String json) throws IOException {
-        return READER.readValue(aposToQuotes(json));
+        return READER.readValue(a2q(json));
     }
 
     private static void notNull(Object value) {

@@ -374,7 +374,7 @@ public class InstantDeserTest extends ModuleTestBase
     {
         final Wrapper input = new Wrapper(Instant.ofEpochMilli(0));
         String json = MAPPER.writeValueAsString(input);
-        assertEquals(aposToQuotes("{'value':'1970-01-01T00:00:00Z'}"), json);
+        assertEquals(a2q("{'value':'1970-01-01T00:00:00Z'}"), json);
 
         Wrapper result = MAPPER.readValue(json, Wrapper.class);
         assertEquals(input.value, result.value);
@@ -394,7 +394,7 @@ public class InstantDeserTest extends ModuleTestBase
         String json = MAPPER.writeValueAsString(input);
 
         assertTrue("Instant in UTC timezone was not serialized as expected.",
-                json.contains(aposToQuotes("'valueInUTC':'" + valueInUTC + "'")));
+                json.contains(a2q("'valueInUTC':'" + valueInUTC + "'")));
 
         WrapperWithCustomPattern result = MAPPER.readValue(json, WrapperWithCustomPattern.class);
         assertEquals("Instant in UTC timezone was not deserialized as expected.",

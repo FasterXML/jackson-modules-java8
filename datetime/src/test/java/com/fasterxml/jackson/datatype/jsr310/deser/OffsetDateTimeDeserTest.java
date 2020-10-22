@@ -591,7 +591,7 @@ public class OffsetDateTimeDeserTest
         final Wrapper input = new Wrapper(inputValue);
         final ObjectMapper m = newMapper();
         String json = m.writeValueAsString(input);
-        assertEquals(aposToQuotes("{'value':'1970_01_01T00:00:00+0000'}"), json);
+        assertEquals(a2q("{'value':'1970_01_01T00:00:00+0000'}"), json);
 
         Wrapper result = m.readValue(json, Wrapper.class);
         assertEquals(input.value, result.value);

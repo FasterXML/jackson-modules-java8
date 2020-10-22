@@ -67,7 +67,7 @@ public class YearMonthDeserTest extends ModuleTestBase
     	String json="['2000-01']";
     	YearMonth value= newMapper()
     			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
-    			.readerFor(YearMonth.class).readValue(aposToQuotes(json));
+    			.readerFor(YearMonth.class).readValue(a2q(json));
     	notNull(value);
         expect(YearMonth.of(2000, Month.JANUARY), value);
     }
@@ -79,7 +79,7 @@ public class YearMonthDeserTest extends ModuleTestBase
     	YearMonth value= newMapper()
     			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
     			.configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true)
-    			.readerFor(YearMonth.class).readValue(aposToQuotes(json));
+    			.readerFor(YearMonth.class).readValue(a2q(json));
     	assertNull(value);
     }
 
@@ -149,7 +149,7 @@ public class YearMonthDeserTest extends ModuleTestBase
     }
 
     private YearMonth read(final String json) throws IOException {
-        return READER.readValue(aposToQuotes(json));
+        return READER.readValue(a2q(json));
     }
 
     private static void notNull(Object value) {

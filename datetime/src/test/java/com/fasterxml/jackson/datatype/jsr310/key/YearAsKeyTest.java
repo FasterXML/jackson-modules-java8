@@ -57,7 +57,7 @@ public class YearAsKeyTest extends ModuleTestBase
         assertEquals(testMap, deserialized);
 
         // actually, check padded as well just to make sure
-        Map<Year, Float> deserialized2 = MAPPER.readValue(aposToQuotes("{'0001':1.0}"),
+        Map<Year, Float> deserialized2 = MAPPER.readValue(a2q("{'0001':1.0}"),
                 yearFloatTypeReference);
         assertEquals(testMap, deserialized2);
     }

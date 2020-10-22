@@ -354,7 +354,7 @@ public class DurationDeserTest extends ModuleTestBase
         try {
             newMapper()
                 .configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
-        	        .readerFor(Duration.class).readValue(aposToQuotes("[]"));
+        	        .readerFor(Duration.class).readValue(a2q("[]"));
             fail("expected MismatchedInputException");
         } catch (MismatchedInputException e) {
             verifyException(e, "Cannot deserialize value of type `java.time.Duration` from Array value");
@@ -378,7 +378,7 @@ public class DurationDeserTest extends ModuleTestBase
     	Duration value= newMapper()
     			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
     			.configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true)
-    			.readerFor(Duration.class).readValue(aposToQuotes(json));
+    			.readerFor(Duration.class).readValue(a2q(json));
     	assertNull(value);
     }
 

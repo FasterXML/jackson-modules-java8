@@ -95,7 +95,7 @@ public class LocalDateDeserTest extends ModuleTestBase
     public void testDeserializationAsString01() throws Exception
     {
         assertEquals("The value is not correct.", LocalDate.of(2000, Month.JANUARY, 1),
-                READER.readValue(quote("2000-01-01")));
+                READER.readValue(q("2000-01-01")));
 
         LocalDate date = LocalDate.of(1986, Month.JANUARY, 17);
         assertEquals("The value is not correct.", date,
@@ -128,7 +128,7 @@ public class LocalDateDeserTest extends ModuleTestBase
     public void testBadDeserializationAsString01() throws Throwable
     {
         try {
-            READER.readValue(quote("notalocaldate"));
+            READER.readValue(q("notalocaldate"));
             fail("Should not pass");
         } catch (MismatchedInputException e) {
             verifyException(e, "Cannot deserialize value of type");
@@ -140,7 +140,7 @@ public class LocalDateDeserTest extends ModuleTestBase
     public void testBadDeserializationAsString02() throws Exception
     {
         try {
-            READER.readValue(quote("2015-06-19TShouldNotParse"));
+            READER.readValue(q("2015-06-19TShouldNotParse"));
             fail("Should not pass");
         } catch (JsonMappingException e) {
             verifyException(e, "Cannot deserialize value of type");
@@ -423,7 +423,7 @@ public class LocalDateDeserTest extends ModuleTestBase
      */
     private void expectFailure(ObjectReader reader, String json) throws Throwable {
         try {
-            reader.readValue(aposToQuotes(json));
+            reader.readValue(a2q(json));
             fail("expected DateTimeParseException");
         } catch (JsonProcessingException e) {
             if (e.getCause() == null) {
@@ -436,7 +436,7 @@ public class LocalDateDeserTest extends ModuleTestBase
     }
 
     private void expectSuccess(ObjectReader reader, Object exp, String json) throws IOException {
-        final LocalDate value = reader.readValue(aposToQuotes(json));
+        final LocalDate value = reader.readValue(a2q(json));
         assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.", exp,  value);
     }

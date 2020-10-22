@@ -32,13 +32,13 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
     {
         assertEquals("The value is not correct.",
                 ZonedDateTime.of(2000, 1, 1, 12, 0, 0, 0, ZoneId.of("UTC")),
-                READER.readValue(quote("2000-01-01T12:00Z")));
+                READER.readValue(q("2000-01-01T12:00Z")));
     }
 
     @Test
     public void testBadDeserializationAsString01() throws Throwable
     {
-        expectFailure(quote("notazone"));
+        expectFailure(q("notazone"));
     }
     
     @Test
@@ -69,7 +69,7 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
     		String json="[]";
         	newMapper()
         			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
-        			.readerFor(ZonedDateTime.class).readValue(aposToQuotes(json));
+        			.readerFor(ZonedDateTime.class).readValue(a2q(json));
     	    fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
            // OK
@@ -84,7 +84,7 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
         String json="['2000-01-01T12:00Z']";
         ZonedDateTime value = newMapper()
     			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
-    			.readerFor(ZonedDateTime.class).readValue(aposToQuotes(json));
+    			.readerFor(ZonedDateTime.class).readValue(a2q(json));
         assertEquals("The value is not correct.",
                 ZonedDateTime.of(2000, 1, 1, 12, 0, 0, 0, ZoneId.of("UTC")),
                 value);
@@ -98,7 +98,7 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
     	ZonedDateTime value= newMapper()
     			.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
     			.configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true)
-    			.readerFor(ZonedDateTime.class).readValue(aposToQuotes(json));
+    			.readerFor(ZonedDateTime.class).readValue(a2q(json));
     	assertNull(value);
     }
 
@@ -146,7 +146,7 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
 
     private void expectFailure(String json) throws Throwable {
         try {
-            READER.readValue(aposToQuotes(json));
+            READER.readValue(a2q(json));
             fail("expected DateTimeParseException");
         } catch (JsonProcessingException e) {
             if (e.getCause() == null) {
