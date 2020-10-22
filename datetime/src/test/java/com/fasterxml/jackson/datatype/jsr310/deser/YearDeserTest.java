@@ -63,13 +63,13 @@ public class YearDeserTest extends ModuleTestBase
     public void testDeserializationAsString01() throws Exception
     {
         assertEquals("The value is not correct.",Year.of(2000),
-                READER.readValue(quote("2000")));
+                READER.readValue(q("2000")));
     }
 
     @Test
     public void testBadDeserializationAsString01() throws Throwable
     {
-        expectFailure(quote("notayear"));
+        expectFailure(q("notayear"));
     }
 
     @Test
@@ -88,20 +88,20 @@ public class YearDeserTest extends ModuleTestBase
     @Test
     public void testDeserializationAsEmptyArrayDisabled() throws Throwable
     {
-     try {
-          read("[]");
-         fail("expected JsonMappingException");
+        try {
+            read("[]");
+            fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
            // OK
         } catch (IOException e) {
             throw e;
         }
-     try {
-          String json="[]";
-          newMapper().readerFor(Year.class)
-              .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
-              .readValue(aposToQuotes(json));
-          fail("expected JsonMappingException");
+        try {
+            newMapper()
+                .readerFor(Year.class)
+                .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
+                .readValue("[]");
+            fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
            // OK
         } catch (IOException e) {
@@ -112,11 +112,10 @@ public class YearDeserTest extends ModuleTestBase
     @Test
     public void testDeserializationAsArrayEnabled() throws Throwable
     {
-        String json="['2000']";
         Year value= newMapper()
              .readerFor(Year.class)
              .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
-             .readValue(aposToQuotes(json));
+             .readValue(a2q("['2000']"));
         assertEquals("The value is not correct.", Year.of(2000), value);
     }
     
@@ -258,7 +257,7 @@ public class YearDeserTest extends ModuleTestBase
      */
 
     private Year read(final String json) throws IOException {
-        return READER.readValue(aposToQuotes(json));
+        return READER.readValue(a2q(json));
     }
 
     private void expectFailure(String json) throws Throwable {

@@ -39,7 +39,7 @@ public class TestOffsetDateTimeDeserialization extends ModuleTestBase
     {
         assertEquals("The value is not correct.", 
                 OffsetDateTime.of(2000, 1, 1, 12, 0, 0, 0, ZoneOffset.UTC),
-                READER.readValue(quote("2000-01-01T12:00Z")));
+                READER.readValue(q("2000-01-01T12:00Z")));
     }
 
     @Test
@@ -47,7 +47,7 @@ public class TestOffsetDateTimeDeserialization extends ModuleTestBase
     {
         assertEquals("The value is not correct.", 
                 OffsetDateTime.of(2000, 1, 1, 7, 0, 0, 0, ZoneOffset.UTC),
-                READER.readValue(quote("2000-01-01T12:00+05:00")));
+                READER.readValue(q("2000-01-01T12:00+05:00")));
     }
 
     // [modules-java8#34]
@@ -56,7 +56,7 @@ public class TestOffsetDateTimeDeserialization extends ModuleTestBase
     {
         assertEquals("The value is not correct.", 
                 OffsetDateTime.of(2017, 7, 25, 20, 22, 58, 800_000_000, ZoneOffset.UTC),
-                READER.readValue(quote("2017-07-25T20:22:58.8Z")));
+                READER.readValue(q("2017-07-25T20:22:58.8Z")));
     }
     
     @Test
@@ -67,7 +67,7 @@ public class TestOffsetDateTimeDeserialization extends ModuleTestBase
         //
         ObjectReader reader2 = READER
                 .without(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
-        OffsetDateTime parsed = reader2.readValue(aposToQuotes("'2000-01-01T12:00+05:00'"));
+        OffsetDateTime parsed = reader2.readValue(a2q("'2000-01-01T12:00+05:00'"));
         assertEquals("The value is not correct.", 
                 OffsetDateTime.of(2000, 1, 1, 12, 0, 0, 0, ZoneOffset.ofHours(5)), parsed) ;
     }
@@ -99,7 +99,7 @@ public class TestOffsetDateTimeDeserialization extends ModuleTestBase
     @Test
     public void testBadDeserializationAsString01() throws Throwable
     {
-        expectFailure(quote("notanoffsetdatetime"));
+        expectFailure(q("notanoffsetdatetime"));
     }
 
     @Test
@@ -107,7 +107,7 @@ public class TestOffsetDateTimeDeserialization extends ModuleTestBase
     {
         assertEquals("The value is not correct.", 
                 OffsetDateTime.of(2000, 1, 1, 12, 0, 0, 0, ZoneOffset.UTC),
-                READER.readValue(quote("2000-01-01T12:00+00:00")));
+                READER.readValue(q("2000-01-01T12:00+00:00")));
     }
 
     @Test
@@ -115,7 +115,7 @@ public class TestOffsetDateTimeDeserialization extends ModuleTestBase
     {
         assertEquals("The value is not correct.", 
                 OffsetDateTime.of(2000, 1, 1, 12, 0, 0, 0, ZoneOffset.UTC),
-                READER.readValue(quote("2000-01-01T12:00+0000")));
+                READER.readValue(q("2000-01-01T12:00+0000")));
     }
 
     @Test
@@ -123,7 +123,7 @@ public class TestOffsetDateTimeDeserialization extends ModuleTestBase
     {
         assertEquals("The value is not correct.", 
                 OffsetDateTime.of(2000, 1, 1, 12, 0, 0, 0, ZoneOffset.UTC),
-                READER.readValue(quote("2000-01-01T12:00+00")));
+                READER.readValue(q("2000-01-01T12:00+00")));
     }
 
     @Test
@@ -172,13 +172,13 @@ public class TestOffsetDateTimeDeserialization extends ModuleTestBase
         OffsetDateTime value = READER
     			.with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS,
     			        DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT)
-    			.readValue(aposToQuotes("[]"));
+    			.readValue("[]");
         assertNull(value);
     }
     
     private void expectFailure(String json) throws Exception {
         try {
-            READER.readValue(aposToQuotes(json));
+            READER.readValue(a2q(json));
             fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
             Throwable t = e.getCause();

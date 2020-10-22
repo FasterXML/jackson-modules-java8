@@ -37,7 +37,7 @@ public class YearMonthDeserTest extends ModuleTestBase
     public void testBadDeserializationAsString01() throws Throwable
     {
         try {
-            read(quote("notayearmonth"));
+            read(q("notayearmonth"));
             fail("expected DateTimeParseException");
         } catch (InvalidFormatException e) {
             verifyException(e, "could not be parsed");
@@ -66,7 +66,7 @@ public class YearMonthDeserTest extends ModuleTestBase
     public void testDeserializationAsArrayEnabled() throws Throwable
     {
         YearMonth value = READER.with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
-                .readValue(aposToQuotes("['2000-01']"));
+                .readValue(a2q("['2000-01']"));
         assertEquals("The value is not correct", YearMonth.of(2000, Month.JANUARY), value);
     }
 
@@ -124,6 +124,6 @@ public class YearMonthDeserTest extends ModuleTestBase
     }
 
     private YearMonth read(final String json) throws IOException {
-        return READER.readValue(aposToQuotes(json));
+        return READER.readValue(a2q(json));
     }
 }

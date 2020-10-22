@@ -1,5 +1,11 @@
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
+import java.math.BigInteger;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAmount;
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -11,13 +17,6 @@ import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 import org.junit.Test;
-
-import java.math.BigInteger;
-import java.time.Duration;
-import java.time.OffsetDateTime;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAmount;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -343,7 +342,7 @@ public class DurationDeserTest extends ModuleTestBase
         }
         try {
             READER.with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
-        	        .readValue(aposToQuotes("[]"));
+        	        .readValue("[]");
             fail("expected MismatchedInputException");
         } catch (MismatchedInputException e) {
             verifyException(e, "Cannot deserialize value of type `java.time.Duration` from Array value");
@@ -362,7 +361,7 @@ public class DurationDeserTest extends ModuleTestBase
     @Test
     public void testDeserializationAsEmptyArrayEnabled() throws Throwable
     {
-        Duration value= newMapper().readerFor(Duration.class)
+        Duration value = newMapper().readerFor(Duration.class)
                 .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS,
                         DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT)
                 .readValue("[]");

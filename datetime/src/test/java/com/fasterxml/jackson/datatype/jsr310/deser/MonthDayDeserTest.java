@@ -93,7 +93,7 @@ public class MonthDayDeserTest extends ModuleTestBase
     public void testDeserializationAsArrayEnabled() throws Throwable
     {
         MonthDay value = READER.with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
-    			.readValue(aposToQuotes("['--01-01']"));
+    			.readValue(a2q("['--01-01']"));
         expect(MonthDay.of(Month.JANUARY, 1), value);
     }
 
@@ -215,7 +215,7 @@ public class MonthDayDeserTest extends ModuleTestBase
     }
 
     private MonthDay read(final String aposJson) throws IOException {
-        return READER.readValue(aposToQuotes(aposJson));
+        return READER.readValue(a2q(aposJson));
     }
 
     private static void notNull(Object value) {

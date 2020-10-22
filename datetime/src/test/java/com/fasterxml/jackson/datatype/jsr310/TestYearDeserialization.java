@@ -50,7 +50,7 @@ public class TestYearDeserialization extends ModuleTestBase
     public void testDeserializationAsEmptyArrayDisabled() throws Throwable
     {
         try {
-            READER.readValue(aposToQuotes("[]"));
+            READER.readValue("[]");
     	    fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
            // OK
@@ -74,7 +74,7 @@ public class TestYearDeserialization extends ModuleTestBase
     public void testDeserializationAsArrayEnabled() throws Throwable
     {
         Year value = READER.with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
-                .readValue(aposToQuotes("['2000']"));
+                .readValue(a2q("['2000']"));
         expect(Year.of(2000), value);
     }
 
@@ -90,7 +90,7 @@ public class TestYearDeserialization extends ModuleTestBase
 
     private void expectFailure(String json) throws Throwable {
         try {
-            READER.readValue(aposToQuotes(json));
+            READER.readValue(a2q(json));
             fail("expected DateTimeParseException");
         } catch (JsonProcessingException e) {
             if (e.getCause() == null) {
@@ -104,7 +104,7 @@ public class TestYearDeserialization extends ModuleTestBase
 
     private void expectSuccess(Object exp, String json) throws IOException {
         assertEquals("The value is not correct.", exp,
-                READER.readValue(aposToQuotes(json)));
+                READER.readValue(a2q(json)));
     }
 
     private static void expect(Object exp, Object value) {

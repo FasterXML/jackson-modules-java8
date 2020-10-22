@@ -32,13 +32,13 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
     {
         assertEquals("The value is not correct.",
                 ZonedDateTime.of(2000, 1, 1, 12, 0, 0, 0, ZoneId.of("UTC")),
-                READER.readValue(quote("2000-01-01T12:00Z")));
+                READER.readValue(q("2000-01-01T12:00Z")));
     }
 
     @Test
     public void testBadDeserializationAsString01() throws Throwable
     {
-        expectFailure(quote("notazone"));
+        expectFailure(q("notazone"));
     }
     
     @Test
@@ -66,12 +66,11 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
             throw e;
         }
     	try {
-    		String json="[]";
         	newMapper()
             	.readerFor(ZonedDateTime.class)
             	.with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
-            	.readValue(aposToQuotes(json));
-    	    fail("expected JsonMappingException");
+            	.readValue("[]");
+        	fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
            // OK
         } catch (IOException e) {
@@ -94,12 +93,11 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
     @Test
     public void testDeserializationAsEmptyArrayEnabled() throws Throwable
     {
-        String json="[]";
         ZonedDateTime value = newMapper()
                 .readerFor(ZonedDateTime.class)
                 .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS,
                         DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT)
-                .readValue(aposToQuotes(json));
+                .readValue("[]");
         assertNull(value);
     }
 
@@ -147,7 +145,7 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
 
     private void expectFailure(String json) throws Throwable {
         try {
-            READER.readValue(aposToQuotes(json));
+            READER.readValue(a2q(json));
             fail("expected DateTimeParseException");
         } catch (JsonProcessingException e) {
             if (e.getCause() == null) {

@@ -142,12 +142,12 @@ public class LocalDateTimeDeserTest
     public void testDeserializationAsString01() throws Exception
     {
         LocalDateTime time = LocalDateTime.of(1986, Month.JANUARY, 17, 15, 43);
-        LocalDateTime value = MAPPER.readValue('"' + time.toString() + '"', LocalDateTime.class);
+        LocalDateTime value = MAPPER.readValue(q(time.toString()), LocalDateTime.class);
         assertEquals("The value is not correct.", time, value);
 
         assertEquals("The value is not correct.",
                 LocalDateTime.of(2000, Month.JANUARY, 1, 12, 0),
-                READER.readValue(quote("2000-01-01T12:00")));
+                READER.readValue(q("2000-01-01T12:00")));
     }
 
     @Test
@@ -171,7 +171,7 @@ public class LocalDateTimeDeserTest
     public void testBadDeserializationOfTimeWithTimeZone() throws Exception
     {
         try {
-            MAPPER.readValue(quote("2020-10-22T00:16:20.504Z"), LocalDateTime.class);
+            MAPPER.readValue(q("2020-10-22T00:16:20.504Z"), LocalDateTime.class);
             fail("expected fail");
         } catch (InvalidFormatException e) {
             verifyException(e, "Invalid value");
@@ -183,7 +183,7 @@ public class LocalDateTimeDeserTest
     public void testBadDeserializationAsString01() throws Throwable
     {
         try {
-            READER.readValue(quote("notalocaldatetime"));
+            READER.readValue(q("notalocaldatetime"));
             fail("expected fail");
         } catch (InvalidFormatException e) {
             verifyException(e, "Cannot deserialize value of type");
@@ -359,7 +359,7 @@ public class LocalDateTimeDeserTest
             }
         };
         ObjectMapper handledMapper = mapperBuilder().addHandler(handler).build();
-        assertEquals(now, handledMapper.readValue(quote("now"), LocalDateTime.class));
+        assertEquals(now, handledMapper.readValue(q("now"), LocalDateTime.class));
     }
 
     @Test
@@ -468,7 +468,8 @@ public class LocalDateTimeDeserTest
                         JsonFormat.Value.forPattern("dd-MMM-yyyy HH:mm")))
                 .build();
         ObjectReader reader = mapper.readerFor(LocalDateTime.class);
-        expectSuccess(reader, LocalDateTime.of(2000, Month.JANUARY, 1, 13, 45), quote("01-Jan-2000 13:45"));
+        expectSuccess(reader, LocalDateTime.of(2000, Month.JANUARY, 1, 13, 45),
+                q("01-Jan-2000 13:45"));
     }
 
     @Test
@@ -512,14 +513,14 @@ public class LocalDateTimeDeserTest
     }
 
     private void expectSuccess(ObjectReader reader, Object exp, String json) throws IOException {
-        final LocalDateTime value = reader.readValue(aposToQuotes(json));
+        final LocalDateTime value = reader.readValue(a2q(json));
         assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.", exp,  value);
     }
 
     private void expectFailure(ObjectReader reader, String json) throws Throwable {
         try {
-            reader.readValue(aposToQuotes(json));
+            reader.readValue(a2q(json));
             fail("expected DateTimeParseException");
         } catch (JsonProcessingException e) {
             if (e.getCause() == null) {

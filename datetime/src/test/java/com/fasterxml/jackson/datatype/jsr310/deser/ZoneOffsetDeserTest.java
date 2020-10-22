@@ -25,8 +25,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -54,7 +52,7 @@ public class ZoneOffsetDeserTest extends ModuleTestBase
         assertEquals("The value is not correct.", ZoneOffset.of("Z"),
                 READER.readValue("\"Z\""));
         assertEquals("The value is not correct.", ZoneOffset.of("+0300"),
-                READER.readValue(quote("+0300")));
+                READER.readValue(q("+0300")));
         assertEquals("The value is not correct.", ZoneOffset.of("-0630"),
                 READER.readValue("\"-06:30\""));
     }
@@ -194,7 +192,7 @@ public class ZoneOffsetDeserTest extends ModuleTestBase
     public void testZoneOffsetDeserFromEmpty() throws Exception
     {
         // by default, should be fine
-        assertNull(MAPPER.readValue(quote("  "), ZoneOffset.class));
+        assertNull(MAPPER.readValue(q("  "), ZoneOffset.class));
         // but fail if coercion illegal
         final ObjectMapper mapper = mapperBuilder()
                 .withCoercionConfig(LogicalType.DateTime,
@@ -202,7 +200,7 @@ public class ZoneOffsetDeserTest extends ModuleTestBase
                 .build();
         try {
             mapper.readerFor(ZoneOffset.class)
-                .readValue(quote(" "));
+                .readValue(q(" "));
             fail("Should not pass");
         } catch (MismatchedInputException e) {
             verifyException(e, "Cannot coerce empty String");

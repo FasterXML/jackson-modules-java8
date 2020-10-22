@@ -500,7 +500,7 @@ public class OffsetDateTimeDeserTest
         OffsetDateTime inputValue = OffsetDateTime.ofInstant(Instant.ofEpochSecond(0L), UTC);
         final Wrapper input = new Wrapper(inputValue);
         String json = MAPPER.writeValueAsString(input);
-        assertEquals(aposToQuotes("{'value':'1970_01_01T00:00:00+0000'}"), json);
+        assertEquals(a2q("{'value':'1970_01_01T00:00:00+0000'}"), json);
 
         Wrapper result = MAPPER.readValue(json, Wrapper.class);
         assertEquals(input.value, result.value);

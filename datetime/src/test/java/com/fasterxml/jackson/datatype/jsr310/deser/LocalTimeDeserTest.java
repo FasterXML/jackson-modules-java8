@@ -146,7 +146,7 @@ public class LocalTimeDeserTest extends ModuleTestBase
     public void testDeserializationAsArrayDisabled() throws Throwable
     {
         try {
-            READER.readValue(aposToQuotes("['12:00']"));
+            READER.readValue(a2q("['12:00']"));
             fail("expected MismatchedInputException");
         } catch (MismatchedInputException e) {
             verifyException(e, "Unexpected token (VALUE_STRING) within Array");
@@ -162,7 +162,7 @@ public class LocalTimeDeserTest extends ModuleTestBase
     {
         LocalTime value = READER
                .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
-               .readValue(aposToQuotes("['12:00']"));
+               .readValue(a2q("['12:00']"));
         expect(LocalTime.of(12, 0), value);
     }
 
@@ -172,7 +172,7 @@ public class LocalTimeDeserTest extends ModuleTestBase
         LocalTime value = READER
                 .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS,
                         DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT)
-                .readValue(aposToQuotes("[]"));
+                .readValue(a2q("[]"));
         assertNull(value);
     }    
 
@@ -281,7 +281,7 @@ public class LocalTimeDeserTest extends ModuleTestBase
 
     private void expectFailure(String aposJson) throws Throwable {
         try {
-            READER.readValue(aposToQuotes(aposJson));
+            READER.readValue(a2q(aposJson));
             fail("expected DateTimeParseException");
         } catch (JsonProcessingException e) {
             if (e.getCause() == null) {
@@ -294,7 +294,7 @@ public class LocalTimeDeserTest extends ModuleTestBase
     }
 
     private void expectSuccess(Object exp, String aposJson) throws IOException {
-        final LocalTime value = READER.readValue(aposToQuotes(aposJson));
+        final LocalTime value = READER.readValue(a2q(aposJson));
         expect(exp, value);
     }
 

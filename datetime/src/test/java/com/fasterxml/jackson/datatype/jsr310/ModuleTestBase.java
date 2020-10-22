@@ -40,11 +40,11 @@ public class ModuleTestBase
                 .addModule(new JavaTimeModule());
     }
 
-    protected String quote(String value) {
+    protected String q(String value) {
         return "\"" + value + "\"";
     }
 
-    protected String aposToQuotes(String json) {
+    protected String a2q(String json) {
         return json.replace("'", "\"");
     }
 

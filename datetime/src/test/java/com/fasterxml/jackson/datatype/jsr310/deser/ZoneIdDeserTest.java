@@ -125,14 +125,14 @@ public class ZoneIdDeserTest extends ModuleTestBase
     public void testZoneIdDeserFromEmpty() throws Exception
     {
         // by default, should be fine
-        assertNull(MAPPER.readValue(quote("  "), ZoneId.class));
+        assertNull(MAPPER.readValue(q("  "), ZoneId.class));
         // but fail if coercion illegal
         final ObjectMapper mapper = mapperBuilder()
                 .withCoercionConfig(LogicalType.DateTime,
                         cfg -> cfg.setCoercion(CoercionInputShape.EmptyString, CoercionAction.Fail))
                 .build();
         try {
-            mapper.readValue(quote(" "), ZoneId.class);
+            mapper.readValue(q(" "), ZoneId.class);
             fail("Should not pass");
         } catch (MismatchedInputException e) {
             verifyException(e, "Cannot coerce empty String");
