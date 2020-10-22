@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.Temporal;
 import java.util.Calendar;
@@ -169,11 +168,16 @@ public class LocalDateTimeDeserTest
     }
 
     @Test
-    public void testDeserializationAsString04() throws Exception
+    public void testBadDeserializationOfTimeWithTimeZone() throws Exception
     {
-        Instant instant = Instant.now();
-        LocalDateTime value = MAPPER.readValue('"' + instant.toString() + '"', LocalDateTime.class);
-        assertEquals("The value is not correct.", LocalDateTime.ofInstant(instant, ZoneOffset.UTC), value);
+        try {
+            Instant instant = Instant.now();
+            MAPPER.readValue('"' + instant.toString() + '"', LocalDateTime.class);
+            fail("expected fail");
+        } catch (InvalidFormatException e) {
+            verifyException(e, "Cannot deserialize value of type");
+            verifyException(e, "from String \"");
+        }
     }
 
     @Test
