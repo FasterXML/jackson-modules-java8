@@ -48,6 +48,13 @@ public class LocalDateTimeDeserTest
 {
     private final static ObjectMapper MAPPER = newMapper();
     private final static ObjectReader READER = MAPPER.readerFor(LocalDateTime.class);
+
+    private final static ObjectMapper STRICT_MAPPER = mapperBuilder()
+        .withConfigOverride(LocalDateTime.class,
+                c -> c.setFormat(JsonFormat.Value.forLeniency(false))
+        )
+        .build();
+
     private final TypeReference<Map<String, LocalDateTime>> MAP_TYPE_REF = new TypeReference<Map<String, LocalDateTime>>() { };
 
     final static class StrictWrapper {
@@ -154,7 +161,7 @@ public class LocalDateTimeDeserTest
     public void testDeserializationAsString02() throws Exception
     {
         LocalDateTime time = LocalDateTime.of(2013, Month.AUGUST, 21, 9, 22, 57);
-        LocalDateTime value = MAPPER.readValue('"' + time.toString() + '"', LocalDateTime.class);
+        LocalDateTime value = MAPPER.readValue(q(time.toString()), LocalDateTime.class);
         assertEquals("The value is not correct.", time, value);
     }
 
@@ -162,20 +169,48 @@ public class LocalDateTimeDeserTest
     public void testDeserializationAsString03() throws Exception
     {
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 829837);
-        LocalDateTime value = MAPPER.readValue('"' + time.toString() + '"', LocalDateTime.class);
+        LocalDateTime value = MAPPER.readValue(q(time.toString()), LocalDateTime.class);
         assertEquals("The value is not correct.", time, value);
     }
 
-    // [modules-java#94]: Should not include timezone
+    /*
+    /**********************************************************
+    /* Tests for deserializing from textual representation,
+    /* fail cases, leniency checking
+    /**********************************************************
+     */
+
+    // [modules-java#94]: "Z" offset MAY be allowed, requires leniency
     @Test
-    public void testBadDeserializationOfTimeWithTimeZone() throws Exception
+    public void testAllowZuluIfLenient() throws Exception
+    {
+        final LocalDateTime EXP = LocalDateTime.of(2020, Month.OCTOBER, 22, 4, 16, 20, 504000000);
+        final String input = q("2020-10-22T04:16:20.504Z");
+        final ObjectReader r = MAPPER.readerFor(LocalDateTime.class);
+
+        // First, defaults:
+        assertEquals("The value is not correct.", EXP, r.readValue(input));
+
+        // but ensure that global timezone setting doesn't matter
+        LocalDateTime value = r.with(TimeZone.getTimeZone(Z_CHICAGO))
+                .readValue(input);
+        assertEquals("The value is not correct.", EXP, value);
+
+        value = r.with(TimeZone.getTimeZone(Z_BUDAPEST))
+                .readValue(input);
+        assertEquals("The value is not correct.", EXP, value);
+    }
+
+    // [modules-java#94]: "Z" offset not allowed if strict mode
+    @Test
+    public void testFailOnZuluIfStrict() throws Exception
     {
         try {
-            MAPPER.readValue(q("2020-10-22T00:16:20.504Z"), LocalDateTime.class);
-            fail("expected fail");
+            STRICT_MAPPER.readValue(q("2020-10-22T00:16:20.504Z"), LocalDateTime.class);
+            fail("Should not pass");
         } catch (InvalidFormatException e) {
-            verifyException(e, "Invalid value");
-            verifyException(e, "for `java.time.LocalDateTime`");
+            verifyException(e, "Cannot deserialize value of type ");
+            verifyException(e, "Should not contain offset when 'strict' mode");
         }
     }
 
@@ -222,22 +257,17 @@ public class LocalDateTimeDeserTest
     public void testStrictDeserializeFromEmptyString() throws Exception {
 
         final String key = "datetime";
-        final ObjectMapper mapper = mapperBuilder()
-                .withConfigOverride(LocalDateTime.class,
-                        c -> c.setFormat(JsonFormat.Value.forLeniency(false))
-                )
-                .build();
-        final ObjectReader objectReader = mapper.readerFor(MAP_TYPE_REF);
+        final ObjectReader objectReader = STRICT_MAPPER.readerFor(MAP_TYPE_REF);
         final String dateValAsNullStr = null;
 
         // even with strict, null value should be deserialized without throwing an exception
-        String valueFromNullStr = mapper.writeValueAsString(asMap(key, dateValAsNullStr));
+        String valueFromNullStr = STRICT_MAPPER.writeValueAsString(asMap(key, dateValAsNullStr));
         Map<String, LocalDateTime> actualMapFromNullStr = objectReader.readValue(valueFromNullStr);
         assertNull(actualMapFromNullStr.get(key));
 
         String dateValAsEmptyStr = "";
         // TODO: nothing stops us from writing an empty string, maybe there should be a check there too?
-        String valueFromEmptyStr = mapper.writeValueAsString(asMap("date", dateValAsEmptyStr));
+        String valueFromEmptyStr = STRICT_MAPPER.writeValueAsString(asMap("date", dateValAsEmptyStr));
         // with strict, deserializing an empty string is not permitted
         objectReader.readValue(valueFromEmptyStr);
     }

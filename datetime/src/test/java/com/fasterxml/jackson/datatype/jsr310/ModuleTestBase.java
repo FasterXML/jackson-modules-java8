@@ -1,5 +1,6 @@
 package com.fasterxml.jackson.datatype.jsr310;
 
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.TimeZone;
 import java.util.Collections;
@@ -11,6 +12,11 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 
 public class ModuleTestBase
 {
+    protected static final ZoneId UTC = ZoneId.of("UTC");
+
+    protected static final ZoneId Z_CHICAGO = ZoneId.of("America/Chicago");
+    protected static final ZoneId Z_BUDAPEST = ZoneId.of("Europe/Budapest");
+
     // 14-Mar-2016, tatu: Serialization of trailing zeroes may change [datatype-jsr310#67]
     //   Note, tho, that "0.0" itself is special case; need to avoid scientific notation:
     final protected static String NO_NANOSECS_SER = "0.0";
