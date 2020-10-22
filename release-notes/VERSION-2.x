@@ -10,6 +10,9 @@ Modules:
 
 2.12.0 (not yet released)
 
+#94: Deserialization of timestamps with UTC timezone to LocalDateTime
+   doesn't yield correct time
+ (reported by Antti L)
 #165: Problem in serializing negative Duration values
  (reported by Joni S)
 #166: Cannot deserialize `OffsetDateTime.MIN` or `OffsetDateTime.MAX` with

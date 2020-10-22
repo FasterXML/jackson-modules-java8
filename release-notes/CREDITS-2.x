@@ -104,6 +104,11 @@ Samantha Williamson (samwill@github)
   * Contributed fix to #148: Allow strict `LocalDate` parsing
    (2.11.0)
 
+Antti S. Lankila (alankila@github)
+  * Reported #94: Deserialization of timestamps with UTC timezone to LocalDateTime
+    doesn't yield correct time
+   (2.12.0)
+
 Joni Syri (jpsyri@github)
   * Reported #165: Problem in serializing negative Duration values
    (2.12.0)

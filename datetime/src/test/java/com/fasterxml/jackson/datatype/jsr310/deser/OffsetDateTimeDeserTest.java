@@ -29,7 +29,6 @@ public class OffsetDateTimeDeserTest
 {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
     private final TypeReference<Map<String, OffsetDateTime>> MAP_TYPE_REF = new TypeReference<Map<String, OffsetDateTime>>() { };
-    private static final ZoneId UTC = ZoneId.of("UTC");
 
     private static final ZoneId Z1 = ZoneId.of("America/Chicago");
 

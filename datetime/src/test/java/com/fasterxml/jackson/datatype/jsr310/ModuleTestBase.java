@@ -1,5 +1,6 @@
 package com.fasterxml.jackson.datatype.jsr310;
 
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
@@ -12,6 +13,11 @@ import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 
 public class ModuleTestBase
 {
+    protected static final ZoneId UTC = ZoneId.of("UTC");
+
+    protected static final ZoneId Z_CHICAGO = ZoneId.of("America/Chicago");
+    protected static final ZoneId Z_BUDAPEST = ZoneId.of("Europe/Budapest");
+    
     public static class NoCheckSubTypeValidator
         extends PolymorphicTypeValidator.Base
     {

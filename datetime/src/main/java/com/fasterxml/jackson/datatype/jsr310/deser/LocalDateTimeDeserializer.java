@@ -22,13 +22,14 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.JsonTokenId;
+
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.util.ClassUtil;
 
 /**
  * Deserializer for Java 8 temporal {@link LocalDateTime}s.
@@ -152,21 +153,25 @@ public class LocalDateTimeDeserializer
             return null;
         }
         try {
-            // 21-Oct-2020, tatu: Removed as per [modules-base#94];
-            //   original flawed change from [modules-base#56]
+            // 21-Oct-2020, tatu: Changed as per [modules-base#94] for 2.12,
+            //    had bad timezone handle change from [modules-base#56]
             if (_formatter == DEFAULT_FORMATTER) {
+                // ... only allow iff lenient mode enabled since
                 // JavaScript by default includes time and zone in JSON serialized Dates (UTC/ISO instant format).
+                // And if so, do NOT use zoned date parsing as that can easily produce
+                // incorrect answer.
                 if (string.length() > 10 && string.charAt(10) == 'T') {
                    if (string.endsWith("Z")) {
+                       if (isLenient()) {
+                           return LocalDateTime.parse(string.substring(0, string.length()-1),
+                                   _formatter);
+                       }
                        JavaType t = getValueType(ctxt);
                        return (LocalDateTime) ctxt.handleWeirdStringValue(t.getRawClass(),
                                string,
-"Invalid value ('%s') for %s: should not contain timezone/offset (define custom `@JsonFormat(pattern=)` if you must accept)",
-string, ClassUtil.getTypeDescription(t));
+"Should not contain offset when 'strict' mode set for property or type (enable 'lenient' handling to allow)"
+                               );
                    }
-//                       return LocalDateTime.ofInstant(Instant.parse(string), ZoneOffset.UTC);
-//                   } else {
-//                       return LocalDateTime.parse(string, DEFAULT_FORMATTER);
                 }
             }
            return LocalDateTime.parse(string, _formatter);
