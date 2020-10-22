@@ -16,6 +16,16 @@
 
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.Temporal;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Map;
+import java.util.TimeZone;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Feature;
 import com.fasterxml.jackson.annotation.JsonFormat.Value;
@@ -31,18 +41,6 @@ import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeParseException;
-import java.time.temporal.Temporal;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Map;
-import java.util.TimeZone;
 
 import static org.junit.Assert.*;
 
@@ -169,12 +167,17 @@ public class LocalDateTimeDeserTest
         assertEquals("The value is not correct.", time, value);
     }
 
+    // [modules-java#94]: Should not include timezone
     @Test
-    public void testDeserializationAsString04() throws Exception
+    public void testBadDeserializationOfTimeWithTimeZone() throws Exception
     {
-        Instant instant = Instant.now();
-        LocalDateTime value = MAPPER.readValue('"' + instant.toString() + '"', LocalDateTime.class);
-        assertEquals("The value is not correct.", LocalDateTime.ofInstant(instant, ZoneOffset.UTC), value);
+        try {
+            MAPPER.readValue(quote("2020-10-22T00:16:20.504Z"), LocalDateTime.class);
+            fail("expected fail");
+        } catch (InvalidFormatException e) {
+            verifyException(e, "Cannot deserialize value of type");
+            verifyException(e, "from String \"");
+        }
     }
 
     @Test
@@ -492,7 +495,6 @@ public class LocalDateTimeDeserTest
     {
         /*StrictWrapper w =*/ MAPPER.readValue("{\"value\":\"2019-11-31 25:45\"}", StrictWrapper.class);
     }
-
 
     private void expectSuccess(ObjectReader reader, Object exp, String json) throws IOException {
         final LocalDateTime value = reader.readValue(aposToQuotes(json));

@@ -18,9 +18,7 @@ package com.fasterxml.jackson.datatype.jsr310.deser;
 
 import java.io.IOException;
 import java.time.DateTimeException;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -29,6 +27,8 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.JsonTokenId;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.util.ClassUtil;
 
 /**
  * Deserializer for Java 8 temporal {@link LocalDateTime}s.
@@ -152,17 +152,22 @@ public class LocalDateTimeDeserializer
             return null;
         }
         try {
+            // 21-Oct-2020, tatu: Removed as per [modules-base#94];
+            //   original flawed change from [modules-base#56]
             if (_formatter == DEFAULT_FORMATTER) {
                 // JavaScript by default includes time and zone in JSON serialized Dates (UTC/ISO instant format).
                 if (string.length() > 10 && string.charAt(10) == 'T') {
                    if (string.endsWith("Z")) {
-                       return LocalDateTime.ofInstant(Instant.parse(string), ZoneOffset.UTC);
-                   } else {
-                       return LocalDateTime.parse(string, DEFAULT_FORMATTER);
+                       JavaType t = getValueType(ctxt);
+                       ctxt.reportInputMismatch(t,
+"Invalid value ('%s') for %s: should not contain timezone/offset (define custom `@JsonFormat(pattern=)` if you must accept)",
+string, ClassUtil.getTypeDescription(t));
                    }
+//                       return LocalDateTime.ofInstant(Instant.parse(string), ZoneOffset.UTC);
+//                   } else {
+//                       return LocalDateTime.parse(string, DEFAULT_FORMATTER);
                 }
             }
-
            return LocalDateTime.parse(string, _formatter);
         } catch (DateTimeException e) {
             return _handleDateTimeException(ctxt, e, string);
