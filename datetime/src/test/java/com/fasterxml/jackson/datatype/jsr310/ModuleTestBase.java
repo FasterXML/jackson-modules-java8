@@ -39,7 +39,7 @@ public class ModuleTestBase
         return JsonMapper.builder()
                 .addModule(new JavaTimeModule());
     }
-    
+
     protected String quote(String value) {
         return "\"" + value + "\"";
     }

@@ -17,7 +17,6 @@
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
 import java.io.IOException;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeParseException;
@@ -167,16 +166,16 @@ public class LocalDateTimeDeserTest
         assertEquals("The value is not correct.", time, value);
     }
 
+    // [modules-java#94]: Should not include timezone
     @Test
     public void testBadDeserializationOfTimeWithTimeZone() throws Exception
     {
         try {
-            Instant instant = Instant.now();
-            MAPPER.readValue('"' + instant.toString() + '"', LocalDateTime.class);
+            MAPPER.readValue(quote("2020-10-22T00:16:20.504Z"), LocalDateTime.class);
             fail("expected fail");
         } catch (InvalidFormatException e) {
-            verifyException(e, "Cannot deserialize value of type");
-            verifyException(e, "from String \"");
+            verifyException(e, "Invalid value");
+            verifyException(e, "for `java.time.LocalDateTime`");
         }
     }
 
@@ -511,7 +510,6 @@ public class LocalDateTimeDeserTest
     {
         /*StrictWrapper w =*/ MAPPER.readValue("{\"value\":\"2019-11-31 25:45\"}", StrictWrapper.class);
     }
-
 
     private void expectSuccess(ObjectReader reader, Object exp, String json) throws IOException {
         final LocalDateTime value = reader.readValue(aposToQuotes(json));
