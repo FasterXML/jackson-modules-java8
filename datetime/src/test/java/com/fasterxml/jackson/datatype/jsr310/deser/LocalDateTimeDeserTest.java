@@ -175,8 +175,8 @@ public class LocalDateTimeDeserTest
             MAPPER.readValue(quote("2020-10-22T00:16:20.504Z"), LocalDateTime.class);
             fail("expected fail");
         } catch (InvalidFormatException e) {
-            verifyException(e, "Cannot deserialize value of type");
-            verifyException(e, "from String \"");
+            verifyException(e, "Invalid value");
+            verifyException(e, "for `java.time.LocalDateTime`");
         }
     }
 

@@ -159,7 +159,8 @@ public class LocalDateTimeDeserializer
                 if (string.length() > 10 && string.charAt(10) == 'T') {
                    if (string.endsWith("Z")) {
                        JavaType t = getValueType(ctxt);
-                       ctxt.reportInputMismatch(t,
+                       return (LocalDateTime) ctxt.handleWeirdStringValue(t.getRawClass(),
+                               string,
 "Invalid value ('%s') for %s: should not contain timezone/offset (define custom `@JsonFormat(pattern=)` if you must accept)",
 string, ClassUtil.getTypeDescription(t));
                    }
