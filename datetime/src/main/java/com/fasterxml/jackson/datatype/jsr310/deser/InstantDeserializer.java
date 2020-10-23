@@ -248,15 +248,15 @@ public class InstantDeserializer<T extends Temporal>
         return commas;
     }
 
-    protected T _fromString(JsonParser parser, DeserializationContext context,
-            String string)  throws IOException
+    protected T _fromString(JsonParser p, DeserializationContext ctxt,
+            String string0)  throws IOException
     {
-        string = string.trim();
+        String string = string0.trim();
         if (string.length() == 0) {
-            if (!isLenient()) {
-                return _failForNotLenient(parser, context, JsonToken.VALUE_STRING);
-            }
-            return null;
+            // 22-Oct-2020, tatu: not sure if we should pass original (to distinguish
+            //   b/w empty and blank); for now don't which will allow blanks to be
+            //   handled like "regular" empty (same as pre-2.12)
+            return _fromEmptyString(p, ctxt, string);
         }
 
         // only check for other parsing modes if we are using default formatter
@@ -268,10 +268,10 @@ public class InstantDeserializer<T extends Temporal>
             if (dots >= 0) { // negative if not simple number
                 try {
                     if (dots == 0) {
-                        return _fromLong(context, Long.parseLong(string));
+                        return _fromLong(ctxt, Long.parseLong(string));
                     }
                     if (dots == 1) {
-                        return _fromDecimal(context, new BigDecimal(string));
+                        return _fromDecimal(ctxt, new BigDecimal(string));
                     }
                 } catch (NumberFormatException e) {
                     // fall through to default handling, to get error there
@@ -285,11 +285,11 @@ public class InstantDeserializer<T extends Temporal>
         try {
             TemporalAccessor acc = _formatter.parse(string);
             value = parsedToValue.apply(acc);
-            if (shouldAdjustToContextTimezone(context)) {
-                return adjust.apply(value, this.getZone(context));
+            if (shouldAdjustToContextTimezone(ctxt)) {
+                return adjust.apply(value, getZone(ctxt));
             }
         } catch (DateTimeException e) {
-            value = _handleDateTimeFormatException(context, e, _formatter, string);
+            value = _handleDateTimeFormatException(ctxt, e, _formatter, string);
         }
         return value;
     }
