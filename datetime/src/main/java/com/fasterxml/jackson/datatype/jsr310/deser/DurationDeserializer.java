@@ -151,14 +151,14 @@ pattern, DurationUnitConverter.descForAllowed()));
     }
 
     protected Duration _fromString(JsonParser parser, DeserializationContext ctxt,
-            String value)  throws IOException
+            String value0)  throws IOException
     {
-        value = value.trim();
+        String value = value0.trim();
         if (value.length() == 0) {
-            if (!isLenient()) {
-                return _failForNotLenient(parser, ctxt, JsonToken.VALUE_STRING);
-            }
-            return null;
+            // 22-Oct-2020, tatu: not sure if we should pass original (to distinguish
+            //   b/w empty and blank); for now don't which will allow blanks to be
+            //   handled like "regular" empty (same as pre-2.12)
+            return _fromEmptyString(parser, ctxt, value);
         }
         // 30-Sep-2020: Should allow use of "Timestamp as String" for
         //     some textual formats
