@@ -5,6 +5,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.TimeZone;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -37,6 +38,7 @@ public class TestZonedDateTimeSerializationWithCustomFormatter {
         ObjectMapper mapper = JsonMapper.builder()
                 .addModule(new SimpleModule().addSerializer(
                         new ZonedDateTimeSerializer(f)))
+                .defaultTimeZone(TimeZone.getTimeZone("UTC"))
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .build();
         return mapper.writeValueAsString(zonedDateTime);
