@@ -136,14 +136,14 @@ public class LocalTimeDeserializer extends JSR310DateTimeDeserializerBase<LocalT
     }
 
     protected LocalTime _fromString(JsonParser p, DeserializationContext ctxt,
-            String string)  throws IOException
+            String string0)  throws IOException
     {
-        string = string.trim();
+        String string = string0.trim();
         if (string.length() == 0) {
-            if (!isLenient()) {
-                return _failForNotLenient(p, ctxt, JsonToken.VALUE_STRING);
-            }
-            return null;
+            // 22-Oct-2020, tatu: not sure if we should pass original (to distinguish
+            //   b/w empty and blank); for now don't which will allow blanks to be
+            //   handled like "regular" empty (same as pre-2.12)
+            return _fromEmptyString(p, ctxt, string);
         }
         DateTimeFormatter format = _formatter;
         try {

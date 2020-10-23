@@ -92,27 +92,27 @@ public class YearDeserializer extends JSR310DateTimeDeserializerBase<Year>
     }
 
     protected Year _fromString(JsonParser p, DeserializationContext ctxt,
-            String value)  throws IOException
+            String string0)  throws IOException
     {
-        value = value.trim();
-        if (value.length() == 0) {
-            if (!isLenient()) {
-                return _failForNotLenient(p, ctxt, JsonToken.VALUE_STRING);
-            }
-            return null;
+        String string = string0.trim();
+        if (string.length() == 0) {
+            // 22-Oct-2020, tatu: not sure if we should pass original (to distinguish
+            //   b/w empty and blank); for now don't which will allow blanks to be
+            //   handled like "regular" empty (same as pre-2.12)
+            return _fromEmptyString(p, ctxt, string);
         }
         // 30-Sep-2020: Should allow use of "Timestamp as String" for XML/CSV
         if (ctxt.isEnabled(StreamReadCapability.UNTYPED_SCALARS)
-                && _isValidTimestampString(value)) {
-            return _fromNumber(ctxt, NumberInput.parseInt(value));
+                && _isValidTimestampString(string)) {
+            return _fromNumber(ctxt, NumberInput.parseInt(string));
         }
         try {
             if (_formatter == null) {
-                return Year.parse(value);
+                return Year.parse(string);
             }
-            return Year.parse(value, _formatter);
+            return Year.parse(string, _formatter);
         } catch (DateTimeException e) {
-            return _handleDateTimeException(ctxt, e, value);
+            return _handleDateTimeException(ctxt, e, string);
         }
     }
 

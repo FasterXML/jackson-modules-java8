@@ -138,14 +138,14 @@ public class LocalDateDeserializer extends JSR310DateTimeDeserializerBase<LocalD
     }
 
     protected LocalDate _fromString(JsonParser p, DeserializationContext ctxt,
-            String string)  throws IOException
+            String string0)  throws IOException
     {
-        string = string.trim();
+        String string = string0.trim();
         if (string.length() == 0) {
-            if (!isLenient()) {
-                return _failForNotLenient(p, ctxt, JsonToken.VALUE_STRING);
-            }
-            return null;
+            // 22-Oct-2020, tatu: not sure if we should pass original (to distinguish
+            //   b/w empty and blank); for now don't which will allow blanks to be
+            //   handled like "regular" empty (same as pre-2.12)
+            return _fromEmptyString(p, ctxt, string);
         }
         try {
             // as per [datatype-jsr310#37], only check for optional (and, incorrect...) time marker 'T'
