@@ -23,10 +23,10 @@ import java.util.Arrays;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
-
 import com.fasterxml.jackson.core.io.NumberInput;
 
 import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.cfg.CoercionAction;
 import com.fasterxml.jackson.databind.deser.std.StdScalarDeserializer;
 import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
 import com.fasterxml.jackson.databind.type.LogicalType;
@@ -81,6 +81,35 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
      */
     protected boolean isLenient() {
         return _isLenient;
+    }
+
+    /**
+     * Replacement for {@code isLenient()} for specific case of deserialization
+     * from empty or blank String.
+     *
+     * @since 2.12
+     */
+    @SuppressWarnings("unchecked")
+    protected T _fromEmptyString(JsonParser p, DeserializationContext ctxt,
+            String str)
+        throws IOException
+    {
+        final CoercionAction act = _checkFromStringCoercion(ctxt, str);
+        switch (act) { // note: Fail handled above
+        case AsEmpty:
+            return (T) getEmptyValue(ctxt);
+        case TryConvert:
+        case AsNull:
+        default:
+        }
+        // 22-Oct-2020, tatu: Although we should probably just accept this,
+        //   for backwards compatibility let's for now allow override by
+        //   "Strict" checks
+        if (!_isLenient) {
+            return _failForNotLenient(p, ctxt, JsonToken.VALUE_STRING);            
+        }
+        
+        return null;
     }
 
     // Presumably all types here are Date/Time oriented ones?
@@ -199,7 +228,7 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
     public Object handleUnexpectedToken(Class<?> instClass, JsonToken t,
             JsonParser p, String msg, Object... msgArgs)
      */
-    
+
     /**
      * Helper method used to peel off spurious wrappings of DateTimeException
      *
