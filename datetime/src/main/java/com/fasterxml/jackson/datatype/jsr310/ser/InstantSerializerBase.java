@@ -16,17 +16,18 @@
 
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import java.io.IOException;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.JsonParser.NumberType;
+
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -128,19 +129,17 @@ public abstract class InstantSerializerBase<T extends Temporal>
     // @since 2.12
     protected String formatValue(T value, SerializerProvider provider)
     {
-        DateTimeFormatter formatter = null;
-        if (_formatter != null) {
-            formatter = _formatter;
-        } else if (defaultFormat != null) {
-            formatter = defaultFormat;
-        }
-
+        DateTimeFormatter formatter = (_formatter != null) ? _formatter : defaultFormat;
         if (formatter != null) {
-            ZoneId zone = formatter.getZone();
-            if (zone == null) {
-                zone = provider.getTimeZone().toZoneId();
+            if (formatter.getZone() == null) { // timezone set if annotated on property
+                // 19-Oct-2020, tatu: As per [modules-java#188], only override with explicitly
+                //     set timezone, to minimize change from pre-2.12. May need to further
+                //     improve in future to maybe introduce more configuration.
+                if (provider.getConfig().hasExplicitTimeZone()) {
+                    formatter = formatter.withZone(provider.getTimeZone().toZoneId());
+                }
             }
-            return formatter.withZone(zone).format(value);
+            return formatter.format(value);
         }
 
         return value.toString();
