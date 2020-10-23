@@ -3,7 +3,6 @@ package com.fasterxml.jackson.datatype.jsr310.ser;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 import java.util.TimeZone;
@@ -18,14 +17,11 @@ import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class OffsetDateTimeSerTest
     extends ModuleTestBase
 {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-
-    private static final DateTimeFormatter FORMATTER_UTC = FORMATTER.withZone(ZoneOffset.UTC);
 
     private static final ZoneId Z1 = ZoneId.of("America/Chicago");
 
@@ -118,7 +114,8 @@ public class OffsetDateTimeSerTest
         String value = MAPPER.writer()
                 .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.", '"' + FORMATTER_UTC.format(date) + '"', value);
+        assertEquals("The value is not correct.", '"'
+                + FORMATTER.withZone(Z1).format(date) + '"', value);
     }
 
     @Test
@@ -128,7 +125,8 @@ public class OffsetDateTimeSerTest
         String value = MAPPER.writer()
                 .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.", '"' + FORMATTER_UTC.format(date) + '"', value);
+        assertEquals("The value is not correct.", '"'
+                + FORMATTER.withZone(Z2).format(date) + '"', value);
     }
 
     @Test
@@ -138,7 +136,8 @@ public class OffsetDateTimeSerTest
         String value = MAPPER.writer()
                 .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.", '"' + FORMATTER_UTC.format(date) + '"', value);
+        assertEquals("The value is not correct.", '"'
+                + FORMATTER.withZone(Z3).format(date) + '"', value);
     }
 
     @Test
@@ -213,9 +212,9 @@ public class OffsetDateTimeSerTest
             .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
             .addMixIn(Temporal.class, MockObjectConfiguration.class)
             .writeValueAsString(date);
-        assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.",
-            "[\"" + OffsetDateTime.class.getName() + "\",\"" + FORMATTER_UTC.format(date) + "\"]", value);
+            "[\"" + OffsetDateTime.class.getName() + "\",\""
+                    + FORMATTER.withZone(Z3).format(date) + "\"]", value);
     }
 
     @Test

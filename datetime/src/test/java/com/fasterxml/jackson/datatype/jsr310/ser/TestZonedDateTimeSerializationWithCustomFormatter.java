@@ -2,6 +2,7 @@ package com.fasterxml.jackson.datatype.jsr310.ser;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +14,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.TimeZone;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.StringContains.containsString;
@@ -33,9 +35,12 @@ public class TestZonedDateTimeSerializationWithCustomFormatter {
     }
 
     private String serializeWith(ZonedDateTime zonedDateTime, DateTimeFormatter f) throws Exception {
-        ObjectMapper mapper = new ObjectMapper().registerModule(new SimpleModule().addSerializer(
-                new ZonedDateTimeSerializer(f)));
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        ObjectMapper mapper = JsonMapper.builder()
+                .addModule(new SimpleModule().addSerializer(
+                        new ZonedDateTimeSerializer(f)))
+                .defaultTimeZone(TimeZone.getTimeZone("UTC"))
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .build();
         return mapper.writeValueAsString(zonedDateTime);
     }
 
