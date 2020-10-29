@@ -24,6 +24,8 @@ Modules:
 #184: `DurationDeserializer` should use `@JsonFormat.pattern` (and config override)
   to support configurable `ChronoUnit`
  (requested by Philipp D, fix contributed by Oriol B)
+#189: Support use of "pattern" (`ChronoUnit`) for `DurationSerializer` too
+ (contributed bvy Oriol B)
 - Add Gradle Module Metadata (https://blog.gradle.org/alignment-with-gradle-module-metadata)
 
 2.11.3 (02-Oct-2020)

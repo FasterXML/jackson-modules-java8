@@ -137,4 +137,6 @@ Oriol Barcelona (obarcelonap@github)
   * Contributed fix for #184: `DurationDeserializer` should use `@JsonFormat.pattern`
     (and config override) to support configurable `ChronoUnit`
    (2.12.0)
-
+  * Contributed fix for #189: Support use of "pattern" (`ChronoUnit`) for
+    `DurationSerializer` too
+   (2.12.0)
