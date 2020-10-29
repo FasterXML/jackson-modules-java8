@@ -1,5 +1,6 @@
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -160,5 +161,186 @@ public class DurationSerTest extends ModuleTestBase
 
         assertEquals("The value is not correct.",
                 "[\"" + Duration.class.getName() + "\",\"" + duration.toString() + "\"]", value);
+    }
+
+    /*
+    /**********************************************************
+    /* Tests for custom patterns (modules-java8#189)
+    /**********************************************************
+     */
+
+    @Test
+    public void shouldSerializeInNanos_whenSetAsPattern() throws Exception
+    {
+        ObjectMapper mapper = _mapperForPatternOverride("NANOS");
+
+        Duration duration = Duration.ofHours(1);
+        String value = mapper.writeValueAsString(duration);
+
+        assertEquals("The value is not correct.", "3600000000000", value);
+    }
+
+    @Test
+    public void shouldSerializeInMicros_whenSetAsPattern() throws Exception
+    {
+        ObjectMapper mapper = _mapperForPatternOverride("MICROS");
+
+        Duration duration = Duration.ofMillis(1);
+        String value = mapper.writeValueAsString(duration);
+
+        assertEquals("The value is not correct.", "1000", value);
+    }
+
+    @Test
+    public void shouldSerializeInMicrosDiscardingFractions_whenSetAsPattern() throws Exception
+    {
+        ObjectMapper mapper = _mapperForPatternOverride("MICROS");
+
+        Duration duration = Duration.ofNanos(1500);
+        String value = mapper.writeValueAsString(duration);
+
+        assertEquals("The value is not correct.", "1", value);
+    }
+
+    @Test
+    public void shouldSerializeInMillis_whenSetAsPattern() throws Exception
+    {
+        ObjectMapper mapper = _mapperForPatternOverride("MILLIS");
+
+        Duration duration = Duration.ofSeconds(1);
+        String value = mapper.writeValueAsString(duration);
+
+        assertEquals("The value is not correct.", "1000", value);
+    }
+
+    @Test
+    public void shouldSerializeInMillisDiscardingFractions_whenSetAsPattern() throws Exception
+    {
+        ObjectMapper mapper = _mapperForPatternOverride("MILLIS");
+
+        Duration duration = Duration.ofNanos(1500000);
+        String value = mapper.writeValueAsString(duration);
+
+        assertEquals("The value is not correct.", "1", value);
+    }
+
+    @Test
+    public void shouldSerializeInSeconds_whenSetAsPattern() throws Exception
+    {
+        ObjectMapper mapper = _mapperForPatternOverride("SECONDS");
+
+        Duration duration = Duration.ofMinutes(1);
+        String value = mapper.writeValueAsString(duration);
+
+        assertEquals("The value is not correct.", "60", value);
+    }
+
+    @Test
+    public void shouldSerializeInSecondsDiscardingFractions_whenSetAsPattern() throws Exception
+    {
+        ObjectMapper mapper = _mapperForPatternOverride("SECONDS");
+
+        Duration duration = Duration.ofMillis(1500);
+        String value = mapper.writeValueAsString(duration);
+
+        assertEquals("The value is not correct.", "1", value);
+    }
+
+    @Test
+    public void shouldSerializeInMinutes_whenSetAsPattern() throws Exception
+    {
+        ObjectMapper mapper = _mapperForPatternOverride("MINUTES");
+
+        Duration duration = Duration.ofHours(1);
+        String value = mapper.writeValueAsString(duration);
+
+        assertEquals("The value is not correct.", "60", value);
+    }
+
+    @Test
+    public void shouldSerializeInMinutesDiscardingFractions_whenSetAsPattern() throws Exception
+    {
+        ObjectMapper mapper = _mapperForPatternOverride("MINUTES");
+
+        Duration duration = Duration.ofSeconds(90);
+        String value = mapper.writeValueAsString(duration);
+
+        assertEquals("The value is not correct.", "1", value);
+    }
+
+    @Test
+    public void shouldSerializeInHours_whenSetAsPattern() throws Exception
+    {
+        ObjectMapper mapper = _mapperForPatternOverride("HOURS");
+
+        Duration duration = Duration.ofDays(1);
+        String value = mapper.writeValueAsString(duration);
+
+        assertEquals("The value is not correct.", "24", value);
+    }
+
+    @Test
+    public void shouldSerializeInHoursDiscardingFractions_whenSetAsPattern() throws Exception
+    {
+        ObjectMapper mapper = _mapperForPatternOverride("HOURS");
+
+        Duration duration = Duration.ofMinutes(90);
+        String value = mapper.writeValueAsString(duration);
+
+        assertEquals("The value is not correct.", "1", value);
+    }
+
+    @Test
+    public void shouldSerializeInHalfDays_whenSetAsPattern() throws Exception
+    {
+        ObjectMapper mapper = _mapperForPatternOverride("HALF_DAYS");
+
+        Duration duration = Duration.ofDays(1);
+        String value = mapper.writeValueAsString(duration);
+
+        assertEquals("The value is not correct.", "2", value);
+    }
+
+    @Test
+    public void shouldSerializeInHalfDaysDiscardingFractions_whenSetAsPattern() throws Exception
+    {
+        ObjectMapper mapper = _mapperForPatternOverride("DAYS");
+
+        Duration duration = Duration.ofHours(30);
+        String value = mapper.writeValueAsString(duration);
+
+        assertEquals("The value is not correct.", "1", value);
+    }
+
+    @Test
+    public void shouldSerializeInDays_whenSetAsPattern() throws Exception
+    {
+        ObjectMapper mapper = _mapperForPatternOverride("DAYS");
+
+        Duration duration = Duration.ofDays(1);
+        String value = mapper.writeValueAsString(duration);
+
+        assertEquals("The value is not correct.", "1", value);
+    }
+
+    @Test
+    public void shouldSerializeInDaysDiscardingFractions_whenSetAsPattern() throws Exception
+    {
+        ObjectMapper mapper = _mapperForPatternOverride("DAYS");
+
+        Duration duration = Duration.ofHours(36);
+        String value = mapper.writeValueAsString(duration);
+
+        assertEquals("The value is not correct.", "1", value);
+    }
+
+    protected ObjectMapper _mapperForPatternOverride(String pattern) {
+        ObjectMapper mapper = mapperBuilder()
+                .enable(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
+                .disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .build();
+        mapper.configOverride(Duration.class)
+                .setFormat(JsonFormat.Value.forPattern(pattern));
+        return mapper;
     }
 }
