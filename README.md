@@ -114,6 +114,18 @@ If you want "the other" version of the module but also use auto-registration, ma
 register "other" module explicitly AFTER calling `mapper.findAndRegisterModules()`.
 Call after works because `getTypeId()` provided by modules differs so they are not considered duplicates.
 
+# Development
+
+## Maintainers
+
+Following developers have committer access to this project.
+
+* Authors
+    * Nick Williams (beamerblvd@github) contributed Java 8 date/time module; still helps issues from time to time
+    * Tatu Saloranta (@cowtowncoder) wrote the other 2 modules and maintains them for 2.x (in 3.0, integrated into core `jackson-databind`)
+* Maintainers:
+    * Michael O'Keeffe (kupci@github) is the current maintainer of Java 8 date/time module   
+
 ## More
 
 See [Wiki](../../wiki) for more information (javadocs).
