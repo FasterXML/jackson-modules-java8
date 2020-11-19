@@ -5,7 +5,12 @@ import java.util.OptionalInt;
 import java.util.OptionalLong;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertThrows;
 
 public class OptionalNumbersTest extends ModuleTestBase
 {
@@ -37,6 +42,7 @@ public class OptionalNumbersTest extends ModuleTestBase
     }
 
     private ObjectMapper MAPPER = mapperWithModule();
+    private ObjectMapper MAPPER_WITHOUT_COERCION = MAPPER.copy().disable(MapperFeature.ALLOW_COERCION_OF_SCALARS);
 
     /*
     /**********************************************************
@@ -186,5 +192,70 @@ public class OptionalNumbersTest extends ModuleTestBase
         bean = MAPPER.readValue(aposToQuotes("{'value':'0.5'}"), OptionalDoubleBean.class);
         assertNotNull(bean.value);
         assertEquals(0.5, bean.value.getAsDouble());
+    }
+
+    public void testOptionalDoubleInArraySpecialValues() throws Exception
+    {
+        OptionalDouble[] actual = MAPPER.readValue(
+                "[null,\"NaN\",\"Infinity\",\"-Infinity\",1,\"2\"]",
+                OptionalDouble[].class);
+        OptionalDouble[] expected = new OptionalDouble[] {
+                OptionalDouble.empty(),
+                OptionalDouble.of(Double.NaN),
+                OptionalDouble.of(Double.POSITIVE_INFINITY),
+                OptionalDouble.of(Double.NEGATIVE_INFINITY),
+                OptionalDouble.of(1D),
+                OptionalDouble.of(2D)
+        };
+        assertArrayEquals(expected, actual);
+    }
+
+    public void testOptionalDoubleInArraySpecialValuesWithoutCoercion() throws Exception
+    {
+        OptionalDouble[] actual = MAPPER_WITHOUT_COERCION.readValue(
+                aposToQuotes("[null,'NaN','Infinity','-Infinity',1]"),
+                OptionalDouble[].class);
+        OptionalDouble[] expected = new OptionalDouble[] {
+                OptionalDouble.empty(),
+                OptionalDouble.of(Double.NaN),
+                OptionalDouble.of(Double.POSITIVE_INFINITY),
+                OptionalDouble.of(Double.NEGATIVE_INFINITY),
+                OptionalDouble.of(1D)
+        };
+        assertArrayEquals(expected, actual);
+    }
+
+    public void testQuotedOptionalDoubleWithoutCoercion()
+    {
+        assertThrows(MismatchedInputException.class,
+                () -> MAPPER_WITHOUT_COERCION.readValue(aposToQuotes("['1']"), OptionalDouble[].class));
+    }
+
+    public void testOptionalDoubleBeanSpecialValuesWithoutCoercion_null() throws Exception
+    {
+        OptionalDoubleBean bean = MAPPER_WITHOUT_COERCION.readValue(
+                aposToQuotes("{'value':null}"), OptionalDoubleBean.class);
+        assertEquals(OptionalDouble.empty(), bean.value);
+    }
+
+    public void testOptionalDoubleBeanSpecialValuesWithoutCoercion_nan() throws Exception
+    {
+        OptionalDoubleBean bean = MAPPER_WITHOUT_COERCION.readValue(
+                aposToQuotes("{'value':'NaN'}"), OptionalDoubleBean.class);
+        assertEquals(OptionalDouble.of(Double.NaN), bean.value);
+    }
+
+    public void testOptionalDoubleBeanSpecialValuesWithoutCoercion_positiveInfinity() throws Exception
+    {
+        OptionalDoubleBean bean = MAPPER_WITHOUT_COERCION.readValue(
+                aposToQuotes("{'value':'Infinity'}"), OptionalDoubleBean.class);
+        assertEquals(OptionalDouble.of(Double.POSITIVE_INFINITY), bean.value);
+    }
+
+    public void testOptionalDoubleBeanSpecialValuesWithoutCoercion_negativeInfinity() throws Exception
+    {
+        OptionalDoubleBean bean = MAPPER_WITHOUT_COERCION.readValue(
+                aposToQuotes("{'value':'-Infinity'}"), OptionalDoubleBean.class);
+        assertEquals(OptionalDouble.of(Double.NEGATIVE_INFINITY), bean.value);
     }
 }
