@@ -8,7 +8,7 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
-2.12.0 (not yet released)
+2.12.0 (29-Nov-2020)
 
 #94: Deserialization of timestamps with UTC timezone to LocalDateTime
    doesn't yield correct time
