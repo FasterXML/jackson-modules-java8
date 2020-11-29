@@ -106,9 +106,8 @@ And selection of which one varies by module and settings:
     * Duplicates are detected using id provided by `Module.getTypeId()`; duplicate-detection requires that Module provides same for all instances (true for Modules provided by this repo)
 * Otherwise all registrations are processed by the LAST one has effect as it has precedence over earlier registrations.
 
-
-Also note that before Jackson 2.10, auto-registration will only register older `JSR310Module`, and not newer
-`JavaTimeModule` -- this is due to backwards compatibility. This is changed in Jackson 2.10.
+Also note that before Jackson 2.10, auto-registration would only register older `JSR310Module`, and not newer
+`JavaTimeModule` -- this is due to backwards compatibility. This was changed in Jackson 2.10.
 
 If you want "the other" version of the module but also use auto-registration, make sure to
 register "other" module explicitly AFTER calling `mapper.findAndRegisterModules()`.
