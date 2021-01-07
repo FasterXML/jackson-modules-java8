@@ -2,6 +2,7 @@ package com.fasterxml.jackson.datatype.jsr310;
 
 import java.time.ZoneId;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.TimeZone;
 import java.util.Collections;
 import java.util.Map;
@@ -28,7 +29,8 @@ public class ModuleTestBase
 
     protected static MapperBuilder<?,?> newMapperBuilder() {
         return JsonMapper.builder()
-                .addModule(new JavaTimeModule());
+                .addModule(new JavaTimeModule())
+                .defaultLocale(Locale.ENGLISH);
     }
 
     protected static MapperBuilder<?,?> newMapperBuilder(TimeZone tz) {
