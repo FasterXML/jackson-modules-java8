@@ -187,15 +187,13 @@ public class InstantDeserializer<T extends Temporal>
     {
         InstantDeserializer<T> deserializer =
                 (InstantDeserializer<T>)super.createContextual(ctxt, property);
-        if (deserializer != this) {
-            JsonFormat.Value val = findFormatOverrides(ctxt, property, handledType());
-            if (val != null) {
-                deserializer = new InstantDeserializer<>(deserializer, val.getFeature(JsonFormat.Feature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE));
-                if (val.hasLenient()) {
-                    Boolean leniency = val.getLenient();
-                    if (leniency != null) {
-                        deserializer = deserializer.withLeniency(leniency);
-                    }
+        JsonFormat.Value val = findFormatOverrides(ctxt, property, handledType());
+        if (val != null) {
+            deserializer = new InstantDeserializer<>(deserializer, val.getFeature(JsonFormat.Feature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE));
+            if (val.hasLenient()) {
+                Boolean leniency = val.getLenient();
+                if (leniency != null) {
+                    deserializer = deserializer.withLeniency(leniency);
                 }
             }
         }
