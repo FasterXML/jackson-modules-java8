@@ -23,8 +23,6 @@ import com.fasterxml.jackson.core.JsonTokenId;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 
 import java.io.IOException;
@@ -37,6 +35,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAccessor;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -181,23 +180,17 @@ public class InstantDeserializer<T extends Temporal>
     protected InstantDeserializer<T> withShape(JsonFormat.Shape shape) { return this; }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public JsonDeserializer<T> createContextual(DeserializationContext ctxt,
-            BeanProperty property) throws JsonMappingException
+    @Override // @since 2.12.1
+    protected JSR310DateTimeDeserializerBase<?> _withFormatOverrides(DeserializationContext ctxt,
+            BeanProperty property, JsonFormat.Value formatOverrides)
     {
-        InstantDeserializer<T> deserializer =
-                (InstantDeserializer<T>)super.createContextual(ctxt, property);
-        JsonFormat.Value val = findFormatOverrides(ctxt, property, handledType());
-        if (val != null) {
-            deserializer = new InstantDeserializer<>(deserializer, val.getFeature(JsonFormat.Feature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE));
-            if (val.hasLenient()) {
-                Boolean leniency = val.getLenient();
-                if (leniency != null) {
-                    deserializer = deserializer.withLeniency(leniency);
-                }
-            }
+        InstantDeserializer<T> deser = (InstantDeserializer<T>) super._withFormatOverrides(ctxt,
+                property, formatOverrides);
+        Boolean B = formatOverrides.getFeature(JsonFormat.Feature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
+        if (!Objects.equals(B, deser._adjustToContextTZOverride)) {
+            return new InstantDeserializer<T>(deser, B);
         }
-        return deserializer;
+        return deser;
     }
 
     @SuppressWarnings("unchecked")

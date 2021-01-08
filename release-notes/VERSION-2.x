@@ -8,6 +8,12 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
+2.12.1 (not yet released)
+
+#196: `@JsonFormat` overriden features don't apply when there are no other
+   options while deserializing ZonedDateTime
+ (reported, fix contributed by Maciej D)
+
 2.12.0 (29-Nov-2020)
 
 #94: Deserialization of timestamps with UTC timezone to LocalDateTime
