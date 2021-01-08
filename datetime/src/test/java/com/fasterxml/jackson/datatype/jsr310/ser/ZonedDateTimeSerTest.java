@@ -23,6 +23,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -106,7 +107,7 @@ public class ZonedDateTimeSerTest
     public void testSerializationAsTimestamp01NegativeSecondsWithDefaults() throws Exception
     {
         // test for Issue #69 using default mapper config
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MMM dd yyyy HH:mm:ss.SSS zzz");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MMM dd yyyy HH:mm:ss.SSS zzz", Locale.ENGLISH);
         ZonedDateTime original = ZonedDateTime.parse("Apr 13 1969 05:05:38.599 UTC", dtf);
         String serialized = MAPPER.writeValueAsString(original);
         ZonedDateTime deserialized = MAPPER.readValue(serialized, ZonedDateTime.class);

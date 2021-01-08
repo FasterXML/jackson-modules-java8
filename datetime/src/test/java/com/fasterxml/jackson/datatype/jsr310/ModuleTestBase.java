@@ -3,6 +3,7 @@ package com.fasterxml.jackson.datatype.jsr310;
 import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.JavaType;
@@ -40,6 +41,7 @@ public class ModuleTestBase
 
     protected static JsonMapper.Builder mapperBuilder() {
         return JsonMapper.builder()
+                .defaultLocale(Locale.ENGLISH)
                 .addModule(new JavaTimeModule());
     }
 
