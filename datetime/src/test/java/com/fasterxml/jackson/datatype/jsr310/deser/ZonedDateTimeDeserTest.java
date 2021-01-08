@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.Map;
@@ -26,6 +27,11 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
 {
     private final ObjectReader READER = newMapper().readerFor(ZonedDateTime.class);
     private final TypeReference<Map<String, ZonedDateTime>> MAP_TYPE_REF = new TypeReference<Map<String, ZonedDateTime>>() { };
+
+    static class WrapperWithFeatures {
+        @JsonFormat(without = JsonFormat.Feature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+        public ZonedDateTime value;
+    }
 
     @Test
     public void testDeserializationAsString01() throws Exception
@@ -100,6 +106,17 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
     			.configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true)
     			.readerFor(ZonedDateTime.class).readValue(a2q(json));
     	assertNull(value);
+    }
+
+    @Test
+    public void testDeserializationWithZonePreserved() throws Throwable
+    {
+        WrapperWithFeatures wrapper = newMapper()
+                .readerFor(WrapperWithFeatures.class)
+                .readValue("{\"value\":\"2000-01-01T12:00+01:00\"}");
+        assertEquals("Timezone should be preserved.",
+                ZonedDateTime.of(2000, 1, 1, 12, 0, 0 ,0, ZoneOffset.ofHours(1)),
+                wrapper.value);
     }
 
     /*
