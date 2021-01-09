@@ -8,7 +8,7 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
-2.12.1 (not yet released)
+2.12.1 (08-Jan-2021)
 
 #196: `@JsonFormat` overriden features don't apply when there are no other
    options while deserializing ZonedDateTime
