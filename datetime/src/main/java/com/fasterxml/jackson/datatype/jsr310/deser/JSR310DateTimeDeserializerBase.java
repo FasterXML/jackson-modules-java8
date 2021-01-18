@@ -1,6 +1,5 @@
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
-import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.ResolverStyle;
@@ -10,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Feature;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 
+import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 
 import com.fasterxml.jackson.databind.*;
@@ -148,7 +148,7 @@ public abstract class JSR310DateTimeDeserializerBase<T>
     }
     
     protected void _throwNoNumericTimestampNeedTimeZone(JsonParser p, DeserializationContext ctxt)
-        throws IOException
+        throws JacksonException
     {
         ctxt.reportInputMismatch(handledType(),
 "raw timestamp (%d) not allowed for `%s`: need additional information such as an offset or time-zone (see class Javadocs)",

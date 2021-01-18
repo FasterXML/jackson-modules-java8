@@ -1,10 +1,9 @@
 package com.fasterxml.jackson.datatype.jsr310.deser.key;
 
-import java.io.IOException;
 import java.time.DateTimeException;
 
+import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.KeyDeserializer;
 import com.fasterxml.jackson.databind.util.ClassUtil;
 
@@ -12,7 +11,7 @@ abstract class Jsr310KeyDeserializer extends KeyDeserializer
 {
     @Override
     public final Object deserializeKey(String key, DeserializationContext ctxt)
-        throws IOException
+        throws JacksonException
     {
         // 17-Aug-2019, tatu: Jackson 2.x had special handling for "null" key marker, which
         //    is why we have this unnecessary dispatching, for now
@@ -20,11 +19,12 @@ abstract class Jsr310KeyDeserializer extends KeyDeserializer
     }
 
     protected abstract Object deserialize(String key, DeserializationContext ctxt)
-        throws IOException;
+        throws JacksonException;
 
     @SuppressWarnings("unchecked")
     protected <T> T _handleDateTimeException(DeserializationContext ctxt,
-              Class<?> type, DateTimeException e0, String value) throws IOException
+              Class<?> type, DateTimeException e0, String value)
+          throws JacksonException
     {
         try {
             return (T) ctxt.handleWeirdKey(type, value,
@@ -33,14 +33,9 @@ abstract class Jsr310KeyDeserializer extends KeyDeserializer
                     e0.getClass().getName(),
                     e0.getMessage());
 
-        } catch (JsonMappingException e) {
+        } catch (JacksonException e) {
             e.initCause(e0);
             throw e;
-        } catch (IOException e) {
-            if (null == e.getCause()) {
-                e.initCause(e0);
-            }
-            throw JsonMappingException.fromUnexpectedIOE(e);
         }
     }
 }

@@ -16,27 +16,24 @@
 
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.Year;
+import java.time.format.DateTimeFormatter;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonIntegerFormatVisitor;
-
-import java.io.IOException;
-import java.time.Year;
-import java.time.format.DateTimeFormatter;
 
 /**
  * Serializer for Java 8 temporal {@link Year}s.
  *
  * @author Nick Williams
- * @since 2.2
  */
 public class YearSerializer extends JSR310FormattedSerializerBase<Year>
 {
@@ -62,7 +59,8 @@ public class YearSerializer extends JSR310FormattedSerializerBase<Year>
     }
 
     @Override
-    public void serialize(Year year, JsonGenerator generator, SerializerProvider provider) throws IOException
+    public void serialize(Year year, JsonGenerator generator, SerializerProvider provider)
+        throws JacksonException
     {
         if (useTimestamp(provider)) {
             generator.writeNumber(year.getValue());
@@ -75,7 +73,6 @@ public class YearSerializer extends JSR310FormattedSerializerBase<Year>
     // Override because we have String/Int, NOT String/Array
     @Override
     protected void _acceptTimestampVisitor(JsonFormatVisitorWrapper visitor, JavaType typeHint)
-            throws JsonMappingException
     {
         JsonIntegerFormatVisitor v2 = visitor.expectIntegerFormat(typeHint);
         if (v2 != null) {

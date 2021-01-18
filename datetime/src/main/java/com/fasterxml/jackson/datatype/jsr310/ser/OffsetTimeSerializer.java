@@ -16,23 +16,22 @@
 
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
+import java.time.OffsetTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.type.WritableTypeId;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 
-import java.io.IOException;
-import java.time.OffsetTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoField;
-
 /**
  * Serializer for Java 8 temporal {@link OffsetTime}s.
  *
  * @author Nick Williams
- * @since 2.2
  */
 public class OffsetTimeSerializer extends JSR310FormattedSerializerBase<OffsetTime>
 {
@@ -59,7 +58,8 @@ public class OffsetTimeSerializer extends JSR310FormattedSerializerBase<OffsetTi
     }
 
     @Override
-    public void serialize(OffsetTime time, JsonGenerator g, SerializerProvider provider) throws IOException
+    public void serialize(OffsetTime time, JsonGenerator g, SerializerProvider provider)
+        throws JacksonException
     {
         if (useTimestamp(provider)) {
             g.writeStartArray();
@@ -73,7 +73,8 @@ public class OffsetTimeSerializer extends JSR310FormattedSerializerBase<OffsetTi
 
     @Override
     public void serializeWithType(OffsetTime value, JsonGenerator g, SerializerProvider ctxt,
-            TypeSerializer typeSer) throws IOException
+            TypeSerializer typeSer)
+        throws JacksonException
     {
         WritableTypeId typeIdDef = typeSer.writeTypePrefix(g, ctxt,
                 typeSer.typeId(value, serializationShape(ctxt)));
@@ -88,7 +89,8 @@ public class OffsetTimeSerializer extends JSR310FormattedSerializerBase<OffsetTi
     }
 
     private final void _serializeAsArrayContents(OffsetTime value, JsonGenerator g,
-            SerializerProvider provider) throws IOException
+            SerializerProvider provider)
+        throws JacksonException
     {
         g.writeNumber(value.getHour());
         g.writeNumber(value.getMinute());

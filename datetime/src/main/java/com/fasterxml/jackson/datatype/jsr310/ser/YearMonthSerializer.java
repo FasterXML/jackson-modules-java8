@@ -16,16 +16,17 @@
 
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import java.io.IOException;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.type.WritableTypeId;
+
 import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonStringFormatVisitor;
@@ -62,7 +63,8 @@ public class YearMonthSerializer extends JSR310FormattedSerializerBase<YearMonth
     }
 
     @Override
-    public void serialize(YearMonth value, JsonGenerator g, SerializerProvider provider) throws IOException
+    public void serialize(YearMonth value, JsonGenerator g, SerializerProvider provider)
+        throws JacksonException
     {
         if (useTimestamp(provider)) {
             g.writeStartArray();
@@ -75,7 +77,8 @@ public class YearMonthSerializer extends JSR310FormattedSerializerBase<YearMonth
 
     @Override
     public void serializeWithType(YearMonth value, JsonGenerator g,
-            SerializerProvider ctxt, TypeSerializer typeSer) throws IOException
+            SerializerProvider ctxt, TypeSerializer typeSer)
+        throws JacksonException
     {
         WritableTypeId typeIdDef = typeSer.writeTypePrefix(g, ctxt,
                 typeSer.typeId(value, serializationShape(ctxt)));
@@ -89,14 +92,15 @@ public class YearMonthSerializer extends JSR310FormattedSerializerBase<YearMonth
     }
 
     protected void _serializeAsArrayContents(YearMonth value, JsonGenerator g,
-            SerializerProvider provider) throws IOException
+            SerializerProvider provider)
+        throws JacksonException
     {
         g.writeNumber(value.getYear());
         g.writeNumber(value.getMonthValue());
     }
 
     @Override
-    protected void _acceptTimestampVisitor(JsonFormatVisitorWrapper visitor, JavaType typeHint) throws JsonMappingException
+    protected void _acceptTimestampVisitor(JsonFormatVisitorWrapper visitor, JavaType typeHint)
     {
         SerializerProvider provider = visitor.getProvider();
         boolean useTimestamp = (provider != null) && useTimestamp(provider);

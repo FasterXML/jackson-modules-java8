@@ -1,5 +1,11 @@
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -11,13 +17,6 @@ import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
 import org.junit.Test;
-
-import java.io.IOException;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeParseException;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -55,23 +54,19 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
             fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
            // OK
-        } catch (IOException e) {
-            throw e;
         }
     }
     
     @Test
     public void testDeserializationAsEmptyArrayDisabled() throws Throwable
     {
-    	try {
+        try {
     	    READER.readValue("[]");
     	    fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
            // OK
-        } catch (IOException e) {
-            throw e;
         }
-    	try {
+        try {
         	newMapper()
             	.readerFor(ZonedDateTime.class)
             	.with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
@@ -79,8 +74,6 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
         	fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
            // OK
-        } catch (IOException e) {
-            throw e;
         }
     }
 

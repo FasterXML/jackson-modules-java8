@@ -1,6 +1,5 @@
 package com.fasterxml.jackson.datatype.jsr310.key;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Map;
@@ -63,7 +62,7 @@ public class LocalDateTimeAsKeyTest extends ModuleTestBase
         DeserializationProblemHandler handler = new DeserializationProblemHandler() {
             @Override
             public Object handleWeirdKey(DeserializationContext ctxt, Class<?> targetType,
-                   String valueToConvert, String failureMsg) throws IOException {
+                   String valueToConvert, String failureMsg) {
                 if (LocalDateTime.class == targetType) {
                     if ("now".equals(valueToConvert)) {
                         return now;

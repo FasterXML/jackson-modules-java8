@@ -16,7 +16,6 @@
 
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
-import java.io.IOException;
 import java.time.DateTimeException;
 import java.time.OffsetTime;
 import java.time.ZoneOffset;
@@ -64,7 +63,8 @@ public class OffsetTimeDeserializer extends JSR310DateTimeDeserializerBase<Offse
     protected OffsetTimeDeserializer withShape(JsonFormat.Shape shape) { return this; }
 
     @Override
-    public OffsetTime deserialize(JsonParser parser, DeserializationContext context) throws IOException
+    public OffsetTime deserialize(JsonParser parser, DeserializationContext context)
+        throws JacksonException
     {
         if (parser.hasToken(JsonToken.VALUE_STRING)) {
             return _fromString(parser, context, parser.getText());
@@ -138,7 +138,8 @@ public class OffsetTimeDeserializer extends JSR310DateTimeDeserializerBase<Offse
     }
 
     protected OffsetTime _fromString(JsonParser p, DeserializationContext ctxt,
-            String string0)  throws IOException
+            String string0)
+        throws JacksonException
     {
         String string = string0.trim();
         if (string.length() == 0) {

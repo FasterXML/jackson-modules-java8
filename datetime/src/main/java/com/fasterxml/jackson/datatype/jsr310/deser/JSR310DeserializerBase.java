@@ -16,11 +16,11 @@
 
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
-import java.io.IOException;
 import java.time.DateTimeException;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
+import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.io.NumberInput;
@@ -36,7 +36,6 @@ import com.fasterxml.jackson.databind.util.ClassUtil;
  * Base class that indicates that all JSR310 datatypes are deserialized from scalar JSON types.
  *
  * @author Nick Williams
- * @since 2.2
  */
 abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
 {
@@ -92,7 +91,7 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
     @SuppressWarnings("unchecked")
     protected T _fromEmptyString(JsonParser p, DeserializationContext ctxt,
             String str)
-        throws IOException
+        throws JacksonException
     {
         final CoercionAction act = _checkFromStringCoercion(ctxt, str);
         switch (act) { // note: Fail handled above
@@ -119,7 +118,7 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
     @Override
     public Object deserializeWithType(JsonParser parser, DeserializationContext context,
             TypeDeserializer typeDeserializer)
-        throws IOException
+        throws JacksonException
     {
         return typeDeserializer.deserializeTypedFromAny(parser, context);
     }
@@ -133,7 +132,8 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
     }
 
     protected <BOGUS> BOGUS _reportWrongToken(DeserializationContext context,
-            JsonToken exp, String unit) throws IOException
+            JsonToken exp, String unit)
+        throws JacksonException
     {
         context.reportWrongTokenException((JsonDeserializer<?>)this, exp,
                 "Expected %s for '%s' of %s value",
@@ -142,7 +142,8 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
     }
 
     protected <BOGUS> BOGUS _reportWrongToken(JsonParser parser, DeserializationContext context,
-            JsonToken... expTypes) throws IOException
+            JsonToken... expTypes)
+        throws JacksonException
     {
         // 20-Apr-2016, tatu: No multiple-expected-types handler yet, construct message here
         return context.reportInputMismatch(handledType(),
@@ -154,27 +155,24 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
 
     @SuppressWarnings("unchecked")
     protected <R> R _handleDateTimeException(DeserializationContext context,
-              DateTimeException e0, String value) throws JsonMappingException
+              DateTimeException e0, String value)
+          throws JacksonException
     {
         try {
             return (R) context.handleWeirdStringValue(handledType(), value,
                     "Failed to deserialize %s: (%s) %s",
                     ClassUtil.getClassDescription(handledType()), e0.getClass().getName(), e0.getMessage());
-        } catch (JsonMappingException e) {
+        } catch (JacksonException e) {
             e.initCause(e0);
             throw e;
-        } catch (IOException e) {
-            if (null == e.getCause()) {
-                e.initCause(e0);
-            }
-            throw JsonMappingException.fromUnexpectedIOE(e);
         }
     }
 
     // @since 3.0
     @SuppressWarnings("unchecked")
     protected <R> R _handleDateTimeFormatException(DeserializationContext context,
-              DateTimeException e0, DateTimeFormatter format, String value) throws JsonMappingException
+              DateTimeException e0, DateTimeFormatter format, String value)
+          throws JacksonException
     {
         final String formatterDesc = (format == null) ? "[default format]" : format.toString();
         try {
@@ -182,32 +180,23 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
                     "Failed to deserialize %s (with format '%s'): (%s) %s",
                     ClassUtil.getClassDescription(handledType()),
                     formatterDesc, e0.getClass().getName(), e0.getMessage());
-        } catch (JsonMappingException e) {
+        } catch (JacksonException e) {
             e.initCause(e0);
             throw e;
-        } catch (IOException e) {
-            if (null == e.getCause()) {
-                e.initCause(e0);
-            }
-            throw JsonMappingException.fromUnexpectedIOE(e);
         }
     }
     
     @SuppressWarnings("unchecked")
     protected <R> R _handleUnexpectedToken(DeserializationContext ctxt,
-              JsonParser parser, String message, Object... args) throws JsonMappingException {
-        try {
-            return (R) ctxt.handleUnexpectedToken(getValueType(ctxt), parser.currentToken(),
-                    parser, message, args);
-        } catch (JsonMappingException e) {
-            throw e;
-        } catch (IOException e) {
-            throw JsonMappingException.fromUnexpectedIOE(e);
-        }
+              JsonParser parser, String message, Object... args)
+    {
+        return (R) ctxt.handleUnexpectedToken(getValueType(ctxt), parser.currentToken(),
+                parser, message, args);
     }
 
     protected <R> R _handleUnexpectedToken(DeserializationContext context,
-              JsonParser parser, JsonToken... expTypes) throws JsonMappingException {
+              JsonParser parser, JsonToken... expTypes)
+    {
         return _handleUnexpectedToken(context, parser,
                 "Unexpected token (%s), expected one of %s for %s value",
                 parser.currentToken(),
@@ -217,7 +206,8 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
 
     @SuppressWarnings("unchecked")
     protected T _failForNotLenient(JsonParser p, DeserializationContext ctxt,
-            JsonToken expToken) throws IOException
+            JsonToken expToken)
+        throws JacksonException
     {
         return (T) ctxt.handleUnexpectedToken(getValueType(ctxt), expToken, p,
                 "Cannot deserialize instance of %s out of %s token: not allowed because 'strict' mode set for property or type (enable 'lenient' handling to allow)",

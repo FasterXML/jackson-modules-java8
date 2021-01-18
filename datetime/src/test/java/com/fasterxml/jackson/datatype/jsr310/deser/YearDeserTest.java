@@ -104,8 +104,6 @@ public class YearDeserTest extends ModuleTestBase
             fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
            // OK
-        } catch (IOException e) {
-            throw e;
         }
     }
     
