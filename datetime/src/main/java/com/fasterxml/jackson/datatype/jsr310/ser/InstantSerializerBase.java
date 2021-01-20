@@ -16,14 +16,13 @@
 
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
-import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-
+import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.JsonParser.NumberType;
@@ -81,7 +80,8 @@ public abstract class InstantSerializerBase<T extends Temporal>
         JsonFormat.Shape shape);
 
     @Override
-    public void serialize(T value, JsonGenerator generator, SerializerProvider provider) throws IOException
+    public void serialize(T value, JsonGenerator generator, SerializerProvider provider)
+        throws JacksonException
     {
         if (useTimestamp(provider)) {
             if (useNanoseconds(provider)) {

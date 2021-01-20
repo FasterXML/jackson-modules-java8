@@ -16,12 +16,11 @@
 
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
-import java.io.IOException;
 import java.time.MonthDay;
 import java.time.format.DateTimeFormatter;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-
+import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.type.WritableTypeId;
@@ -62,7 +61,7 @@ public class MonthDaySerializer extends JSR310FormattedSerializerBase<MonthDay>
 
     @Override
     public void serialize(MonthDay value, JsonGenerator g, SerializerProvider provider)
-        throws IOException
+        throws JacksonException
     {
         if (_useTimestampExplicitOnly(provider)) {
             g.writeStartArray();
@@ -75,7 +74,8 @@ public class MonthDaySerializer extends JSR310FormattedSerializerBase<MonthDay>
 
     @Override
     public void serializeWithType(MonthDay value, JsonGenerator g,
-            SerializerProvider ctxt, TypeSerializer typeSer) throws IOException
+            SerializerProvider ctxt, TypeSerializer typeSer)
+        throws JacksonException
     {
         WritableTypeId typeIdDef = typeSer.writeTypePrefix(g, ctxt,
                 typeSer.typeId(value, serializationShape(ctxt)));
@@ -89,7 +89,8 @@ public class MonthDaySerializer extends JSR310FormattedSerializerBase<MonthDay>
     }
     
     protected void _serializeAsArrayContents(MonthDay value, JsonGenerator g,
-            SerializerProvider provider) throws IOException
+            SerializerProvider provider)
+        throws JacksonException
     {
         g.writeNumber(value.getMonthValue());
         g.writeNumber(value.getDayOfMonth());

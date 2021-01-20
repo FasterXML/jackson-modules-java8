@@ -16,11 +16,12 @@
 
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.type.WritableTypeId;
@@ -59,7 +60,8 @@ public class LocalDateSerializer extends JSR310FormattedSerializerBase<LocalDate
     }
 
     @Override
-    public void serialize(LocalDate date, JsonGenerator g, SerializerProvider provider) throws IOException
+    public void serialize(LocalDate date, JsonGenerator g, SerializerProvider provider)
+        throws JacksonException
     {
         if (useTimestamp(provider)) {
             if (_shape == JsonFormat.Shape.NUMBER_INT) {
@@ -76,7 +78,8 @@ public class LocalDateSerializer extends JSR310FormattedSerializerBase<LocalDate
 
     @Override
     public void serializeWithType(LocalDate value, JsonGenerator g,
-            SerializerProvider ctxt, TypeSerializer typeSer) throws IOException
+            SerializerProvider ctxt, TypeSerializer typeSer)
+        throws JacksonException
     {
         WritableTypeId typeIdDef = typeSer.writeTypePrefix(g, ctxt,
                 typeSer.typeId(value, serializationShape(ctxt)));
@@ -95,7 +98,8 @@ public class LocalDateSerializer extends JSR310FormattedSerializerBase<LocalDate
     }
 
     protected void _serializeAsArrayContents(LocalDate value, JsonGenerator g,
-            SerializerProvider provider) throws IOException
+            SerializerProvider provider)
+        throws JacksonException
     {
         g.writeNumber(value.getYear());
         g.writeNumber(value.getMonthValue());

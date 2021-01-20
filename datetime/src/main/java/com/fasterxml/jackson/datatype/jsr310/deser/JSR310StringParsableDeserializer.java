@@ -16,13 +16,13 @@
 
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
-import java.io.IOException;
 import java.time.DateTimeException;
 import java.time.Period;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 
 import com.fasterxml.jackson.core.JsonToken;
@@ -107,7 +107,8 @@ public class JSR310StringParsableDeserializer
     }
 
     @Override
-    public Object deserialize(JsonParser p, DeserializationContext ctxt) throws IOException
+    public Object deserialize(JsonParser p, DeserializationContext ctxt)
+        throws JacksonException
     {
         if (p.hasToken(JsonToken.VALUE_STRING)) {
             return _fromString(p, ctxt, p.getText());
@@ -132,7 +133,7 @@ public class JSR310StringParsableDeserializer
     @Override
     public Object deserializeWithType(JsonParser p, DeserializationContext context,
             TypeDeserializer deserializer)
-        throws IOException
+        throws JacksonException
     {
         // This is a nasty kludge right here, working around issues like
         // [datatype-jsr310#24]. But should work better than not having the work-around.
@@ -144,7 +145,8 @@ public class JSR310StringParsableDeserializer
     }
 
     protected Object _fromString(JsonParser p, DeserializationContext ctxt,
-            String string)  throws IOException
+            String string)
+        throws JacksonException
     {
         string = string.trim();
         if (string.length() == 0) {

@@ -379,7 +379,7 @@ public class LocalDateTimeDeserTest
         DeserializationProblemHandler handler = new DeserializationProblemHandler() {
             @Override
             public Object handleWeirdStringValue(DeserializationContext ctxt, Class<?> targetType,
-                   String valueToConvert, String failureMsg) throws IOException {
+                   String valueToConvert, String failureMsg) {
                 if (LocalDateTime.class == targetType) {
                     if ("now".equals(valueToConvert)) {
                         return now;
@@ -399,7 +399,7 @@ public class LocalDateTimeDeserTest
         DeserializationProblemHandler handler = new DeserializationProblemHandler() {
             @Override
             public Object handleUnexpectedToken(DeserializationContext ctxt, JavaType targetType,
-                   JsonToken t, JsonParser p, String failureMsg) throws IOException {
+                   JsonToken t, JsonParser p, String failureMsg) {
                 if (targetType.hasRawClass(LocalDateTime.class)) {
                     if (t.isBoolean()) {
                         return now;

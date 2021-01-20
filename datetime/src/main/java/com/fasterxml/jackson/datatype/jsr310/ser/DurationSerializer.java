@@ -16,7 +16,12 @@
 
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
+import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.format.DateTimeFormatter;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -33,11 +38,6 @@ import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonValueFormat;
 import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 import com.fasterxml.jackson.datatype.jsr310.util.DurationUnitConverter;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.time.Duration;
-import java.time.format.DateTimeFormatter;
-
 /**
  * Serializer for Java 8 temporal {@link Duration}s.
  *<p>
@@ -47,7 +47,6 @@ import java.time.format.DateTimeFormatter;
  * {@link SerializationFeature#WRITE_DATES_AS_TIMESTAMPS} was used.
  *
  * @author Nick Williams
- * @since 2.2
  */
 public class DurationSerializer extends JSR310FormattedSerializerBase<Duration>
 {
@@ -118,7 +117,8 @@ public class DurationSerializer extends JSR310FormattedSerializerBase<Duration>
     }
 
     @Override
-    public void serialize(Duration duration, JsonGenerator generator, SerializerProvider provider) throws IOException
+    public void serialize(Duration duration, JsonGenerator generator, SerializerProvider provider)
+        throws JacksonException
     {
         if (useTimestamp(provider)) {
             if (useNanoseconds(provider)) {

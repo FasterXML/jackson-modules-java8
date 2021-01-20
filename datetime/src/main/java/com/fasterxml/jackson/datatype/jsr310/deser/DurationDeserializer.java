@@ -16,13 +16,12 @@
 
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.DateTimeException;
 import java.time.Duration;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-
+import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.JsonTokenId;
@@ -110,7 +109,8 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
     }
 
     @Override
-    public Duration deserialize(JsonParser parser, DeserializationContext context) throws IOException
+    public Duration deserialize(JsonParser parser, DeserializationContext context)
+        throws JacksonException
     {
         switch (parser.currentTokenId())
         {
@@ -138,7 +138,8 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
     }
 
     protected Duration _fromString(JsonParser parser, DeserializationContext ctxt,
-            String value0)  throws IOException
+            String value0)
+        throws JacksonException
     {
         String value = value0.trim();
         if (value.length() == 0) {
@@ -162,7 +163,8 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
         }
     }
 
-    protected Duration _fromTimestamp(DeserializationContext ctxt, long ts) {
+    protected Duration _fromTimestamp(DeserializationContext ctxt, long ts)
+    {
         if (_durationUnitConverter != null) {
             return _durationUnitConverter.convert(ts);
         }

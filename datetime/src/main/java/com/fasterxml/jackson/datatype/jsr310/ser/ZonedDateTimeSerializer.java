@@ -1,10 +1,11 @@
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -58,7 +59,7 @@ public class ZonedDateTimeSerializer extends InstantSerializerBase<ZonedDateTime
 
     @Override
     public void serialize(ZonedDateTime value, JsonGenerator g, SerializerProvider provider)
-        throws IOException
+        throws JacksonException
     {
         if (!useTimestamp(provider)) {
             if (shouldWriteWithZoneId(provider)) {

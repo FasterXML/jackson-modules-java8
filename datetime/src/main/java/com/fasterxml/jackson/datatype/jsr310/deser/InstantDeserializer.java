@@ -16,16 +16,6 @@
 
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.core.JsonTokenId;
-import com.fasterxml.jackson.databind.BeanProperty;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
-
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.DateTimeException;
 import java.time.Instant;
@@ -39,6 +29,18 @@ import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.regex.Pattern;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.JsonTokenId;
+
+import com.fasterxml.jackson.databind.BeanProperty;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 
 /**
  * Deserializer for Java 8 temporal {@link Instant}s, {@link OffsetDateTime},
@@ -189,7 +191,8 @@ public class InstantDeserializer<T extends Temporal>
 
     @SuppressWarnings("unchecked")
     @Override
-    public T deserialize(JsonParser parser, DeserializationContext context) throws IOException
+    public T deserialize(JsonParser parser, DeserializationContext context)
+        throws JacksonException
     {
         //NOTE: Timestamps contain no timezone info, and are always in configured TZ. Only
         //string values have to be adjusted to the configured TZ.
@@ -240,7 +243,8 @@ public class InstantDeserializer<T extends Temporal>
     }
 
     protected T _fromString(JsonParser p, DeserializationContext ctxt,
-            String string0)  throws IOException
+            String string0)
+        throws JacksonException
     {
         String string = string0.trim();
         if (string.length() == 0) {

@@ -16,12 +16,12 @@
 
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
-import java.io.IOException;
 import java.time.DateTimeException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -67,7 +67,8 @@ public class LocalTimeDeserializer extends JSR310DateTimeDeserializerBase<LocalT
     protected LocalTimeDeserializer withShape(JsonFormat.Shape shape) { return this; }
 
     @Override
-    public LocalTime deserialize(JsonParser parser, DeserializationContext context) throws IOException
+    public LocalTime deserialize(JsonParser parser, DeserializationContext context)
+        throws JacksonException
     {
         if (parser.hasToken(JsonToken.VALUE_STRING)) {
             return _fromString(parser, context, parser.getText());
@@ -134,7 +135,8 @@ public class LocalTimeDeserializer extends JSR310DateTimeDeserializerBase<LocalT
     }
 
     protected LocalTime _fromString(JsonParser p, DeserializationContext ctxt,
-            String string0)  throws IOException
+            String string0)
+        throws JacksonException
     {
         String string = string0.trim();
         if (string.length() == 0) {

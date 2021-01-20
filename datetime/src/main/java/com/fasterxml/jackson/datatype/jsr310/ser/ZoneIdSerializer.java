@@ -1,8 +1,8 @@
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
-import java.io.IOException;
 import java.time.ZoneId;
 
+import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.type.WritableTypeId;
@@ -16,7 +16,8 @@ public class ZoneIdSerializer extends ToStringSerializerBase
 
     @Override
     public void serializeWithType(Object value, JsonGenerator g,
-            SerializerProvider ctxt, TypeSerializer typeSer) throws IOException
+            SerializerProvider ctxt, TypeSerializer typeSer)
+        throws JacksonException
     {
         // Better ensure we don't use specific sub-classes:
         WritableTypeId typeIdDef = typeSer.writeTypePrefix(g, ctxt,

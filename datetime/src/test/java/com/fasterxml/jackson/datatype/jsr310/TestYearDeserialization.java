@@ -41,8 +41,6 @@ public class TestYearDeserialization extends ModuleTestBase
             fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
            // OK
-        } catch (IOException e) {
-            throw e;
         }
     }
     
@@ -54,8 +52,6 @@ public class TestYearDeserialization extends ModuleTestBase
     	    fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
            // OK
-        } catch (IOException e) {
-            throw e;
         }
         try {
     		JsonMapper.builder()
@@ -65,8 +61,6 @@ public class TestYearDeserialization extends ModuleTestBase
     		fail("expected JsonMappingException");
         } catch (JsonMappingException e) {
            // OK
-        } catch (IOException e) {
-            throw e;
         }
     }
     

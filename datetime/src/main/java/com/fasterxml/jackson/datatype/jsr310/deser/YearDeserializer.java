@@ -16,12 +16,12 @@
 
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
-import java.io.IOException;
 import java.time.DateTimeException;
 import java.time.Year;
 import java.time.format.DateTimeFormatter;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.StreamReadCapability;
@@ -66,7 +66,8 @@ public class YearDeserializer extends JSR310DateTimeDeserializerBase<Year>
     protected YearDeserializer withShape(JsonFormat.Shape shape) { return this; }
 
     @Override
-    public Year deserialize(JsonParser parser, DeserializationContext context) throws IOException
+    public Year deserialize(JsonParser parser, DeserializationContext context)
+        throws JacksonException
     {
         JsonToken t = parser.currentToken();
         if (t == JsonToken.VALUE_STRING) {
@@ -90,7 +91,8 @@ public class YearDeserializer extends JSR310DateTimeDeserializerBase<Year>
     }
 
     protected Year _fromString(JsonParser p, DeserializationContext ctxt,
-            String string0)  throws IOException
+            String string0)
+        throws JacksonException
     {
         String string = string0.trim();
         if (string.length() == 0) {

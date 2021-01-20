@@ -16,17 +16,18 @@
 
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
-import java.io.IOException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+
+import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.type.WritableTypeId;
+
 import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonStringFormatVisitor;
@@ -68,7 +69,7 @@ public class LocalTimeSerializer extends JSR310FormattedSerializerBase<LocalTime
 
     @Override
     public void serialize(LocalTime value, JsonGenerator g, SerializerProvider provider)
-        throws IOException
+        throws JacksonException
     {
         if (useTimestamp(provider)) {
             g.writeStartArray();
@@ -85,7 +86,8 @@ public class LocalTimeSerializer extends JSR310FormattedSerializerBase<LocalTime
 
     @Override
     public void serializeWithType(LocalTime value, JsonGenerator g,
-            SerializerProvider ctxt, TypeSerializer typeSer) throws IOException
+            SerializerProvider ctxt, TypeSerializer typeSer)
+        throws JacksonException
     {
         WritableTypeId typeIdDef = typeSer.writeTypePrefix(g, ctxt,
                 typeSer.typeId(value, serializationShape(ctxt)));
@@ -103,7 +105,8 @@ public class LocalTimeSerializer extends JSR310FormattedSerializerBase<LocalTime
     }
 
     private final void _serializeAsArrayContents(LocalTime value, JsonGenerator g,
-            SerializerProvider provider) throws IOException
+            SerializerProvider provider)
+        throws JacksonException
     {
         g.writeNumber(value.getHour());
         g.writeNumber(value.getMinute());
@@ -136,7 +139,6 @@ public class LocalTimeSerializer extends JSR310FormattedSerializerBase<LocalTime
     // as per [modules-java8#105]
     @Override
     public void acceptJsonFormatVisitor(JsonFormatVisitorWrapper visitor, JavaType typeHint)
-        throws JsonMappingException
     {
         if (useTimestamp(visitor.getProvider())) {
             _acceptTimestampVisitor(visitor, typeHint);
