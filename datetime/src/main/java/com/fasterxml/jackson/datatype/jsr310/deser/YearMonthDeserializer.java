@@ -50,7 +50,7 @@ public class YearMonthDeserializer extends JSR310DateTimeDeserializerBase<YearMo
     /**
      * Since 2.11
      */
-    protected YearMonthDeserializer(YearMonthDeserializer base, Boolean leniency) {
+    public YearMonthDeserializer(YearMonthDeserializer base, Boolean leniency) {
         super(base, leniency);
     }
 
