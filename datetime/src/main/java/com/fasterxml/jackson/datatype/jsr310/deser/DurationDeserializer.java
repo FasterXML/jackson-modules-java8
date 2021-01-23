@@ -82,7 +82,7 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
 
     @Override
     public JsonDeserializer<?> createContextual(DeserializationContext ctxt,
-            BeanProperty property) throws JsonMappingException
+            BeanProperty property)
     {
         JsonFormat.Value format = findFormatOverrides(ctxt, property, handledType());
         DurationDeserializer deser = this;

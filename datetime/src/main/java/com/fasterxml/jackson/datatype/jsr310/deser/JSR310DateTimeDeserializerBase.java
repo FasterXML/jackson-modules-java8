@@ -71,7 +71,7 @@ public abstract class JSR310DateTimeDeserializerBase<T>
 
     @Override
     public JsonDeserializer<?> createContextual(DeserializationContext ctxt,
-            BeanProperty property) throws JsonMappingException
+            BeanProperty property)
     {
         JsonFormat.Value format = findFormatOverrides(ctxt, property, handledType());
         return (format == null) ? this : _withFormatOverrides(ctxt, property, format);

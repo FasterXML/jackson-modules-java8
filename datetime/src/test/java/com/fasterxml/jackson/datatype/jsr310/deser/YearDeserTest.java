@@ -16,18 +16,14 @@
 
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
-import java.io.IOException;
 import java.time.Year;
-import java.time.format.DateTimeParseException;
 import java.time.temporal.Temporal;
 import java.util.Map;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
@@ -60,50 +56,50 @@ public class YearDeserTest extends ModuleTestBase
     private final ObjectReader READER = MAPPER.readerFor(Year.class);
 
     @Test
-    public void testDeserializationAsString01() throws Exception
+    public void testDeserializationAsString01()
     {
         assertEquals("The value is not correct.",Year.of(2000),
                 READER.readValue(q("2000")));
     }
 
     @Test
-    public void testBadDeserializationAsString01() throws Throwable
+    public void testBadDeserializationAsString01()
     {
-        expectFailure(q("notayear"));
+        try {
+            READER.readValue(q("notayear"));
+            fail("expected DateTimeParseException");
+        } catch (MismatchedInputException e) {
+            verifyException(e, "Cannot deserialize value of type `java.time.Year` from String \"notayear\"");
+        }
     }
 
     @Test
-    public void testDeserializationAsArrayDisabled() throws Throwable
+    public void testDeserializationAsArrayDisabled()
     {
-     try {
-          read("['2000']");
-         fail("expected JsonMappingException");
-        } catch (JsonMappingException e) {
-           // OK
-        } catch (IOException e) {
-            throw e;
+        try {
+            read("['2000']");
+            fail("Should nae pass");
+        } catch (MismatchedInputException e) {
+            verifyException(e, "Cannot deserialize value of type `java.time.Year` from Array");
         }
     }
     
     @Test
-    public void testDeserializationAsEmptyArrayDisabled() throws Throwable
+    public void testDeserializationAsEmptyArrayDisabled()
     {
         try {
             read("[]");
-            fail("expected JsonMappingException");
-        } catch (JsonMappingException e) {
-           // OK
-        } catch (IOException e) {
-            throw e;
+            fail("Should nae pass");
+        } catch (MismatchedInputException e) {
+            verifyException(e, "Cannot deserialize value of type `java.time.Year` from Array");
         }
         try {
-            newMapper()
-                .readerFor(Year.class)
+            READER
                 .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
                 .readValue("[]");
-            fail("expected JsonMappingException");
-        } catch (JsonMappingException e) {
-           // OK
+            fail("Should nae pass");
+        } catch (MismatchedInputException e) {
+            verifyException(e, "Cannot deserialize value of type `java.time.Year` from Array");
         }
     }
     
@@ -254,21 +250,7 @@ public class YearDeserTest extends ModuleTestBase
     /**********************************************************
      */
 
-    private Year read(final String json) throws IOException {
+    private Year read(final String json) {
         return READER.readValue(a2q(json));
-    }
-
-    private void expectFailure(String json) throws Throwable {
-        try {
-            READER.readValue(json);
-            fail("expected DateTimeParseException");
-        } catch (JsonProcessingException e) {
-            if (e.getCause() == null) {
-                throw e;
-            }
-            if (!(e.getCause() instanceof DateTimeParseException)) {
-                throw e.getCause();
-            }
-        }
     }
 }

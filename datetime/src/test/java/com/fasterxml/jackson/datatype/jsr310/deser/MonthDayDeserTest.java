@@ -13,7 +13,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
@@ -67,8 +66,8 @@ public class MonthDayDeserTest extends ModuleTestBase
     {
         try {
             read("['--01-01']");
-            fail("expected JsonMappingException");
-        } catch (JsonMappingException e) {
+            fail("expected MismatchedInputException");
+        } catch (MismatchedInputException e) {
             // expecting array-of-ints
             verifyException(e, "Unexpected token");
         }

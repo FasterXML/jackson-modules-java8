@@ -110,7 +110,7 @@ abstract class JSR310FormattedSerializerBase<T>
 
     @Override
     public JsonSerializer<?> createContextual(SerializerProvider prov,
-            BeanProperty property) throws JsonMappingException
+            BeanProperty property)
     {
         JsonFormat.Value format = findFormatOverrides(prov, property, handledType());
         if (format != null) {
@@ -144,7 +144,7 @@ abstract class JSR310FormattedSerializerBase<T>
     }
 
     @Override
-    public void acceptJsonFormatVisitor(JsonFormatVisitorWrapper visitor, JavaType typeHint) throws JsonMappingException
+    public void acceptJsonFormatVisitor(JsonFormatVisitorWrapper visitor, JavaType typeHint)
     {
         if (useTimestamp(visitor.getProvider())) {
             _acceptTimestampVisitor(visitor, typeHint);
@@ -156,7 +156,7 @@ abstract class JSR310FormattedSerializerBase<T>
         }
     }
 
-    protected void _acceptTimestampVisitor(JsonFormatVisitorWrapper visitor, JavaType typeHint) throws JsonMappingException
+    protected void _acceptTimestampVisitor(JsonFormatVisitorWrapper visitor, JavaType typeHint)
     {
         // By default, most sub-types use JSON Array, so do this:
         // 28-May-2019, tatu: serialized as a List<Integer>, presumably

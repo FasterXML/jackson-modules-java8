@@ -28,7 +28,6 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.JsonParser.NumberType;
 
 import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonIntegerFormatVisitor;
@@ -100,7 +99,6 @@ public abstract class InstantSerializerBase<T extends Temporal>
     // Overridden to ensure that our timestamp handling is as expected
     @Override
     protected void _acceptTimestampVisitor(JsonFormatVisitorWrapper visitor, JavaType typeHint)
-        throws JsonMappingException
     {
         if (useNanoseconds(visitor.getProvider())) {
             JsonNumberFormatVisitor v2 = visitor.expectNumberFormat(typeHint);

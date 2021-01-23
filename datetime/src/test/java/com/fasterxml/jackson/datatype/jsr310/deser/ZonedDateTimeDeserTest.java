@@ -9,11 +9,12 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
 import org.junit.Test;
@@ -52,8 +53,8 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
         try {
             READER.readValue("[\"2000-01-01T12:00Z\"]");
             fail("expected JsonMappingException");
-        } catch (JsonMappingException e) {
-           // OK
+        } catch (MismatchedInputException e) {
+            verifyException(e, "Cannot deserialize value of type `java.time.ZonedDateTime` from Array");
         }
     }
     
@@ -61,19 +62,19 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
     public void testDeserializationAsEmptyArrayDisabled() throws Throwable
     {
         try {
-    	    READER.readValue("[]");
-    	    fail("expected JsonMappingException");
-        } catch (JsonMappingException e) {
-           // OK
+            READER.readValue("[]");
+            fail("expected MismatchedInputException");
+        } catch (MismatchedInputException e) {
+            verifyException(e, "Cannot deserialize value of type `java.time.ZonedDateTime` from Array");
         }
         try {
-        	newMapper()
-            	.readerFor(ZonedDateTime.class)
-            	.with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
-            	.readValue("[]");
-        	fail("expected JsonMappingException");
-        } catch (JsonMappingException e) {
-           // OK
+            newMapper()
+                .readerFor(ZonedDateTime.class)
+                .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
+                .readValue("[]");
+            fail("expected MismatchedInputException");
+        } catch (MismatchedInputException e) {
+            verifyException(e, "Cannot deserialize value of type `java.time.ZonedDateTime` from Array");
         }
     }
 

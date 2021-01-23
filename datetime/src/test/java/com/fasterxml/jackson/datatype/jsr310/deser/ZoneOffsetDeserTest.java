@@ -28,13 +28,13 @@ import static org.junit.Assert.fail;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.cfg.CoercionAction;
 import com.fasterxml.jackson.databind.cfg.CoercionInputShape;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.databind.type.LogicalType;
+
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
@@ -114,8 +114,8 @@ public class ZoneOffsetDeserTest extends ModuleTestBase
             READER
                 .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
                 .readValue("[]");
-            fail("expected JsonMappingException");
-        } catch (JsonMappingException e) {
+            fail("expected MismatchedInputException");
+        } catch (MismatchedInputException e) {
             verifyException(e, "Cannot deserialize value of type `java.time.ZoneOffset` from Array value");
         }
     }

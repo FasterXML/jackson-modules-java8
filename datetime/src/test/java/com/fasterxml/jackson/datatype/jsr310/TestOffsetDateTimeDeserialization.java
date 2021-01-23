@@ -2,14 +2,13 @@ package com.fasterxml.jackson.datatype.jsr310;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.time.format.DateTimeParseException;
 import java.util.TimeZone;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 
 import org.junit.Test;
 
@@ -99,7 +98,12 @@ public class TestOffsetDateTimeDeserialization extends ModuleTestBase
     @Test
     public void testBadDeserializationAsString01() throws Throwable
     {
-        expectFailure(q("notanoffsetdatetime"));
+        try {
+            READER.readValue(q("notanoffsetdatetime"));
+            fail("Should not pass");
+        } catch (MismatchedInputException e) {
+            verifyException(e, "Failed to deserialize `java.time.OffsetDateTime`");
+        }
     }
 
     @Test
@@ -127,12 +131,12 @@ public class TestOffsetDateTimeDeserialization extends ModuleTestBase
     }
 
     @Test
-    public void testDeserializationAsArrayDisabled() throws Throwable
+    public void testDeserializationAsArrayDisabled()
     {
         try {
             READER.readValue("['2000-01-01T12:00+00']");
-    		    fail("expected JsonMappingException");
-        } catch (JsonMappingException e) {
+            fail("expected InputMismatchException");
+        } catch (MismatchedInputException e) {
             verifyException(e, "Cannot deserialize value of type `java.time.OffsetDateTime` from Array value");
         }
     }
@@ -142,22 +146,22 @@ public class TestOffsetDateTimeDeserialization extends ModuleTestBase
     {
         try {
             READER.readValue("[]");
-            fail("expected JsonMappingException");
-        } catch (JsonMappingException e) {
+            fail("expected InputMismatchException");
+        } catch (MismatchedInputException e) {
             verifyException(e, "Cannot deserialize value of type `java.time.OffsetDateTime` from Array value");
         }
         try {
     		    READER.with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
     		        .readValue("[]");
-    		    fail("expected JsonMappingException");
-        } catch (JsonMappingException e) {
+    		    fail("expected InputMismatchException");
+        } catch (MismatchedInputException e) {
             verifyException(e, "Cannot deserialize value of type `");
             verifyException(e, "from Array value");
         }
     }
 
     @Test
-    public void testDeserializationAsArrayEnabled() throws Throwable
+    public void testDeserializationAsArrayEnabled()
     {
         OffsetDateTime value = READER
                 .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
@@ -167,27 +171,12 @@ public class TestOffsetDateTimeDeserialization extends ModuleTestBase
     }
     
     @Test
-    public void testDeserializationAsEmptyArrayEnabled() throws Throwable
+    public void testDeserializationAsEmptyArrayEnabled()
     {
         OffsetDateTime value = READER
     			.with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS,
     			        DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT)
     			.readValue("[]");
         assertNull(value);
-    }
-    
-    private void expectFailure(String json) throws Exception {
-        try {
-            READER.readValue(a2q(json));
-            fail("expected JsonMappingException");
-        } catch (JsonMappingException e) {
-            Throwable t = e.getCause();
-            if (t == null) {
-                fail("Should have `cause` for exception: "+e);
-            }
-            if (!(t instanceof DateTimeParseException)) {
-                fail("Should have DateTimeParseException as root cause, had: "+t);
-            }
-        }
     }
 }

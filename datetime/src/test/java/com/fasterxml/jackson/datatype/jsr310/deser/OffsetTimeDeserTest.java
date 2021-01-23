@@ -9,13 +9,15 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
@@ -215,9 +217,10 @@ public class OffsetTimeDeserTest extends ModuleTestBase
     {
         try {
             read("['12:00Z']");
-    	        fail("expected JsonMappingException");
-        } catch (JsonMappingException e) {
-           // OK
+    	        fail("expected MismatchedInputException");
+        } catch (MismatchedInputException e) {
+            // not the greatest error message...
+            verifyException(e, "Unexpected token (VALUE_STRING) within Array, expected");
         }
     }
     

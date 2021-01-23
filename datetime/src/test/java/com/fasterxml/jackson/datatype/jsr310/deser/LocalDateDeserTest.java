@@ -5,32 +5,31 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
-import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.ZoneOffset;
-import java.time.format.DateTimeParseException;
 import java.time.temporal.Temporal;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.OptBoolean;
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import org.junit.Test;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Feature;
-import com.fasterxml.jackson.core.JsonProcessingException;
+
 import com.fasterxml.jackson.core.type.TypeReference;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
+
+import org.junit.Test;
 
 public class LocalDateDeserTest extends ModuleTestBase
 {
@@ -71,14 +70,14 @@ public class LocalDateDeserTest extends ModuleTestBase
      */
     
     @Test
-    public void testDeserializationAsTimestamp01() throws Exception
+    public void testDeserializationAsTimestamp01()
     {
         assertEquals("The value is not correct.", LocalDate.of(1986, Month.JANUARY, 17),
                 READER.readValue("[1986,1,17]"));
     }
 
     @Test
-    public void testDeserializationAsTimestamp02() throws Exception
+    public void testDeserializationAsTimestamp02()
     {
         assertEquals("The value is not correct.", LocalDate.of(2013, Month.AUGUST, 21),
                 READER.readValue("[2013,8,21]"));
@@ -91,7 +90,7 @@ public class LocalDateDeserTest extends ModuleTestBase
      */
     
     @Test
-    public void testDeserializationAsString01() throws Exception
+    public void testDeserializationAsString01()
     {
         assertEquals("The value is not correct.", LocalDate.of(2000, Month.JANUARY, 1),
                 READER.readValue(q("2000-01-01")));
@@ -106,7 +105,7 @@ public class LocalDateDeserTest extends ModuleTestBase
     }
 
     @Test
-    public void testDeserializationAsString02() throws Exception
+    public void testDeserializationAsString02()
     {
         LocalDateTime date = LocalDateTime.now();
         assertEquals("The value is not correct.", date.toLocalDate(),
@@ -114,7 +113,7 @@ public class LocalDateDeserTest extends ModuleTestBase
     }
 
     @Test
-    public void testDeserializationAsString03() throws Exception
+    public void testDeserializationAsString03()
     {
         Instant instant = Instant.now();
         LocalDate value = READER.readValue('"' + instant.toString() + '"');
@@ -124,7 +123,7 @@ public class LocalDateDeserTest extends ModuleTestBase
     }
 
     @Test
-    public void testBadDeserializationAsString01() throws Throwable
+    public void testBadDeserializationAsString01()
     {
         try {
             READER.readValue(q("notalocaldate"));
@@ -136,19 +135,19 @@ public class LocalDateDeserTest extends ModuleTestBase
     }
 
     @Test
-    public void testBadDeserializationAsString02() throws Exception
+    public void testBadDeserializationAsString02()
     {
         try {
             READER.readValue(q("2015-06-19TShouldNotParse"));
             fail("Should not pass");
-        } catch (JsonMappingException e) {
+        } catch (MismatchedInputException e) {
             verifyException(e, "Cannot deserialize value of type");
             verifyException(e, "from String \"");
         }
     }
 
     @Test
-    public void testDeserializationWithTypeInfo01() throws Exception
+    public void testDeserializationWithTypeInfo01()
     {
         ObjectMapper mapper = mapperBuilder()
                .addMixIn(Temporal.class, MockObjectConfiguration.class)
@@ -169,7 +168,7 @@ public class LocalDateDeserTest extends ModuleTestBase
 
     // By default, lenient handling on so we can do this:
     @Test
-    public void testLenientDeserializeFromInt() throws Exception
+    public void testLenientDeserializeFromInt()
     {
         assertEquals("The value is not correct.", LocalDate.of(1970, Month.JANUARY, 3),
                 READER.readValue("2"));
@@ -180,7 +179,7 @@ public class LocalDateDeserTest extends ModuleTestBase
 
     // But with alternate setting, not so
     @Test
-    public void testStricDeserializeFromInt() throws Exception
+    public void testStricDeserializeFromInt()
     {
         ObjectMapper mapper = mapperBuilder()
                 .withConfigOverride(LocalDate.class,
@@ -190,7 +189,7 @@ public class LocalDateDeserTest extends ModuleTestBase
         try {
             mapper.readValue("2", LocalDate.class);
             fail("Should not pass");
-        } catch (JsonMappingException e) {
+        } catch (MismatchedInputException e) {
             verifyException(e, "Cannot deserialize instance of");
             verifyException(e, "not allowed because 'strict' mode set for property or type");
         }
@@ -206,7 +205,8 @@ public class LocalDateDeserTest extends ModuleTestBase
      */
 
     @Test
-    public void testLenientDeserializeFromEmptyString() throws Exception {
+    public void testLenientDeserializeFromEmptyString()
+    {
 
         String key = "date";
         ObjectMapper mapper = newMapper();
@@ -226,8 +226,9 @@ public class LocalDateDeserTest extends ModuleTestBase
         assertEquals("empty string failed to deserialize to null with lenient setting",actualDateFromNullStr, actualDateFromEmptyStr);
     }
 
-    @Test( expected =  MismatchedInputException.class)
-    public void testStrictDeserializeFromEmptyString() throws Exception {
+    @Test
+    public void testStrictDeserializeFromEmptyString()
+    {
 
         final String key = "date";
         final ObjectMapper mapper = mapperBuilder()
@@ -247,7 +248,12 @@ public class LocalDateDeserTest extends ModuleTestBase
         // TODO: nothing stops us from writing an empty string, maybe there should be a check there too?
         String valueFromEmptyStr = mapper.writeValueAsString(asMap("date", dateValAsEmptyStr));
         // with strict, deserializing an empty string is not permitted
-        objectReader.readValue(valueFromEmptyStr);
+        try {
+            objectReader.readValue(valueFromEmptyStr);
+            fail("Should not pass");
+        } catch (MismatchedInputException e) {
+            verifyException(e, "Cannot deserialize instance of `java.time.LocalDate`");
+        }
     }
 
     /*
@@ -257,7 +263,7 @@ public class LocalDateDeserTest extends ModuleTestBase
      */
     
     @Test
-    public void testDeserializationAsArrayDisabled() throws Throwable
+    public void testDeserializationAsArrayDisabled()
     {
         try {
             READER.readValue("[\"2000-01-01\"]");
@@ -268,14 +274,14 @@ public class LocalDateDeserTest extends ModuleTestBase
     }
 
     @Test
-    public void testDeserializationAsEmptyArrayDisabled() throws Throwable
+    public void testDeserializationAsEmptyArrayDisabled()
     {
         // works even without the feature enabled
         assertNull(READER.readValue("[]"));
     }
 
     @Test
-    public void testDeserializationAsArrayEnabled() throws Throwable
+    public void testDeserializationAsArrayEnabled()
     {
         LocalDate actual = READER
                 .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
@@ -284,7 +290,7 @@ public class LocalDateDeserTest extends ModuleTestBase
     }
 
     @Test
-    public void testDeserializationAsEmptyArrayEnabled() throws Throwable
+    public void testDeserializationAsEmptyArrayEnabled()
     {
         LocalDate value = READER
                 .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS,
@@ -301,13 +307,12 @@ public class LocalDateDeserTest extends ModuleTestBase
 
     // for [datatype-jsr310#37]
     @Test
-    public void testCustomFormat() throws Exception
+    public void testCustomFormat()
     {
         Wrapper w = MAPPER.readValue("{\"value\":\"2015_07_28T13:53+0300\"}", Wrapper.class);
         LocalDate date = w.value; 
         assertEquals(28, date.getDayOfMonth());
     }
-
 
     /*
     /**********************************************************
@@ -316,10 +321,15 @@ public class LocalDateDeserTest extends ModuleTestBase
      */
 
     // for [modules-java8#148]
-    @Test(expected = InvalidFormatException.class)
-    public void testStrictCustomFormat() throws Exception
+    @Test
+    public void testStrictCustomFormat()
     {
-        /*StrictWrapper w =*/ MAPPER.readValue("{\"value\":\"2019-11-31\"}", StrictWrapper.class);
+        try {
+            /*StrictWrapper w =*/ MAPPER.readValue("{\"value\":\"2019-11-31\"}", StrictWrapper.class);
+            fail("Should not pass");
+        } catch (MismatchedInputException e) {
+            verifyException(e, "Cannot deserialize value of type `java.time.LocalDate`");
+        }
     }
 
     /*
@@ -327,9 +337,9 @@ public class LocalDateDeserTest extends ModuleTestBase
     /* Case-insensitive tests
     /**********************************************************************
      */
-    
+
     @Test
-    public void testDeserializationCaseInsensitiveEnabledOnValue() throws Throwable
+    public void testDeserializationCaseInsensitiveEnabledOnValue()
     {
         ObjectMapper mapper = newMapperBuilder()
                 .withConfigOverride(LocalDate.class, o -> o.setFormat(JsonFormat.Value
@@ -340,13 +350,13 @@ public class LocalDateDeserTest extends ModuleTestBase
         ObjectReader reader = mapper.readerFor(LocalDate.class);
         String[] jsons = new String[] { q("01-Jan-2000"), q("01-JAN-2000"),
                 q("01-jan-2000")};
-        for(String json : jsons) {
+        for (String json : jsons) {
             expectSuccess(reader, LocalDate.of(2000, Month.JANUARY, 1), json);
         }
     }
     
     @Test
-    public void testDeserializationCaseInsensitiveEnabled() throws Throwable
+    public void testDeserializationCaseInsensitiveEnabled()
     {
         final ObjectMapper mapper = newMapperBuilder()
                 .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES, true)
@@ -362,7 +372,7 @@ public class LocalDateDeserTest extends ModuleTestBase
     }
     
     @Test
-    public void testDeserializationCaseInsensitiveDisabled() throws Throwable
+    public void testDeserializationCaseInsensitiveDisabled()
     {
         final ObjectMapper mapper = newMapperBuilder()
                 .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES, false)
@@ -374,7 +384,7 @@ public class LocalDateDeserTest extends ModuleTestBase
     }
     
     @Test
-    public void testDeserializationCaseInsensitiveDisabled_InvalidDate() throws Throwable
+    public void testDeserializationCaseInsensitiveDisabled_InvalidDate()
     {
         ObjectMapper mapper = newMapperBuilder()
                 .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES, false)
@@ -383,20 +393,24 @@ public class LocalDateDeserTest extends ModuleTestBase
         ObjectReader reader = mapper.readerFor(LocalDate.class);
         String[] jsons = new String[] { q("01-JAN-2000"), q("01-jan-2000")};
         for(String json : jsons) {
-            expectFailure(reader, json);
+            try {
+                reader.readValue(a2q(json));
+                fail("expected DateTimeParseException");
+            } catch (MismatchedInputException e) {
+                verifyException(e, "Cannot deserialize value of type `java.time.LocalDate` from String ");
+            }
         }
     }
 
     /*
     /**********************************************************************
-    /*
-     * Tests for issue 58 - NUMBER_INT should be specified when deserializing
-     * LocalDate as EpochDays
-     *
-     /**********************************************************************
+    /* Tests for issue 58 - NUMBER_INT should be specified when deserializing
+    /* LocalDate as EpochDays
+    /**********************************************************************
      */
+
     @Test
-    public void testLenientDeserializeFromNumberInt() throws Exception {
+    public void testLenientDeserializeFromNumberInt() {
         ObjectMapper mapper = newMapperBuilder()
                 .withConfigOverride(LocalDate.class,
                         o -> o.setFormat(JsonFormat.Value.forShape(JsonFormat.Shape.NUMBER_INT)))
@@ -407,7 +421,7 @@ public class LocalDateDeserTest extends ModuleTestBase
     }
 
     @Test
-    public void testStrictDeserializeFromNumberInt() throws Exception
+    public void testStrictDeserializeFromNumberInt()
     {
         ObjectMapper mapper = newMapperBuilder()
                 .withConfigOverride(LocalDate.class,
@@ -421,14 +435,19 @@ public class LocalDateDeserTest extends ModuleTestBase
                 localDate);
     }
 
-    @Test(expected = MismatchedInputException.class)
-    public void testStrictDeserializeFromString() throws Exception
+    @Test
+    public void testStrictDeserializeFromString()
     {
         ObjectMapper mapper = newMapperBuilder()
                 .withConfigOverride(LocalDate.class,
                         o -> o.setFormat(JsonFormat.Value.forLeniency(false)))
                 .build();
-        mapper.readValue("{\"value\":123}", Wrapper.class);
+        try {
+            mapper.readValue("{\"value\":123}", Wrapper.class);
+            fail("Should not pass");
+        } catch (MismatchedInputException e) {
+            verifyException(e, "Cannot deserialize instance of `java.time.LocalDate`");
+        }
     }
 
     /*
@@ -436,21 +455,8 @@ public class LocalDateDeserTest extends ModuleTestBase
     /* Helper methods
     /**********************************************************************
      */
-    private void expectFailure(ObjectReader reader, String json) throws Throwable {
-        try {
-            reader.readValue(a2q(json));
-            fail("expected DateTimeParseException");
-        } catch (JsonProcessingException e) {
-            if (e.getCause() == null) {
-                throw e;
-            }
-            if (!(e.getCause() instanceof DateTimeParseException)) {
-                throw e.getCause();
-            }
-        }
-    }
 
-    private void expectSuccess(ObjectReader reader, Object exp, String json) throws IOException {
+   private void expectSuccess(ObjectReader reader, Object exp, String json) {
         final LocalDate value = reader.readValue(a2q(json));
         assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.", exp,  value);

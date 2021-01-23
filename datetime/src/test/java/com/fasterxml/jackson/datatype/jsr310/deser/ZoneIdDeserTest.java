@@ -33,7 +33,7 @@ public class ZoneIdDeserTest extends ModuleTestBase
             .build();
 
     @Test
-    public void testSimpleZoneIdDeser() throws Exception
+    public void testSimpleZoneIdDeser()
     {
         assertEquals("The value is not correct.", ZoneId.of("America/Chicago"),
                 MAPPER.readValue("\"America/Chicago\"", ZoneId.class));
@@ -42,7 +42,7 @@ public class ZoneIdDeserTest extends ModuleTestBase
     }
 
     @Test
-    public void testPolymorphicZoneIdDeser() throws Exception
+    public void testPolymorphicZoneIdDeser()
     {
         ObjectMapper mapper = JsonMapper.builder()
                 .addMixIn(ZoneId.class, MockObjectConfiguration.class)
@@ -53,21 +53,21 @@ public class ZoneIdDeserTest extends ModuleTestBase
     }
 
     @Test
-    public void testDeserialization01() throws Exception
+    public void testDeserialization01()
     {
         assertEquals("The value is not correct.", ZoneId.of("America/Chicago"),
                 MAPPER.readValue("\"America/Chicago\"", ZoneId.class));
     }
 
     @Test
-    public void testDeserialization02() throws Exception
+    public void testDeserialization02()
     {
         assertEquals("The value is not correct.", ZoneId.of("America/Anchorage"),
                 MAPPER.readValue("\"America/Anchorage\"", ZoneId.class));
     }
 
     @Test
-    public void testDeserializationWithTypeInfo02() throws Exception
+    public void testDeserializationWithTypeInfo02()
     {
         ZoneId value = MOCK_OBJECT_MIXIN_MAPPER.readValue("[\"" + ZoneId.class.getName() + "\",\"America/Denver\"]", ZoneId.class);
         assertEquals("The value is not correct.", ZoneId.of("America/Denver"), value);
@@ -80,7 +80,8 @@ public class ZoneIdDeserTest extends ModuleTestBase
      */
 
     @Test
-    public void testLenientDeserializeFromEmptyString() throws Exception {
+    public void testLenientDeserializeFromEmptyString()
+    {
 
         String key = "zoneId";
         ObjectMapper mapper = newMapper();
@@ -97,7 +98,8 @@ public class ZoneIdDeserTest extends ModuleTestBase
         assertEquals("empty string failed to deserialize to null with lenient setting", null, actualDateFromEmptyStr);
     }
 
-    public void testStrictDeserializeFromEmptyString() throws Exception {
+    public void testStrictDeserializeFromEmptyString()
+    {
 
         final String key = "zoneId";
         final ObjectMapper mapper = mapperBuilder()
@@ -122,7 +124,7 @@ public class ZoneIdDeserTest extends ModuleTestBase
 
     // [module-java8#68]
     @Test
-    public void testZoneIdDeserFromEmpty() throws Exception
+    public void testZoneIdDeserFromEmpty()
     {
         // by default, should be fine
         assertNull(MAPPER.readValue(q("  "), ZoneId.class));

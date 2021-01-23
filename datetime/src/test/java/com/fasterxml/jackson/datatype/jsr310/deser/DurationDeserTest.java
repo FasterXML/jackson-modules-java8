@@ -7,9 +7,10 @@ import java.time.temporal.TemporalAmount;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import com.fasterxml.jackson.core.type.TypeReference;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
@@ -312,13 +313,12 @@ public class DurationDeserTest extends ModuleTestBase
     	Duration exp = Duration.ofSeconds(13498L, 8374);
     	try {
 	        READER.readValue("[\"" + exp.toString() + "\"]");
-	        fail("expected JsonMappingException");
-        } catch (JsonMappingException e) {
+	        fail("expected MismatchedInputException");
+        } catch (MismatchedInputException e) {
             verifyException(e, "Cannot deserialize value of type `java.time.Duration` from Array value");
         }
     }
-    
-    
+
     @Test
     public void testDeserializationAsEmptyArrayDisabled() throws Throwable
     {

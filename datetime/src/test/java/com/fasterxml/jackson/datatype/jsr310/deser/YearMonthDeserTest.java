@@ -6,13 +6,15 @@ import java.time.YearMonth;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import com.fasterxml.jackson.core.type.TypeReference;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
 import org.junit.Test;
@@ -49,9 +51,9 @@ public class YearMonthDeserTest extends ModuleTestBase
     {
         try {
             read("['2000-01']");
-            fail("expected JsonMappingException");
-        } catch (JsonMappingException e) {
-            verifyException(e, "Unexpected token (VALUE_STRING)");
+            fail("expected MismatchedInputException");
+        } catch (MismatchedInputException e) {
+            verifyException(e, "Unexpected token (VALUE_STRING), expected VALUE_NUMBER_INT");
         }
     }
 

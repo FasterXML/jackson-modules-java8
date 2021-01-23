@@ -35,19 +35,19 @@ public class DateTimeSchemasTest extends ModuleTestBase
         }
 
         @Override
-        public JsonObjectFormatVisitor expectObjectFormat(JavaType type) throws JsonMappingException {
+        public JsonObjectFormatVisitor expectObjectFormat(JavaType type) {
             return new JsonObjectFormatVisitor.Base(serializerProvider) {
                 @Override
-                public void property(BeanProperty prop) throws JsonMappingException {
+                public void property(BeanProperty prop) {
                     anyProperty(prop);
                 }
 
                 @Override
-                public void optionalProperty(BeanProperty prop) throws JsonMappingException {
+                public void optionalProperty(BeanProperty prop) {
                     anyProperty(prop);
                 }
 
-                private void anyProperty(BeanProperty prop) throws JsonMappingException {
+                private void anyProperty(BeanProperty prop) {
                     final String propertyName = prop.getFullName().toString();
                     traversedProperties.put(baseName + propertyName, "");
                     serializerProvider.findPrimaryPropertySerializer(prop.getType(), prop)
@@ -57,13 +57,13 @@ public class DateTimeSchemasTest extends ModuleTestBase
         }
 
         @Override
-        public JsonArrayFormatVisitor expectArrayFormat(JavaType type) throws JsonMappingException {
+        public JsonArrayFormatVisitor expectArrayFormat(JavaType type) {
             traversedProperties.put(baseName, "ARRAY/"+type.getGenericSignature());
             return null;
         }
 
         @Override
-        public JsonStringFormatVisitor expectStringFormat(JavaType type) throws JsonMappingException {
+        public JsonStringFormatVisitor expectStringFormat(JavaType type) {
             return new JsonStringFormatVisitor.Base() {
                 @Override
                 public void format(JsonValueFormat format) {
@@ -73,7 +73,7 @@ public class DateTimeSchemasTest extends ModuleTestBase
         }
 
         @Override
-        public JsonNumberFormatVisitor expectNumberFormat(JavaType type) throws JsonMappingException {
+        public JsonNumberFormatVisitor expectNumberFormat(JavaType type) {
             return new JsonNumberFormatVisitor.Base() {
                 @Override
                 public void numberType(JsonParser.NumberType format) {
@@ -83,7 +83,7 @@ public class DateTimeSchemasTest extends ModuleTestBase
         }
 
         @Override
-        public JsonIntegerFormatVisitor expectIntegerFormat(JavaType type) throws JsonMappingException {
+        public JsonIntegerFormatVisitor expectIntegerFormat(JavaType type) {
             return new JsonIntegerFormatVisitor.Base() {
                 @Override
                 public void numberType(JsonParser.NumberType format) {
@@ -93,24 +93,24 @@ public class DateTimeSchemasTest extends ModuleTestBase
         }
 
         @Override
-        public JsonBooleanFormatVisitor expectBooleanFormat(JavaType type) throws JsonMappingException {
+        public JsonBooleanFormatVisitor expectBooleanFormat(JavaType type) {
             traversedProperties.put(baseName, "BOOLEAN");
             return new JsonBooleanFormatVisitor.Base();
         }
 
         @Override
-        public JsonNullFormatVisitor expectNullFormat(JavaType type) throws JsonMappingException {
+        public JsonNullFormatVisitor expectNullFormat(JavaType type) {
             return new JsonNullFormatVisitor.Base();
         }
 
         @Override
-        public JsonAnyFormatVisitor expectAnyFormat(JavaType type) throws JsonMappingException {
+        public JsonAnyFormatVisitor expectAnyFormat(JavaType type) {
             traversedProperties.put(baseName, "ANY");
             return new JsonAnyFormatVisitor.Base();
         }
 
         @Override
-        public JsonMapFormatVisitor expectMapFormat(JavaType type) throws JsonMappingException {
+        public JsonMapFormatVisitor expectMapFormat(JavaType type) {
             traversedProperties.put(baseName, "MAP");
             return new JsonMapFormatVisitor.Base(serializerProvider);
         }
