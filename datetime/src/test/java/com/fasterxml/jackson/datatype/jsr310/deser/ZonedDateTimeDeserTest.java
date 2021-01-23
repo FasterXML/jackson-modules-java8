@@ -3,11 +3,9 @@ package com.fasterxml.jackson.datatype.jsr310.deser;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeParseException;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -44,7 +42,12 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
     @Test
     public void testBadDeserializationAsString01() throws Throwable
     {
-        expectFailure(q("notazone"));
+        try {
+            READER.readValue(q("notazone"));
+            fail("Should nae pass");
+        } catch (MismatchedInputException e) {
+            verifyException(e, "Cannot deserialize value of type `java.time.ZonedDateTime` from String");
+        }
     }
     
     @Test
@@ -52,7 +55,7 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
     {
         try {
             READER.readValue("[\"2000-01-01T12:00Z\"]");
-            fail("expected JsonMappingException");
+            fail("expected MismatchedInputException");
         } catch (MismatchedInputException e) {
             verifyException(e, "Cannot deserialize value of type `java.time.ZonedDateTime` from Array");
         }
@@ -152,19 +155,5 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
 
         String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, ""));
         objectReader.readValue(valueFromEmptyStr);
-    }
-
-    private void expectFailure(String json) throws Throwable {
-        try {
-            READER.readValue(a2q(json));
-            fail("expected DateTimeParseException");
-        } catch (JsonProcessingException e) {
-            if (e.getCause() == null) {
-                throw e;
-            }
-            if (!(e.getCause() instanceof DateTimeParseException)) {
-                throw e.getCause();
-            }
-        }
     }
 }

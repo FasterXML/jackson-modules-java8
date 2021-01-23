@@ -3,14 +3,12 @@ package com.fasterxml.jackson.datatype.jsr310.deser;
 import java.io.IOException;
 import java.time.OffsetTime;
 import java.time.ZoneOffset;
-import java.time.format.DateTimeParseException;
 import java.time.temporal.Temporal;
 import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -149,9 +147,14 @@ public class OffsetTimeDeserTest extends ModuleTestBase
     @Test
     public void testBadDeserializationFromString01() throws Throwable
     {
-        expectFailure(q("notanoffsettime"));
+        try {
+            READER.readValue(q("notanoffsettime"));
+            fail("Should nae pass");
+        } catch (MismatchedInputException e) {
+            verifyException(e, "Cannot deserialize value of type `java.time.OffsetTime` from String");
+        }
     }
-    
+
     @Test
     public void testDeserializationWithTypeInfo01() throws Exception
     {
@@ -289,20 +292,6 @@ public class OffsetTimeDeserTest extends ModuleTestBase
 
         String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, ""));
         objectReader.readValue(valueFromEmptyStr);
-    }
-
-    private void expectFailure(String json) throws Throwable {
-        try {
-            read(json);
-            fail("expected DateTimeParseException");
-        } catch (JsonProcessingException e) {
-            if (e.getCause() == null) {
-                throw e;
-            }
-            if (!(e.getCause() instanceof DateTimeParseException)) {
-                throw e.getCause();
-            }
-        }
     }
 
     private void expectSuccess(Object exp, String json) throws IOException {

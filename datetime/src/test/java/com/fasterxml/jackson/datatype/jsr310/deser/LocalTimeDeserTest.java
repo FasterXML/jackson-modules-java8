@@ -18,7 +18,6 @@ package com.fasterxml.jackson.datatype.jsr310.deser;
 
 import java.io.IOException;
 import java.time.LocalTime;
-import java.time.format.DateTimeParseException;
 import java.time.temporal.Temporal;
 import java.util.Map;
 
@@ -30,8 +29,9 @@ import static org.junit.Assert.fail;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.OptBoolean;
-import com.fasterxml.jackson.core.JsonProcessingException;
+
 import com.fasterxml.jackson.core.type.TypeReference;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -139,7 +139,12 @@ public class LocalTimeDeserTest extends ModuleTestBase
     @Test
     public void testBadDeserializationFromString() throws Throwable
     {
-        expectFailure("'notalocaltime'");
+        try {
+            READER.readValue(q("notalocaltime"));
+            fail("Should nae pass");
+        } catch (MismatchedInputException e) {
+            verifyException(e, "Cannot deserialize value of type `java.time.LocalTime` from String");
+        }
     }
 
     @Test
@@ -277,20 +282,6 @@ public class LocalTimeDeserTest extends ModuleTestBase
     public void testStrictCustomFormatInvalidTime() throws Exception
     {
         /*StrictWrapper w =*/ MAPPER.readValue("{\"value\":\"25:45\"}", StrictWrapper.class);
-    }
-
-    private void expectFailure(String aposJson) throws Throwable {
-        try {
-            READER.readValue(a2q(aposJson));
-            fail("expected DateTimeParseException");
-        } catch (JsonProcessingException e) {
-            if (e.getCause() == null) {
-                throw e;
-            }
-            if (!(e.getCause() instanceof DateTimeParseException)) {
-                throw e.getCause();
-            }
-        }
     }
 
     private void expectSuccess(Object exp, String aposJson) throws IOException {

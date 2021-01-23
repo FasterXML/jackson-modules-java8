@@ -3,13 +3,11 @@ package com.fasterxml.jackson.datatype.jsr310.deser;
 import java.io.IOException;
 import java.time.Month;
 import java.time.MonthDay;
-import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAccessor;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -58,7 +56,12 @@ public class MonthDayDeserTest extends ModuleTestBase
     @Test
     public void testBadDeserializationAsString01() throws Throwable
     {
-        expectFailure("'notamonthday'");
+        try {
+            READER.readValue(q("notamonthday"));
+            fail("Should nae pass");
+        } catch (MismatchedInputException e) {
+            verifyException(e, "Cannot deserialize value of type `java.time.MonthDay` from String");
+        }
     }
 
     @Test
@@ -188,22 +191,6 @@ public class MonthDayDeserTest extends ModuleTestBase
             fail("Should not pass");
         } catch (MismatchedInputException e) {
             verifyException(e, "not allowed because 'strict' mode set for");
-        }
-    }
-
-    private void expectFailure(String aposJson) throws Throwable {
-        try {
-            read(aposJson);
-            fail("expected DateTimeParseException");
-        } catch (JsonProcessingException e) {
-            if (e.getCause() == null) {
-                throw e;
-            }
-            if (!(e.getCause() instanceof DateTimeParseException)) {
-                throw e.getCause();
-            }
-        } catch (IOException e) {
-            throw e;
         }
     }
 
