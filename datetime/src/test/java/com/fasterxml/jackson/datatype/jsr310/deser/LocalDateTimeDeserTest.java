@@ -68,6 +68,24 @@ public class LocalDateTimeDeserTest
         public StrictWrapper(LocalDateTime v) { value = v; }
     }
 
+    final static class StrictWrapperWithYearOfEra {
+        @JsonFormat(pattern="yyyy-MM-dd HH:mm G",
+                lenient = OptBoolean.FALSE)
+        public LocalDateTime value;
+
+        public StrictWrapperWithYearOfEra() { }
+        public StrictWrapperWithYearOfEra(LocalDateTime v) { value = v; }
+    }
+
+    final static class StrictWrapperWithYearWithoutEra {
+        @JsonFormat(pattern="uuuu-MM-dd HH:mm",
+                lenient = OptBoolean.FALSE)
+        public LocalDateTime value;
+
+        public StrictWrapperWithYearWithoutEra() { }
+        public StrictWrapperWithYearWithoutEra(LocalDateTime v) { value = v; }
+    }
+
     /*
     /**********************************************************
     /* Tests for deserializing from int array
@@ -511,21 +529,74 @@ public class LocalDateTimeDeserTest
 
     // [modules-java8#148]: handle strict deserializaiton for date/time
     @Test(expected = InvalidFormatException.class)
-    public void testStrictCustomFormatInvalidDate() throws Exception
+    public void testStrictCustomFormatForInvalidFormat() throws Exception
     {
-        /*StrictWrapper w =*/ MAPPER.readValue("{\"value\":\"2019-11-31 15:45\"}", StrictWrapper.class);
+        /*StrictWrapper w =*/ MAPPER.readValue("{\"value\":\"2019-11-30 15:45\"}", StrictWrapper.class);
     }
 
     @Test(expected = InvalidFormatException.class)
-    public void testStrictCustomFormatInvalidTime() throws Exception
+    public void testStrictCustomFormatForInvalidFormatWithEra() throws Exception
     {
-        /*StrictWrapper w =*/ MAPPER.readValue("{\"value\":\"2019-11-30 25:45\"}", StrictWrapper.class);
+        /*StrictWrapperWithYearOfEra w =*/ MAPPER.readValue("{\"value\":\"2019-11-30 15:45\"}", StrictWrapperWithYearOfEra.class);
     }
 
     @Test(expected = InvalidFormatException.class)
-    public void testStrictCustomFormatInvalidDateAndTime() throws Exception
+    public void testStrictCustomFormatForInvalidDateWithEra() throws Exception
     {
-        /*StrictWrapper w =*/ MAPPER.readValue("{\"value\":\"2019-11-31 25:45\"}", StrictWrapper.class);
+        /*StrictWrapperWithYearOfEra w =*/ MAPPER.readValue("{\"value\":\"2019-11-31 15:45 AD\"}", StrictWrapperWithYearOfEra.class);
+    }
+
+    @Test(expected = InvalidFormatException.class)
+    public void testStrictCustomFormatForInvalidTimeWithEra() throws Exception
+    {
+        /*StrictWrapperWithYearOfEra w =*/ MAPPER.readValue("{\"value\":\"2019-11-30 25:45 AD\"}", StrictWrapperWithYearOfEra.class);
+    }
+
+    @Test(expected = InvalidFormatException.class)
+    public void testStrictCustomFormatForInvalidDateAndTimeWithEra() throws Exception
+    {
+        /*StrictWrapperWithYearOfEra w =*/ MAPPER.readValue("{\"value\":\"2019-11-31 25:45 AD\"}", StrictWrapperWithYearOfEra.class);
+    }
+
+    @Test
+    public void testStrictCustomFormatValidDateAndTimeWithEra() throws Exception
+    {
+        StrictWrapperWithYearOfEra w = MAPPER.readValue("{\"value\":\"2019-11-30 20:45 AD\"}", StrictWrapperWithYearOfEra.class);
+
+        assertEquals(w.value, LocalDateTime.of(2019, 11, 30, 20, 45));
+    }
+
+    @Test(expected = InvalidFormatException.class)
+    public void testStrictCustomFormatForInvalidFormatWithoutEra() throws Exception
+    {
+        /*StrictWrapperWithYearWithoutEra w =*/ MAPPER.readValue("{\"value\":\"2019-11-30 15:45 AD\"}", StrictWrapperWithYearWithoutEra.class);
+    }
+
+    @Test(expected = InvalidFormatException.class)
+    public void testStrictCustomFormatForInvalidTimeWithoutEra() throws Exception
+    {
+        /*StrictWrapperWithYearWithoutEra w =*/ MAPPER.readValue("{\"value\":\"2019-11-30 25:45\"}", StrictWrapperWithYearWithoutEra.class);
+    }
+
+    @Test(expected = InvalidFormatException.class)
+    public void testStrictCustomFormatForInvalidDateWithoutEra() throws Exception
+    {
+        /*StrictWrapperWithYearWithoutEra w =*/ MAPPER.readValue("{\"value\":\"2019-11-31 15:45\"}", StrictWrapperWithYearWithoutEra.class);
+    }
+
+    @Test(expected = InvalidFormatException.class)
+    public void testStrictCustomFormatForInvalidDateAndTimeWithoutEra() throws Exception
+    {
+        /*StrictWrapperWithYearWithoutEra w =*/ MAPPER.readValue("{\"value\":\"2019-11-31 25:45\"}", StrictWrapperWithYearWithoutEra.class);
+    }
+
+    @Test
+    public void testStrictCustomFormatForValidDateAndTimeWithoutEra() throws Exception
+    {
+        StrictWrapperWithYearWithoutEra w = MAPPER.readValue("{\"value\":\"2019-11-30 20:45\"}",
+                StrictWrapperWithYearWithoutEra.class);
+
+        assertEquals(w.value, LocalDateTime.of(2019, 11, 30, 20, 45));
     }
 
     private void expectSuccess(ObjectReader reader, Object exp, String json) throws IOException {
