@@ -53,7 +53,8 @@ public class YearMonthDeserTest extends ModuleTestBase
             read("['2000-01']");
             fail("expected MismatchedInputException");
         } catch (MismatchedInputException e) {
-            verifyException(e, "Unexpected token (VALUE_STRING), expected VALUE_NUMBER_INT");
+            verifyException(e,
+"Unexpected token (`JsonToken.VALUE_STRING`), expected `JsonToken.VALUE_NUMBER_INT`");
         }
     }
 

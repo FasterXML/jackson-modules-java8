@@ -21,22 +21,22 @@ public class ZonedDateTimeKeySerializer extends JsonSerializer<ZonedDateTime> {
     }
 
     @Override
-    public void serialize(ZonedDateTime value, JsonGenerator gen, SerializerProvider serializers)
+    public void serialize(ZonedDateTime value, JsonGenerator g, SerializerProvider serializers)
         throws JacksonException
     {
         /* [modules-java8#127]: Serialization of timezone data is disabled by default, but can be
          * turned on by enabling `SerializationFeature.WRITE_DATES_WITH_ZONE_ID`
          */
         if (serializers.isEnabled(SerializationFeature.WRITE_DATES_WITH_ZONE_ID)) {
-            gen.writeFieldName(DateTimeFormatter.ISO_ZONED_DATE_TIME.format(value));
+            g.writeName(DateTimeFormatter.ISO_ZONED_DATE_TIME.format(value));
         } else if (useTimestamps(serializers)) {
             if (useNanos(serializers)) {
-                gen.writeFieldName(DecimalUtils.toBigDecimal(value.toEpochSecond(), value.getNano()).toString());
+                g.writeName(DecimalUtils.toBigDecimal(value.toEpochSecond(), value.getNano()).toString());
             } else {
-                gen.writeFieldName(String.valueOf(value.toInstant().toEpochMilli()));
+                g.writeName(String.valueOf(value.toInstant().toEpochMilli()));
             }
         } else {
-            gen.writeFieldName(DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(value));
+            g.writeName(DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(value));
         }
     }
 
