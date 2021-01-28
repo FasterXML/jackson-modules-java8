@@ -10,6 +10,13 @@ module com.fasterxml.jackson.datatype.jsr310 {
     exports com.fasterxml.jackson.datatype.jsr310.ser;
     exports com.fasterxml.jackson.datatype.jsr310.ser.key;
 
+    // 27-Jan-2021, tatu: Likely needed for access to (de)serializers via
+    //    annotations (see [modules-java#202])
+    opens com.fasterxml.jackson.datatype.jsr310.deser;
+    opens com.fasterxml.jackson.datatype.jsr310.deser.key;
+    opens com.fasterxml.jackson.datatype.jsr310.ser;
+    opens com.fasterxml.jackson.datatype.jsr310.ser.key;
+
     provides com.fasterxml.jackson.databind.Module with
         com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 }

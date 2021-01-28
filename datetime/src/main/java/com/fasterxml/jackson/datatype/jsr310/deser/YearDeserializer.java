@@ -39,7 +39,11 @@ public class YearDeserializer extends JSR310DateTimeDeserializerBase<Year>
 
     public static final YearDeserializer INSTANCE = new YearDeserializer();
 
-    private YearDeserializer() {
+    /**
+     * NOTE: only {@code public} so that use via annotations (see [modules-java8#202])
+     * is possible
+     */
+    public YearDeserializer() { // public since 2.12
         this(null);
     }
 
