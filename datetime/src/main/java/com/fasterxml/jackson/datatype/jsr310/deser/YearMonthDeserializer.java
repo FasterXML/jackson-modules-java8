@@ -37,7 +37,11 @@ public class YearMonthDeserializer extends JSR310DateTimeDeserializerBase<YearMo
 {
     public static final YearMonthDeserializer INSTANCE = new YearMonthDeserializer();
 
-    private YearMonthDeserializer()
+    /**
+     * NOTE: only {@code public} so that use via annotations (see [modules-java8#202])
+     * is possible
+     */
+    public YearMonthDeserializer() // public since 2.12
     {
         this(DateTimeFormatter.ofPattern("uuuu-MM"));
     }

@@ -42,7 +42,7 @@ public class LocalDateTimeDeserializer
 
     public static final LocalDateTimeDeserializer INSTANCE = new LocalDateTimeDeserializer();
 
-    private LocalDateTimeDeserializer() {
+    protected LocalDateTimeDeserializer() { // was private before 2.12
         this(DEFAULT_FORMATTER);
     }
 

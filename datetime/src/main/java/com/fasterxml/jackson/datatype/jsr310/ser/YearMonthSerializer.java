@@ -43,7 +43,7 @@ public class YearMonthSerializer extends JSR310FormattedSerializerBase<YearMonth
 {
     public static final YearMonthSerializer INSTANCE = new YearMonthSerializer();
 
-    private YearMonthSerializer() {
+    protected YearMonthSerializer() { // was private before 2.12
         this(null);
     }
 

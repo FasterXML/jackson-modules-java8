@@ -38,7 +38,7 @@ public class LocalTimeDeserializer extends JSR310DateTimeDeserializerBase<LocalT
 
     public static final LocalTimeDeserializer INSTANCE = new LocalTimeDeserializer();
 
-    private LocalTimeDeserializer() {
+    protected LocalTimeDeserializer() { // was private before 2.12
         this(DEFAULT_FORMATTER);
     }
 

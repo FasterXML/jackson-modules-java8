@@ -16,7 +16,15 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
  */
 public class MonthDayDeserializer extends JSR310DateTimeDeserializerBase<MonthDay>
 {
-    public static final MonthDayDeserializer INSTANCE = new MonthDayDeserializer(null);
+    public static final MonthDayDeserializer INSTANCE = new MonthDayDeserializer();
+
+    /**
+     * NOTE: only {@code public} so that use via annotations (see [modules-java8#202])
+     * is possible
+     */
+    public MonthDayDeserializer() {
+        this(null);
+    }
 
     public MonthDayDeserializer(DateTimeFormatter formatter) {
         super(MonthDay.class, formatter);
