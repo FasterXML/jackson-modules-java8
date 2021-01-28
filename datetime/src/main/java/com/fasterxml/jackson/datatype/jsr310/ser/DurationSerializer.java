@@ -65,7 +65,7 @@ public class DurationSerializer extends JSR310FormattedSerializerBase<Duration>
      */
     private DurationUnitConverter _durationUnitConverter;
 
-    private DurationSerializer() {
+    protected DurationSerializer() { // was private before 2.12
         super(Duration.class);
     }
 

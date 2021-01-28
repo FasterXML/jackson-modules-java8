@@ -18,7 +18,17 @@ public class MonthDayDeserializer extends JSR310DateTimeDeserializerBase<MonthDa
 {
     private static final long serialVersionUID = 1L;
 
-    public static final MonthDayDeserializer INSTANCE = new MonthDayDeserializer(null);
+    public static final MonthDayDeserializer INSTANCE = new MonthDayDeserializer();
+
+    /**
+     * NOTE: only {@code public} so that use via annotations (see [modules-java8#202])
+     * is possible
+     *
+     * @since 2.12
+     */
+    public MonthDayDeserializer() {
+        this(null);
+    }
 
     public MonthDayDeserializer(DateTimeFormatter formatter) {
         super(MonthDay.class, formatter);

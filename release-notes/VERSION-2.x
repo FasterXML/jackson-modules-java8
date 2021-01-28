@@ -8,6 +8,12 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
+2.12.2 (not yet released)
+
+#202: Unable to deserialize `YearMonth` when running as java9 module,
+  added with `@JsonDeserialize` annotation
+ (reported by walkeros@github)
+
 2.12.1 (08-Jan-2021)
 
 #196: `@JsonFormat` overriden features don't apply when there are no other

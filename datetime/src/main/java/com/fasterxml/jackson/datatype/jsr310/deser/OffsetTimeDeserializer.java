@@ -37,7 +37,7 @@ public class OffsetTimeDeserializer extends JSR310DateTimeDeserializerBase<Offse
 
     public static final OffsetTimeDeserializer INSTANCE = new OffsetTimeDeserializer();
 
-    private OffsetTimeDeserializer() {
+    protected OffsetTimeDeserializer() { // was private before 2.12
         this(DateTimeFormatter.ISO_OFFSET_TIME);
     }
 

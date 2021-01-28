@@ -44,7 +44,7 @@ public class MonthDaySerializer extends JSR310FormattedSerializerBase<MonthDay>
 
     public static final MonthDaySerializer INSTANCE = new MonthDaySerializer();
 
-    private MonthDaySerializer() {
+    protected MonthDaySerializer() { // was private before 2.12
         this(null);
     }
 
