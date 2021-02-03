@@ -22,7 +22,7 @@ import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.DeserializationConfig;
 import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.JacksonModule;
 import com.fasterxml.jackson.databind.deser.ValueInstantiator;
 import com.fasterxml.jackson.databind.deser.ValueInstantiators;
 import com.fasterxml.jackson.databind.deser.std.StdValueInstantiator;
@@ -102,7 +102,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.key.ZonedDateTimeKeySerializer;
  * @since 2.6
  */
 public final class JavaTimeModule
-    extends Module
+    extends JacksonModule
     implements java.io.Serializable
 {
     private static final long serialVersionUID = 1L;

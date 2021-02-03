@@ -17,6 +17,6 @@ module com.fasterxml.jackson.datatype.jsr310 {
     opens com.fasterxml.jackson.datatype.jsr310.ser;
     opens com.fasterxml.jackson.datatype.jsr310.ser.key;
 
-    provides com.fasterxml.jackson.databind.Module with
+    provides com.fasterxml.jackson.databind.JacksonModule with
         com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 }

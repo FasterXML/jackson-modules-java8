@@ -1,13 +1,13 @@
 package com.fasterxml.jackson.datatype.jdk8;
 
 import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.JacksonModule;
 
 /**
  * @deprecated Since 3.0 functionality included in core databind directly
  */
 @Deprecated // since 3.0
-public class Jdk8Module extends Module
+public class Jdk8Module extends JacksonModule
 {
     protected boolean _cfgHandleAbsentAsNull = false;
 
