@@ -1,10 +1,5 @@
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
-
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -24,12 +19,18 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 public class LocalDateDeserTest extends ModuleTestBase
 {
@@ -61,6 +62,24 @@ public class LocalDateDeserTest extends ModuleTestBase
 
         public StrictWrapper() { }
         public StrictWrapper(LocalDate v) { value = v; }
+    }
+
+    final static class StrictWrapperWithYearOfEra {
+        @JsonFormat(pattern="yyyy-MM-dd G",
+                lenient = OptBoolean.FALSE)
+        public LocalDate value;
+
+        public StrictWrapperWithYearOfEra() { }
+        public StrictWrapperWithYearOfEra(LocalDate v) { value = v; }
+    }
+
+    final static class StrictWrapperWithYearWithoutEra {
+        @JsonFormat(pattern="uuuu-MM-dd",
+                lenient = OptBoolean.FALSE)
+        public LocalDate value;
+
+        public StrictWrapperWithYearWithoutEra() { }
+        public StrictWrapperWithYearWithoutEra(LocalDate v) { value = v; }
     }
 
     /*
@@ -330,6 +349,52 @@ public class LocalDateDeserTest extends ModuleTestBase
         } catch (MismatchedInputException e) {
             verifyException(e, "Cannot deserialize value of type `java.time.LocalDate`");
         }
+    }
+
+    @Test(expected = InvalidFormatException.class)
+    public void testStrictCustomFormatForInvalidFormat() throws Exception
+    {
+        /*StrictWrapper w =*/ MAPPER.readValue("{\"value\":\"2019-11-30\"}", StrictWrapper.class);
+    }
+
+    @Test(expected = InvalidFormatException.class)
+    public void testStrictCustomFormatForInvalidFormatWithEra() throws Exception
+    {
+        /*StrictWrapperWithYearOfEra w =*/ MAPPER.readValue("{\"value\":\"2019-11-30\"}", StrictWrapperWithYearOfEra.class);
+    }
+
+    @Test(expected = InvalidFormatException.class)
+    public void testStrictCustomFormatForInvalidDateWithEra() throws Exception
+    {
+        /*StrictWrapperWithYearOfEra w =*/ MAPPER.readValue("{\"value\":\"2019-11-31 AD\"}", StrictWrapperWithYearOfEra.class);
+    }
+
+    @Test
+    public void testStrictCustomFormatForValidDateWithEra() throws Exception
+    {
+        StrictWrapperWithYearOfEra w = MAPPER.readValue("{\"value\":\"2019-11-30 AD\"}", StrictWrapperWithYearOfEra.class);
+
+        assertEquals(w.value, LocalDate.of(2019, 11, 30));
+    }
+
+    @Test(expected = InvalidFormatException.class)
+    public void testStrictCustomFormatForInvalidFormatWithoutEra() throws Exception
+    {
+        /*StrictWrapperWithYearWithoutEra w =*/ MAPPER.readValue("{\"value\":\"2019-11-30 AD\"}", StrictWrapperWithYearWithoutEra.class);
+    }
+
+    @Test(expected = InvalidFormatException.class)
+    public void testStrictCustomFormatForInvalidDateWithoutEra() throws Exception
+    {
+        /*StrictWrapperWithYearWithoutEra w =*/ MAPPER.readValue("{\"value\":\"2019-11-31\"}", StrictWrapperWithYearWithoutEra.class);
+    }
+
+    @Test
+    public void testStrictCustomFormatForValidDateWithoutEra() throws Exception
+    {
+        StrictWrapperWithYearWithoutEra w = MAPPER.readValue("{\"value\":\"2019-11-30\"}", StrictWrapperWithYearWithoutEra.class);
+
+        assertEquals(w.value, LocalDate.of(2019, 11, 30));
     }
 
     /*
