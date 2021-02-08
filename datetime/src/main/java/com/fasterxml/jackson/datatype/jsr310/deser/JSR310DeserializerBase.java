@@ -135,7 +135,7 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
             JsonToken exp, String unit)
         throws JacksonException
     {
-        context.reportWrongTokenException((JsonDeserializer<?>)this, exp,
+        context.reportWrongTokenException((ValueDeserializer<?>)this, exp,
                 "Expected %s for '%s' of %s value",
                         exp.name(), unit, ClassUtil.getClassDescription(handledType()));
         return null;

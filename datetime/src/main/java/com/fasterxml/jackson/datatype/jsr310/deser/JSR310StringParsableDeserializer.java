@@ -31,7 +31,7 @@ import com.fasterxml.jackson.core.util.VersionUtil;
 
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.ValueDeserializer;
 import com.fasterxml.jackson.databind.cfg.CoercionAction;
 import com.fasterxml.jackson.databind.cfg.CoercionInputShape;
 import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
@@ -51,13 +51,13 @@ public class JSR310StringParsableDeserializer
     protected final static int TYPE_ZONE_ID = 2;
     protected final static int TYPE_ZONE_OFFSET = 3;
 
-    public static final JsonDeserializer<Period> PERIOD =
+    public static final ValueDeserializer<Period> PERIOD =
         createDeserializer(Period.class, TYPE_PERIOD);
 
-    public static final JsonDeserializer<ZoneId> ZONE_ID =
+    public static final ValueDeserializer<ZoneId> ZONE_ID =
         createDeserializer(ZoneId.class, TYPE_ZONE_ID);
 
-    public static final JsonDeserializer<ZoneOffset> ZONE_OFFSET =
+    public static final ValueDeserializer<ZoneOffset> ZONE_OFFSET =
         createDeserializer(ZoneOffset.class, TYPE_ZONE_OFFSET);
 
     protected final int _typeSelector;
@@ -75,8 +75,8 @@ public class JSR310StringParsableDeserializer
     }
 
     @SuppressWarnings("unchecked")
-    protected static <T> JsonDeserializer<T> createDeserializer(Class<T> type, int typeId) {
-        return (JsonDeserializer<T>) new JSR310StringParsableDeserializer(type, typeId);
+    protected static <T> ValueDeserializer<T> createDeserializer(Class<T> type, int typeId) {
+        return (ValueDeserializer<T>) new JSR310StringParsableDeserializer(type, typeId);
     }
 
     @Override
@@ -90,7 +90,7 @@ public class JSR310StringParsableDeserializer
     }
 
     @Override
-    public JsonDeserializer<?> createContextual(DeserializationContext ctxt,
+    public ValueDeserializer<?> createContextual(DeserializationContext ctxt,
             BeanProperty property)
     {
         JsonFormat.Value format = findFormatOverrides(ctxt, property, handledType());

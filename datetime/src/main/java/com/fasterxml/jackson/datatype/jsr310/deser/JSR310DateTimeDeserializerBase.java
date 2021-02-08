@@ -70,7 +70,7 @@ public abstract class JSR310DateTimeDeserializerBase<T>
     protected abstract JSR310DateTimeDeserializerBase<T> withShape(Shape shape);
 
     @Override
-    public JsonDeserializer<?> createContextual(DeserializationContext ctxt,
+    public ValueDeserializer<?> createContextual(DeserializationContext ctxt,
             BeanProperty property)
     {
         JsonFormat.Value format = findFormatOverrides(ctxt, property, handledType());
