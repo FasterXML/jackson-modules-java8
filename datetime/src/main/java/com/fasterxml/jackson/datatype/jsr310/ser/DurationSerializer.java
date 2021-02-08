@@ -28,7 +28,7 @@ import com.fasterxml.jackson.core.JsonToken;
 
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.ValueSerializer;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
@@ -98,7 +98,7 @@ public class DurationSerializer extends JSR310FormattedSerializerBase<Duration>
     }
 
     @Override
-    public JsonSerializer<?> createContextual(SerializerProvider prov, BeanProperty property)
+    public ValueSerializer<?> createContextual(SerializerProvider prov, BeanProperty property)
     {
         DurationSerializer ser = (DurationSerializer) super.createContextual(prov, property);
         JsonFormat.Value format = findFormatOverrides(prov, property, handledType());

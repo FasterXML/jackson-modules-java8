@@ -109,7 +109,7 @@ abstract class JSR310FormattedSerializerBase<T>
     }
 
     @Override
-    public JsonSerializer<?> createContextual(SerializerProvider prov,
+    public ValueSerializer<?> createContextual(SerializerProvider prov,
             BeanProperty property)
     {
         JsonFormat.Value format = findFormatOverrides(prov, property, handledType());

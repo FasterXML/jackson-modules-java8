@@ -6,13 +6,13 @@ import java.time.format.DateTimeFormatter;
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonGenerator;
 
-import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.ValueSerializer;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 
-public class ZonedDateTimeKeySerializer extends JsonSerializer<ZonedDateTime> {
+public class ZonedDateTimeKeySerializer extends ValueSerializer<ZonedDateTime> {
 
     public static final ZonedDateTimeKeySerializer INSTANCE = new ZonedDateTimeKeySerializer();
 
