@@ -17,11 +17,11 @@ public class ModuleTestBase
                 .addModule(new ParameterNamesModule());
     }
 
-    protected String q(String value) {
+    protected static String q(String value) {
         return "\"" + value + "\"";
     }
 
-    protected String a2q(String json) {
+    protected static String a2q(String json) {
         return json.replace("'", "\"");
     }
 
