@@ -17,6 +17,8 @@ No changes since 2.12
 #202: Unable to deserialize `YearMonth` when running as java9 module,
   added with `@JsonDeserialize` annotation
  (reported by walkeros@github)
+#206: `@JsonKey`is ignored with parameter-names module registered
+ (reported by bertwin@github.com)
 
 2.12.1 (08-Jan-2021)
 
