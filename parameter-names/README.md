@@ -1,5 +1,7 @@
-Jackson module
-that adds support for accessing parameter names; a feature added in JDK 8.
+Jackson module that adds support for accessing parameter names; a feature added in JDK 8.
+
+NOTE: only available for Jackson 2.x; functionality included in `jackson-databind` itself
+for Jackson 3.x.
 
 ## Usage
 
@@ -84,6 +86,6 @@ Preconditions:
 
 See [Wiki](../../../wiki) for more information (javadocs, downloads).
 
-[1]: http://jackson.codehaus.org/1.1.2/javadoc/org/codehaus/jackson/annotate/JsonProperty.html
+[1]: https://fasterxml.github.io/jackson-annotations/javadoc/2.12/com/fasterxml/jackson/annotation/JsonProperty.html
 [2]: http://docs.oracle.com/javase/tutorial/reflect/member/methodparameterreflection.html
 [3]: https://github.com/FasterXML/jackson-databind/issues/1498

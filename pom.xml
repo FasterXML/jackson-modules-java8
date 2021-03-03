@@ -15,8 +15,11 @@
 
   <modules>
     <module>parameter-names</module>
+
+<!-- 03-Mar-2021, tatu: Stop actually publishing these modules for 3.0 
     <module>datatypes</module>
     <module>datetime</module>
+-->
   </modules>
 
   <url>https://github.com/FasterXML/jackson-modules-java8</url>
