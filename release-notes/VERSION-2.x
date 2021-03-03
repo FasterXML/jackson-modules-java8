@@ -8,7 +8,7 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
-2.12.2 (not yet released)
+2.12.2 (03-Mar-2021)
 
 #202: Unable to deserialize `YearMonth` when running as java9 module,
   added with `@JsonDeserialize` annotation
