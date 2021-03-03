@@ -5,6 +5,9 @@ supported by core databind due to baseline being JDK 6, excluding following:
 * New Date/Time datatypes (supported by `jackson-datatype-jsr310` module)
 * Support for parameter names (supported by `jackson-module-parameter-names`)
 
+NOTE: only available for Jackson 2.x; functionality included in `jackson-databind` itself
+for Jackson 3.x.
+
 ## Usage
 
 ### Maven dependency
@@ -15,7 +18,7 @@ To use module on Maven-based projects, use following dependency:
 <dependency>
   <groupId>com.fasterxml.jackson.datatype</groupId>
   <artifactId>jackson-datatype-jdk8</artifactId>
-  <version>2.6.3</version>
+  <version>2.12.2</version>
 </dependency>    
 ```
 
@@ -70,7 +73,3 @@ String withEmailJson = mapper.writeValueAsString(withEmail);
 // prints:  {"name":"Example Co.","email":"info@example.com"}
 System.out.println(withEmailJson);
 ```
-
-## More
-
-See [Wiki](../../../wiki) for more information (javadocs, downloads).

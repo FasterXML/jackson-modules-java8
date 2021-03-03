@@ -14,11 +14,11 @@
   </description>
 
   <modules>
-    <module>parameter-names</module>
+    <module>datetime</module>
 
 <!-- 03-Mar-2021, tatu: Stop actually publishing these modules for 3.0 
+    <module>parameter-names</module>
     <module>datatypes</module>
-    <module>datetime</module>
 -->
   </modules>
 
