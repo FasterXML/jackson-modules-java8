@@ -344,6 +344,22 @@ public class OffsetDateTimeDeserTest
     }
 
     @Test
+    public void testDeserializationAsString01WithTimeZoneColonless() throws Exception
+    {
+        OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(0L), Z1);
+        ObjectMapper m = newMapper()
+            .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false);
+
+        String sDate = offsetWithoutColon(FORMATTER.format(date));
+
+        OffsetDateTime value = m.readValue('"' + sDate + '"', OffsetDateTime.class);
+
+        assertNotNull("The value should not be null.", value);
+        assertIsEqual(date, value);
+        assertEquals("The time zone is not correct.", getOffset(value, Z1), value.getOffset());
+    }
+
+    @Test
     public void testDeserializationAsString02WithoutTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 183917322), Z2);
@@ -385,6 +401,22 @@ public class OffsetDateTimeDeserTest
     }
 
     @Test
+    public void testDeserializationAsString02WithTimeZoneColonless() throws Exception
+    {
+        OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 183917322), Z2);
+        ObjectMapper m = newMapper()
+            .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false);
+
+        String sDate = offsetWithoutColon(FORMATTER.format(date));
+
+        OffsetDateTime value = m.readValue('"' + sDate + '"', OffsetDateTime.class);
+
+        assertNotNull("The value should not be null.", value);
+        assertIsEqual(date, value);
+        assertEquals("The time zone is not correct.", getOffset(value, Z2), value.getOffset());
+    }
+
+    @Test
     public void testDeserializationAsString03WithoutTimeZone() throws Exception
     {
         OffsetDateTime date = OffsetDateTime.now(Z3);
@@ -419,6 +451,23 @@ public class OffsetDateTimeDeserTest
             .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false)
             .setTimeZone(TimeZone.getDefault());
         OffsetDateTime value = m.readValue('"' + FORMATTER.format(date) + '"', OffsetDateTime.class);
+
+        assertNotNull("The value should not be null.", value);
+        assertIsEqual(date, value);
+        assertEquals("The time zone is not correct.", getOffset(value, Z3), value.getOffset());
+    }
+
+
+    @Test
+    public void testDeserializationAsString03WithTimeZoneColonless() throws Exception
+    {
+        OffsetDateTime date = OffsetDateTime.now(Z3);
+        ObjectMapper m = newMapper()
+            .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false);
+
+        String sDate = offsetWithoutColon(FORMATTER.format(date));
+
+        OffsetDateTime value = m.readValue('"' + sDate + '"', OffsetDateTime.class);
 
         assertNotNull("The value should not be null.", value);
         assertIsEqual(date, value);
@@ -708,5 +757,9 @@ public class OffsetDateTimeDeserTest
     private static ZoneOffset getOffset(OffsetDateTime date, ZoneId zone)
     {
         return zone.getRules().getOffset(date.toLocalDateTime());
+    }
+
+    private static String offsetWithoutColon(String string){
+        return new StringBuilder(string).deleteCharAt(string.lastIndexOf(":")).toString();
     }
 }
