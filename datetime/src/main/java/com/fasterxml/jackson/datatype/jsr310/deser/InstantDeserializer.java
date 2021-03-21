@@ -65,7 +65,7 @@ public class InstantDeserializer<T extends Temporal>
      *
      * @since 2.13
      */
-    private static final Pattern ISO8601_COLONLESS_OFFSET_REGEX = Pattern.compile("[+-][0-9]{4}");
+    private static final Pattern ISO8601_COLONLESS_OFFSET_REGEX = Pattern.compile("(?<!^)[+-][0-9]{4}");
 
     public static final InstantDeserializer<Instant> INSTANT = new InstantDeserializer<>(
             Instant.class, DateTimeFormatter.ISO_INSTANT,
