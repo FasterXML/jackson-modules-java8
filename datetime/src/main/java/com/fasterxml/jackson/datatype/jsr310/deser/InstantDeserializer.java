@@ -65,7 +65,7 @@ public class InstantDeserializer<T extends Temporal>
      *
      * @since 2.13
      */
-    private static final Pattern ISO8601_COLONLESS_OFFSET_REGEX = Pattern.compile("(?<!^)[+-][0-9]{4}");
+    protected static final Pattern ISO8601_COLONLESS_OFFSET_REGEX = Pattern.compile("(?<!^)[+-][0-9]{4}");
 
     public static final InstantDeserializer<Instant> INSTANT = new InstantDeserializer<>(
             Instant.class, DateTimeFormatter.ISO_INSTANT,
@@ -289,8 +289,9 @@ public class InstantDeserializer<T extends Temporal>
         if (_formatter == DateTimeFormatter.ISO_OFFSET_DATE_TIME ||
             _formatter == DateTimeFormatter.ISO_ZONED_DATE_TIME) {
 
-            // 21-March-2021, Oeystein: Work-around for supporting iso-8601 time offsets that are
-            // specified without a colon as OffsetTime.parse() only support ones with.
+            // 21-March-2021, Oeystein: Work-around to support basic iso 8601 format (colon-less).
+            // As per JSR-310; Only extended 8601 formats (with colon) are supported for
+            // ZonedDateTime.parse() and OffsetDateTime.parse().
             // https://github.com/FasterXML/jackson-modules-java8/issues/131
             string = addInColonToOffsetIfMissing(string);
         }
