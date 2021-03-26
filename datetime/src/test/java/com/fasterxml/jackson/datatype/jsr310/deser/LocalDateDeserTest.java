@@ -55,13 +55,13 @@ public class LocalDateDeserTest extends ModuleTestBase
         public ShapeWrapper(LocalDate v) { date = v; }
     }
 
-    final static class StrictWrapper {
+    static class StrictWrapperWithFormat {
         @JsonFormat(pattern="yyyy-MM-dd",
                 lenient = OptBoolean.FALSE)
         public LocalDate value;
 
-        public StrictWrapper() { }
-        public StrictWrapper(LocalDate v) { value = v; }
+        public StrictWrapperWithFormat() { }
+        public StrictWrapperWithFormat(LocalDate v) { value = v; }
     }
 
     final static class StrictWrapperWithYearOfEra {
@@ -341,20 +341,33 @@ public class LocalDateDeserTest extends ModuleTestBase
 
     // for [modules-java8#148]
     @Test
-    public void testStrictCustomFormat()
+    public void testStrictWithCustomFormat()
     {
         try {
-            /*StrictWrapper w =*/ MAPPER.readValue("{\"value\":\"2019-11-31\"}", StrictWrapper.class);
+            /*StrictWrapperWithFormat w =*/ MAPPER.readValue(
+                    "{\"value\":\"2019-11-31\"}",
+                    StrictWrapperWithFormat.class);
             fail("Should not pass");
-        } catch (MismatchedInputException e) {
-            verifyException(e, "Cannot deserialize value of type `java.time.LocalDate`");
+        } catch (InvalidFormatException e) {
+            verifyException(e, "Cannot deserialize value of type `java.time.LocalDate` from String");
+            verifyException(e, "\"2019-11-31\"");
         }
     }
 
-    @Test(expected = InvalidFormatException.class)
+    @Test
     public void testStrictCustomFormatForInvalidFormat() throws Exception
     {
-        /*StrictWrapper w =*/ MAPPER.readValue("{\"value\":\"2019-11-30\"}", StrictWrapper.class);
+        try {
+            /*StrictWrapperWithFormat w = */ MAPPER.readValue(
+                "{\"value\":\"2019-11-30\"}",
+                StrictWrapperWithFormat.class);
+            fail("Should not pass");
+        } catch (InvalidFormatException e) {
+            // 25-Mar-2021, tatu: Really bad exception message we got... but
+            //   it is what it is
+            verifyException(e, "Cannot deserialize value of type `java.time.LocalDate` from String");
+            verifyException(e, "\"2019-11-30\"");
+        }
     }
 
     @Test(expected = InvalidFormatException.class)
@@ -423,8 +436,8 @@ public class LocalDateDeserTest extends ModuleTestBase
     @Test
     public void testDeserializationCaseInsensitiveEnabled()
     {
-        final ObjectMapper mapper = newMapperBuilder()
-                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES, true)
+        final ObjectMapper mapper = mapperBuilder()
+                .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES)
                 .withConfigOverride(LocalDate.class, o -> o.setFormat(
                         JsonFormat.Value.forPattern("dd-MMM-yyyy")))
                 .build();
@@ -439,7 +452,7 @@ public class LocalDateDeserTest extends ModuleTestBase
     @Test
     public void testDeserializationCaseInsensitiveDisabled()
     {
-        final ObjectMapper mapper = newMapperBuilder()
+        final ObjectMapper mapper = mapperBuilder()
                 .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES, false)
                 .withConfigOverride(LocalDate.class, o -> o.setFormat(
                         JsonFormat.Value.forPattern("dd-MMM-yyyy")))
@@ -451,7 +464,7 @@ public class LocalDateDeserTest extends ModuleTestBase
     @Test
     public void testDeserializationCaseInsensitiveDisabled_InvalidDate()
     {
-        ObjectMapper mapper = newMapperBuilder()
+        final ObjectMapper mapper = mapperBuilder()
                 .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES, false)
                 .withConfigOverride(LocalDate.class, o -> JsonFormat.Value.forPattern("dd-MMM-yyyy"))
                 .build();
