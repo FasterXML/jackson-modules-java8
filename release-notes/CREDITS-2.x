@@ -140,3 +140,8 @@ Oriol Barcelona (obarcelonap@github)
   * Contributed fix for #189: Support use of "pattern" (`ChronoUnit`) for
     `DurationSerializer` too
    (2.12.0)
+
+Gökhan Öner (gokhanoner@github)
+  * Reported #207: Fail to serialize `TemporalAdjuster` type with 2.12
+   (2.12.3)
+
