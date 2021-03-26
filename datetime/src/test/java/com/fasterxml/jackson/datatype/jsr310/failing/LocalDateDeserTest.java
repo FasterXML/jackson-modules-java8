@@ -12,18 +12,18 @@ import java.time.LocalDate;
 public class LocalDateDeserTest extends ModuleTestBase {
     private final ObjectMapper MAPPER = newMapper();
 
-    final static class StrictWrapper {
+    static class StrictWrapperWithFormat {
         @JsonFormat(pattern="yyyy-MM-dd",
                 lenient = OptBoolean.FALSE)
         public LocalDate value;
 
-        public StrictWrapper() { }
-        public StrictWrapper(LocalDate v) { value = v; }
+        public StrictWrapperWithFormat() { }
+        public StrictWrapperWithFormat(LocalDate v) { value = v; }
     }
-
     @Test(expected = InvalidFormatException.class)
     public void testStrictCustomFormat() throws Exception
     {
-        /*StrictWrapper w =*/ MAPPER.readValue("{\"value\":\"2019-11-30\"}", StrictWrapper.class);
+        /*StrictWrapper w =*/ MAPPER.readValue("{\"value\":\"2019-11-30\"}",
+                StrictWrapperWithFormat.class);
     }
 }

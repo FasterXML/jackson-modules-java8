@@ -155,7 +155,8 @@ public class LocalDateDeserializer extends JSR310DateTimeDeserializerBase<LocalD
                 // JavaScript by default includes time in JSON serialized Dates (UTC/ISO instant format).
                 if (string.length() > 10 && string.charAt(10) == 'T') {
                    if (string.endsWith("Z")) {
-                       return LocalDateTime.ofInstant(Instant.parse(string), ZoneOffset.UTC).toLocalDate();
+                       return LocalDate.parse(string.substring(0, string.length() - 1),
+                               DateTimeFormatter.ISO_LOCAL_DATE_TIME);
                    } else {
                        return LocalDate.parse(string, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
                    }
