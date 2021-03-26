@@ -18,16 +18,15 @@ package com.fasterxml.jackson.datatype.jsr310.deser;
 
 import java.io.IOException;
 import java.time.DateTimeException;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
 
 /**
  * Deserializer for Java 8 temporal {@link LocalDate}s.
@@ -154,12 +153,18 @@ public class LocalDateDeserializer extends JSR310DateTimeDeserializerBase<LocalD
             if (format == DEFAULT_FORMATTER) {
                 // JavaScript by default includes time in JSON serialized Dates (UTC/ISO instant format).
                 if (string.length() > 10 && string.charAt(10) == 'T') {
-                   if (string.endsWith("Z")) {
-                       return LocalDate.parse(string.substring(0, string.length() - 1),
-                               DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-                   } else {
-                       return LocalDate.parse(string, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-                   }
+                    if (isLenient()) {
+                        if (string.endsWith("Z")) {
+                            return LocalDate.parse(string.substring(0, string.length() - 1),
+                                    DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                        }
+                        return LocalDate.parse(string, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                    }
+                    JavaType t = getValueType(ctxt);
+                    return (LocalDate) ctxt.handleWeirdStringValue(t.getRawClass(),
+                            string,
+"Should not contain time component when 'strict' mode set for property or type (enable 'lenient' handling to allow)"
+                            );
                 }
             }
             return LocalDate.parse(string, format);
