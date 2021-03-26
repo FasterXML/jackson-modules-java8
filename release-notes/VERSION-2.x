@@ -8,6 +8,11 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
+2.12.3 (not yet released)
+
+#207: Fail to serialize `TemporalAdjuster` type with 2.12
+ (reported by Gökhan Ö)
+
 2.12.2 (03-Mar-2021)
 
 #202: Unable to deserialize `YearMonth` when running as java9 module,
