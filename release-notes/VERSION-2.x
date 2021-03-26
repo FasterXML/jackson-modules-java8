@@ -10,7 +10,8 @@ Modules:
 
 2.13.0 (not yet released)
 
-No changes since 2.12
+#212: Make LocalDateDeserializer consider strict/lenient on accepting (or not)
+  of "time" part
 
 2.12.3 (not yet released)
 
