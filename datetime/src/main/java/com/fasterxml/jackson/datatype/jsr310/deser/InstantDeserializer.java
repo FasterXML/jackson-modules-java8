@@ -28,6 +28,7 @@ import java.time.temporal.TemporalAccessor;
 import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -56,6 +57,13 @@ public class InstantDeserializer<T extends Temporal>
      * Constants used to check if the time offset is zero. See [jackson-modules-java8#18]
      */
     private static final Pattern ISO8601_UTC_ZERO_OFFSET_SUFFIX_REGEX = Pattern.compile("\\+00:?(00)?$");
+
+    /**
+     * Constants used to check if ISO 8601 time string is colonless. See [jackson-modules-java8#131]
+     *
+     * @since 2.13
+     */
+    protected static final Pattern ISO8601_COLONLESS_OFFSET_REGEX = Pattern.compile("[+-][0-9]{4}(?=\\[|$)");
 
     public static final InstantDeserializer<Instant> INSTANT = new InstantDeserializer<>(
             Instant.class, DateTimeFormatter.ISO_INSTANT,
@@ -276,6 +284,17 @@ public class InstantDeserializer<T extends Temporal>
             string = replaceZeroOffsetAsZIfNecessary(string);
         }
 
+        // For some reason DateTimeFormatter.ISO_INSTANT only supports UTC ISO 8601 strings, so it have to be excluded
+        if (_formatter == DateTimeFormatter.ISO_OFFSET_DATE_TIME ||
+            _formatter == DateTimeFormatter.ISO_ZONED_DATE_TIME) {
+
+            // 21-March-2021, Oeystein: Work-around to support basic iso 8601 format (colon-less).
+            // As per JSR-310; Only extended 8601 formats (with colon) are supported for
+            // ZonedDateTime.parse() and OffsetDateTime.parse().
+            // https://github.com/FasterXML/jackson-modules-java8/issues/131
+            string = addInColonToOffsetIfMissing(string);
+        }
+
         T value;
         try {
             TemporalAccessor acc = _formatter.parse(string);
@@ -319,6 +338,19 @@ public class InstantDeserializer<T extends Temporal>
             return ISO8601_UTC_ZERO_OFFSET_SUFFIX_REGEX.matcher(text).replaceFirst("Z");
         }
 
+        return text;
+    }
+
+    // @since 2.13
+    private String addInColonToOffsetIfMissing(String text)
+    {
+        final Matcher matcher = ISO8601_COLONLESS_OFFSET_REGEX.matcher(text);
+        if (matcher.find()){
+            StringBuilder sb = new StringBuilder(matcher.group(0));
+            sb.insert(3, ":");
+
+            return matcher.replaceFirst(sb.toString());
+        }
         return text;
     }
 

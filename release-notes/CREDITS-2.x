@@ -145,3 +145,6 @@ Gökhan Öner (gokhanoner@github)
   * Reported #207: Fail to serialize `TemporalAdjuster` type with 2.12
    (2.12.3)
 
+Øystein B. Huseby (oeystein@github)
+  * Contributed #131: Deserializing ZonedDateTime with basic TZ offset notation (0000)
+   (2.13.0)

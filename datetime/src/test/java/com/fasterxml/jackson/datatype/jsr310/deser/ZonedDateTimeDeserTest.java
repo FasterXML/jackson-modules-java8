@@ -156,4 +156,33 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
         String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, ""));
         objectReader.readValue(valueFromEmptyStr);
     }
+
+    /*
+    /**********************************************************
+    /* Tests for ISO-8601 ZonedDateTimes that are colonless
+    /**********************************************************
+     */
+
+    @Test
+    public void testDeserializationWithoutColonInOffset() throws Throwable
+    {
+        WrapperWithFeatures wrapper = READER
+                .forType(WrapperWithFeatures.class)
+                .readValue("{\"value\":\"2000-01-01T12:00+0100\"}");
+
+        assertEquals("Value parses as if it were with colon",
+                ZonedDateTime.of(2000, 1, 1, 12, 0, 0 ,0, ZoneOffset.ofHours(1)),
+                wrapper.value);
+    }
+
+    @Test
+    public void testDeserializationWithoutColonInTimeZoneWithTZDB() throws Throwable
+    {
+        WrapperWithFeatures wrapper = READER
+                .forType(WrapperWithFeatures.class)
+                .readValue("{\"value\":\"2000-01-01T12:00+0100[Europe/Paris]\"}");
+        assertEquals("Timezone should be preserved.",
+                ZonedDateTime.of(2000, 1, 1, 12, 0, 0 ,0, ZoneId.of("Europe/Paris")),
+                wrapper.value);
+    }
 }
