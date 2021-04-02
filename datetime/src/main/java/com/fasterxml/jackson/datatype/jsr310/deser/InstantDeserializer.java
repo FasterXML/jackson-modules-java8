@@ -342,17 +342,16 @@ public class InstantDeserializer<T extends Temporal>
         return text;
     }
 
+    // @since 2.13
     private String addInColonToOffsetIfMissing(String text)
     {
-        Matcher matcher = ISO8601_COLONLESS_OFFSET_REGEX.matcher(text);
-
+        final Matcher matcher = ISO8601_COLONLESS_OFFSET_REGEX.matcher(text);
         if (matcher.find()){
             StringBuilder sb = new StringBuilder(matcher.group(0));
             sb.insert(3, ":");
 
             return matcher.replaceFirst(sb.toString());
         }
-
         return text;
     }
 

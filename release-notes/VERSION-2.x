@@ -10,6 +10,8 @@ Modules:
 
 2.13.0 (not yet released)
 
+#131: Deserializing ZonedDateTime with basic TZ offset notation (0000)
+ (contributed by Øystein H)
 #212: Make LocalDateDeserializer consider strict/lenient on accepting (or not)
   of "time" part
 
