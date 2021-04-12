@@ -15,7 +15,7 @@ Modules:
 #212: Make LocalDateDeserializer consider strict/lenient on accepting (or not)
   of "time" part
 
-2.12.3 (not yet released)
+2.12.3 (12-Apr-2021)
 
 #207: Fail to serialize `TemporalAdjuster` type with 2.12
  (reported by Gökhan Ö)
