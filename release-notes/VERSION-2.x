@@ -8,7 +8,7 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
-2.12.3 (not yet released)
+2.12.3 (12-Apr-2021)
 
 #207: Fail to serialize `TemporalAdjuster` type with 2.12
  (reported by Gökhan Ö)
