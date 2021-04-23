@@ -42,7 +42,7 @@ public class ContextualOptional17Test extends ModuleTestBase
         input.date2 = Optional.ofNullable(new Date(0L));
         final String json = mapper.writeValueAsString(input);
 //System.err.println("JSON:\n"+json);
-        assertEquals(aposToQuotes(
+        assertEquals(a2q(
                 "{'date':'1970/01/01','date1':'1970+01+01','date2':'1970*01*01'}"),
                 json);
     }        

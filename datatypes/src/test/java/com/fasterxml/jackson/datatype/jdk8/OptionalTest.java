@@ -179,24 +179,24 @@ public class OptionalTest extends ModuleTestBase
     {
         ObjectMapper mapper = mapperWithModule()
                 .setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        assertEquals(aposToQuotes("{'value':'foo'}"),
+        assertEquals(a2q("{'value':'foo'}"),
                 mapper.writeValueAsString(new OptionalStringBean("foo")));
         // absent is not strictly null so
-        assertEquals(aposToQuotes("{'value':null}"),
+        assertEquals(a2q("{'value':null}"),
                 mapper.writeValueAsString(new OptionalStringBean(null)));
 
         // however:
         mapper = mapperWithModule()
                 .setSerializationInclusion(JsonInclude.Include.NON_ABSENT);
-        assertEquals(aposToQuotes("{'value':'foo'}"),
+        assertEquals(a2q("{'value':'foo'}"),
                 mapper.writeValueAsString(new OptionalStringBean("foo")));
-        assertEquals(aposToQuotes("{}"),
+        assertEquals(a2q("{}"),
                 mapper.writeValueAsString(new OptionalStringBean(null)));
     }
 
     public void testWithCustomDeserializer() throws Exception
     {
-        CaseChangingStringWrapper w = MAPPER.readValue(aposToQuotes("{'value':'FoobaR'}"),
+        CaseChangingStringWrapper w = MAPPER.readValue(a2q("{'value':'FoobaR'}"),
                 CaseChangingStringWrapper.class);
         assertEquals("foobar", w.value.get());
     }
@@ -211,7 +211,7 @@ public class OptionalTest extends ModuleTestBase
                 CaseChangingStringWrapper.class).value);
                 */
 
-        assertEquals(Optional.empty(), MAPPER.readValue(aposToQuotes("{'value':null}"),
+        assertEquals(Optional.empty(), MAPPER.readValue(a2q("{'value':null}"),
                 CaseChangingStringWrapper.class).value);
     }
 
@@ -219,25 +219,25 @@ public class OptionalTest extends ModuleTestBase
     {
         final String VALUE = "fooBAR";
         String json = MAPPER.writeValueAsString(new CaseChangingStringWrapper(VALUE));
-        assertEquals(json, aposToQuotes("{'value':'FOOBAR'}"));
+        assertEquals(json, a2q("{'value':'FOOBAR'}"));
     }
 
     public void testCustomSerializerIfOptionalAbsent() throws Exception
     {
         ObjectMapper mapper = mapperWithModule()
                 .setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        assertEquals(aposToQuotes("{'value':'FOO'}"),
+        assertEquals(a2q("{'value':'FOO'}"),
                 mapper.writeValueAsString(new CaseChangingStringWrapper("foo")));
         // absent is not strictly null so
-        assertEquals(aposToQuotes("{'value':null}"),
+        assertEquals(a2q("{'value':null}"),
                 mapper.writeValueAsString(new CaseChangingStringWrapper(null)));
 
         // however:
         mapper = mapperWithModule()
                 .setSerializationInclusion(JsonInclude.Include.NON_ABSENT);
-        assertEquals(aposToQuotes("{'value':'FOO'}"),
+        assertEquals(a2q("{'value':'FOO'}"),
                 mapper.writeValueAsString(new CaseChangingStringWrapper("foo")));
-        assertEquals(aposToQuotes("{}"),
+        assertEquals(a2q("{}"),
                 mapper.writeValueAsString(new CaseChangingStringWrapper(null)));
     }
 
@@ -245,7 +245,7 @@ public class OptionalTest extends ModuleTestBase
     public void testOtherRefSerializers() throws Exception
     {
         String json = MAPPER.writeValueAsString(new AtomicReference<String>("foo"));
-        assertEquals(quote("foo"), json);
+        assertEquals(q("foo"), json);
     }
 
     // Check [databind#2796] here too

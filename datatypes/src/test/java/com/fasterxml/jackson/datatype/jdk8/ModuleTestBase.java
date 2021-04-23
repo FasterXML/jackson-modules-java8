@@ -32,6 +32,7 @@ public abstract class ModuleTestBase extends junit.framework.TestCase
         return mapper;
     }
 
+    @SuppressWarnings("deprecation")
     static ObjectMapper mapperWithModule(boolean absentsAsNulls) {
         ObjectMapper mapper = new ObjectMapper();
         Jdk8Module module = new Jdk8Module();
@@ -59,11 +60,11 @@ public abstract class ModuleTestBase extends junit.framework.TestCase
                 + msg + "\"");
     }
 
-    protected String quote(String str) {
+    protected String q(String str) {
         return '"' + str + '"';
     }
 
-    protected String aposToQuotes(String json) {
+    protected String a2q(String json) {
         return json.replace("'", "\"");
     }
 }

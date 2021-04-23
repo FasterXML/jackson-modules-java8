@@ -71,18 +71,18 @@ public class OptionalNumbersTest extends ModuleTestBase
 
     public void testOptionalIntCoerceFromString() throws Exception
     {
-        OptionalInt opt = MAPPER.readValue(quote("123"), OptionalInt.class);
+        OptionalInt opt = MAPPER.readValue(q("123"), OptionalInt.class);
         assertEquals(123, opt.getAsInt());
         opt = MAPPER.readValue("\"\"", OptionalInt.class);
         assertNotNull(opt);
         assertFalse(opt.isPresent());
 
-        OptionalIntBean bean = MAPPER.readValue(aposToQuotes("{'value':null}"),
+        OptionalIntBean bean = MAPPER.readValue(a2q("{'value':null}"),
                 OptionalIntBean.class);
         assertNotNull(bean.value);
         assertFalse(bean.value.isPresent());
 
-        bean = MAPPER.readValue(aposToQuotes("{'value':'-37'}"), OptionalIntBean.class);
+        bean = MAPPER.readValue(a2q("{'value':'-37'}"), OptionalIntBean.class);
         assertNotNull(bean.value);
         assertEquals(-37L, bean.value.getAsInt());
     }
@@ -113,7 +113,7 @@ public class OptionalNumbersTest extends ModuleTestBase
 
     public void testOptionalLongCoerceFromString() throws Exception
     {
-        OptionalLong opt = MAPPER.readValue(quote("123"), OptionalLong.class);
+        OptionalLong opt = MAPPER.readValue(q("123"), OptionalLong.class);
         assertEquals(123L, opt.getAsLong());
 
         // should coerce from empty String too (by default)
@@ -121,12 +121,12 @@ public class OptionalNumbersTest extends ModuleTestBase
         assertNotNull(opt);
         assertFalse(opt.isPresent());
         
-        OptionalLongBean bean = MAPPER.readValue(aposToQuotes("{'value':null}"),
+        OptionalLongBean bean = MAPPER.readValue(a2q("{'value':null}"),
                 OptionalLongBean.class);
         assertNotNull(bean.value);
         assertFalse(bean.value.isPresent());
 
-        bean = MAPPER.readValue(aposToQuotes("{'value':'19'}"), OptionalLongBean.class);
+        bean = MAPPER.readValue(a2q("{'value':'19'}"), OptionalLongBean.class);
         assertNotNull(bean.value);
         assertEquals(19L, bean.value.getAsLong());
     }
@@ -135,18 +135,18 @@ public class OptionalNumbersTest extends ModuleTestBase
     {
         ObjectMapper mapper = mapperWithModule()
                 .setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        assertEquals(aposToQuotes("{'value':123}"),
+        assertEquals(a2q("{'value':123}"),
                 mapper.writeValueAsString(new OptionalLongBean(123L)));
         // absent is not strictly null so
-        assertEquals(aposToQuotes("{'value':null}"),
+        assertEquals(a2q("{'value':null}"),
                 mapper.writeValueAsString(new OptionalLongBean()));
 
         // however:
         mapper = mapperWithModule()
                 .setSerializationInclusion(JsonInclude.Include.NON_ABSENT);
-        assertEquals(aposToQuotes("{'value':456}"),
+        assertEquals(a2q("{'value':456}"),
                 mapper.writeValueAsString(new OptionalLongBean(456L)));
-        assertEquals(aposToQuotes("{}"),
+        assertEquals(a2q("{}"),
                 mapper.writeValueAsString(new OptionalLongBean()));
     }
 
@@ -176,7 +176,7 @@ public class OptionalNumbersTest extends ModuleTestBase
 
     public void testOptionalDoubleCoerceFromString() throws Exception
     {
-        OptionalDouble opt = MAPPER.readValue(quote("0.25"), OptionalDouble.class);
+        OptionalDouble opt = MAPPER.readValue(q("0.25"), OptionalDouble.class);
         assertEquals(0.25, opt.getAsDouble());
 
         // should coerce from empty String too (by default)
@@ -184,12 +184,12 @@ public class OptionalNumbersTest extends ModuleTestBase
         assertNotNull(opt);
         assertFalse(opt.isPresent());
         
-        OptionalDoubleBean bean = MAPPER.readValue(aposToQuotes("{'value':null}"),
+        OptionalDoubleBean bean = MAPPER.readValue(a2q("{'value':null}"),
                 OptionalDoubleBean.class);
         assertNotNull(bean.value);
         assertFalse(bean.value.isPresent());
 
-        bean = MAPPER.readValue(aposToQuotes("{'value':'0.5'}"), OptionalDoubleBean.class);
+        bean = MAPPER.readValue(a2q("{'value':'0.5'}"), OptionalDoubleBean.class);
         assertNotNull(bean.value);
         assertEquals(0.5, bean.value.getAsDouble());
     }
@@ -213,7 +213,7 @@ public class OptionalNumbersTest extends ModuleTestBase
     public void testOptionalDoubleInArraySpecialValuesWithoutCoercion() throws Exception
     {
         OptionalDouble[] actual = MAPPER_WITHOUT_COERCION.readValue(
-                aposToQuotes("[null,'NaN','Infinity','-Infinity',1]"),
+                a2q("[null,'NaN','Infinity','-Infinity',1]"),
                 OptionalDouble[].class);
         OptionalDouble[] expected = new OptionalDouble[] {
                 OptionalDouble.empty(),
@@ -228,34 +228,34 @@ public class OptionalNumbersTest extends ModuleTestBase
     public void testQuotedOptionalDoubleWithoutCoercion()
     {
         assertThrows(MismatchedInputException.class,
-                () -> MAPPER_WITHOUT_COERCION.readValue(aposToQuotes("['1']"), OptionalDouble[].class));
+                () -> MAPPER_WITHOUT_COERCION.readValue(a2q("['1']"), OptionalDouble[].class));
     }
 
     public void testOptionalDoubleBeanSpecialValuesWithoutCoercion_null() throws Exception
     {
         OptionalDoubleBean bean = MAPPER_WITHOUT_COERCION.readValue(
-                aposToQuotes("{'value':null}"), OptionalDoubleBean.class);
+                a2q("{'value':null}"), OptionalDoubleBean.class);
         assertEquals(OptionalDouble.empty(), bean.value);
     }
 
     public void testOptionalDoubleBeanSpecialValuesWithoutCoercion_nan() throws Exception
     {
         OptionalDoubleBean bean = MAPPER_WITHOUT_COERCION.readValue(
-                aposToQuotes("{'value':'NaN'}"), OptionalDoubleBean.class);
+                a2q("{'value':'NaN'}"), OptionalDoubleBean.class);
         assertEquals(OptionalDouble.of(Double.NaN), bean.value);
     }
 
     public void testOptionalDoubleBeanSpecialValuesWithoutCoercion_positiveInfinity() throws Exception
     {
         OptionalDoubleBean bean = MAPPER_WITHOUT_COERCION.readValue(
-                aposToQuotes("{'value':'Infinity'}"), OptionalDoubleBean.class);
+                a2q("{'value':'Infinity'}"), OptionalDoubleBean.class);
         assertEquals(OptionalDouble.of(Double.POSITIVE_INFINITY), bean.value);
     }
 
     public void testOptionalDoubleBeanSpecialValuesWithoutCoercion_negativeInfinity() throws Exception
     {
         OptionalDoubleBean bean = MAPPER_WITHOUT_COERCION.readValue(
-                aposToQuotes("{'value':'-Infinity'}"), OptionalDoubleBean.class);
+                a2q("{'value':'-Infinity'}"), OptionalDoubleBean.class);
         assertEquals(OptionalDouble.of(Double.NEGATIVE_INFINITY), bean.value);
     }
 }

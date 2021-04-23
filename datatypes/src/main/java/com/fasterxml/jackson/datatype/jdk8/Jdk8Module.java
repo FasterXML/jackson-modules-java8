@@ -44,7 +44,7 @@ public class Jdk8Module extends Module
 
     /**
      * Configuration method that may be used to change configuration setting
-     * <code>_cfgHandleAbsentAsNull</code>: enabling means that `Optional.empty()` values
+     * {@code _cfgHandleAbsentAsNull}: enabling means that `Optional.empty()` values
      * are handled like Java nulls (wrt filtering on serialization); disabling that
      * they are only treated as "empty" values, but not like native Java nulls.
      * Recommended setting for this value is `false`. For compatibility with older versions
@@ -55,11 +55,14 @@ public class Jdk8Module extends Module
      * criteria for filtering out absent optionals; this setting is mostly useful for
      * legacy use cases that predate version 2.6.
      *
-     *
      * @return This module instance, useful for chaining calls
      *
      * @since 2.6
+     * 
+     * @deprecated Since 2.13, no replacement, will be removed from Jackson 3.0
+     *    (when optional types will be part of core databind)
      */
+    @Deprecated
     public Jdk8Module configureAbsentsAsNulls(boolean state) {
         _cfgHandleAbsentAsNull = state;
         return this;

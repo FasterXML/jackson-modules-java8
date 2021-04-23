@@ -14,6 +14,7 @@ Modules:
  (contributed by Øystein H)
 #212: Make LocalDateDeserializer consider strict/lenient on accepting (or not)
   of "time" part
+#216: Deprecate method Jdk8Module.configureAbsentsAsNulls() (to be removed from Jackson 3)
 
 2.12.3 (12-Apr-2021)
 
