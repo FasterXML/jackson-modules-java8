@@ -21,7 +21,6 @@ Modules:
 #214: readerForUpdating(objectToUpdate).readValue(json) behaves unexpectedly
    on Optional<List>
  (reported by jc84-dev@github)
->>>>>>> 2.12
 
 2.12.3 (12-Apr-2021)
 
