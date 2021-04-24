@@ -16,6 +16,13 @@ Modules:
   of "time" part
 #216: Deprecate method Jdk8Module.configureAbsentsAsNulls() (to be removed from Jackson 3)
 
+2.12.4 (not yet released)
+
+#214: readerForUpdating(objectToUpdate).readValue(json) behaves unexpectedly
+   on Optional<List>
+ (reported by jc84-dev@github)
+>>>>>>> 2.12
+
 2.12.3 (12-Apr-2021)
 
 #207: Fail to serialize `TemporalAdjuster` type with 2.12

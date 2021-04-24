@@ -12,7 +12,7 @@ public class OptionalMergeTest extends ModuleTestBase
     // [modules-java8#214]
     static class OptionalListWrapper {
         @JsonMerge
-        public Optional<List<String>> list;
+        public Optional<List<String>> list = Optional.empty();
     }
 
     private final ObjectMapper MAPPER = mapperWithModule();
