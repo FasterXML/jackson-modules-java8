@@ -46,17 +46,22 @@ All modules are licensed under [Apache License 2.0](http://www.apache.org/licens
 To include modules, you use some or all of:
 
 ```xml
+<!--	Parameter names	-->
 <dependency>
     <groupId>com.fasterxml.jackson.module</groupId>
     <artifactId>jackson-module-parameter-names</artifactId>
 </dependency>
-<dependency>
-    <groupId>com.fasterxml.jackson.datatype</groupId>
-    <artifactId>jackson-datatype-jdk8</artifactId>
-</dependency>
+
+<!--	Java 8 Date/time	-->
 <dependency>
     <groupId>com.fasterxml.jackson.datatype</groupId>
     <artifactId>jackson-datatype-jsr310</artifactId>
+</dependency>
+
+<!--	Java 8 Datatypes	-->
+<dependency>
+    <groupId>com.fasterxml.jackson.datatype</groupId>
+    <artifactId>jackson-datatype-jdk8</artifactId>
 </dependency>
 ```
 
