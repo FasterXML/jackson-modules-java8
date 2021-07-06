@@ -16,7 +16,7 @@ Modules:
   of "time" part
 #216: Deprecate method Jdk8Module.configureAbsentsAsNulls() (to be removed from Jackson 3)
 
-2.12.4 (not yet released)
+2.12.4 (06-Jul-2021)
 
 #214: readerForUpdating(objectToUpdate).readValue(json) behaves unexpectedly
    on Optional<List>
