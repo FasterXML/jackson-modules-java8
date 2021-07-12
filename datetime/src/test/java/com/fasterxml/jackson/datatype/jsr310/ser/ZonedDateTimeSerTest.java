@@ -273,35 +273,62 @@ public class ZonedDateTimeSerTest
         assertEquals("The value is incorrect.", "\"" + DateTimeFormatter.ISO_ZONED_DATE_TIME.format(date) + "\"", value);
     }
 
+    @Test
+    public void testSerializationAsStringWithDefaultTimeZoneAndContextTimeZoneOnAndACustomFormatter() throws Exception {
+        ZonedDateTime date = ZonedDateTime.now(Z3);
+        // With a custom DateTimeFormatter without a ZoneId.
+        String value = MAPPER.registerModule(new SimpleModule().addSerializer(new ZonedDateTimeSerializer(FORMATTER_WITHOUT_ZONEID))).writer()
+                .with(TimeZone.getTimeZone(Z2))
+                .without(SerializationFeature.WRITE_DATES_WITH_ZONE_ID)
+                .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .with(SerializationFeature.WRITE_DATES_WITH_CONTEXT_TIME_ZONE)
+                .writeValueAsString(date);
+
+        // We expect to have the date written with the ZoneId Z2
+        assertEquals("The value is incorrect", "\"" + date.withZoneSameInstant(Z2).format(FORMATTER_WITHOUT_ZONEID) + "\"", value);
+    }
+
+    @Test
+    public void testSerializationAsStringWithDefaultTimeZoneAndContextTimeZoneOffAndACustomFormatter() throws Exception {
+        ZonedDateTime date = ZonedDateTime.now(Z3);
+        // With a custom DateTimeFormatter without a Zone.
+        String value = MAPPER.registerModule(new SimpleModule().addSerializer(new ZonedDateTimeSerializer(FORMATTER_WITHOUT_ZONEID))).writer()
+                .with(TimeZone.getTimeZone(Z2))
+                .without(SerializationFeature.WRITE_DATES_WITH_ZONE_ID)
+                .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .without(SerializationFeature.WRITE_DATES_WITH_CONTEXT_TIME_ZONE)
+                .writeValueAsString(date);
+
+        // We expect to have the date written with the ZoneId Z3
+        assertEquals("The value is incorrect", "\"" + date.format(FORMATTER_WITHOUT_ZONEID) + "\"", value);
+    }
 
     @Test
     public void testSerializationAsStringWithDefaultTimeZoneAndContextTimeZoneOn() throws Exception {
-		ZonedDateTime date = ZonedDateTime.now(Z3);
-		// With a custom DateTimeFormatter without a ZoneId.
-		String value = MAPPER.registerModule(new SimpleModule().addSerializer(new ZonedDateTimeSerializer(FORMATTER_WITHOUT_ZONEID))).writer()
-		        .with(TimeZone.getTimeZone(Z2))
-				.without(SerializationFeature.WRITE_DATES_WITH_ZONE_ID)
-				.without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-				.with(SerializationFeature.WRITE_DATES_WITH_CONTEXT_TIME_ZONE)
-				.writeValueAsString(date);
+        ZonedDateTime date = ZonedDateTime.now(Z3);
+        String value = MAPPER.writer()
+                .with(TimeZone.getTimeZone(Z2))
+                .without(SerializationFeature.WRITE_DATES_WITH_ZONE_ID)
+                .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .with(SerializationFeature.WRITE_DATES_WITH_CONTEXT_TIME_ZONE)
+                .writeValueAsString(date);
 
-		// We expect to have the date written with the ZoneId Z2
-		assertEquals("The value is incorrect", "\"" + date.withZoneSameInstant(Z2).format(FORMATTER_WITHOUT_ZONEID) + "\"", value);
+        // We expect to have the date written with the ZoneId Z2
+        assertEquals("The value is incorrect", "\"" + DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(date.withZoneSameInstant(Z2)) + "\"", value);
     }
 
     @Test
     public void testSerializationAsStringWithDefaultTimeZoneAndContextTimeZoneOff() throws Exception {
-		ZonedDateTime date = ZonedDateTime.now(Z3);
-		// With a custom DateTimeFormatter without a Zone.
-		String value = MAPPER.registerModule(new SimpleModule().addSerializer(new ZonedDateTimeSerializer(FORMATTER_WITHOUT_ZONEID))).writer()
-				.with(TimeZone.getTimeZone(Z2))
-				.without(SerializationFeature.WRITE_DATES_WITH_ZONE_ID)
-				.without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-				.without(SerializationFeature.WRITE_DATES_WITH_CONTEXT_TIME_ZONE)
-				.writeValueAsString(date);
+        ZonedDateTime date = ZonedDateTime.now(Z3);
+        String value = MAPPER.writer()
+                .with(TimeZone.getTimeZone(Z2))
+                .without(SerializationFeature.WRITE_DATES_WITH_ZONE_ID)
+                .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .without(SerializationFeature.WRITE_DATES_WITH_CONTEXT_TIME_ZONE)
+                .writeValueAsString(date);
 
-		// We expect to have the date written with the ZoneId Z3
-		assertEquals("The value is incorrect", "\"" + date.format(FORMATTER_WITHOUT_ZONEID) + "\"", value);
+        // We expect to have the date written with the ZoneId Z3
+        assertEquals("The value is incorrect", "\"" + DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(date) + "\"", value);
     }
 
     @Test
