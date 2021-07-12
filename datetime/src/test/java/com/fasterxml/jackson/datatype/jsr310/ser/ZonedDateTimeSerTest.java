@@ -44,7 +44,7 @@ import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 public class ZonedDateTimeSerTest
     extends ModuleTestBase
 {
-    private static final DateTimeFormatter FORMATTER_WITHOUT_ZONEID = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ");
+    private static final DateTimeFormatter FORMATTER_WITHOUT_ZONEID = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
@@ -284,7 +284,7 @@ public class ZonedDateTimeSerTest
                 .with(SerializationFeature.WRITE_DATES_WITH_CONTEXT_TIME_ZONE)
                 .writeValueAsString(date);
 
-        // We expect to have the date written with the ZoneId Z2
+        // We expect to have the date written with the datetime of ZoneId Z2
         assertEquals("The value is incorrect", "\"" + date.withZoneSameInstant(Z2).format(FORMATTER_WITHOUT_ZONEID) + "\"", value);
     }
 
@@ -299,7 +299,7 @@ public class ZonedDateTimeSerTest
                 .without(SerializationFeature.WRITE_DATES_WITH_CONTEXT_TIME_ZONE)
                 .writeValueAsString(date);
 
-        // We expect to have the date written with the ZoneId Z3
+        // We expect to have the date written with the datetime of ZoneId Z3
         assertEquals("The value is incorrect", "\"" + date.format(FORMATTER_WITHOUT_ZONEID) + "\"", value);
     }
 
