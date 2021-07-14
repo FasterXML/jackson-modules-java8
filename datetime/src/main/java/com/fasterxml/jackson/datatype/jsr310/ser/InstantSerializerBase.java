@@ -16,6 +16,8 @@
 
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
+import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_WITH_CONTEXT_TIME_ZONE;
+
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 import java.util.function.ToIntFunction;
@@ -130,10 +132,9 @@ public abstract class InstantSerializerBase<T extends Temporal>
         DateTimeFormatter formatter = (_formatter != null) ? _formatter : defaultFormat;
         if (formatter != null) {
             if (formatter.getZone() == null) { // timezone set if annotated on property
-                // 19-Oct-2020, tatu: As per [modules-java#188], only override with explicitly
-                //     set timezone, to minimize change from pre-2.12. May need to further
-                //     improve in future to maybe introduce more configuration.
-                if (provider.getConfig().hasExplicitTimeZone()) {
+                // If the user specified to use the context TimeZone explicitly, and the formatter provided doesn't contain a TZ
+                // Then we use the TZ specified in the objectMapper
+                if (provider.getConfig().hasExplicitTimeZone() && provider.isEnabled(WRITE_DATES_WITH_CONTEXT_TIME_ZONE)) {
                     formatter = formatter.withZone(provider.getTimeZone().toZoneId());
                 }
             }
