@@ -9,7 +9,7 @@
   <parent>
     <groupId>com.fasterxml.jackson.module</groupId>
     <artifactId>jackson-modules-java8</artifactId>
-    <version>2.13.0-rc1</version>
+    <version>2.13.0-rc2-SNAPSHOT</version>
   </parent>
   <artifactId>jackson-module-parameter-names</artifactId>
   <name>Jackson-module-parameter-names</name>
