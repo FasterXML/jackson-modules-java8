@@ -16,6 +16,10 @@
 
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -26,23 +30,22 @@ import java.time.temporal.Temporal;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import org.junit.Test;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 public class ZonedDateTimeSerTest
     extends ModuleTestBase
 {
+    private static final DateTimeFormatter FORMATTER_WITHOUT_ZONEID = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
     private static final ZoneId Z1 = ZoneId.of("America/Chicago");
@@ -268,6 +271,64 @@ public class ZonedDateTimeSerTest
                 .writeValueAsString(date);
 
         assertEquals("The value is incorrect.", "\"" + DateTimeFormatter.ISO_ZONED_DATE_TIME.format(date) + "\"", value);
+    }
+
+    @Test
+    public void testSerializationAsStringWithDefaultTimeZoneAndContextTimeZoneOnAndACustomFormatter() throws Exception {
+        ZonedDateTime date = ZonedDateTime.now(Z3);
+        // With a custom DateTimeFormatter without a ZoneId.
+        String value = MAPPER.registerModule(new SimpleModule().addSerializer(new ZonedDateTimeSerializer(FORMATTER_WITHOUT_ZONEID))).writer()
+                .with(TimeZone.getTimeZone(Z2))
+                .without(SerializationFeature.WRITE_DATES_WITH_ZONE_ID)
+                .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .with(SerializationFeature.WRITE_DATES_WITH_CONTEXT_TIME_ZONE)
+                .writeValueAsString(date);
+
+        // We expect to have the date written with the datetime of ZoneId Z2
+        assertEquals("The value is incorrect", "\"" + date.withZoneSameInstant(Z2).format(FORMATTER_WITHOUT_ZONEID) + "\"", value);
+    }
+
+    @Test
+    public void testSerializationAsStringWithDefaultTimeZoneAndContextTimeZoneOffAndACustomFormatter() throws Exception {
+        ZonedDateTime date = ZonedDateTime.now(Z3);
+        // With a custom DateTimeFormatter without a Zone.
+        String value = MAPPER.registerModule(new SimpleModule().addSerializer(new ZonedDateTimeSerializer(FORMATTER_WITHOUT_ZONEID))).writer()
+                .with(TimeZone.getTimeZone(Z2))
+                .without(SerializationFeature.WRITE_DATES_WITH_ZONE_ID)
+                .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .without(SerializationFeature.WRITE_DATES_WITH_CONTEXT_TIME_ZONE)
+                .writeValueAsString(date);
+
+        // We expect to have the date written with the datetime of ZoneId Z3
+        assertEquals("The value is incorrect", "\"" + date.format(FORMATTER_WITHOUT_ZONEID) + "\"", value);
+    }
+
+    @Test
+    public void testSerializationAsStringWithDefaultTimeZoneAndContextTimeZoneOn() throws Exception {
+        ZonedDateTime date = ZonedDateTime.now(Z3);
+        String value = MAPPER.writer()
+                .with(TimeZone.getTimeZone(Z2))
+                .without(SerializationFeature.WRITE_DATES_WITH_ZONE_ID)
+                .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .with(SerializationFeature.WRITE_DATES_WITH_CONTEXT_TIME_ZONE)
+                .writeValueAsString(date);
+
+        // We expect to have the date written with the ZoneId Z2
+        assertEquals("The value is incorrect", "\"" + DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(date.withZoneSameInstant(Z2)) + "\"", value);
+    }
+
+    @Test
+    public void testSerializationAsStringWithDefaultTimeZoneAndContextTimeZoneOff() throws Exception {
+        ZonedDateTime date = ZonedDateTime.now(Z3);
+        String value = MAPPER.writer()
+                .with(TimeZone.getTimeZone(Z2))
+                .without(SerializationFeature.WRITE_DATES_WITH_ZONE_ID)
+                .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .without(SerializationFeature.WRITE_DATES_WITH_CONTEXT_TIME_ZONE)
+                .writeValueAsString(date);
+
+        // We expect to have the date written with the ZoneId Z3
+        assertEquals("The value is incorrect", "\"" + DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(date) + "\"", value);
     }
 
     @Test
