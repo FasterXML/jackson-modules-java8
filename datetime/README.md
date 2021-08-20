@@ -3,16 +3,28 @@ Datatype module to make Jackson recognize Java 8 Date & Time API data types (JSR
 ## Summary
 
 Most [JSR-310](https://jcp.org/en/jsr/detail?id=310) types are serialized as numbers (integers or decimals as appropriate) if the
-[`SerializationFeature#WRITE_DATES_AS_TIMESTAMPS`](http://fasterxml.github.com/jackson-databind/javadoc/2.2.0/com/fasterxml/jackson/databind/SerializationFeature.html#WRITE_DATES_AS_TIMESTAMPS)
+[`SerializationFeature.WRITE_DATES_AS_TIMESTAMPS`](https://github.com/FasterXML/jackson-databind/wiki/Serialization-features#datatype-specific-serialization)
 feature is enabled, and otherwise are serialized in standard [ISO-8601](http://en.wikipedia.org/wiki/ISO_8601)
 string representation. ISO-8601 specifies formats for representing offset dates and times, zoned dates and times,
 local dates and times, periods, durations, zones, and more. All JSR-310 types have built-in translation to and from
 ISO-8601 formats.
 
+For string representation default formats for deserialization are:
+|  Java type | Format  |
+|------------|---------|
+|[`Instant`](https://docs.oracle.com/javase/8/docs/api/java/time/Instant.html)|[`DateTimeFormatter.ISO_INSTANT`](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#ISO_INSTANT)|
+|[`OffsetDateTime`](https://docs.oracle.com/javase/8/docs/api/java/time/OffsetDateTime.html)|[`DateTimeFormatter.ISO_OFFSET_DATE_TIME`](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#ISO_OFFSET_DATE_TIME)|
+|[`ZonedDateTime`](https://docs.oracle.com/javase/8/docs/api/java/time/ZonedDateTime.html)|[`DateTimeFormatter.ISO_ZONED_DATE_TIME`](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#ISO_ZONED_DATE_TIME)|
+|[`LocalDateTime`](https://docs.oracle.com/javase/8/docs/api/java/time/LocalDateTime.html)|[`DateTimeFormatter.ISO_LOCAL_DATE_TIME`](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#ISO_LOCAL_DATE_TIME)|
+|[`LocalDate`](https://docs.oracle.com/javase/8/docs/api/java/time/LocalDate.html)|[`DateTimeFormatter.ISO_LOCAL_DATE`](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#ISO_LOCAL_DATE)|
+|[`LocalTime`](https://docs.oracle.com/javase/8/docs/api/java/time/LocalTime.html)|[`DateTimeFormatter.ISO_LOCAL_TIME`](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#ISO_LOCAL_TIME)|
+|[`OffsetTime`](https://docs.oracle.com/javase/8/docs/api/java/time/OffsetTime.html)|[`DateTimeFormatter.ISO_OFFSET_TIME`](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#ISO_OFFSET_TIME)|
+|[`YearMonth`](https://docs.oracle.com/javase/8/docs/api/java/time/YearMonth.html)|[`DateTimeFormatter.ofPattern("uuuu-MM")`](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#ofPattern-java.lang.String-)|
+
 Granularity of timestamps is controlled through the companion features
-[`SerializationFeature#WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS`](http://fasterxml.github.com/jackson-databind/javadoc/2.2.0/com/fasterxml/jackson/databind/SerializationFeature.html#WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
+[`SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS`](https://github.com/FasterXML/jackson-databind/wiki/Serialization-features#datatype-specific-serialization)
 and
-[`DeserializationFeature#READ_DATE_TIMESTAMPS_AS_NANOSECONDS`](http://fasterxml.github.com/jackson-databind/javadoc/2.2.0/com/fasterxml/jackson/databind/DeserializationFeature.html#READ_DATE_TIMESTAMPS_AS_NANOSECONDS).
+[`DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS`](https://github.com/FasterXML/jackson-databind/wiki/Deserialization-Features#value-conversions-coercion).
 For serialization, timestamps are written as fractional numbers (decimals), where the number is seconds and the decimal
 is fractional seconds, if `WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS` is enabled (it is by default), with resolution as fine
 as nanoseconds depending on the underlying JDK implementation. If `WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS` is disabled,
@@ -66,10 +78,16 @@ For instance:
 
 ### Registering module
 
-Starting with Jackson 2.2, `Module`s can be automatically discovered using the Java 6 Service Provider Interface (SPI) feature.
+Starting with Jackson 2.2, `Module`s can be automatically discovered using the 
+Service Provider Interface (SPI) feature.
 You can activate this by instructing an `ObjectMapper` to find and register all `Module`s:
 
 ```java
+// Jackson 2.10 and later
+ObjectMapper mapper = JsonMapper.builder()
+    .findAndAddModules()
+    .build();
+// or, 2.x before 2.9
 ObjectMapper mapper = new ObjectMapper();
 mapper.findAndRegisterModules();
 ```
@@ -82,6 +100,11 @@ If you prefer to selectively register this module, this is done as follows, with
 `findAndRegisterModules()`:
 
 ```java
+// Jackson 2.10 and later:
+ObjectMapper mapper = JsonMapper.builder()
+    .addModule(new JavaTimeModule())
+    .build();
+// or, 2.x before 2.9
 ObjectMapper mapper = new ObjectMapper();
 mapper.registerModule(new JavaTimeModule());
 ```
@@ -90,7 +113,7 @@ After either of these, functionality is available for all normal Jackson operati
 
 ## More
 
-See [Wiki](../../wiki) for more information
+See [Wiki](../../../wiki) for more information
 (JavaDocs, downloads).
 
 Also: there is [JDK 1.7 backport](https://github.com/joschi/jackson-datatype-threetenbp) datatype module!
