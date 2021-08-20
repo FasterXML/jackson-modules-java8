@@ -23,6 +23,7 @@ all of which are built from this repository, and accessed and used as separate J
 ### Jackson 3.0
 
 Jackson 3.0 changes things as it requires Java 8 to work and can thereby directly supported features.
+
 Because of this `parameter-names` and `datatypes` modules are merged into `jackson-databind`
 and need not be registered; `datetime` module (`JavaTimeModule`) remains separate module due to its size
 and configurability options.
@@ -36,6 +37,7 @@ All modules are licensed under [Apache License 2.0](http://www.apache.org/licens
 ## Status
 
 [![Build Status](https://travis-ci.org/FasterXML/jackson-modules-java8.svg)](https://travis-ci.org/FasterXML/jackson-modules-java8)
+[![Tidelift](https://tidelift.com/badges/package/maven/com.fasterxml.jackson.datatype:jackson-datatype-jsr310)](https://tidelift.com/subscription/pkg/maven-com-fasterxml-jackson-datatype-jackson-datatype-jsr310?utm_source=maven-com-fasterxml-jackson-datatype-jackson-datatype-jsr310&utm_medium=referral&utm_campaign=readme)
 
 ## Usage
 
@@ -44,17 +46,22 @@ All modules are licensed under [Apache License 2.0](http://www.apache.org/licens
 To include modules, you use some or all of:
 
 ```xml
+<!--	Parameter names	-->
 <dependency>
     <groupId>com.fasterxml.jackson.module</groupId>
     <artifactId>jackson-module-parameter-names</artifactId>
 </dependency>
-<dependency>
-    <groupId>com.fasterxml.jackson.datatype</groupId>
-    <artifactId>jackson-datatype-jdk8</artifactId>
-</dependency>
+
+<!--	Java 8 Date/time	-->
 <dependency>
     <groupId>com.fasterxml.jackson.datatype</groupId>
     <artifactId>jackson-datatype-jsr310</artifactId>
+</dependency>
+
+<!--	Java 8 Datatypes	-->
+<dependency>
+    <groupId>com.fasterxml.jackson.datatype</groupId>
+    <artifactId>jackson-datatype-jdk8</artifactId>
 </dependency>
 ```
 
@@ -71,17 +78,17 @@ The most common mechanism (and one recommended by Jackson team) is to explicitly
 This is done by code like:
 
 ```java
-// Up to Jackson 2.9
+// Up to Jackson 2.9: (but not with 3.0)
 ObjectMapper mapper = new ObjectMapper()
    .registerModule(new ParameterNamesModule())
    .registerModule(new Jdk8Module())
    .registerModule(new JavaTimeModule()); // new module, NOT JSR310Module
 
-// or with 2.10 and above, alternatively
+// with 3.0 (or with 2.10 as alternative)
 ObjectMapper mapper = JsonMapper.builder() // or different mapper for other format
-   .registerModule(new ParameterNamesModule())
-   .registerModule(new Jdk8Module())
-   .registerModule(new JavaTimeModule())
+   .addModule(new ParameterNamesModule())
+   .addModule(new Jdk8Module())
+   .addModule(new JavaTimeModule())
    // and possibly other configuration, modules, then:
    .build();
 ```
@@ -104,13 +111,24 @@ And selection of which one varies by module and settings:
     * Duplicates are detected using id provided by `Module.getTypeId()`; duplicate-detection requires that Module provides same for all instances (true for Modules provided by this repo)
 * Otherwise all registrations are processed by the LAST one has effect as it has precedence over earlier registrations.
 
-
-Also note that before Jackson 2.10, auto-registration will only register older `JSR310Module`, and not newer
-`JavaTimeModule` -- this is due to backwards compatibility. This is changed in Jackson 2.10.
+Also note that before Jackson 2.10, auto-registration would only register older `JSR310Module`, and not newer
+`JavaTimeModule` -- this is due to backwards compatibility. This was changed in Jackson 2.10.
 
 If you want "the other" version of the module but also use auto-registration, make sure to
 register "other" module explicitly AFTER calling `mapper.findAndRegisterModules()`.
 Call after works because `getTypeId()` provided by modules differs so they are not considered duplicates.
+
+# Development
+
+## Maintainers
+
+Following developers have committer access to this project.
+
+* Authors
+    * Nick Williams (beamerblvd@github) contributed Java 8 date/time module; still helps issues from time to time
+    * Tatu Saloranta (@cowtowncoder) wrote the other 2 modules and maintains them for 2.x (in 3.0, integrated into core `jackson-databind`)
+* Maintainers:
+    * Michael O'Keeffe (kupci@github) is the current maintainer of Java 8 date/time module   
 
 ## More
 
