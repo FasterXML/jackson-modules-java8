@@ -8,7 +8,7 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
-2.13.0 (not yet released)
+2.13.0 (30-Sep-2021)
 
 #131: Deserializing ZonedDateTime with basic TZ offset notation (0000)
  (contributed by Øystein H)
