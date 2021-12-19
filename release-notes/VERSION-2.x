@@ -12,6 +12,10 @@ Modules:
 
 * No changes since 2.13
 
+2.13.1 (19-Dec-2021)
+
+No changes since 2.13.0
+
 2.13.0 (30-Sep-2021)
 
 #131: Deserializing ZonedDateTime with basic TZ offset notation (0000)
@@ -20,6 +24,7 @@ Modules:
   of "time" part
 #216: Deprecate method Jdk8Module.configureAbsentsAsNulls() (to be removed from Jackson 3)
 
+2.12.6 (15-Dec-2021)
 2.12.5 (27-Aug-2021)
 
 No changes since 2.12.4
