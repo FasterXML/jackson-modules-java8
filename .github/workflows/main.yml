@@ -19,10 +19,6 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
-    addons:
-      apt:
-        packages:
-        - openjdk-18-jdk
     strategy:
       fail-fast: false
       matrix:
@@ -35,7 +31,7 @@ jobs:
     - name: Set up JDK
       uses: actions/setup-java@v3
       with:
-        distribution: "adopt"
+        distribution: "temurin"
         java-version: ${{ matrix.java_version }}
         server-id: sonatype-nexus-snapshots
         server-username: CI_DEPLOY_USERNAME
