@@ -37,10 +37,14 @@ public class ParameterNamesAnnotationIntrospector extends NopAnnotationIntrospec
     }
 
     private String findParameterName(AnnotatedParameter annotatedParameter) {
+        AnnotatedWithParams owner = annotatedParameter.getOwner();
+        if (isParameterIgnored(annotatedParameter) || isParameterIgnored(owner)) {
+            return null;
+        }
 
         Parameter[] params;
         try {
-            params = getParameters(annotatedParameter.getOwner());
+            params = getParameters(owner);
         } catch (MalformedParametersException e) {
             return null;
         }
@@ -58,6 +62,12 @@ public class ParameterNamesAnnotationIntrospector extends NopAnnotationIntrospec
         }
 
         return null;
+    }
+
+
+    private boolean isParameterIgnored(AnnotatedMember member) {
+        JsonParamNameIgnore parameterIgnore = member.getAnnotation(JsonParamNameIgnore.class);
+        return parameterIgnore != null && parameterIgnore.value();
     }
 
     /*
