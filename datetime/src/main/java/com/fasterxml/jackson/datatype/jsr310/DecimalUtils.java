@@ -16,6 +16,8 @@
 
 package com.fasterxml.jackson.datatype.jsr310;
 
+import com.fasterxml.jackson.core.io.BigDecimalParser;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.function.BiFunction;
@@ -92,7 +94,7 @@ public final class DecimalUtils
             }
             return BigDecimal.valueOf(seconds).setScale(9);
         }
-        return new BigDecimal(toDecimal(seconds, nanoseconds));
+        return BigDecimalParser.parse(toDecimal(seconds, nanoseconds));
     }
 
     /**
@@ -104,7 +106,7 @@ public final class DecimalUtils
         // !!! 14-Mar-2016, tatu: Somewhat inefficient; should replace with functionally
         //   equivalent code that just subtracts integral part? (or, measure and show
         //   there's no difference and do nothing... )
-        return value.subtract(new BigDecimal(integer)).multiply(ONE_BILLION).intValue();
+        return value.subtract(BigDecimal.valueOf(integer)).multiply(ONE_BILLION).intValue();
     }
 
     /**
@@ -136,7 +138,7 @@ public final class DecimalUtils
         else {
             // Now we know that seconds has reasonable scale, we can safely chop it apart.
             secondsOnly = seconds.longValue();
-            nanosOnly = nanoseconds.subtract(new BigDecimal(secondsOnly).scaleByPowerOfTen(9)).intValue();
+            nanosOnly = nanoseconds.subtract(BigDecimal.valueOf(secondsOnly).scaleByPowerOfTen(9)).intValue();
 
             if (secondsOnly < 0 && secondsOnly > Instant.MIN.getEpochSecond()) {
                 // Issue #69 and Issue #120: avoid sending a negative adjustment to the Instant constructor, we want this as the actual nanos

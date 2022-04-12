@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.JsonTokenId;
+import com.fasterxml.jackson.core.io.BigDecimalParser;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -275,7 +276,7 @@ public class InstantDeserializer<T extends Temporal>
                         return _fromLong(ctxt, Long.parseLong(string));
                     }
                     if (dots == 1) {
-                        return _fromDecimal(ctxt, new BigDecimal(string));
+                        return _fromDecimal(ctxt, BigDecimalParser.parse(string));
                     }
                 } catch (NumberFormatException e) {
                     // fall through to default handling, to get error there
