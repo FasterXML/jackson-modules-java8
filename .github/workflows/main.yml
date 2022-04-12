@@ -16,13 +16,17 @@ on:
     paths-ignore:
     - "README.md"
     - "release-notes/*"
+addons:
+  apt:
+    packages:
+    - openjdk-18-jdk
 jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        java_version: ['8', '11', '17']
+        java_version: ['8', '11', '17', '18']
         os: ['ubuntu-20.04']
     env:
       JAVA_OPTS: "-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
