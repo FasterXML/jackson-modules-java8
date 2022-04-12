@@ -114,7 +114,14 @@ public class ZonedDateTimeSerTest
         ZonedDateTime original = ZonedDateTime.parse("Apr 13 1969 05:05:38.599 UTC", dtf);
         String serialized = MAPPER.writeValueAsString(original);
         ZonedDateTime deserialized = MAPPER.readValue(serialized, ZonedDateTime.class);
-        assertEquals("The value is not correct.",  original, deserialized);
+        assertEquals("The day is not correct.", original.getDayOfMonth(), deserialized.getDayOfMonth());
+        assertEquals("The month is not correct.", original.getMonthValue(), deserialized.getMonthValue());
+        assertEquals("The year is not correct.", original.getYear(), deserialized.getYear());
+        assertEquals("The hour is not correct.", original.getHour(), deserialized.getHour());
+        assertEquals("The hour is not correct.", original.getMinute(), deserialized.getMinute());
+        assertEquals("The hour is not correct.", original.getSecond(), deserialized.getSecond());
+        assertEquals("The hour is not correct.", original.getNano(), deserialized.getNano());
+        assertEquals("The time zone is not correct.", ZoneId.of("UTC"), deserialized.getZone());
     }
 
     @Test
