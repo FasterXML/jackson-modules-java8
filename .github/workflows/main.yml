@@ -16,13 +16,13 @@ on:
     paths-ignore:
     - "README.md"
     - "release-notes/*"
-addons:
-  apt:
-    packages:
-    - openjdk-18-jdk
 jobs:
   build:
     runs-on: ${{ matrix.os }}
+    addons:
+      apt:
+        packages:
+        - openjdk-18-jdk
     strategy:
       fail-fast: false
       matrix:

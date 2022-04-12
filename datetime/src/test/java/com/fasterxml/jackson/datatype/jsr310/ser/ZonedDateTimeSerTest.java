@@ -118,9 +118,9 @@ public class ZonedDateTimeSerTest
         assertEquals("The month is not correct.", original.getMonthValue(), deserialized.getMonthValue());
         assertEquals("The year is not correct.", original.getYear(), deserialized.getYear());
         assertEquals("The hour is not correct.", original.getHour(), deserialized.getHour());
-        assertEquals("The hour is not correct.", original.getMinute(), deserialized.getMinute());
-        assertEquals("The hour is not correct.", original.getSecond(), deserialized.getSecond());
-        assertEquals("The hour is not correct.", original.getNano(), deserialized.getNano());
+        assertEquals("The minute is not correct.", original.getMinute(), deserialized.getMinute());
+        assertEquals("The second is not correct.", original.getSecond(), deserialized.getSecond());
+        assertEquals("The nano is not correct.", original.getNano(), deserialized.getNano());
         assertEquals("The time zone is not correct.", ZoneId.of("UTC"), deserialized.getZone());
     }
 
