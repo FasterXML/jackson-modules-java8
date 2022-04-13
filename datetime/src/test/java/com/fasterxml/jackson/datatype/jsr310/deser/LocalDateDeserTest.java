@@ -1,10 +1,5 @@
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
-
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -16,6 +11,8 @@ import java.time.temporal.Temporal;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.OptBoolean;
+import com.fasterxml.jackson.databind.cfg.CoercionAction;
+import com.fasterxml.jackson.databind.cfg.CoercionInputShape;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.junit.Test;
 
@@ -32,6 +29,11 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
+
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertThrows;
 
 public class LocalDateDeserTest extends ModuleTestBase
 {
@@ -476,7 +478,7 @@ public class LocalDateDeserTest extends ModuleTestBase
         mapper.configOverride(LocalDate.class)
                         .setFormat(JsonFormat.Value.forShape(JsonFormat.Shape.NUMBER_INT));
 
-        assertEquals("The value is not correct.", LocalDate.of(1970, Month.MAY, 04),
+        assertEquals("The value is not correct.", LocalDate.of(1970, Month.MAY, 4),
                 mapper.readValue("123", LocalDate.class));
     }
 
@@ -490,7 +492,7 @@ public class LocalDateDeserTest extends ModuleTestBase
         ShapeWrapper w = mapper.readValue("{\"date\":123}", ShapeWrapper.class);
         LocalDate localDate = w.date;
 
-        assertEquals("The value is not correct.", LocalDate.of(1970, Month.MAY, 04),
+        assertEquals("The value is not correct.", LocalDate.of(1970, Month.MAY, 4),
                 localDate);
     }
 
@@ -502,6 +504,38 @@ public class LocalDateDeserTest extends ModuleTestBase
                 .setFormat(JsonFormat.Value.forLeniency(false));
 
         mapper.readValue("{\"value\":123}", Wrapper.class);
+    }
+
+    /**********************************************************************
+     *
+     * coercion config test
+     *
+     /**********************************************************************
+     */
+    @Test
+    public void testDeserializeFromIntegerWithCoercionActionFail() {
+        ObjectMapper mapper = newMapper();
+        mapper.coercionConfigFor(LocalDate.class)
+                .setCoercion(CoercionInputShape.Integer, CoercionAction.Fail);
+
+        MismatchedInputException exception = assertThrows(MismatchedInputException.class,
+                () -> mapper.readValue("123", LocalDate.class));
+
+        assertThat(exception.getMessage(),
+                containsString("Cannot coerce Integer value (123) to `java.time.LocalDate`"));
+    }
+
+    @Test
+    public void testDeserializeFromEmptyStringWithCoercionActionFail() {
+        ObjectMapper mapper = newMapper();
+        mapper.coercionConfigFor(LocalDate.class)
+                .setCoercion(CoercionInputShape.EmptyString, CoercionAction.Fail);
+
+        MismatchedInputException exception = assertThrows(MismatchedInputException.class,
+                () -> mapper.readValue(a2q("{'value':''}"), Wrapper.class));
+
+        assertThat(exception.getMessage(),
+                containsString("Cannot coerce empty String (\"\") to `java.time.LocalDate`"));
     }
 
     /*
