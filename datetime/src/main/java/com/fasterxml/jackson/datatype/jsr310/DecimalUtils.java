@@ -16,7 +16,7 @@
 
 package com.fasterxml.jackson.datatype.jsr310;
 
-import com.fasterxml.jackson.core.io.BigDecimalParser;
+import com.fasterxml.jackson.core.io.NumberInput;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -94,7 +94,7 @@ public final class DecimalUtils
             }
             return BigDecimal.valueOf(seconds).setScale(9);
         }
-        return BigDecimalParser.parse(toDecimal(seconds, nanoseconds));
+        return NumberInput.parseBigDecimal(toDecimal(seconds, nanoseconds));
     }
 
     /**
