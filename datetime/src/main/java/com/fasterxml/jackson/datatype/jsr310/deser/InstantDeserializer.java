@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.JsonTokenId;
+import com.fasterxml.jackson.core.io.NumberInput;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -272,10 +273,10 @@ public class InstantDeserializer<T extends Temporal>
             if (dots >= 0) { // negative if not simple number
                 try {
                     if (dots == 0) {
-                        return _fromLong(ctxt, Long.parseLong(string));
+                        return _fromLong(ctxt, NumberInput.parseLong(string));
                     }
                     if (dots == 1) {
-                        return _fromDecimal(ctxt, new BigDecimal(string));
+                        return _fromDecimal(ctxt, NumberInput.parseBigDecimal(string));
                     }
                 } catch (NumberFormatException e) {
                     // fall through to default handling, to get error there
