@@ -27,7 +27,7 @@ introspection of method/constructor parameter names, without having to add expli
     <packageVersion.package>${project.groupId}.paramnames</packageVersion.package>
 
     <assertj-core.version>3.8.0</assertj-core.version>
-    <mockito-core.version>1.10.19</mockito-core.version>
+    <mockito-core.version>4.5.0</mockito-core.version>
   </properties>
 
   <dependencies>
