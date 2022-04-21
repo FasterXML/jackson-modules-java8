@@ -12,6 +12,8 @@ Modules:
 
 #230: Change `LocalDateTimeSerializer` constructor protected from private
  (requested by trydofor@github)
+#240: `LocalDateDeserializer` should consider coercionConfig settings
+ (contributed by (Maciej D)
 
 2.13.2 (06-Mar-2022)
 2.13.1 (19-Dec-2021)

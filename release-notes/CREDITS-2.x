@@ -148,3 +148,7 @@ Gökhan Öner (gokhanoner@github)
 Øystein B. Huseby (oeystein@github)
   * Contributed #131: Deserializing ZonedDateTime with basic TZ offset notation (0000)
    (2.13.0)
+
+Maciej Dębowski (maciekdeb@github)
+  * Contributed #240: `LocalDateDeserializer` should consider coercionConfig settings
+   (2.14.0)
