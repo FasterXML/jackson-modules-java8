@@ -48,7 +48,8 @@ public class LocalDateTimeSerializer extends JSR310FormattedSerializerBase<Local
         super(LocalDateTime.class, f);
     }
 
-    private LocalDateTimeSerializer(LocalDateTimeSerializer base, Boolean useTimestamp, Boolean useNanoseconds, DateTimeFormatter f) {
+    // protected in 2.14 (from private)
+    protected LocalDateTimeSerializer(LocalDateTimeSerializer base, Boolean useTimestamp, Boolean useNanoseconds, DateTimeFormatter f) {
         super(base, useTimestamp, useNanoseconds, f, null);
     }
 

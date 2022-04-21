@@ -10,7 +10,8 @@ Modules:
 
 2.14.0 (not yet released)
 
-* No changes since 2.13
+#230: Change `LocalDateTimeSerializer` constructor protected from private
+ (requested by trydofor@github)
 
 2.13.2 (06-Mar-2022)
 2.13.1 (19-Dec-2021)
