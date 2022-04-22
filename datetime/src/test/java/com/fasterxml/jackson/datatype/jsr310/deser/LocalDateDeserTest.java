@@ -9,28 +9,27 @@ import java.time.temporal.Temporal;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.OptBoolean;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Feature;
 
+import com.fasterxml.jackson.databind.cfg.CoercionAction;
+import com.fasterxml.jackson.databind.cfg.CoercionInputShape;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.core.type.TypeReference;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.type.LogicalType;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertThrows;
 
 public class LocalDateDeserTest extends ModuleTestBase
 {
@@ -494,7 +493,7 @@ public class LocalDateDeserTest extends ModuleTestBase
                         o -> o.setFormat(JsonFormat.Value.forShape(JsonFormat.Shape.NUMBER_INT)))
                 .build();
 
-        assertEquals("The value is not correct.", LocalDate.of(1970, Month.MAY, 04),
+        assertEquals("The value is not correct.", LocalDate.of(1970, Month.MAY, 4),
                 mapper.readValue("123", LocalDate.class));
     }
 
@@ -509,7 +508,7 @@ public class LocalDateDeserTest extends ModuleTestBase
         ShapeWrapper w = mapper.readValue("{\"date\":123}", ShapeWrapper.class);
         LocalDate localDate = w.date;
 
-        assertEquals("The value is not correct.", LocalDate.of(1970, Month.MAY, 04),
+        assertEquals("The value is not correct.", LocalDate.of(1970, Month.MAY, 4),
                 localDate);
     }
 
@@ -526,6 +525,40 @@ public class LocalDateDeserTest extends ModuleTestBase
         } catch (MismatchedInputException e) {
             verifyException(e, "Cannot deserialize instance of `java.time.LocalDate`");
         }
+    }
+
+    /**********************************************************************
+     *
+     * coercion config test
+     *
+     /**********************************************************************
+     */
+
+    @Test
+    public void testDeserializeFromIntegerWithCoercionActionFail() {
+        ObjectMapper mapper = newMapperBuilder()
+                .withCoercionConfig(LocalDate.class, cfg ->
+                    cfg.setCoercion(CoercionInputShape.Integer, CoercionAction.Fail)
+                ).build();
+        MismatchedInputException exception = assertThrows(MismatchedInputException.class,
+                () -> mapper.readValue("123", LocalDate.class));
+
+        assertThat(exception.getMessage(),
+                containsString("Cannot coerce Integer value (123) to `java.time.LocalDate`"));
+    }
+
+    @Test
+    public void testDeserializeFromEmptyStringWithCoercionActionFail() {
+        ObjectMapper mapper = newMapperBuilder()
+                .withCoercionConfig(LocalDate.class, cfg ->
+                    cfg.setCoercion(CoercionInputShape.EmptyString, CoercionAction.Fail)
+                ).build();
+
+        MismatchedInputException exception = assertThrows(MismatchedInputException.class,
+                () -> mapper.readValue(a2q("{'value':''}"), Wrapper.class));
+
+        assertThat(exception.getMessage(),
+                containsString("Cannot coerce empty String (\"\") to `java.time.LocalDate`"));
     }
 
     /*
