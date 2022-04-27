@@ -40,9 +40,18 @@ public class InstantSerializer extends InstantSerializerBase<Instant>
                 null);
     }
 
+    @Deprecated // since 2.14
     protected InstantSerializer(InstantSerializer base,
             Boolean useTimestamp, DateTimeFormatter formatter) {
-        this(base, useTimestamp, null, formatter);
+        this(base, useTimestamp, base._useNanoseconds, formatter);
+    }
+
+    /**
+     * @since 2.14
+     */
+    protected InstantSerializer(InstantSerializer base, Boolean useTimestamp,
+            DateTimeFormatter formatter, JsonFormat.Shape shape) {
+        super(base, useTimestamp, base._useNanoseconds, formatter, shape);
     }
 
     protected InstantSerializer(InstantSerializer base,
@@ -53,7 +62,7 @@ public class InstantSerializer extends InstantSerializerBase<Instant>
     @Override
     protected JSR310FormattedSerializerBase<Instant> withFormat(Boolean useTimestamp,
             DateTimeFormatter formatter, JsonFormat.Shape shape) {
-        return new InstantSerializer(this, useTimestamp, formatter);
+        return new InstantSerializer(this, useTimestamp, formatter, shape);
     }
 
     @Override

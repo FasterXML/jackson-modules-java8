@@ -2,6 +2,7 @@ package com.fasterxml.jackson.datatype.jsr310.ser;
 
 import static org.junit.Assert.assertEquals;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -258,5 +259,17 @@ public class OffsetDateTimeSerTest
 
         // We expect to have the date written with the ZoneId Z3
         assertEquals("The value is incorrect", "\"" + FORMATTER.format(date) + "\"", value);
+    }
+
+    private static class Pojo1 {
+        @JsonFormat(shape = JsonFormat.Shape.NUMBER_INT)
+        public OffsetDateTime t1 = OffsetDateTime.parse("2022-04-27T12:00:00+02:00");
+        public OffsetDateTime t2 = t1;
+    }
+
+    @Test
+    public void testShapeInt() throws JsonProcessingException {
+        String json1 = newMapper().writeValueAsString(new Pojo1());
+        assertEquals("{\"t1\":1651053600000,\"t2\":1651053600.000000000}", json1);
     }
 }

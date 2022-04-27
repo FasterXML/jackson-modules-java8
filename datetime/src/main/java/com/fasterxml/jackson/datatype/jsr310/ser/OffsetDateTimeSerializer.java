@@ -16,9 +16,10 @@ public class OffsetDateTimeSerializer extends InstantSerializerBase<OffsetDateTi
                 DateTimeFormatter.ISO_OFFSET_DATE_TIME);
     }
 
+    @Deprecated // since 2.14
     protected OffsetDateTimeSerializer(OffsetDateTimeSerializer base,
             Boolean useTimestamp, DateTimeFormatter formatter) {
-        this(base, useTimestamp, null, formatter);
+        this(base, useTimestamp, base._useNanoseconds, formatter);
     }
 
     protected OffsetDateTimeSerializer(OffsetDateTimeSerializer base,
@@ -26,11 +27,19 @@ public class OffsetDateTimeSerializer extends InstantSerializerBase<OffsetDateTi
         super(base, useTimestamp, useNanoseconds, formatter);
     }
 
+    /**
+     * @since 2.14
+     */
+    public OffsetDateTimeSerializer(OffsetDateTimeSerializer base, Boolean useTimestamp,
+            DateTimeFormatter formatter, JsonFormat.Shape shape) {
+        super(base, useTimestamp, base._useNanoseconds, formatter, shape);
+    }
+
     @Override
     protected JSR310FormattedSerializerBase<?> withFormat(Boolean useTimestamp,
         DateTimeFormatter formatter, JsonFormat.Shape shape)
     {
-        return new OffsetDateTimeSerializer(this, useTimestamp, formatter);
+        return new OffsetDateTimeSerializer(this, useTimestamp, formatter, shape);
     }
 
     @Override

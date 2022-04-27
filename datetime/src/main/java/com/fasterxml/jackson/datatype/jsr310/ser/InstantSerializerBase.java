@@ -70,13 +70,21 @@ public abstract class InstantSerializerBase<T extends Temporal>
     protected InstantSerializerBase(InstantSerializerBase<T> base,
             Boolean useTimestamp, DateTimeFormatter dtf)
     {
-        this(base, useTimestamp, null, dtf);
+        this(base, useTimestamp, base._useNanoseconds, dtf);
     }
 
     protected InstantSerializerBase(InstantSerializerBase<T> base,
             Boolean useTimestamp, Boolean useNanoseconds, DateTimeFormatter dtf)
     {
-        super(base, useTimestamp, useNanoseconds, dtf, null);
+        this(base, useTimestamp, useNanoseconds, dtf, base._shape);
+    }
+
+    /**
+     * @since 2.14
+     */
+    protected InstantSerializerBase(InstantSerializerBase<T> base, Boolean useTimestamp,
+            Boolean useNanoseconds, DateTimeFormatter dtf, JsonFormat.Shape shape) {
+        super(base, useTimestamp, useNanoseconds, dtf, shape);
         defaultFormat = base.defaultFormat;
         getEpochMillis = base.getEpochMillis;
         getEpochSeconds = base.getEpochSeconds;
