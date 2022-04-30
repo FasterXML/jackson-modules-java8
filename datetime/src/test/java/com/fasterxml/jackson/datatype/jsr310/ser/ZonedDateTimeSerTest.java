@@ -16,10 +16,6 @@
 
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -30,8 +26,6 @@ import java.time.temporal.Temporal;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import org.junit.Test;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,6 +35,12 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
+
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class ZonedDateTimeSerTest
     extends ModuleTestBase
@@ -927,6 +927,18 @@ public class ZonedDateTimeSerTest
         final String serialized = MAPPER.writeValueAsString(original);
         final Instant deserialized = MAPPER.readValue(serialized, Instant.class);
         assertEquals(original, deserialized);
+    }
+
+    static class Pojo1 {
+        @JsonFormat(shape = JsonFormat.Shape.NUMBER_INT)
+        public ZonedDateTime t1 = ZonedDateTime.parse("2022-04-27T12:00:00+02:00[Europe/Paris]");
+        public ZonedDateTime t2 = t1;
+    }
+
+    @Test
+    public void testShapeInt() throws Exception {
+        String json1 = newMapper().writeValueAsString(new Pojo1());
+        assertEquals("{\"t1\":1651053600000,\"t2\":1651053600.000000000}", json1);
     }
 
     private static void assertIsEqual(ZonedDateTime expected, ZonedDateTime actual)

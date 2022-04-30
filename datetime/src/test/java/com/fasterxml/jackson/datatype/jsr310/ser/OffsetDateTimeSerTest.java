@@ -10,14 +10,14 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 import java.util.TimeZone;
 
-import org.junit.Test;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
+
+import org.junit.Test;
 
 public class OffsetDateTimeSerTest
     extends ModuleTestBase
@@ -261,5 +261,17 @@ public class OffsetDateTimeSerTest
 
         // We expect to have the date written with the ZoneId Z3
         assertEquals("The value is incorrect", "\"" + FORMATTER.format(date) + "\"", value);
+    }
+
+    static class Pojo1 {
+        @JsonFormat(shape = JsonFormat.Shape.NUMBER_INT)
+        public OffsetDateTime t1 = OffsetDateTime.parse("2022-04-27T12:00:00+02:00");
+        public OffsetDateTime t2 = t1;
+    }
+
+    @Test
+    public void testShapeInt() throws Exception {
+        String json1 = newMapper().writeValueAsString(new Pojo1());
+        assertEquals("{\"t1\":1651053600000,\"t2\":1651053600.000000000}", json1);
     }
 }

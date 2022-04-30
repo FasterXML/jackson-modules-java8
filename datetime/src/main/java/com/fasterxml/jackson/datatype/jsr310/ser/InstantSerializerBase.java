@@ -66,9 +66,10 @@ public abstract class InstantSerializerBase<T extends Temporal>
 
     protected InstantSerializerBase(InstantSerializerBase<T> base,
             DateTimeFormatter dtf,
-            Boolean useTimestamp,  Boolean useNanoseconds)
+            Boolean useTimestamp,  Boolean useNanoseconds,
+            JsonFormat.Shape shape)
     {
-        super(base, dtf, useTimestamp, useNanoseconds, null);
+        super(base, dtf, useTimestamp, useNanoseconds, shape);
         defaultFormat = base.defaultFormat;
         getEpochMillis = base.getEpochMillis;
         getEpochSeconds = base.getEpochSeconds;
@@ -126,7 +127,6 @@ public abstract class InstantSerializerBase<T extends Temporal>
         return JsonToken.VALUE_STRING;
     }
 
-    // @since 2.12
     protected String formatValue(T value, SerializerProvider provider)
     {
         DateTimeFormatter formatter = (_formatter != null) ? _formatter : defaultFormat;
