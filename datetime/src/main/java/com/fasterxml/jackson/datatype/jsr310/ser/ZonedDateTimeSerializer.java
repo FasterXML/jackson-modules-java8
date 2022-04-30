@@ -36,13 +36,23 @@ public class ZonedDateTimeSerializer extends InstantSerializerBase<ZonedDateTime
 
     protected ZonedDateTimeSerializer(ZonedDateTimeSerializer base,
             Boolean useTimestamp, DateTimeFormatter formatter, Boolean writeZoneId) {
-        this(base, useTimestamp, null, formatter, writeZoneId);
+        this(base, useTimestamp, base._useNanoseconds, formatter, base._shape, writeZoneId);
     }
 
+    @Deprecated // since 2.14
     protected ZonedDateTimeSerializer(ZonedDateTimeSerializer base,
             Boolean useTimestamp, Boolean useNanoseconds, DateTimeFormatter formatter,
             Boolean writeZoneId) {
-        super(base, useTimestamp, useNanoseconds, formatter);
+        this(base, useTimestamp, useNanoseconds, formatter, base._shape, writeZoneId);
+    }
+
+    /**
+     * @since 2.14
+     */
+    protected ZonedDateTimeSerializer(ZonedDateTimeSerializer base,
+            Boolean useTimestamp, Boolean useNanoseconds, DateTimeFormatter formatter,
+            JsonFormat.Shape shape, Boolean writeZoneId) {
+        super(base, useTimestamp, useNanoseconds, formatter, shape);
         _writeZoneId = writeZoneId;
     }
 
@@ -51,7 +61,8 @@ public class ZonedDateTimeSerializer extends InstantSerializerBase<ZonedDateTime
         Boolean useTimestamp,
         DateTimeFormatter formatter,
         JsonFormat.Shape shape) {
-        return new ZonedDateTimeSerializer(this, useTimestamp, formatter, _writeZoneId);
+        return new ZonedDateTimeSerializer(this, useTimestamp, _useNanoseconds, formatter,
+            shape, _writeZoneId);
     }
 
     @Override
