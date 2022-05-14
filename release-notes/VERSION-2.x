@@ -17,6 +17,7 @@ Modules:
 #242: Fix InstantSerializer ignoring the JsonFormat shape
  (contributed by KaseiFR@github)
 
+2.13.3 (14-May-2022)
 2.13.2 (06-Mar-2022)
 2.13.1 (19-Dec-2021)
 
