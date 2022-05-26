@@ -22,6 +22,7 @@ No changes since 2.13.0
   of "time" part
 #216: Deprecate method Jdk8Module.configureAbsentsAsNulls() (to be removed from Jackson 3)
 
+2.12.7 (26-May-2022)
 2.12.6 (15-Dec-2021)
 2.12.5 (27-Aug-2021)
 
