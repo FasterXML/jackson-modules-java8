@@ -1,14 +1,13 @@
 package com.fasterxml.jackson.datatype.jsr310.failing;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 import org.junit.Test;
-
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 
 import static org.junit.Assert.assertEquals;
 
@@ -17,28 +16,29 @@ import static org.junit.Assert.assertEquals;
  */
 public class ZonedDateTimeIssue244Test extends ModuleTestBase
 {
-    private final ObjectMapper MAPPER = newMapper()
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    private final ObjectMapper MAPPER = mapperBuilder()
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .build();
 
     @Test
-    public void zoneIdUTC() throws JsonProcessingException
+    public void zoneIdUTC() throws Exception
     {
-        assertSerializeAndSerialize(ZonedDateTime.now(ZoneId.of("UTC")));
+        assertSerializeAndDeserialize(ZonedDateTime.now(ZoneId.of("UTC")));
     }
 
     @Test
-    public void zoneOffsetUTC() throws JsonProcessingException
+    public void zoneOffsetUTC() throws Exception
     {
-        assertSerializeAndSerialize(ZonedDateTime.now(ZoneOffset.UTC)); // fails!
+        assertSerializeAndDeserialize(ZonedDateTime.now(ZoneOffset.UTC)); // fails!
     }
 
     @Test
-    public void zoneOffsetNonUTC() throws JsonProcessingException
+    public void zoneOffsetNonUTC() throws Exception
     {
-        assertSerializeAndSerialize(ZonedDateTime.now(ZoneOffset.ofHours(-7))); // fails!
+        assertSerializeAndDeserialize(ZonedDateTime.now(ZoneOffset.ofHours(-7))); // fails!
     }
 
-    private void assertSerializeAndSerialize(final ZonedDateTime date) throws JsonProcessingException
+    private void assertSerializeAndDeserialize(final ZonedDateTime date) throws Exception
     {
         final Example example1 = new Example(date);
         final String json = MAPPER.writeValueAsString(example1);
