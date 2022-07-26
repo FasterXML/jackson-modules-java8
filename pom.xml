@@ -72,7 +72,7 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <configuration>
             <excludes>
-              <exclude>com/fasterxml/jackson/**/failing/*.java</exclude>
+              <exclude>tools/jackson/**/failing/*.java</exclude>
             </excludes>
           </configuration>
 	</plugin>
