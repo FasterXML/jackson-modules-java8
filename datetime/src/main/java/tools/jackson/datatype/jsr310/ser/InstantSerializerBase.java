@@ -33,7 +33,7 @@ import tools.jackson.databind.SerializerProvider;
 import tools.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import tools.jackson.databind.jsonFormatVisitors.JsonIntegerFormatVisitor;
 import tools.jackson.databind.jsonFormatVisitors.JsonNumberFormatVisitor;
-import tools.jackson.datatype.jsr310.DecimalUtils;
+import tools.jackson.datatype.jsr310.util.DecimalUtils;
 
 /**
  * Base class for serializers used for {@link java.time.Instant} and

@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 
 import org.junit.Test;
 
+import tools.jackson.datatype.jsr310.util.DecimalUtils;
+
 import static org.junit.Assert.*;
 
 public class TestDecimalUtils extends ModuleTestBase

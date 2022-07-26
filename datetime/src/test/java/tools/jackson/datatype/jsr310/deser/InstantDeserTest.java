@@ -9,9 +9,9 @@ import java.util.regex.Matcher;
 
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.exc.MismatchedInputException;
-import tools.jackson.datatype.jsr310.DecimalUtils;
 import tools.jackson.datatype.jsr310.MockObjectConfiguration;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
+import tools.jackson.datatype.jsr310.util.DecimalUtils;
 
 import org.junit.Test;
 

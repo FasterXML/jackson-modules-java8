@@ -7,7 +7,7 @@ import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonGenerator;
 
 import tools.jackson.databind.ValueSerializer;
-import tools.jackson.datatype.jsr310.DecimalUtils;
+import tools.jackson.datatype.jsr310.util.DecimalUtils;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.SerializerProvider;
 

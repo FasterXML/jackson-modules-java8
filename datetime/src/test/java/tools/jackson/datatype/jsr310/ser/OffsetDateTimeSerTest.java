@@ -13,9 +13,9 @@ import java.util.TimeZone;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
-import tools.jackson.datatype.jsr310.DecimalUtils;
 import tools.jackson.datatype.jsr310.MockObjectConfiguration;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
+import tools.jackson.datatype.jsr310.util.DecimalUtils;
 
 import org.junit.Test;
 

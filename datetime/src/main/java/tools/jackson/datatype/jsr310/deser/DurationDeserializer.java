@@ -28,7 +28,7 @@ import tools.jackson.core.JsonTokenId;
 import tools.jackson.core.StreamReadCapability;
 import tools.jackson.core.io.NumberInput;
 import tools.jackson.databind.*;
-import tools.jackson.datatype.jsr310.DecimalUtils;
+import tools.jackson.datatype.jsr310.util.DecimalUtils;
 import tools.jackson.datatype.jsr310.util.DurationUnitConverter;
 
 /**

@@ -42,7 +42,7 @@ import tools.jackson.core.io.NumberInput;
 import tools.jackson.databind.BeanProperty;
 import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.DeserializationFeature;
-import tools.jackson.datatype.jsr310.DecimalUtils;
+import tools.jackson.datatype.jsr310.util.DecimalUtils;
 
 /**
  * Deserializer for Java 8 temporal {@link Instant}s, {@link OffsetDateTime},
