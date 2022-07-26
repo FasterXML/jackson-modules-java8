@@ -48,7 +48,7 @@ class OptionalDoubleDeserializer extends BaseScalarOptionalDeserializer<Optional
             // 21-Jun-2020, tatu: Should this also accept "textual null" similar
             //   to regular Doubles?
             text = text.trim();
-            return OptionalDouble.of(_parseDoublePrimitive(ctxt, text));
+            return OptionalDouble.of(_parseDoublePrimitive(p, ctxt, text));
         case JsonTokenId.ID_NUMBER_INT: // coercion here should be fine
             return OptionalDouble.of(p.getDoubleValue());
         case JsonTokenId.ID_NULL:
