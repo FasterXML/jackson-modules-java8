@@ -21,12 +21,12 @@ import java.time.Year;
 import java.time.format.DateTimeFormatter;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.core.StreamReadCapability;
-import com.fasterxml.jackson.core.io.NumberInput;
-import com.fasterxml.jackson.databind.DeserializationContext;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
+import tools.jackson.core.StreamReadCapability;
+import tools.jackson.core.io.NumberInput;
+import tools.jackson.databind.DeserializationContext;
 
 /**
  * Deserializer for Java 8 temporal {@link Year}s.

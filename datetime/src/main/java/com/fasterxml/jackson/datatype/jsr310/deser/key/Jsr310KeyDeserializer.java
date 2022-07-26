@@ -2,10 +2,10 @@ package com.fasterxml.jackson.datatype.jsr310.deser.key;
 
 import java.time.DateTimeException;
 
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.KeyDeserializer;
-import com.fasterxml.jackson.databind.util.ClassUtil;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.KeyDeserializer;
+import tools.jackson.databind.util.ClassUtil;
 
 abstract class Jsr310KeyDeserializer extends KeyDeserializer
 {

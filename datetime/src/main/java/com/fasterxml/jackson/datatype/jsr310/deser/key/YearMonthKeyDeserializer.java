@@ -9,8 +9,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.SignStyle;
 
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.databind.DeserializationContext;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationContext;
 
 public class YearMonthKeyDeserializer extends Jsr310KeyDeserializer {
     public static final YearMonthKeyDeserializer INSTANCE = new YearMonthKeyDeserializer();

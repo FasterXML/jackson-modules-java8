@@ -6,7 +6,7 @@ import java.time.temporal.TemporalAdjusters;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
 public class UnsupportedTypesTest extends ModuleTestBase

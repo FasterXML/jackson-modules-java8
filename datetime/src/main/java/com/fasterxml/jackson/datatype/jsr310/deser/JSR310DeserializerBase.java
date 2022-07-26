@@ -20,17 +20,17 @@ import java.time.DateTimeException;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.core.io.NumberInput;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
+import tools.jackson.core.io.NumberInput;
 
-import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.cfg.CoercionAction;
-import com.fasterxml.jackson.databind.deser.std.StdScalarDeserializer;
-import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
-import com.fasterxml.jackson.databind.type.LogicalType;
-import com.fasterxml.jackson.databind.util.ClassUtil;
+import tools.jackson.databind.*;
+import tools.jackson.databind.cfg.CoercionAction;
+import tools.jackson.databind.deser.std.StdScalarDeserializer;
+import tools.jackson.databind.jsontype.TypeDeserializer;
+import tools.jackson.databind.type.LogicalType;
+import tools.jackson.databind.util.ClassUtil;
 
 /**
  * Base class that indicates that all JSR310 datatypes are deserialized from scalar JSON types.

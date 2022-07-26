@@ -5,11 +5,11 @@ import java.time.format.DateTimeFormatter;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.JsonToken;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.SerializerProvider;
 
 public class ZonedDateTimeSerializer extends InstantSerializerBase<ZonedDateTime> {
     public static final ZonedDateTimeSerializer INSTANCE = new ZonedDateTimeSerializer();

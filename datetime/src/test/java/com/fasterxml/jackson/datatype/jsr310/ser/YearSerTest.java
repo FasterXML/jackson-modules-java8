@@ -19,7 +19,7 @@ package com.fasterxml.jackson.datatype.jsr310.ser;
 import java.time.Year;
 import java.time.temporal.Temporal;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 

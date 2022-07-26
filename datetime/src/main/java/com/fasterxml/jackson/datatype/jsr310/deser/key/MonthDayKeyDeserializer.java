@@ -8,8 +8,8 @@ import java.time.MonthDay;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.databind.DeserializationContext;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationContext;
 
 public class MonthDayKeyDeserializer extends Jsr310KeyDeserializer {
 

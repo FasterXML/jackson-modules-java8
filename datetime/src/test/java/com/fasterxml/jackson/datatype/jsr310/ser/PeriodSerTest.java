@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 import java.time.Period;
 import java.time.temporal.TemporalAmount;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 

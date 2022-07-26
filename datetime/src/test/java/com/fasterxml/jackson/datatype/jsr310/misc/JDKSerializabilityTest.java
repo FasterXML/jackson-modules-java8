@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.datatype.jsr310.*;
 
-import com.fasterxml.jackson.databind.*;
+import tools.jackson.databind.*;
 
 import static org.junit.Assert.assertEquals;
 

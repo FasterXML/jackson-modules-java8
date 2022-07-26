@@ -3,9 +3,9 @@ package com.fasterxml.jackson.datatype.jsr310.ser;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.YearDeserializer;
 import org.junit.Test;
 import org.junit.runner.RunWith;

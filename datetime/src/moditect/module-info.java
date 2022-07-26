@@ -1,22 +1,22 @@
-// Generated 28-Mar-2019 using Moditect maven plugin
-module com.fasterxml.jackson.datatype.jsr310 {
+module tools.jackson.datatype.jsr310 {
     requires com.fasterxml.jackson.annotation;
-    requires com.fasterxml.jackson.core;
-    requires com.fasterxml.jackson.databind;
 
-    exports com.fasterxml.jackson.datatype.jsr310;
-    exports com.fasterxml.jackson.datatype.jsr310.deser;
-    exports com.fasterxml.jackson.datatype.jsr310.deser.key;
-    exports com.fasterxml.jackson.datatype.jsr310.ser;
-    exports com.fasterxml.jackson.datatype.jsr310.ser.key;
+    requires tools.jackson.core;
+    requires tools.jackson.databind;
+
+    exports tools.jackson.datatype.jsr310;
+    exports tools.jackson.datatype.jsr310.deser;
+    exports tools.jackson.datatype.jsr310.deser.key;
+    exports tools.jackson.datatype.jsr310.ser;
+    exports tools.jackson.datatype.jsr310.ser.key;
 
     // 27-Jan-2021, tatu: Likely needed for access to (de)serializers via
     //    annotations (see [modules-java#202])
-    opens com.fasterxml.jackson.datatype.jsr310.deser;
-    opens com.fasterxml.jackson.datatype.jsr310.deser.key;
-    opens com.fasterxml.jackson.datatype.jsr310.ser;
-    opens com.fasterxml.jackson.datatype.jsr310.ser.key;
+    opens tools.jackson.datatype.jsr310.deser;
+    opens tools.jackson.datatype.jsr310.deser.key;
+    opens tools.jackson.datatype.jsr310.ser;
+    opens tools.jackson.datatype.jsr310.ser.key;
 
-    provides com.fasterxml.jackson.databind.JacksonModule with
-        com.fasterxml.jackson.datatype.jsr310.JSR310Module;
+    provides tools.jackson.databind.JacksonModule with
+        tools.jackson.datatype.jsr310.JSR310Module;
 }

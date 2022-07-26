@@ -4,8 +4,8 @@ import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.databind.DeserializationContext;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationContext;
 
 public class LocalDateTimeKeyDeserializer extends Jsr310KeyDeserializer {
 

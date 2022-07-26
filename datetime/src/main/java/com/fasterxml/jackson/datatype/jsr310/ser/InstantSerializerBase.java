@@ -16,24 +16,24 @@
 
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
-import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_WITH_CONTEXT_TIME_ZONE;
-
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.core.JsonParser.NumberType;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.JsonToken;
+import tools.jackson.core.JsonParser.NumberType;
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
-import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonIntegerFormatVisitor;
-import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonNumberFormatVisitor;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.SerializerProvider;
+import tools.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
+import tools.jackson.databind.jsonFormatVisitors.JsonIntegerFormatVisitor;
+import tools.jackson.databind.jsonFormatVisitors.JsonNumberFormatVisitor;
+
 import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 
 /**
@@ -134,7 +134,8 @@ public abstract class InstantSerializerBase<T extends Temporal>
             if (formatter.getZone() == null) { // timezone set if annotated on property
                 // If the user specified to use the context TimeZone explicitly, and the formatter provided doesn't contain a TZ
                 // Then we use the TZ specified in the objectMapper
-                if (provider.getConfig().hasExplicitTimeZone() && provider.isEnabled(WRITE_DATES_WITH_CONTEXT_TIME_ZONE)) {
+                if (provider.getConfig().hasExplicitTimeZone()
+                        && provider.isEnabled(SerializationFeature.WRITE_DATES_WITH_CONTEXT_TIME_ZONE)) {
                     formatter = formatter.withZone(provider.getTimeZone().toZoneId());
                 }
             }

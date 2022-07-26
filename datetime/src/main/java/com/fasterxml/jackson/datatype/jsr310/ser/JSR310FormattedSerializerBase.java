@@ -23,8 +23,8 @@ import java.util.Locale;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 
-import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.jsonFormatVisitors.*;
+import tools.jackson.databind.*;
+import tools.jackson.databind.jsonFormatVisitors.*;
 
 /**
  * Base class that provides an array schema instead of scalar schema if

@@ -21,13 +21,13 @@ import java.time.DateTimeException;
 import java.time.Duration;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.core.JsonTokenId;
-import com.fasterxml.jackson.core.StreamReadCapability;
-import com.fasterxml.jackson.core.io.NumberInput;
-import com.fasterxml.jackson.databind.*;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
+import tools.jackson.core.JsonTokenId;
+import tools.jackson.core.StreamReadCapability;
+import tools.jackson.core.io.NumberInput;
+import tools.jackson.databind.*;
 import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 import com.fasterxml.jackson.datatype.jsr310.util.DurationUnitConverter;
 

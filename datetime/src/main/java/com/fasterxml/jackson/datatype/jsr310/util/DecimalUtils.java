@@ -14,7 +14,7 @@
  * limitations under the license.
  */
 
-package com.fasterxml.jackson.datatype.jsr310;
+package com.fasterxml.jackson.datatype.jsr310.util;
 
 import tools.jackson.core.io.NumberInput;
 

@@ -8,9 +8,9 @@ import java.util.*;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.jsonFormatVisitors.*;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.*;
+import tools.jackson.databind.jsonFormatVisitors.*;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
 public class DateTimeSchemasTest extends ModuleTestBase

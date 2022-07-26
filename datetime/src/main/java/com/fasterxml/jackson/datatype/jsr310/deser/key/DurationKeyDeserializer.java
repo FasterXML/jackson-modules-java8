@@ -3,8 +3,8 @@ package com.fasterxml.jackson.datatype.jsr310.deser.key;
 import java.time.DateTimeException;
 import java.time.Duration;
 
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.databind.DeserializationContext;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationContext;
 
 public class DurationKeyDeserializer extends Jsr310KeyDeserializer {
 
