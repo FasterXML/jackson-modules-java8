@@ -30,10 +30,7 @@
     <url>https://github.com/FasterXML/jackson-modules-java8/issues</url>
   </issueManagement>
 
-  <!-- NOTE: `dependencyManagement` comes from jackson-bom since 2.8.5 -->
-
   <dependencies>
-    <!-- Extends Jackson mapper -->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
