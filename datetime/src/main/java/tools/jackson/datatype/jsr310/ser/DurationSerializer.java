@@ -110,7 +110,6 @@ public class DurationSerializer extends JSR310FormattedSerializerBase<Duration>
                                 "Bad 'pattern' definition (\"%s\") for `Duration`: expected one of [%s]",
                                 pattern, DurationUnitConverter.descForAllowed()));
             }
-
             ser = ser.withConverter(p);
         }
         return ser;
@@ -121,14 +120,14 @@ public class DurationSerializer extends JSR310FormattedSerializerBase<Duration>
         throws JacksonException
     {
         if (useTimestamp(provider)) {
-            if (useNanoseconds(provider)) {
+            // 03-Aug-2022, tatu: As per [modules-java8#224] need to consider
+            //     Pattern first, and only then nano-seconds/millis difference
+            if (_durationUnitConverter != null) {
+                generator.writeNumber(_durationUnitConverter.convert(duration));
+            } else if (useNanoseconds(provider)) {
                 generator.writeNumber(_toNanos(duration));
             } else {
-                if (_durationUnitConverter != null) {
-                    generator.writeNumber(_durationUnitConverter.convert(duration));
-                } else {
-                    generator.writeNumber(duration.toMillis());
-                }
+                generator.writeNumber(duration.toMillis());
             }
         } else {
             generator.writeString(duration.toString());

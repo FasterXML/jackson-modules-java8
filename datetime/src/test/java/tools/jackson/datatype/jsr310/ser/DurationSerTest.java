@@ -1,6 +1,8 @@
 package tools.jackson.datatype.jsr310.ser;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.ObjectWriter;
 import tools.jackson.databind.SerializationFeature;
@@ -23,6 +25,20 @@ public class DurationSerTest extends ModuleTestBase
     public void setUp()
     {
         WRITER = newMapper().writer();
+    }
+
+    // [datetime#224]
+    static class MyDto224 {
+        @JsonFormat(pattern = "MINUTES"
+              // Work-around from issue:
+//              , without = JsonFormat.Feature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS
+        )
+        @JsonProperty("mins")
+        final Duration duration;
+
+        public MyDto224(Duration d) { duration = d; }
+
+        public Duration getDuration() { return duration; }
     }
 
     @Test
@@ -342,5 +358,13 @@ public class DurationSerTest extends ModuleTestBase
                 .disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .build();
         return mapper;
+    }
+
+    // [datetime#224]
+    @Test
+    public void testDurationFormatOverride() throws Exception
+    {
+        assertEquals(a2q("{'mins':120}"),
+                WRITER.writeValueAsString(new MyDto224(Duration.ofHours(2))));
     }
 }

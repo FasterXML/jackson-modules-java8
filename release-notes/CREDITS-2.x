@@ -149,6 +149,11 @@ Gökhan Öner (gokhanoner@github)
   * Contributed #131: Deserializing ZonedDateTime with basic TZ offset notation (0000)
    (2.13.0)
 
+Sam Kruglov (Sam-Kruglov@github)
+  * Reported #224: `DurationSerializer` ignores format pattern if nano-second
+    serialization enabled
+  (2.14.0)
+
 Maciej Dębowski (maciekdeb@github)
   * Contributed #240: `LocalDateDeserializer` should consider coercionConfig settings
    (2.14.0)
