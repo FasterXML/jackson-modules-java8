@@ -10,6 +10,9 @@ Modules:
 
 2.14.0 (not yet released)
 
+#224: `DurationSerializer` ignores format pattern if nano-second
+  serialization enabled
+ (reported by Sam K)
 #230: Change `LocalDateTimeSerializer` constructor protected from private
  (requested by trydofor@github)
 #240: `LocalDateDeserializer` should consider coercionConfig settings
