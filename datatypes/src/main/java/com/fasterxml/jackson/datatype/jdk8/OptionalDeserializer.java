@@ -12,6 +12,8 @@ final class OptionalDeserializer
 {
     private static final long serialVersionUID = 1L;
 
+    protected final boolean _cfgReadAbsentAsNull;
+    
     /*
     /**********************************************************
     /* Life-cycle
@@ -19,12 +21,26 @@ final class OptionalDeserializer
      */
 
     /**
-     * @since 2.9
+     * @since 2.14
      */
+    public OptionalDeserializer(JavaType fullType, ValueInstantiator inst,
+            TypeDeserializer typeDeser, JsonDeserializer<?> deser,
+            boolean cfgReadAbsentAsNull)
+    {
+        super(fullType, inst, typeDeser, deser);
+        _cfgReadAbsentAsNull = cfgReadAbsentAsNull;
+    }
+
+    /**
+     * @since 2.9
+     * @deprecated Since 2.14
+     */
+    @Deprecated // @since 2.14
     public OptionalDeserializer(JavaType fullType, ValueInstantiator inst,
             TypeDeserializer typeDeser, JsonDeserializer<?> deser)
     {
-        super(fullType, inst, typeDeser, deser);
+        this(fullType, inst, typeDeser, deser,
+                Jdk8Module.DEFAULT_READ_ABSENT_AS_NULL);
     }
 
     /*
@@ -36,7 +52,7 @@ final class OptionalDeserializer
     @Override
     public OptionalDeserializer withResolved(TypeDeserializer typeDeser, JsonDeserializer<?> valueDeser) {
         return new OptionalDeserializer(_fullType, _valueInstantiator,
-                typeDeser, valueDeser);
+                typeDeser, valueDeser, _cfgReadAbsentAsNull);
     }
 
     @Override
@@ -50,6 +66,21 @@ final class OptionalDeserializer
         // 07-May-2019, tatu: I _think_ this needs to align with "null value" and
         //    not necessarily with empty value of contents? (used to just do "absent"
         //    so either way this seems to me like an improvement)
+        return getNullValue(ctxt);
+    }
+
+    /**
+     * As of Jackson 2.14 we will either return either same as
+     * {@link #getNullValue} or {@code null}: see
+     * {@like Jdk8Module#configureReadAbsentLikeNull(boolean)} for
+     * details.
+     */
+    @Override // @since 2.14
+    public Object getAbsentValue(DeserializationContext ctxt) throws JsonMappingException {
+        // Note: actual `null` vs "null value" (which is coerced as "empty")
+        if (_cfgReadAbsentAsNull) {
+            return null;
+        }
         return getNullValue(ctxt);
     }
 

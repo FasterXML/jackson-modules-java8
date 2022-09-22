@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.Module;
 
 public class Jdk8Module extends Module
 {
+    public final static boolean DEFAULT_READ_ABSENT_AS_NULL = false;
+
     /**
      * Configuration setting that determines whether `Optional.empty()` is
      * considered "same as null" for serialization purposes; that is, to be
@@ -22,17 +24,25 @@ public class Jdk8Module extends Module
      * criteria for filtering out absent optionals; this setting is mostly useful for
      * legacy use cases that predate version 2.6.
      */
-    protected boolean _cfgHandleAbsentAsNull = false;
+    protected boolean _cfgWriteAbsentAsNull = false;
+
+    /**
+     * See {@link #configureReadAbsentAsNull} for details of this configuration
+     * setting.
+     *
+     * @since 2.14
+     */
+    protected boolean _cfgReadAbsentAsNull = DEFAULT_READ_ABSENT_AS_NULL;
 
     @Override
     public void setupModule(SetupContext context) {
         context.addSerializers(new Jdk8Serializers());
-        context.addDeserializers(new Jdk8Deserializers());
+        context.addDeserializers(new Jdk8Deserializers(_cfgReadAbsentAsNull));
         // And to fully support Optionals, need to modify type info:
         context.addTypeModifier(new Jdk8TypeModifier());
 
         // Allow enabling "treat Optional.empty() like Java nulls"
-        if (_cfgHandleAbsentAsNull) {
+        if (_cfgWriteAbsentAsNull) {
             context.addBeanSerializerModifier(new Jdk8BeanSerializerModifier());
         }
     }
@@ -64,7 +74,25 @@ public class Jdk8Module extends Module
      */
     @Deprecated
     public Jdk8Module configureAbsentsAsNulls(boolean state) {
-        _cfgHandleAbsentAsNull = state;
+        _cfgWriteAbsentAsNull = state;
+        return this;
+    }
+
+    /**
+     * Method for configuring handling of "absent" {@link java.util.Optional}
+     * values; absent meaning case where no value is found to pass via
+     * Creator method (constructor, factory method).
+     * If enabled (set to {@code true}) it will be deserialized as
+     * {@code null}; if disabled it will be read as "empty" {@code Optional}
+     * (same as if encountering actual JSON {@code null} value).
+     *<p>
+     * Default is {@code false} for backwards compatibility (retains behavior
+     * pre-2.14); for Jackson 3.0 default will likely be changed.
+     *
+     * @since 2.14
+     */
+    public Jdk8Module configureReadAbsentAsNull(boolean state) {
+        _cfgReadAbsentAsNull = state;
         return this;
     }
 

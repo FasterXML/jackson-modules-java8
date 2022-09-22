@@ -5,6 +5,7 @@ import java.util.Optional;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 
 public class CreatorTest extends ModuleTestBase
 {
@@ -34,7 +35,7 @@ public class CreatorTest extends ModuleTestBase
      * Test to ensure that creator parameters use defaulting
      * (introduced in Jackson 2.6)
      */
-    public void testCreatorWithOptional() throws Exception
+    public void testCreatorWithOptionalDefault() throws Exception
     {
         CreatorWithOptionalStrings bean = MAPPER.readValue(
                 a2q("{'a':'foo'}"), CreatorWithOptionalStrings.class);
@@ -44,5 +45,23 @@ public class CreatorTest extends ModuleTestBase
         assertTrue(bean.a.isPresent());
         assertFalse(bean.b.isPresent());
         assertEquals("foo", bean.a.get());
+    }
+
+    public void testCreatorWithOptionalAbsentAsNull() throws Exception
+    {
+        Jdk8Module module = new Jdk8Module()
+                .configureReadAbsentAsNull(true);
+        final ObjectMapper mapper = JsonMapper.builder()
+                .addModule(module)
+                .build();
+        CreatorWithOptionalStrings bean = mapper.readValue(
+                a2q("{'a':'foo'}"), CreatorWithOptionalStrings.class);
+        assertNotNull(bean);
+        assertNotNull(bean.a);
+        assertTrue(bean.a.isPresent());
+        assertEquals("foo", bean.a.get());
+
+        // This is the config change
+        assertNull(bean.b);
     }
 }
