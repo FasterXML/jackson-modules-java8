@@ -19,6 +19,8 @@ Modules:
  (contributed by (Maciej D)
 #242: Fix InstantSerializer ignoring the JsonFormat shape
  (contributed by KaseiFR@github)
+#251: Allow `Optional` deserialization for "absent" value as Java `null`
+ (like other Reference types), not "empty"
 
 2.13.4 (03-Sep-2022)
 2.13.3 (14-May-2022)
