@@ -12,6 +12,7 @@ import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.ObjectReader;
+import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.exc.InvalidFormatException;
 import tools.jackson.databind.exc.MismatchedInputException;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
@@ -24,7 +25,8 @@ import static org.junit.Assert.fail;
 
 public class YearMonthDeserTest extends ModuleTestBase
 {
-    private final ObjectReader READER = newMapper().readerFor(YearMonth.class);
+    private final ObjectMapper MAPPER = newMapper();
+    private final ObjectReader READER = MAPPER.readerFor(YearMonth.class);
     private final TypeReference<Map<String, YearMonth>> MAP_TYPE_REF = new TypeReference<Map<String, YearMonth>>() { };
 
     @Test
@@ -35,7 +37,7 @@ public class YearMonthDeserTest extends ModuleTestBase
     }
 
     @Test
-    public void testBadDeserializationAsString01() throws Throwable
+    public void testBadDeserializationAsString01() throws Exception
     {
         try {
             read(q("notayearmonth"));
@@ -46,7 +48,7 @@ public class YearMonthDeserTest extends ModuleTestBase
     }
 
     @Test
-    public void testDeserializationAsArrayDisabled() throws Throwable
+    public void testDeserializationAsArrayDisabled() throws Exception
     {
         try {
             read("['2000-01']");
@@ -58,14 +60,14 @@ public class YearMonthDeserTest extends ModuleTestBase
     }
 
     @Test
-    public void testDeserializationAsEmptyArrayDisabled() throws Throwable
+    public void testDeserializationAsEmptyArrayDisabled() throws Exception
     {
         // works even without the feature enabled
         assertNull(read("[]"));
     }
 
     @Test
-    public void testDeserializationAsArrayEnabled() throws Throwable
+    public void testDeserializationAsArrayEnabled() throws Exception
     {
         YearMonth value = READER.with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
                 .readValue(a2q("['2000-01']"));
@@ -73,12 +75,24 @@ public class YearMonthDeserTest extends ModuleTestBase
     }
 
     @Test
-    public void testDeserializationAsEmptyArrayEnabled() throws Throwable
+    public void testDeserializationAsEmptyArrayEnabled() throws Exception
     {
         YearMonth value = READER.with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS,
                 DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT)
             .readValue( "[]");
         assertNull(value);
+    }
+
+    // [modules-java8#249]
+    @Test
+    public void testYearAbove10k() throws Exception
+    {
+        YearMonth input = YearMonth.of(10000, 1);
+        String json = MAPPER.writer()
+                .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .writeValueAsString(input);
+        YearMonth result = READER.readValue(json);
+        assertEquals(input, result);
     }
 
     /*

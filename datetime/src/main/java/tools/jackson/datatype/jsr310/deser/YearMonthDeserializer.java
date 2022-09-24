@@ -43,7 +43,7 @@ public class YearMonthDeserializer extends JSR310DateTimeDeserializerBase<YearMo
      */
     public YearMonthDeserializer() // public since 2.12
     {
-        this(DateTimeFormatter.ofPattern("uuuu-MM"));
+        this(DateTimeFormatter.ofPattern("u-MM"));
     }
     
     public YearMonthDeserializer(DateTimeFormatter formatter)
