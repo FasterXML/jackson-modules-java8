@@ -19,6 +19,8 @@ Modules:
  (contributed by (Maciej D)
 #242: Fix InstantSerializer ignoring the JsonFormat shape
  (contributed by KaseiFR@github)
+#249: `YearMonthDeserializer` fails for year > 9999
+ (reported by bent-lorentzen@github)
 #251: Allow `Optional` deserialization for "absent" value as Java `null`
  (like other Reference types), not "empty"
 
