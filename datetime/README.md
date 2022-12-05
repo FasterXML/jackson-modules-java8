@@ -14,7 +14,7 @@ For string representation default formats for deserialization are:
 |------------|---------|
 |[`Instant`](https://docs.oracle.com/javase/8/docs/api/java/time/Instant.html)|[`DateTimeFormatter.ISO_INSTANT`](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#ISO_INSTANT)|
 |[`OffsetDateTime`](https://docs.oracle.com/javase/8/docs/api/java/time/OffsetDateTime.html)|[`DateTimeFormatter.ISO_OFFSET_DATE_TIME`](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#ISO_OFFSET_DATE_TIME)|
-|[`ZonedDateTime`](https://docs.oracle.com/javase/8/docs/api/java/time/OffsetDateTime.html)|[`DateTimeFormatter.ISO_OFFSET_DATE_TIME`](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#ISO_OFFSET_DATE_TIME)|
+|[`ZonedDateTime`](https://docs.oracle.com/javase/8/docs/api/java/time/ZonedDateTime.html)|[`DateTimeFormatter.ISO_OFFSET_DATE_TIME`](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#ISO_OFFSET_DATE_TIME)|
 |[`LocalDateTime`](https://docs.oracle.com/javase/8/docs/api/java/time/LocalDateTime.html)|[`DateTimeFormatter.ISO_LOCAL_DATE_TIME`](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#ISO_LOCAL_DATE_TIME)|
 |[`LocalDate`](https://docs.oracle.com/javase/8/docs/api/java/time/LocalDate.html)|[`DateTimeFormatter.ISO_LOCAL_DATE`](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#ISO_LOCAL_DATE)|
 |[`LocalTime`](https://docs.oracle.com/javase/8/docs/api/java/time/LocalTime.html)|[`DateTimeFormatter.ISO_LOCAL_TIME`](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#ISO_LOCAL_TIME)|
