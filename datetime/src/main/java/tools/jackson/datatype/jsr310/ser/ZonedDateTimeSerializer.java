@@ -20,7 +20,9 @@ public class ZonedDateTimeSerializer extends InstantSerializerBase<ZonedDateTime
     protected final Boolean _writeZoneId;
     
     protected ZonedDateTimeSerializer() {
-        // ISO_ZONED_DATE_TIME is not the ISO format, it is an extension of it
+        // ISO_ZONED_DATE_TIME is an extended version of ISO compliant format
+        // ISO_OFFSET_DATE_TIME with additional information :Zone Id
+        // (This is not part of the ISO-8601 standard)
         this(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
     }
 
