@@ -1,6 +1,8 @@
 package com.fasterxml.jackson.datatype.jsr310.misc;
 
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 import org.junit.Assert;
@@ -185,32 +187,11 @@ public class DateTimeSchemasTest extends ModuleTestBase
         Assert.assertEquals(1, properties.size());
         _verifyBigDecimalType(properties.get(""));
 
-        // but becomes date/time
-        wrapper = new VisitorWrapper(null, "", new HashMap<String, String>());
-        MAPPER.writer().without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-            .acceptJsonFormatVisitor(ZonedDateTime.class, wrapper);
-        properties = wrapper.getTraversedProperties();
-        _verifyDateTimeType(properties.get(""));
-    }
-
-
-    @Test
-    public void testInstantSchema() throws Exception
-    {
-        VisitorWrapper wrapper = new VisitorWrapper(null, "", new HashMap<String, String>());
-        MAPPER.writer().acceptJsonFormatVisitor(Instant.class, wrapper);
-        Map<String, String> properties = wrapper.getTraversedProperties();
-
-        // By default, serialized as an int array, so:
-        Assert.assertEquals(1, properties.size());
-        _verifyBigDecimalType(properties.get(""));
-
-
-        // but becomes date/time
+        // but becomes long
         wrapper = new VisitorWrapper(null, "", new HashMap<String, String>());
         MAPPER.writer()
                 .without(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
-                .acceptJsonFormatVisitor(Instant.class, wrapper);
+                .acceptJsonFormatVisitor(ZonedDateTime.class, wrapper);
         properties = wrapper.getTraversedProperties();
         _verifyLongType(properties.get("numberType"));
         _verifyLongFormat(properties.get("format"));
@@ -218,7 +199,7 @@ public class DateTimeSchemasTest extends ModuleTestBase
         // but becomes date/time
         wrapper = new VisitorWrapper(null, "", new HashMap<String, String>());
         MAPPER.writer().without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .acceptJsonFormatVisitor(Instant.class, wrapper);
+            .acceptJsonFormatVisitor(ZonedDateTime.class, wrapper);
         properties = wrapper.getTraversedProperties();
         _verifyDateTimeType(properties.get(""));
     }
