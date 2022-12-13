@@ -19,7 +19,6 @@ package com.fasterxml.jackson.datatype.jsr310.deser;
 import java.io.IOException;
 import java.time.DateTimeException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import com.fasterxml.jackson.annotation.JsonFormat;

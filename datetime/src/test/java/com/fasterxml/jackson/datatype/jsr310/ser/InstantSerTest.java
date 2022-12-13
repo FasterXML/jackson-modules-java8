@@ -171,7 +171,7 @@ public class InstantSerTest extends ModuleTestBase
                 "[\"" + Instant.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", value);
     }
 
-    private static class Pojo1 {
+    static class Pojo1 {
         @JsonFormat(shape = JsonFormat.Shape.NUMBER_INT)
         public Instant t1 = Instant.parse("2022-04-27T12:00:00Z");
         public Instant t2 = t1;
