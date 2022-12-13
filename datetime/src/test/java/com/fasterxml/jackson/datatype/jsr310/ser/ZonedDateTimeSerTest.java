@@ -948,7 +948,7 @@ public class ZonedDateTimeSerTest
         assertEquals(original, deserialized);
     }
 
-    private static class Pojo1 {
+    static class Pojo1 {
         @JsonFormat(shape = JsonFormat.Shape.NUMBER_INT)
         public ZonedDateTime t1 = ZonedDateTime.parse("2022-04-27T12:00:00+02:00[Europe/Paris]");
         public ZonedDateTime t2 = t1;
