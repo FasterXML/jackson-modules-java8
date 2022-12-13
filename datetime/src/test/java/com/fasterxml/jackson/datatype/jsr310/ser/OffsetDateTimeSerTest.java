@@ -2,7 +2,6 @@ package com.fasterxml.jackson.datatype.jsr310.ser;
 
 import static org.junit.Assert.assertEquals;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -31,7 +30,7 @@ public class OffsetDateTimeSerTest
 
     private static final ZoneId Z3 = ZoneId.of("America/Los_Angeles");
 
-    final static class Wrapper {
+    static class Wrapper {
         @JsonFormat(
                 pattern="yyyy_MM_dd'T'HH:mm:ssZ",
                 shape=JsonFormat.Shape.STRING)
@@ -142,6 +141,23 @@ public class OffsetDateTimeSerTest
                 + FORMATTER.withZone(Z3).format(date) + '"', value);
     }
 
+    // [modules-java#254]
+    @Test
+    public void testSerializationWithJsonFormat() throws Exception
+    {
+        OffsetDateTime t1 = OffsetDateTime.parse("2022-04-27T12:00:00+02:00");
+        Wrapper input = new Wrapper(t1);
+
+        // pattern="yyyy_MM_dd'T'HH:mm:ssZ"
+        assertEquals(a2q("{'value':'2022_04_27T12:00:00+0200'}"),
+                MAPPER.writeValueAsString(input));
+ 
+        ObjectMapper m = mapperBuilder().withConfigOverride(OffsetDateTime.class,
+                cfg -> cfg.setFormat(JsonFormat.Value.forPattern("yyyy.MM.dd'x'HH:mm:ss")))
+            .build();
+        assertEquals(a2q("'2022.04.27x12:00:00'"), m.writeValueAsString(t1));
+    }
+    
     @Test
     public void testSerializationAsStringWithMapperTimeZone01() throws Exception
     {
@@ -261,14 +277,14 @@ public class OffsetDateTimeSerTest
         assertEquals("The value is incorrect", "\"" + FORMATTER.format(date) + "\"", value);
     }
 
-    private static class Pojo1 {
+    static class Pojo1 {
         @JsonFormat(shape = JsonFormat.Shape.NUMBER_INT)
         public OffsetDateTime t1 = OffsetDateTime.parse("2022-04-27T12:00:00+02:00");
         public OffsetDateTime t2 = t1;
     }
 
     @Test
-    public void testShapeInt() throws JsonProcessingException {
+    public void testShapeInt() throws Exception {
         String json1 = newMapper().writeValueAsString(new Pojo1());
         assertEquals("{\"t1\":1651053600000,\"t2\":1651053600.000000000}", json1);
     }
