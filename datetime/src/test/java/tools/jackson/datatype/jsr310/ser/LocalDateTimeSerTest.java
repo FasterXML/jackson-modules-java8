@@ -20,6 +20,8 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.temporal.Temporal;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.datatype.jsr310.MockObjectConfiguration;
@@ -32,6 +34,13 @@ import static org.junit.Assert.*;
 public class LocalDateTimeSerTest
     extends ModuleTestBase
 {
+    static class LDTWrapper {
+        @JsonFormat(pattern="yyyy-MM-dd'A'HH:mm:ss")
+        public LocalDateTime value;
+
+        public LDTWrapper(LocalDateTime v) { value = v; }
+    }
+
     private final ObjectMapper mapper = newMapper();
 
     @Test
@@ -134,6 +143,19 @@ public class LocalDateTimeSerTest
                 .build();
         String value = m.writeValueAsString(time);
         assertEquals("The value is not correct.", '"' + time.toString() + '"', value);
+    }
+
+    @Test
+    public void testSerializationWithFormatOverride() throws Exception
+    {
+        LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 999000);
+        assertEquals(a2q("{'value':'2005-11-05A22:31:05'}"),
+                mapper.writeValueAsString(new LDTWrapper(time)));
+
+        ObjectMapper m = mapperBuilder().withConfigOverride(LocalDateTime.class,
+                cfg -> cfg.setFormat(JsonFormat.Value.forPattern("yyyy-MM-dd'X'HH:mm")))
+            .build();
+        assertEquals(a2q("'2005-11-05X22:31'"), m.writeValueAsString(time));
     }
 
     @Test

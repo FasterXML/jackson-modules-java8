@@ -30,7 +30,7 @@ public class OffsetDateTimeSerTest
 
     private static final ZoneId Z3 = ZoneId.of("America/Los_Angeles");
 
-    final static class Wrapper {
+    static class Wrapper {
         @JsonFormat(
                 pattern="yyyy_MM_dd'T'HH:mm:ssZ",
                 shape=JsonFormat.Shape.STRING)
@@ -141,6 +141,23 @@ public class OffsetDateTimeSerTest
                 + FORMATTER.withZone(Z3).format(date) + '"', value);
     }
 
+    // [modules-java#254]
+    @Test
+    public void testSerializationWithJsonFormat() throws Exception
+    {
+        OffsetDateTime t1 = OffsetDateTime.parse("2022-04-27T12:00:00+02:00");
+        Wrapper input = new Wrapper(t1);
+
+        // pattern="yyyy_MM_dd'T'HH:mm:ssZ"
+        assertEquals(a2q("{'value':'2022_04_27T12:00:00+0200'}"),
+                MAPPER.writeValueAsString(input));
+ 
+        ObjectMapper m = mapperBuilder().withConfigOverride(OffsetDateTime.class,
+                cfg -> cfg.setFormat(JsonFormat.Value.forPattern("yyyy.MM.dd'x'HH:mm:ss")))
+            .build();
+        assertEquals(a2q("'2022.04.27x12:00:00'"), m.writeValueAsString(t1));
+    }
+    
     @Test
     public void testSerializationAsStringWithMapperTimeZone01() throws Exception
     {
