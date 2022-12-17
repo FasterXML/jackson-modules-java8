@@ -86,8 +86,13 @@ public class DateTimeSchemasTest extends ModuleTestBase
         public JsonIntegerFormatVisitor expectIntegerFormat(JavaType type) throws JsonMappingException {
             return new JsonIntegerFormatVisitor.Base() {
                 @Override
-                public void numberType(JsonParser.NumberType format) {
-                    traversedProperties.put(baseName, "INTEGER/"+format.name());
+                public void numberType(JsonParser.NumberType numberType) {
+                    traversedProperties.put(baseName + "numberType", "INTEGER/" + numberType.name());
+                }
+
+                @Override
+                public void format(JsonValueFormat format) {
+                    traversedProperties.put(baseName + "format", "INTEGER/" + format.name());
                 }
             };
         }
@@ -129,7 +134,7 @@ public class DateTimeSchemasTest extends ModuleTestBase
     private final ObjectMapper MAPPER = newMapper();
 
     // // // Local date/time types
-    
+
     // [modules-java8#105]
     @Test
     public void testLocalTimeSchema() throws Exception
@@ -182,6 +187,15 @@ public class DateTimeSchemasTest extends ModuleTestBase
         Assert.assertEquals(1, properties.size());
         _verifyBigDecimalType(properties.get(""));
 
+        // but becomes long
+        wrapper = new VisitorWrapper(null, "", new HashMap<String, String>());
+        MAPPER.writer()
+                .without(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .acceptJsonFormatVisitor(ZonedDateTime.class, wrapper);
+        properties = wrapper.getTraversedProperties();
+        _verifyLongType(properties.get("numberType"));
+        _verifyLongFormat(properties.get("format"));
+
         // but becomes date/time
         wrapper = new VisitorWrapper(null, "", new HashMap<String, String>());
         MAPPER.writer().without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
@@ -189,7 +203,7 @@ public class DateTimeSchemasTest extends ModuleTestBase
         properties = wrapper.getTraversedProperties();
         _verifyDateTimeType(properties.get(""));
     }
-    
+
     private void _verifyIntArrayType(String desc) {
         Assert.assertEquals("ARRAY/Ljava/util/List<Ljava/lang/Integer;>;", desc);
     }
@@ -208,5 +222,13 @@ public class DateTimeSchemasTest extends ModuleTestBase
 
     private void _verifyBigDecimalType(String desc) {
         Assert.assertEquals("NUMBER/BIG_DECIMAL", desc);
+    }
+
+    private void _verifyLongType(String desc) {
+        Assert.assertEquals("INTEGER/LONG", desc);
+    }
+
+    private void _verifyLongFormat(String desc) {
+        Assert.assertEquals("INTEGER/UTC_MILLISEC", desc);
     }
 }
