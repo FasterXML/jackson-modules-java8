@@ -10,7 +10,9 @@ Modules:
 
 2.15.0 (not yet released)
 
--
+#255: Change `InstantSerializerBase` to generate schema format in the same
+  way as `DateTimeSerializerBase`
+ (contributed by Felipe R)
 
 2.14.1 (21-Nov-2022)
 

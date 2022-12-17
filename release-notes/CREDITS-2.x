@@ -157,3 +157,8 @@ Sam Kruglov (Sam-Kruglov@github)
 Maciej Dębowski (maciekdeb@github)
   * Contributed #240: `LocalDateDeserializer` should consider coercionConfig settings
    (2.14.0)
+
+Felipe Rotilho (rotilho@github)
+  * Contributed #255: Change `InstantSerializerBase` to generate schema format in the same
+    way as `DateTimeSerializerBase`
+   (2.15.0)
