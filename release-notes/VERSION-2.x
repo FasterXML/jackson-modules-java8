@@ -13,6 +13,8 @@ Modules:
 #255: Change `InstantSerializerBase` to generate schema format in the same
   way as `DateTimeSerializerBase`
  (contributed by Felipe R)
+#259: Wrong module auto-registered when using JPMS
+ (reported by Michał O)
 
 2.14.1 (21-Nov-2022)
 
