@@ -18,5 +18,5 @@ module tools.jackson.datatype.jsr310 {
     opens tools.jackson.datatype.jsr310.ser.key;
 
     provides tools.jackson.databind.JacksonModule with
-        tools.jackson.datatype.jsr310.JSR310Module;
+        tools.jackson.datatype.jsr310.JavaTimeModule;
 }

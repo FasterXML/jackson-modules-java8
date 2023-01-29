@@ -162,3 +162,7 @@ Felipe Rotilho (rotilho@github)
   * Contributed #255: Change `InstantSerializerBase` to generate schema format in the same
     way as `DateTimeSerializerBase`
    (2.15.0)
+
+Michał Ostrowski (karbi@github)
+  * Contributed #259: Wrong module auto-registered when using JPMS
+   (2.15.0)
