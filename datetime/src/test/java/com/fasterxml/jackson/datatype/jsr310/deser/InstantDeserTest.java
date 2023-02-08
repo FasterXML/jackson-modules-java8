@@ -23,6 +23,7 @@ import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 import static com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer.ISO8601_COLONLESS_OFFSET_REGEX;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assume.assumeTrue;
 
 public class InstantDeserTest extends ModuleTestBase
 {
@@ -434,8 +435,41 @@ public class InstantDeserTest extends ModuleTestBase
         assertEquals("The value is not correct.", date, result);
     }
 
+    @Test
+    public void testDeserializationFromStringWithZeroZoneOffset04() throws Exception {
+        assumeInstantCanParseOffsets();
+        Instant date = Instant.now();
+        String json = formatWithZeroZoneOffset(date, "+00:30");
+        Instant result = READER.readValue(json);
+        assertNotEquals("The value is not correct.", date, result);
+    }
+
+    @Test
+    public void testDeserializationFromStringWithZeroZoneOffset05() throws Exception {
+        assumeInstantCanParseOffsets();
+        Instant date = Instant.now();
+        String json = formatWithZeroZoneOffset(date, "+01:30");
+        Instant result = READER.readValue(json);
+        assertNotEquals("The value is not correct.", date, result);
+    }
+
+    @Test
+    public void testDeserializationFromStringWithZeroZoneOffset06() throws Exception {
+        assumeInstantCanParseOffsets();
+        Instant date = Instant.now();
+        String json = formatWithZeroZoneOffset(date, "-00:00");
+        Instant result = READER.readValue(json);
+        assertEquals("The value is not correct.", date, result);
+    }
+
     private String formatWithZeroZoneOffset(Instant date, String offset){
         return '"' + FORMATTER.format(date).replaceFirst("Z$", offset) + '"';
+    }
+
+    private static void assumeInstantCanParseOffsets() {
+        // DateTimeFormatter.ISO_INSTANT didn't handle offsets until JDK 12+.
+        // This was added by https://bugs.openjdk.org/browse/JDK-8166138
+        assumeTrue(System.getProperty("java.specification.version").compareTo("12") > 0);
     }
 
     /*
