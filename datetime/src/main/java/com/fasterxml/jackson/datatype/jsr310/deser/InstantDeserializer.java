@@ -344,13 +344,19 @@ public class InstantDeserializer<T extends Temporal>
         }
         int maybeOffsetIndex = plusIndex + 1;
         int remaining = text.length() - maybeOffsetIndex;
-        if (remaining < 2 || remaining == 3 || remaining > 5) {
-            return text;
-        }
-
-        String maybeOffset = text.substring(maybeOffsetIndex);
-        if ("00".equals(maybeOffset) || "0000".equals(maybeOffset) || "00:00".equals(maybeOffset)) {
-            return text.substring(0, plusIndex) + 'Z';
+        switch (remaining) {
+            case 2:
+                return text.regionMatches(maybeOffsetIndex, "00", 0, remaining)
+                        ? text.substring(0, plusIndex) + 'Z'
+                        : text;
+            case 4:
+                return text.regionMatches(maybeOffsetIndex, "0000", 0, remaining)
+                        ? text.substring(0, plusIndex) + 'Z'
+                        : text;
+            case 5:
+                return text.regionMatches(maybeOffsetIndex, "00:00", 0, remaining)
+                        ? text.substring(0, plusIndex) + 'Z'
+                        : text;
         }
         return text;
     }
