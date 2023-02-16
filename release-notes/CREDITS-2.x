@@ -166,3 +166,7 @@ Felipe Rotilho (rotilho@github)
 Michał Ostrowski (karbi@github)
   * Contributed #259: Wrong module auto-registered when using JPMS
    (2.15.0)
+
+David Schlosnagle (schlosna@github)
+  * Contributed #266: Optimize `InstantDeserializer` method `replaceZeroOffsetAsZIfNecessary()`
+   (2.15.0)
