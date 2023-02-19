@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
@@ -55,7 +56,7 @@ public class ZonedDateTimeSerTest
 
     private static final ZoneId Z3 = ZoneId.of("America/Los_Angeles");
 
-    private static final ZoneId UTC = ZoneId.of("UTC");
+    private static final ZoneId UTC = ZoneOffset.UTC;
 
     private static final ZoneId DEFAULT_TZ = UTC;
 

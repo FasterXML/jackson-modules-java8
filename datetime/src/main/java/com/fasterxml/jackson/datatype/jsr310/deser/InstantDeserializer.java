@@ -82,8 +82,8 @@ public class InstantDeserializer<T extends Temporal>
     public static final InstantDeserializer<ZonedDateTime> ZONED_DATE_TIME = new InstantDeserializer<>(
             ZonedDateTime.class, DateTimeFormatter.ISO_ZONED_DATE_TIME,
             ZonedDateTime::from,
-            a -> ZonedDateTime.ofInstant(Instant.ofEpochMilli(a.value), a.zoneId),
-            a -> ZonedDateTime.ofInstant(Instant.ofEpochSecond(a.integer, a.fraction), a.zoneId),
+            a -> ZonedDateTime.ofInstant(Instant.ofEpochMilli(a.value), a.zoneId.normalized()),
+            a -> ZonedDateTime.ofInstant(Instant.ofEpochSecond(a.integer, a.fraction), a.zoneId.normalized()),
             ZonedDateTime::withZoneSameInstant,
             false // keep zero offset and Z separate since zones explicitly supported
     );
@@ -295,7 +295,11 @@ public class InstantDeserializer<T extends Temporal>
             TemporalAccessor acc = _formatter.parse(string);
             value = parsedToValue.apply(acc);
             if (shouldAdjustToContextTimezone(ctxt)) {
-                return adjust.apply(value, getZone(ctxt));
+                ZoneId zoneId = getZone(ctxt);
+                if (zoneId != null) {
+                    zoneId = zoneId.normalized();
+                }
+                return adjust.apply(value, zoneId);
             }
         } catch (DateTimeException e) {
             value = _handleDateTimeException(ctxt, e, string);
