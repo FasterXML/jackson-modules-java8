@@ -295,11 +295,7 @@ public class InstantDeserializer<T extends Temporal>
             TemporalAccessor acc = _formatter.parse(string);
             value = parsedToValue.apply(acc);
             if (shouldAdjustToContextTimezone(ctxt)) {
-                ZoneId zoneId = getZone(ctxt);
-                if (zoneId != null) {
-                    zoneId = zoneId.normalized();
-                }
-                return adjust.apply(value, zoneId);
+                return adjust.apply(value, getZone(ctxt));
             }
         } catch (DateTimeException e) {
             value = _handleDateTimeException(ctxt, e, string);
