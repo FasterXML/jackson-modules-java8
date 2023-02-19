@@ -82,8 +82,8 @@ public class InstantDeserializer<T extends Temporal>
     public static final InstantDeserializer<ZonedDateTime> ZONED_DATE_TIME = new InstantDeserializer<>(
             ZonedDateTime.class, DateTimeFormatter.ISO_ZONED_DATE_TIME,
             ZonedDateTime::from,
-            a -> ZonedDateTime.ofInstant(Instant.ofEpochMilli(a.value), a.zoneId.normalized()),
-            a -> ZonedDateTime.ofInstant(Instant.ofEpochSecond(a.integer, a.fraction), a.zoneId.normalized()),
+            a -> ZonedDateTime.ofInstant(Instant.ofEpochMilli(a.value), a.zoneId),
+            a -> ZonedDateTime.ofInstant(Instant.ofEpochSecond(a.integer, a.fraction), a.zoneId),
             ZonedDateTime::withZoneSameInstant,
             false // keep zero offset and Z separate since zones explicitly supported
     );
@@ -328,7 +328,7 @@ public class InstantDeserializer<T extends Temporal>
     private ZoneId getZone(DeserializationContext context)
     {
         // Instants are always in UTC, so don't waste compute cycles
-        return (_valueClass == Instant.class) ? null : context.getTimeZone().toZoneId();
+        return (_valueClass == Instant.class) ? null : context.getTimeZone().toZoneId().normalized();
     }
 
     private String replaceZeroOffsetAsZIfNecessary(String text)
