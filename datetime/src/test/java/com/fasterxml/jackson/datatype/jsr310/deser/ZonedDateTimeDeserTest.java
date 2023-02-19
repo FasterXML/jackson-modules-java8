@@ -53,6 +53,20 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
     }
 
     @Test
+    public void testDeserializationComparedToStandard2() throws Throwable
+    {
+        String inputString = "2021-02-01T19:49:04.0513486Z[UTC]";
+
+        ZonedDateTime converted = newMapper()
+                .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false)
+                .readerFor(ZonedDateTime.class).readValue(q(inputString));
+
+        assertEquals("The value is not correct.",
+                DateTimeFormatter.ISO_ZONED_DATE_TIME.parse(inputString, ZonedDateTime::from),
+                converted);
+    }
+
+    @Test
     public void testBadDeserializationAsString01() throws Throwable
     {
         expectFailure(q("notazone"));
