@@ -255,7 +255,7 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
 
         assertNotNull("The value should not be null.", value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault(), value.getZone());
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
     }
 
     @Test
@@ -280,7 +280,7 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
 
         assertNotNull("The value should not be null.", value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault(), value.getZone());
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
     }
 
     @Test
@@ -309,7 +309,7 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
 
         assertNotNull("The value should not be null.", value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault(), value.getZone());
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
     }
 
     @Test
@@ -336,7 +336,7 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
 
         assertNotNull("The value should not be null.", value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault(), value.getZone());
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
     }
 
     @Test
@@ -363,7 +363,7 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
 
         assertNotNull("The value should not be null.", value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault(), value.getZone());
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
     }
 
     @Test
@@ -390,7 +390,7 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
 
         assertNotNull("The value should not be null.", value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault(), value.getZone());
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
     }
 
     @Test
@@ -417,7 +417,7 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
 
         assertNotNull("The value should not be null.", value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault(), value.getZone());
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
     }
 
     @Test
@@ -446,7 +446,7 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
 
         assertNotNull("The value should not be null.", value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault(), value.getZone());
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
     }
 
     @Test
@@ -477,7 +477,7 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
 
         assertNotNull("The value should not be null.", value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault(), value.getZone());
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
     }
 
     @Test
@@ -504,7 +504,7 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
 
         assertNotNull("The value should not be null.", value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault(), value.getZone());
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
     }
 
     @Test
@@ -545,7 +545,7 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
 
         assertNotNull("The value should not be null.", value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault(), value.getZone());
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
     }
 
     @Test
@@ -586,7 +586,7 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
 
         assertNotNull("The value should not be null.", value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault(), value.getZone());
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
     }
 
     @Test
@@ -633,7 +633,7 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         assertNotNull("The value should not be null.", value);
         assertTrue("The value should be an ZonedDateTime.", value instanceof ZonedDateTime);
         assertIsEqual(date, (ZonedDateTime) value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault(), ((ZonedDateTime) value).getZone());
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), ((ZonedDateTime) value).getZone());
     }
 
     @Test
@@ -668,7 +668,7 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         assertNotNull("The value should not be null.", value);
         assertTrue("The value should be an ZonedDateTime.", value instanceof ZonedDateTime);
         assertIsEqual(date, (ZonedDateTime) value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault(), ((ZonedDateTime) value).getZone());
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), ((ZonedDateTime) value).getZone());
     }
 
     @Test
@@ -703,7 +703,7 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         assertNotNull("The value should not be null.", value);
         assertTrue("The value should be an ZonedDateTime.", value instanceof ZonedDateTime);
         assertIsEqual(date, (ZonedDateTime) value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault(), ((ZonedDateTime) value).getZone());
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), ((ZonedDateTime) value).getZone());
     }
 
     @Test
@@ -738,7 +738,7 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         assertNotNull("The value should not be null.", value);
         assertTrue("The value should be an ZonedDateTime.", value instanceof ZonedDateTime);
         assertIsEqual(date, (ZonedDateTime) value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault(), ((ZonedDateTime) value).getZone());
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), ((ZonedDateTime) value).getZone());
     }
 
     @Test
