@@ -324,6 +324,8 @@ public class InstantDeserializer<T extends Temporal>
     private ZoneId getZone(DeserializationContext context)
     {
         // Instants are always in UTC, so don't waste compute cycles
+        // Normalizing the zone to prevent discrepancies.
+        // See https://github.com/FasterXML/jackson-modules-java8/pull/267 for details
         return (_valueClass == Instant.class) ? null : context.getTimeZone().toZoneId().normalized();
     }
 
