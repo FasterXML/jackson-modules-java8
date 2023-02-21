@@ -324,7 +324,9 @@ public class InstantDeserializer<T extends Temporal>
     private ZoneId getZone(DeserializationContext context)
     {
         // Instants are always in UTC, so don't waste compute cycles
-        return (_valueClass == Instant.class) ? null : context.getTimeZone().toZoneId();
+        // Normalizing the zone to prevent discrepancies.
+        // See https://github.com/FasterXML/jackson-modules-java8/pull/267 for details
+        return (_valueClass == Instant.class) ? null : context.getTimeZone().toZoneId().normalized();
     }
 
     private String replaceZeroOffsetAsZIfNecessary(String text)
