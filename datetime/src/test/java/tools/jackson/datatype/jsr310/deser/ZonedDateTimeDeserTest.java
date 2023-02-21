@@ -3,6 +3,8 @@ package tools.jackson.datatype.jsr310.deser;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -34,8 +36,33 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
     public void testDeserializationAsString01() throws Exception
     {
         assertEquals("The value is not correct.",
-                ZonedDateTime.of(2000, 1, 1, 12, 0, 0, 0, ZoneId.of("UTC")),
+                ZonedDateTime.of(2000, 1, 1, 12, 0, 0, 0, ZoneOffset.UTC),
                 READER.readValue(q("2000-01-01T12:00Z")));
+    }
+
+    @Test
+    public void testDeserializationComparedToStandard() throws Throwable
+    {
+        String inputString = "2021-02-01T19:49:04.0513486Z";
+
+        assertEquals("The value is not correct.",
+                DateTimeFormatter.ISO_ZONED_DATE_TIME.parse(inputString, ZonedDateTime::from),
+                READER.readValue(q(inputString)));
+    }
+
+    @Test
+    public void testDeserializationComparedToStandard2() throws Throwable
+    {
+        String inputString = "2021-02-01T19:49:04.0513486Z[UTC]";
+
+        ZonedDateTime converted = newMapperBuilder()
+                .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false)
+                .build()
+                .readerFor(ZonedDateTime.class).readValue(q(inputString));
+
+        assertEquals("The value is not correct.",
+                DateTimeFormatter.ISO_ZONED_DATE_TIME.parse(inputString, ZonedDateTime::from),
+                converted);
     }
 
     @Test
@@ -88,7 +115,7 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
                .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
     			.readValue("[\"2000-01-01T12:00Z\"]");
         assertEquals("The value is not correct.",
-                ZonedDateTime.of(2000, 1, 1, 12, 0, 0, 0, ZoneId.of("UTC")),
+                ZonedDateTime.of(2000, 1, 1, 12, 0, 0, 0, ZoneOffset.UTC),
                 value);
     }
     

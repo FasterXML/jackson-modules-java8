@@ -396,9 +396,9 @@ public class InstantDeserTest extends ModuleTestBase
     {
         //Test date is pushed one year after start of the epoch just to avoid possible issues with UTC-X TZs which could
         //push the instant before tha start of the epoch
-        final Instant instant = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0), ZoneId.of("UTC")).plusYears(1).toInstant();
+        final Instant instant = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0), ZoneOffset.UTC).plusYears(1).toInstant();
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(CUSTOM_PATTERN);
-        final String valueInUTC = formatter.withZone(ZoneId.of("UTC")).format(instant);
+        final String valueInUTC = formatter.withZone(ZoneOffset.UTC).format(instant);
 
         final WrapperWithCustomPattern input = new WrapperWithCustomPattern(instant);
         String json = MAPPER.writeValueAsString(input);
