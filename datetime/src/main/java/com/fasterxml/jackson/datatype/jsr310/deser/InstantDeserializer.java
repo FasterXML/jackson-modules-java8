@@ -343,10 +343,11 @@ public class InstantDeserializer<T extends Temporal>
             //   handled like "regular" empty (same as pre-2.12)
             return _fromEmptyString(p, ctxt, string);
         }
-        // only check for other parsing modes if we are using default formatter
+        // only check for other parsing modes if we are using default formatter or explicitly asked to
         if (_formatter == DateTimeFormatter.ISO_INSTANT ||
             _formatter == DateTimeFormatter.ISO_OFFSET_DATE_TIME ||
-            _formatter == DateTimeFormatter.ISO_ZONED_DATE_TIME) {
+            _formatter == DateTimeFormatter.ISO_ZONED_DATE_TIME ||
+            ctxt.isEnabled(DeserializationFeature.READ_NUMERIC_STRINGS_AS_DATE_TIMESTAMP)) {
             // 22-Jan-2016, [datatype-jsr310#16]: Allow quoted numbers too
             int dots = _countPeriods(string);
             if (dots >= 0) { // negative if not simple number

@@ -927,6 +927,18 @@ public class ZonedDateTimeSerTest
     }
 
     @Test
+    public void testCustomPatternWithNumericTimestamp() throws Exception
+    {
+        String input = a2q("{'value':'3.141592653'}");
+
+        Wrapper result = MAPPER.readerFor(Wrapper.class)
+            .with(DeserializationFeature.READ_NUMERIC_STRINGS_AS_DATE_TIMESTAMP)
+            .readValue(input);
+
+        assertEquals(Instant.ofEpochSecond(3L, 141592653L), result.value.toInstant());
+    }
+
+    @Test
     public void testNumericCustomPatternWithAnnotations() throws Exception
     {
         ZonedDateTime inputValue = ZonedDateTime.ofInstant(Instant.ofEpochSecond(0L), UTC);
