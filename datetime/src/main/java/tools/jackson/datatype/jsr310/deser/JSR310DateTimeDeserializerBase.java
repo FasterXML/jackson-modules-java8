@@ -140,8 +140,8 @@ public abstract class JSR310DateTimeDeserializerBase<T>
     
     private boolean acceptCaseInsensitiveValues(DeserializationContext ctxt, JsonFormat.Value format) 
     {
-        Boolean enabled = format.getFeature( Feature.ACCEPT_CASE_INSENSITIVE_VALUES);
-        if( enabled == null) {
+        Boolean enabled = format.getFeature(Feature.ACCEPT_CASE_INSENSITIVE_VALUES);
+        if (enabled == null) {
             enabled = ctxt.isEnabled(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES);
         }
         return enabled;
