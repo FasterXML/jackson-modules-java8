@@ -24,6 +24,7 @@ No changes since 2.15
 #267: Normalize zone id during ZonedDateTime deserialization
  (contribtued by Daniel S)
 
+2.14.3 (05-May-2023)
 2.14.2 (28-Jan-2023)
 2.14.1 (21-Nov-2022)
 
