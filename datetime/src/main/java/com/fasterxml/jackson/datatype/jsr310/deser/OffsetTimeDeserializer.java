@@ -21,6 +21,7 @@ import java.time.DateTimeException;
 import java.time.OffsetTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.*;
@@ -37,12 +38,20 @@ public class OffsetTimeDeserializer extends JSR310DateTimeDeserializerBase<Offse
 
     public static final OffsetTimeDeserializer INSTANCE = new OffsetTimeDeserializer();
 
+    /**
+     * Flag for <code>JsonFormat.Feature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS</code>
+     *
+     * @since 2.16
+     */
+    protected final Boolean _readTimestampsAsNanosOverride;
+
     protected OffsetTimeDeserializer() { // was private before 2.12
         this(DateTimeFormatter.ISO_OFFSET_TIME);
     }
 
     protected OffsetTimeDeserializer(DateTimeFormatter dtf) {
         super(OffsetTime.class, dtf);
+        _readTimestampsAsNanosOverride = null;
     }
 
     /**
@@ -50,6 +59,19 @@ public class OffsetTimeDeserializer extends JSR310DateTimeDeserializerBase<Offse
      */
     protected OffsetTimeDeserializer(OffsetTimeDeserializer base, Boolean leniency) {
         super(base, leniency);
+        _readTimestampsAsNanosOverride = base._readTimestampsAsNanosOverride;
+    }
+
+    /**
+     * Since 2.16
+     */
+    protected OffsetTimeDeserializer(OffsetTimeDeserializer base,
+        Boolean leniency,
+        DateTimeFormatter formatter,
+        JsonFormat.Shape shape,
+        Boolean readTimestampsAsNanosOverride) {
+        super(base, leniency, formatter, shape);
+        _readTimestampsAsNanosOverride = readTimestampsAsNanosOverride;
     }
 
     @Override
@@ -64,6 +86,20 @@ public class OffsetTimeDeserializer extends JSR310DateTimeDeserializerBase<Offse
 
     @Override
     protected OffsetTimeDeserializer withShape(JsonFormat.Shape shape) { return this; }
+
+    @Override
+    protected JSR310DateTimeDeserializerBase<?> _withFormatOverrides(DeserializationContext ctxt,
+        BeanProperty property, JsonFormat.Value formatOverrides) {
+        OffsetTimeDeserializer deser = (OffsetTimeDeserializer)
+            super._withFormatOverrides(ctxt, property, formatOverrides);
+        Boolean readTimestampsAsNanosOverride = formatOverrides.getFeature(
+            JsonFormat.Feature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
+        if (!Objects.equals(readTimestampsAsNanosOverride, deser._readTimestampsAsNanosOverride)) {
+            return new OffsetTimeDeserializer(deser, deser._isLenient, deser._formatter,
+                deser._shape, readTimestampsAsNanosOverride);
+        }
+        return deser;
+    }
 
     @Override
     public OffsetTime deserialize(JsonParser parser, DeserializationContext context) throws IOException
@@ -121,8 +157,7 @@ public class OffsetTimeDeserializer extends JSR310DateTimeDeserializerBase<Offse
             second = parser.getIntValue();
             if (parser.nextToken() == JsonToken.VALUE_NUMBER_INT) {
                 partialSecond = parser.getIntValue();
-                if (partialSecond < 1_000 &&
-                        !context.isEnabled(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)) {
+                if (partialSecond < 1_000 && !shouldReadTimestampsAsNanoseconds(context)) {
                     partialSecond *= 1_000_000; // value is milliseconds, convert it to nanoseconds
                 }
                 parser.nextToken();
@@ -137,6 +172,11 @@ public class OffsetTimeDeserializer extends JSR310DateTimeDeserializerBase<Offse
         }
         throw context.wrongTokenException(parser, handledType(), JsonToken.VALUE_STRING,
                 "Expected string for TimeZone after numeric values");
+    }
+
+    protected boolean shouldReadTimestampsAsNanoseconds(DeserializationContext context) {
+        return (_readTimestampsAsNanosOverride != null) ? _readTimestampsAsNanosOverride :
+            context.isEnabled(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
     }
 
     protected OffsetTime _fromString(JsonParser p, DeserializationContext ctxt,

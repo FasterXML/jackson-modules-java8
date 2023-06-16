@@ -112,6 +112,13 @@ public class InstantDeserializer<T extends Temporal>
      */
     protected final Boolean _adjustToContextTZOverride;
 
+    /**
+     * Flag for <code>JsonFormat.Feature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS</code>
+     *
+     * @since 2.16
+     */
+    protected final Boolean _readTimestampsAsNanosOverride;
+
     protected InstantDeserializer(Class<T> supportedType,
             DateTimeFormatter formatter,
             Function<TemporalAccessor, T> parsedToValue,
@@ -126,7 +133,8 @@ public class InstantDeserializer<T extends Temporal>
         this.fromNanoseconds = fromNanoseconds;
         this.adjust = adjust == null ? ((d, z) -> d) : adjust;
         this.replaceZeroOffsetAsZ = replaceZeroOffsetAsZ;
-        _adjustToContextTZOverride = null;
+        this._adjustToContextTZOverride = null;
+        this._readTimestampsAsNanosOverride = null;
     }
 
     @SuppressWarnings("unchecked")
@@ -139,6 +147,7 @@ public class InstantDeserializer<T extends Temporal>
         adjust = base.adjust;
         replaceZeroOffsetAsZ = (_formatter == DateTimeFormatter.ISO_INSTANT);
         _adjustToContextTZOverride = base._adjustToContextTZOverride;
+        _readTimestampsAsNanosOverride = base._readTimestampsAsNanosOverride;
     }
 
     @SuppressWarnings("unchecked")
@@ -151,6 +160,7 @@ public class InstantDeserializer<T extends Temporal>
         adjust = base.adjust;
         replaceZeroOffsetAsZ = base.replaceZeroOffsetAsZ;
         _adjustToContextTZOverride = adjustToContextTimezoneOverride;
+        _readTimestampsAsNanosOverride = base._readTimestampsAsNanosOverride;
     }
 
     @SuppressWarnings("unchecked")
@@ -163,6 +173,27 @@ public class InstantDeserializer<T extends Temporal>
         adjust = base.adjust;
         replaceZeroOffsetAsZ = (_formatter == DateTimeFormatter.ISO_INSTANT);
         _adjustToContextTZOverride = base._adjustToContextTZOverride;
+        _readTimestampsAsNanosOverride = base._readTimestampsAsNanosOverride;
+    }
+
+    /**
+     * @since 2.16
+     */
+    protected InstantDeserializer(InstantDeserializer<T> base,
+        Boolean leniency,
+        DateTimeFormatter formatter,
+        JsonFormat.Shape shape,
+        Boolean adjustToContextTimezoneOverride,
+        Boolean readTimestampsAsNanosOverride)
+    {
+        super(base, leniency, formatter, shape);
+        parsedToValue = base.parsedToValue;
+        fromMilliseconds = base.fromMilliseconds;
+        fromNanoseconds = base.fromNanoseconds;
+        adjust = base.adjust;
+        replaceZeroOffsetAsZ = base.replaceZeroOffsetAsZ;
+        _adjustToContextTZOverride = adjustToContextTimezoneOverride;
+        _readTimestampsAsNanosOverride = readTimestampsAsNanosOverride;
     }
 
     @Override
@@ -170,12 +201,12 @@ public class InstantDeserializer<T extends Temporal>
         if (dtf == _formatter) {
             return this;
         }
-        return new InstantDeserializer<T>(this, dtf);
+        return new InstantDeserializer<>(this, dtf);
     }
 
     @Override
     protected InstantDeserializer<T> withLeniency(Boolean leniency) {
-        return new InstantDeserializer<T>(this, _formatter, leniency);
+        return new InstantDeserializer<>(this, _formatter, leniency);
     }
 
     @Override
@@ -188,9 +219,14 @@ public class InstantDeserializer<T extends Temporal>
     {
         InstantDeserializer<T> deser = (InstantDeserializer<T>) super._withFormatOverrides(ctxt,
                 property, formatOverrides);
-        Boolean B = formatOverrides.getFeature(JsonFormat.Feature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
-        if (!Objects.equals(B, deser._adjustToContextTZOverride)) {
-            return new InstantDeserializer<T>(deser, B);
+        Boolean adjustToContextTZOverride = formatOverrides.getFeature(
+            JsonFormat.Feature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
+        Boolean readTimestampsAsNanosOverride = formatOverrides.getFeature(
+            JsonFormat.Feature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
+        if (!Objects.equals(adjustToContextTZOverride, deser._adjustToContextTZOverride)
+            || !Objects.equals(readTimestampsAsNanosOverride, deser._readTimestampsAsNanosOverride)) {
+            return new InstantDeserializer<>(deser, deser._isLenient, deser._formatter,
+                deser._shape, adjustToContextTZOverride, readTimestampsAsNanosOverride);
         }
         return deser;
     }
@@ -228,6 +264,11 @@ public class InstantDeserializer<T extends Temporal>
     protected boolean shouldAdjustToContextTimezone(DeserializationContext context) {
         return (_adjustToContextTZOverride != null) ? _adjustToContextTZOverride :
                 context.isEnabled(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
+    }
+
+    protected boolean shouldReadTimestampsAsNanoseconds(DeserializationContext context) {
+        return (_readTimestampsAsNanosOverride != null) ? _readTimestampsAsNanosOverride :
+            context.isEnabled(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
     }
 
     // Helper method to find Strings of form "all digits" and "digits-comma-digits"
@@ -305,7 +346,7 @@ public class InstantDeserializer<T extends Temporal>
 
     protected T _fromLong(DeserializationContext context, long timestamp)
     {
-        if(context.isEnabled(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)){
+        if(shouldReadTimestampsAsNanoseconds(context)){
             return fromNanoseconds.apply(new FromDecimalArguments(
                     timestamp, 0, this.getZone(context)
             ));
