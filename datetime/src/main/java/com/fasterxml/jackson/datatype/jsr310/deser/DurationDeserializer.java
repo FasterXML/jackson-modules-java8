@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.DateTimeException;
 import java.time.Duration;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -61,9 +62,17 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
      */
     protected final DurationUnitConverter _durationUnitConverter;
 
+    /**
+     * Flag for <code>JsonFormat.Feature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS</code>
+     *
+     * @since 2.16
+     */
+    protected final Boolean _readTimestampsAsNanosOverride;
+
     public DurationDeserializer() {
         super(Duration.class);
         _durationUnitConverter = null;
+        _readTimestampsAsNanosOverride = null;
     }
 
     /**
@@ -72,6 +81,7 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
     protected DurationDeserializer(DurationDeserializer base, Boolean leniency) {
         super(base, leniency);
         _durationUnitConverter = base._durationUnitConverter;
+        _readTimestampsAsNanosOverride = base._readTimestampsAsNanosOverride;
     }
 
     /**
@@ -80,6 +90,19 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
     protected DurationDeserializer(DurationDeserializer base, DurationUnitConverter converter) {
         super(base, base._isLenient);
         _durationUnitConverter = converter;
+        _readTimestampsAsNanosOverride = base._readTimestampsAsNanosOverride;
+    }
+
+    /**
+     * @since 2.16
+     */
+    protected DurationDeserializer(DurationDeserializer base,
+        Boolean leniency,
+        DurationUnitConverter converter,
+        Boolean readTimestampsAsNanosOverride) {
+        super(base, leniency);
+        _durationUnitConverter = converter;
+        _readTimestampsAsNanosOverride = readTimestampsAsNanosOverride;
     }
 
     @Override
@@ -97,24 +120,31 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
     {
         JsonFormat.Value format = findFormatOverrides(ctxt, property, handledType());
         DurationDeserializer deser = this;
+        boolean leniency = _isLenient;
+        DurationUnitConverter unitConverter = _durationUnitConverter;
+        Boolean timestampsAsNanosOverride = _readTimestampsAsNanosOverride;
         if (format != null) {
             if (format.hasLenient()) {
-                Boolean leniency = format.getLenient();
-                if (leniency != null) {
-                    deser = deser.withLeniency(leniency);
-                }
+                leniency = format.getLenient();
             }
             if (format.hasPattern()) {
                 final String pattern = format.getPattern();
-                DurationUnitConverter p = DurationUnitConverter.from(pattern);
-                if (p == null) {
+                unitConverter = DurationUnitConverter.from(pattern);
+                if (unitConverter == null) {
                     ctxt.reportBadDefinition(getValueType(ctxt),
                             String.format(
                                     "Bad 'pattern' definition (\"%s\") for `Duration`: expected one of [%s]",
                                     pattern, DurationUnitConverter.descForAllowed()));
                 }
-                deser = deser.withConverter(p);
             }
+            timestampsAsNanosOverride =
+                format.getFeature(JsonFormat.Feature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
+        }
+        if (leniency != _isLenient
+            || !Objects.equals(unitConverter, _durationUnitConverter)
+            || !Objects.equals(timestampsAsNanosOverride, _readTimestampsAsNanosOverride)) {
+            return new DurationDeserializer(
+                this, leniency, unitConverter, timestampsAsNanosOverride);
         }
         return deser;
     }
@@ -177,9 +207,14 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
         }
         // 20-Oct-2020, tatu: This makes absolutely no sense but... somehow
         //   became the default handling.
-        if (ctxt.isEnabled(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)) {
+        if (shouldReadTimestampsAsNanoseconds(ctxt)) {
             return Duration.ofSeconds(ts);
         }
         return Duration.ofMillis(ts);
+    }
+
+    protected boolean shouldReadTimestampsAsNanoseconds(DeserializationContext context) {
+        return (_readTimestampsAsNanosOverride != null) ? _readTimestampsAsNanosOverride :
+            context.isEnabled(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
     }
 }

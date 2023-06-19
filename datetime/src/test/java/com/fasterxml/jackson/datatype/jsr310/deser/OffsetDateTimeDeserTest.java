@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Feature;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,7 +23,6 @@ import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertNull;
 
 public class OffsetDateTimeDeserTest
     extends ModuleTestBase
@@ -44,6 +44,26 @@ public class OffsetDateTimeDeserTest
 
         public Wrapper() { }
         public Wrapper(OffsetDateTime v) { value = v; }
+    }
+
+    static class WrapperWithReadTimestampsAsNanosDisabled {
+        @JsonFormat(
+            without=Feature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS
+        )
+        public OffsetDateTime value;
+
+        public WrapperWithReadTimestampsAsNanosDisabled() { }
+        public WrapperWithReadTimestampsAsNanosDisabled(OffsetDateTime v) { value = v; }
+    }
+
+    static class WrapperWithReadTimestampsAsNanosEnabled {
+        @JsonFormat(
+            with=Feature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS
+        )
+        public OffsetDateTime value;
+
+        public WrapperWithReadTimestampsAsNanosEnabled() { }
+        public WrapperWithReadTimestampsAsNanosEnabled(OffsetDateTime v) { value = v; }
     }
 
     private ObjectMapper MAPPER = newMapper();
@@ -299,6 +319,68 @@ public class OffsetDateTimeDeserTest
         assertNotNull("The value should not be null.", value);
         assertIsEqual(date, value);
         assertEquals("The time zone is not correct.", getDefaultOffset(date), value.getOffset());
+    }
+
+    @Test
+    public void testDeserializationAsInt04NanosecondsWithoutTimeZone() throws Exception
+    {
+        OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 0), Z1);
+        ObjectMapper m = newMapper();
+        WrapperWithReadTimestampsAsNanosEnabled actual = m.readValue(
+            a2q("{'value':123456789}"),
+            WrapperWithReadTimestampsAsNanosEnabled.class);
+
+        assertNotNull("The actual should not be null.", actual);
+        assertNotNull("The actual value should not be null.", actual.value);
+        assertIsEqual(date, actual.value);
+        assertEquals("The time zone is not correct.", ZoneOffset.UTC, actual.value.getOffset());
+    }
+
+    @Test
+    public void testDeserializationAsInt04NanosecondsWithTimeZone() throws Exception
+    {
+        OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 0), Z1);
+        ObjectMapper m = newMapper()
+            .setTimeZone(TimeZone.getDefault());
+        WrapperWithReadTimestampsAsNanosEnabled actual = m.readValue(
+            a2q("{'value':123456789}"),
+            WrapperWithReadTimestampsAsNanosEnabled.class);
+
+        assertNotNull("The actual should not be null.", actual);
+        assertNotNull("The actual value should not be null.", actual.value);
+        assertIsEqual(date, actual.value);
+        assertEquals("The time zone is not correct.", getDefaultOffset(date), actual.value.getOffset());
+    }
+
+    @Test
+    public void testDeserializationAsInt04MillisecondsWithoutTimeZone() throws Exception
+    {
+        OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 422000000), Z1);
+        ObjectMapper m = newMapper();
+        WrapperWithReadTimestampsAsNanosDisabled actual = m.readValue(
+            a2q("{'value':123456789422}"),
+            WrapperWithReadTimestampsAsNanosDisabled.class);
+
+        assertNotNull("The actual should not be null.", actual);
+        assertNotNull("The actual value should not be null.", actual.value);
+        assertIsEqual(date, actual.value);
+        assertEquals("The time zone is not correct.", ZoneOffset.UTC, actual.value.getOffset());
+    }
+
+    @Test
+    public void testDeserializationAsInt04MillisecondsWithTimeZone() throws Exception
+    {
+        OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochSecond(123456789L, 422000000), Z1);
+        ObjectMapper m = newMapper()
+            .setTimeZone(TimeZone.getDefault());
+        WrapperWithReadTimestampsAsNanosDisabled actual = m.readValue(
+            a2q("{'value':123456789422}"),
+            WrapperWithReadTimestampsAsNanosDisabled.class);
+
+        assertNotNull("The actual should not be null.", actual);
+        assertNotNull("The actual value should not be null.", actual.value);
+        assertIsEqual(date, actual.value);
+        assertEquals("The time zone is not correct.", getDefaultOffset(date), actual.value.getOffset());
     }
 
     @Test
