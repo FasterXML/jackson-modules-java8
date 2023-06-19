@@ -85,6 +85,26 @@ public class LocalDateTimeDeserTest
         public StrictWrapperWithYearWithoutEra(LocalDateTime v) { value = v; }
     }
 
+    static class WrapperWithReadTimestampsAsNanosDisabled {
+        @JsonFormat(
+            without=Feature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS
+        )
+        public LocalDateTime value;
+
+        public WrapperWithReadTimestampsAsNanosDisabled() { }
+        public WrapperWithReadTimestampsAsNanosDisabled(LocalDateTime v) { value = v; }
+    }
+
+    static class WrapperWithReadTimestampsAsNanosEnabled {
+        @JsonFormat(
+            with=Feature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS
+        )
+        public LocalDateTime value;
+
+        public WrapperWithReadTimestampsAsNanosEnabled() { }
+        public WrapperWithReadTimestampsAsNanosEnabled(LocalDateTime v) { value = v; }
+    }
+
     /*
     /**********************************************************
     /* Tests for deserializing from int array
@@ -156,6 +176,36 @@ public class LocalDateTimeDeserTest
         LocalDateTime value = r.readValue("[2005,11,5,22,31,5,829]");
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 829000000);
         assertEquals("The value is not correct.", time, value);
+    }
+
+    @Test
+    public void testDeserializationAsTimestamp05Nanoseconds() throws Exception
+    {
+        ObjectReader r = MAPPER.readerFor(WrapperWithReadTimestampsAsNanosEnabled.class);
+        WrapperWithReadTimestampsAsNanosEnabled actual =
+            r.readValue(a2q("{'value':[2013,8,21,9,22,0,57]}"));
+        LocalDateTime time = LocalDateTime.of(2013, Month.AUGUST, 21, 9, 22, 0, 57);
+        assertEquals("The value is not correct.", time, actual.value);
+    }
+
+    @Test
+    public void testDeserializationAsTimestamp05Milliseconds01() throws Exception
+    {
+        ObjectReader r = MAPPER.readerFor(WrapperWithReadTimestampsAsNanosDisabled.class);
+        WrapperWithReadTimestampsAsNanosDisabled actual =
+            r.readValue(a2q("{'value':[2013,8,21,9,22,0,57]}"));
+        LocalDateTime time = LocalDateTime.of(2013, Month.AUGUST, 21, 9, 22, 0, 57000000);
+        assertEquals("The value is not correct.", time, actual.value);
+    }
+
+    @Test
+    public void testDeserializationAsTimestamp05Milliseconds02() throws Exception
+    {
+        ObjectReader r = MAPPER.readerFor(WrapperWithReadTimestampsAsNanosDisabled.class);
+        WrapperWithReadTimestampsAsNanosDisabled actual =
+            r.readValue(a2q("{'value':[2013,8,21,9,22,0,4257]}"));
+        LocalDateTime time = LocalDateTime.of(2013, Month.AUGUST, 21, 9, 22, 0, 4257);
+        assertEquals("The value is not correct.", time, actual.value);
     }
 
     /*

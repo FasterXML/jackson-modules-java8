@@ -19,11 +19,14 @@ package tools.jackson.datatype.jsr310.deser;
 import java.time.DateTimeException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
+import tools.jackson.databind.BeanProperty;
 import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.DeserializationFeature;
 
@@ -38,19 +41,37 @@ public class LocalTimeDeserializer extends JSR310DateTimeDeserializerBase<LocalT
 
     public static final LocalTimeDeserializer INSTANCE = new LocalTimeDeserializer();
 
+    /**
+     * Flag for <code>JsonFormat.Feature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS</code>
+     *
+     * @since 2.16
+     */
+    protected final Boolean _readTimestampsAsNanosOverride;
+
     protected LocalTimeDeserializer() { // was private before 2.12
         this(DEFAULT_FORMATTER);
     }
 
     public LocalTimeDeserializer(DateTimeFormatter formatter) {
         super(LocalTime.class, formatter);
+        _readTimestampsAsNanosOverride = null;
+    }
+
+    protected LocalTimeDeserializer(LocalTimeDeserializer base, Boolean leniency) {
+        super(base, leniency);
+        _readTimestampsAsNanosOverride = base._readTimestampsAsNanosOverride;
     }
 
     /**
-     * Since 2.11
+     * Since 2.16
      */
-    protected LocalTimeDeserializer(LocalTimeDeserializer base, Boolean leniency) {
-        super(base, leniency);
+    protected LocalTimeDeserializer(LocalTimeDeserializer base,
+        Boolean leniency,
+        DateTimeFormatter formatter,
+        JsonFormat.Shape shape,
+        Boolean readTimestampsAsNanosOverride) {
+        super(base, leniency, formatter, shape);
+        _readTimestampsAsNanosOverride = readTimestampsAsNanosOverride;
     }
 
     @Override
@@ -67,8 +88,22 @@ public class LocalTimeDeserializer extends JSR310DateTimeDeserializerBase<LocalT
     protected LocalTimeDeserializer withShape(JsonFormat.Shape shape) { return this; }
 
     @Override
-    public LocalTime deserialize(JsonParser parser, DeserializationContext context)
-        throws JacksonException
+    protected JSR310DateTimeDeserializerBase<?> _withFormatOverrides(DeserializationContext ctxt,
+        BeanProperty property, JsonFormat.Value formatOverrides)
+    {
+        LocalTimeDeserializer deser = (LocalTimeDeserializer)
+            super._withFormatOverrides(ctxt, property, formatOverrides);
+        Boolean readTimestampsAsNanosOverride = formatOverrides.getFeature(
+            JsonFormat.Feature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
+        if (!Objects.equals(readTimestampsAsNanosOverride, deser._readTimestampsAsNanosOverride)) {
+            return new LocalTimeDeserializer(deser, deser._isLenient, deser._formatter,
+                deser._shape, readTimestampsAsNanosOverride);
+        }
+        return deser;
+    }
+
+    @Override
+    public LocalTime deserialize(JsonParser parser, DeserializationContext context) throws JacksonException
     {
         if (parser.hasToken(JsonToken.VALUE_STRING)) {
             return _fromString(parser, context, parser.getText());
@@ -108,8 +143,7 @@ public class LocalTimeDeserializer extends JSR310DateTimeDeserializerBase<LocalT
                         result = LocalTime.of(hour, minute, second);
                     } else {
                         int partialSecond = parser.getIntValue();
-                        if(partialSecond < 1_000 &&
-                                !context.isEnabled(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS))
+                        if(partialSecond < 1_000 && !shouldReadTimestampsAsNanoseconds(context))
                             partialSecond *= 1_000_000; // value is milliseconds, convert it to nanoseconds
                         t = parser.nextToken();
                         if (t != JsonToken.END_ARRAY) {
@@ -132,6 +166,11 @@ public class LocalTimeDeserializer extends JSR310DateTimeDeserializerBase<LocalT
             _throwNoNumericTimestampNeedTimeZone(parser, context);
         }
         return _handleUnexpectedToken(context, parser, "Expected array or string.");
+    }
+
+    protected boolean shouldReadTimestampsAsNanoseconds(DeserializationContext context) {
+        return (_readTimestampsAsNanosOverride != null) ? _readTimestampsAsNanosOverride :
+            context.isEnabled(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
     }
 
     protected LocalTime _fromString(JsonParser p, DeserializationContext ctxt,

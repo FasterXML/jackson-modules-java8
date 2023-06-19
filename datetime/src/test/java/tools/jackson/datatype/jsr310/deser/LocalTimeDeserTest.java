@@ -28,6 +28,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Feature;
 import com.fasterxml.jackson.annotation.OptBoolean;
 
 import tools.jackson.core.type.TypeReference;
@@ -55,6 +56,26 @@ public class LocalTimeDeserTest extends ModuleTestBase
 
         public StrictWrapper() { }
         public StrictWrapper(LocalTime v) { value = v; }
+    }
+
+    static class WrapperWithReadTimestampsAsNanosDisabled {
+        @JsonFormat(
+            without=Feature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS
+        )
+        public LocalTime value;
+
+        public WrapperWithReadTimestampsAsNanosDisabled() { }
+        public WrapperWithReadTimestampsAsNanosDisabled(LocalTime v) { value = v; }
+    }
+
+    static class WrapperWithReadTimestampsAsNanosEnabled {
+        @JsonFormat(
+            with=Feature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS
+        )
+        public LocalTime value;
+
+        public WrapperWithReadTimestampsAsNanosEnabled() { }
+        public WrapperWithReadTimestampsAsNanosEnabled(LocalTime v) { value = v; }
     }
 
     @Test
@@ -116,6 +137,36 @@ public class LocalTimeDeserTest extends ModuleTestBase
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("[22,31,5,829]");
         assertEquals("The value is not correct.", LocalTime.of(22, 31, 5, 829000000), value);
+    }
+
+    @Test
+    public void testDeserializationAsTimestamp05Nanoseconds() throws Exception
+    {
+        ObjectReader wrapperReader =
+            newMapper().readerFor(WrapperWithReadTimestampsAsNanosEnabled.class);
+        WrapperWithReadTimestampsAsNanosEnabled actual = wrapperReader
+            .readValue(a2q("{'value':[9,22,0,57]}"));
+        assertEquals("The value is not correct.", LocalTime.of(9, 22, 0, 57), actual.value);
+    }
+
+    @Test
+    public void testDeserializationAsTimestamp05Milliseconds01() throws Exception
+    {
+        ObjectReader wrapperReader =
+            newMapper().readerFor(WrapperWithReadTimestampsAsNanosDisabled.class);
+        WrapperWithReadTimestampsAsNanosDisabled actual = wrapperReader
+            .readValue(a2q("{'value':[9,22,0,57]}"));
+        assertEquals("The value is not correct.", LocalTime.of(9, 22, 0, 57000000), actual.value);
+    }
+
+    @Test
+    public void testDeserializationAsTimestamp05Milliseconds02() throws Exception
+    {
+        ObjectReader wrapperReader =
+            newMapper().readerFor(WrapperWithReadTimestampsAsNanosDisabled.class);
+        WrapperWithReadTimestampsAsNanosDisabled actual = wrapperReader
+            .readValue(a2q("{'value':[9,22,0,4257]}"));
+        assertEquals("The value is not correct.", LocalTime.of(9, 22, 0, 4257), actual.value);
     }
 
     @Test

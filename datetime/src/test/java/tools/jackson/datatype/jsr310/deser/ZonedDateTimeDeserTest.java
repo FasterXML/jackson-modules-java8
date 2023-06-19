@@ -1,13 +1,15 @@
 package tools.jackson.datatype.jsr310.deser;
 
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Feature;
+
 import tools.jackson.core.type.TypeReference;
 
 import tools.jackson.databind.DeserializationFeature;
@@ -32,12 +34,56 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
         public ZonedDateTime value;
     }
 
+    static class WrapperWithReadTimestampsAsNanosDisabled {
+        @JsonFormat(
+            without=Feature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS
+        )
+        public ZonedDateTime value;
+
+        public WrapperWithReadTimestampsAsNanosDisabled() { }
+        public WrapperWithReadTimestampsAsNanosDisabled(ZonedDateTime v) { value = v; }
+    }
+
+    static class WrapperWithReadTimestampsAsNanosEnabled {
+        @JsonFormat(
+            with=Feature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS
+        )
+        public ZonedDateTime value;
+
+        public WrapperWithReadTimestampsAsNanosEnabled() { }
+        public WrapperWithReadTimestampsAsNanosEnabled(ZonedDateTime v) { value = v; }
+    }
+
     @Test
     public void testDeserializationAsString01() throws Exception
     {
         assertEquals("The value is not correct.",
                 ZonedDateTime.of(2000, 1, 1, 12, 0, 0, 0, ZoneOffset.UTC),
                 READER.readValue(q("2000-01-01T12:00Z")));
+    }
+
+    @Test
+    public void testDeserializationAsInt01() throws Exception
+    {
+        ObjectReader reader = newMapper().readerFor(WrapperWithReadTimestampsAsNanosDisabled.class);
+        ZonedDateTime date = ZonedDateTime.of(
+            LocalDateTime.ofEpochSecond(1, 1000000, ZoneOffset.UTC),
+            ZoneOffset.UTC);
+        WrapperWithReadTimestampsAsNanosDisabled actual =
+            reader.readValue(a2q("{'value':1001}"));
+        assertEquals("The value is not correct.", date, actual.value);
+    }
+
+    @Test
+    public void testDeserializationAsInt02() throws Exception
+    {
+        ObjectReader reader = newMapper().readerFor(WrapperWithReadTimestampsAsNanosEnabled.class);
+        ZonedDateTime date = ZonedDateTime.of(
+            LocalDateTime.ofEpochSecond(1, 0, ZoneOffset.UTC),
+            ZoneOffset.UTC);
+        WrapperWithReadTimestampsAsNanosEnabled actual =
+            reader.readValue(a2q("{'value':1}"));
+        assertEquals("The value is not correct.", date, actual.value);
     }
 
     @Test

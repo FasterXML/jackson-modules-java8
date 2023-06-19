@@ -62,6 +62,18 @@ public abstract class JSR310DateTimeDeserializerBase<T>
         _shape = shape;
     }
 
+    /**
+     * @since 2.16
+     */
+    protected JSR310DateTimeDeserializerBase(JSR310DateTimeDeserializerBase<T> base,
+        Boolean leniency,
+        DateTimeFormatter formatter,
+        JsonFormat.Shape shape) {
+        super(base, leniency);
+        _formatter = formatter;
+        _shape = shape;
+    }
+
     protected abstract JSR310DateTimeDeserializerBase<T> withDateFormat(DateTimeFormatter dtf);
 
     @Override

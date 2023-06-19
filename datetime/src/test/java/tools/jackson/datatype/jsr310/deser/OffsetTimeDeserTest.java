@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Feature;
 
 import tools.jackson.core.type.TypeReference;
 
@@ -42,6 +43,26 @@ public class OffsetTimeDeserTest extends ModuleTestBase
         public java.time.OffsetTime starttime;
         public java.time.OffsetTime endtime;
         public String comments;
+    }
+
+    static class WrapperWithReadTimestampsAsNanosDisabled {
+        @JsonFormat(
+            without=Feature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS
+        )
+        public OffsetTime value;
+
+        public WrapperWithReadTimestampsAsNanosDisabled() { }
+        public WrapperWithReadTimestampsAsNanosDisabled(OffsetTime v) { value = v; }
+    }
+
+    static class WrapperWithReadTimestampsAsNanosEnabled {
+        @JsonFormat(
+            with=Feature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS
+        )
+        public OffsetTime value;
+
+        public WrapperWithReadTimestampsAsNanosEnabled() { }
+        public WrapperWithReadTimestampsAsNanosEnabled(OffsetTime v) { value = v; }
     }
 
     private final ObjectMapper MAPPER = newMapper();
@@ -123,6 +144,45 @@ public class OffsetTimeDeserTest extends ModuleTestBase
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                .readValue("[22,31,5,829,\"+11:00\"]");
         assertEquals("The value is not correct.", time, value);
+    }
+
+    @Test
+    public void testDeserializationAsTimestamp05Nanoseconds() throws Exception
+    {
+        ObjectReader reader = newMapper().readerFor(WrapperWithReadTimestampsAsNanosEnabled.class);
+        OffsetTime time = OffsetTime.of(9, 22, 0, 57, ZoneOffset.of("-0630"));
+        WrapperWithReadTimestampsAsNanosEnabled actual = reader
+            .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+            .readValue(a2q("{'value':[9,22,0,57,'-06:30']}"));
+
+        assertNotNull("The value should not be null.", actual);
+        assertEquals("The value is not correct.", time, actual.value);
+    }
+
+    @Test
+    public void testDeserializationAsTimestamp05Milliseconds01() throws Exception
+    {
+        ObjectReader reader = newMapper().readerFor(WrapperWithReadTimestampsAsNanosDisabled.class);
+        OffsetTime time = OffsetTime.of(9, 22, 0, 57000000, ZoneOffset.of("-0630"));
+        WrapperWithReadTimestampsAsNanosDisabled actual = reader
+            .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+            .readValue(a2q("{'value':[9,22,0,57,'-06:30']}"));
+
+        assertNotNull("The value should not be null.", actual);
+        assertEquals("The value is not correct.", time, actual.value);
+    }
+
+    @Test
+    public void testDeserializationAsTimestamp05Milliseconds02() throws Exception
+    {
+        ObjectReader reader = newMapper().readerFor(WrapperWithReadTimestampsAsNanosDisabled.class);
+        OffsetTime time = OffsetTime.of(9, 22, 0, 4257, ZoneOffset.of("-0630"));
+        WrapperWithReadTimestampsAsNanosDisabled actual = reader
+            .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+            .readValue(a2q("{'value':[9,22,0,4257,'-06:30']}"));
+
+        assertNotNull("The value should not be null.", actual);
+        assertEquals("The value is not correct.", time, actual.value);
     }
 
     @Test

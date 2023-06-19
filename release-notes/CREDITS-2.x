@@ -105,72 +105,77 @@ Samantha Williamson (samwill@github)
    (2.11.0)
 
 Antti S. Lankila (alankila@github)
-  * Reported #94: Deserialization of timestamps with UTC timezone to LocalDateTime
-    doesn't yield correct time
-   (2.12.0)
+ * Reported #94: Deserialization of timestamps with UTC timezone to LocalDateTime
+   doesn't yield correct time
+  (2.12.0)
 
 Joni Syri (jpsyri@github)
-  * Reported #165: Problem in serializing negative Duration values
-   (2.12.0)
+ * Reported #165: Problem in serializing negative Duration values
+  (2.12.0)
 
 Moritz Orth (morth@github.com)
-  * Reported and suggested fix for #166: Cannot deserialize OffsetDateTime.MIN and
-   OffsetDateTime.MAX with ADJUST_DATES_TO_CONTEXT_TIME_ZONE enabled
-   (2.12.0)
+ * Reported and suggested fix for #166: Cannot deserialize OffsetDateTime.MIN and
+  OffsetDateTime.MAX with ADJUST_DATES_TO_CONTEXT_TIME_ZONE enabled
+  (2.12.0)
 
 Erwan Leroux (ErwanLeroux@github)
-  * Reported #175: ObjectMapper#setTimeZone ignored by jsr-310/datetime
-    types during serialization when using `@JsonFormat` annotation
-   (2.12.0)
+ * Reported #175: ObjectMapper#setTimeZone ignored by jsr-310/datetime
+   types during serialization when using `@JsonFormat` annotation
+  (2.12.0)
 
 Ferenc Csaky (ferenc-csaky@github)
-  * Contributed fix to #175: ObjectMapper#setTimeZone ignored by jsr-310/datetime
-    types during serialization when using `@JsonFormat` annotation
-   (2.12.0)
+ * Contributed fix to #175: ObjectMapper#setTimeZone ignored by jsr-310/datetime
+   types during serialization when using `@JsonFormat` annotation
+  (2.12.0)
 
 Philipp Dargel (chisui@github)
-  * Requested #184: `DurationDeserializer` should use `@JsonFormat.pattern` (and
-    config override) to support configurable `ChronoUnit`
-   (2.12.0)
+ * Requested #184: `DurationDeserializer` should use `@JsonFormat.pattern` (and
+   config override) to support configurable `ChronoUnit`
+  (2.12.0)
 
 Oriol Barcelona (obarcelonap@github)
-  * Contributed fix for #184: `DurationDeserializer` should use `@JsonFormat.pattern`
-    (and config override) to support configurable `ChronoUnit`
-   (2.12.0)
-  * Contributed fix for #189: Support use of "pattern" (`ChronoUnit`) for
-    `DurationSerializer` too
-   (2.12.0)
+ * Contributed fix for #184: `DurationDeserializer` should use `@JsonFormat.pattern`
+   (and config override) to support configurable `ChronoUnit`
+  (2.12.0)
+ * Contributed fix for #189: Support use of "pattern" (`ChronoUnit`) for
+   `DurationSerializer` too
+  (2.12.0)
 
 Gökhan Öner (gokhanoner@github)
-  * Reported #207: Fail to serialize `TemporalAdjuster` type with 2.12
-   (2.12.3)
+ * Reported #207: Fail to serialize `TemporalAdjuster` type with 2.12
+  (2.12.3)
 
 Øystein B. Huseby (oeystein@github)
-  * Contributed #131: Deserializing ZonedDateTime with basic TZ offset notation (0000)
-   (2.13.0)
+ * Contributed #131: Deserializing ZonedDateTime with basic TZ offset notation (0000)
+  (2.13.0)
 
 Sam Kruglov (Sam-Kruglov@github)
-  * Reported #224: `DurationSerializer` ignores format pattern if nano-second
-    serialization enabled
+ * Reported #224: `DurationSerializer` ignores format pattern if nano-second
+   serialization enabled
   (2.14.0)
 
 Maciej Dębowski (maciekdeb@github)
-  * Contributed #240: `LocalDateDeserializer` should consider coercionConfig settings
-   (2.14.0)
+ * Contributed #240: `LocalDateDeserializer` should consider coercionConfig settings
+  (2.14.0)
 
 Felipe Rotilho (rotilho@github)
-  * Contributed #255: Change `InstantSerializerBase` to generate schema format in the same
-    way as `DateTimeSerializerBase`
-   (2.15.0)
+ * Contributed #255: Change `InstantSerializerBase` to generate schema format in the same
+   way as `DateTimeSerializerBase`
+  (2.15.0)
 
 Michał Ostrowski (karbi@github)
-  * Contributed #259: Wrong module auto-registered when using JPMS
-   (2.15.0)
+ * Contributed #259: Wrong module auto-registered when using JPMS
+  (2.15.0)
 
 David Schlosnagle (schlosna@github)
-  * Contributed #266: Optimize `InstantDeserializer` method `replaceZeroOffsetAsZIfNecessary()`
-   (2.15.0)
+ * Contributed #266: Optimize `InstantDeserializer` method `replaceZeroOffsetAsZIfNecessary()`
+  (2.15.0)
 
 Daniel Scalzi (dscalzi@github)
-  * Contributed #267: Normalize zone id during ZonedDateTime deserialization
-   (2.15.0)
+ * Contributed #267: Normalize zone id during ZonedDateTime deserialization
+  (2.15.0)
+
+Raman Babich (raman-babich@github)
+ * Contributed fix for #272: `JsonFormat.Feature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS`
+    not respected when deserialising `Instant`s
+  (2.16.0)

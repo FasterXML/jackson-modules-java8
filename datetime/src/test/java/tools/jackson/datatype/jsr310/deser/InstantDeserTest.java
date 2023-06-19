@@ -63,6 +63,26 @@ public class InstantDeserTest extends ModuleTestBase
         }
     }
 
+    static class WrapperWithReadTimestampsAsNanosDisabled {
+        @JsonFormat(
+            without=JsonFormat.Feature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS
+        )
+        public Instant value;
+
+        public WrapperWithReadTimestampsAsNanosDisabled() { }
+        public WrapperWithReadTimestampsAsNanosDisabled(Instant v) { value = v; }
+    }
+
+    static class WrapperWithReadTimestampsAsNanosEnabled {
+        @JsonFormat(
+            with=JsonFormat.Feature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS
+        )
+        public Instant value;
+
+        public WrapperWithReadTimestampsAsNanosEnabled() { }
+        public WrapperWithReadTimestampsAsNanosEnabled(Instant v) { value = v; }
+    }
+
     private final ObjectMapper MAPPER = newMapper();
     private final ObjectReader READER = MAPPER.readerFor(Instant.class);
 
@@ -239,6 +259,19 @@ public class InstantDeserTest extends ModuleTestBase
         assertEquals("The value is not correct.", date, value);
     }
 
+    @Test
+    public void testDeserializationAsInt04Nanoseconds() throws Exception
+    {
+        ObjectReader reader = MAPPER.readerFor(WrapperWithReadTimestampsAsNanosEnabled.class);
+        Instant date = Instant.now();
+        date = date.minus(date.getNano(), ChronoUnit.NANOS);
+        WrapperWithReadTimestampsAsNanosEnabled expected =
+            new WrapperWithReadTimestampsAsNanosEnabled(date);
+        WrapperWithReadTimestampsAsNanosEnabled actual = reader.readValue(
+            a2q("{'value':" + date.getEpochSecond() + "}"));
+        assertEquals("The value is not correct.", expected.value, actual.value);
+    }
+
     /*
     /**********************************************************************
     /* Basic deserialization from Integer (long) value, as milliseconds
@@ -275,6 +308,19 @@ public class InstantDeserTest extends ModuleTestBase
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue(Long.toString(date.toEpochMilli()));
         assertEquals("The value is not correct.", date, value);
+    }
+
+    @Test
+    public void testDeserializationAsInt04Milliseconds() throws Exception
+    {
+        ObjectReader reader = MAPPER.readerFor(WrapperWithReadTimestampsAsNanosDisabled.class);
+        Instant date = Instant.now();
+        date = date.minus(date.getNano(), ChronoUnit.NANOS);
+        WrapperWithReadTimestampsAsNanosDisabled expected =
+            new WrapperWithReadTimestampsAsNanosDisabled(date);
+        WrapperWithReadTimestampsAsNanosDisabled actual = reader.readValue(
+            a2q("{'value':" + date.toEpochMilli() + "}"));
+        assertEquals("The value is not correct.", expected.value, actual.value);
     }
 
     /*

@@ -7,6 +7,7 @@ import java.time.temporal.TemporalAmount;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Feature;
 
 import tools.jackson.core.type.TypeReference;
 
@@ -36,6 +37,26 @@ public class DurationDeserTest extends ModuleTestBase
 
         public Wrapper() { }
         public Wrapper(Duration v) { value = v; }
+    }
+
+    static class WrapperWithReadTimestampsAsNanosDisabled {
+        @JsonFormat(
+            without=Feature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS
+        )
+        public Duration value;
+
+        public WrapperWithReadTimestampsAsNanosDisabled() { }
+        public WrapperWithReadTimestampsAsNanosDisabled(Duration v) { value = v; }
+    }
+
+    static class WrapperWithReadTimestampsAsNanosEnabled {
+        @JsonFormat(
+            with=Feature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS
+        )
+        public Duration value;
+
+        public WrapperWithReadTimestampsAsNanosEnabled() { }
+        public WrapperWithReadTimestampsAsNanosEnabled(Duration v) { value = v; }
     }
 
 
@@ -224,6 +245,28 @@ public class DurationDeserTest extends ModuleTestBase
         Duration value = READER.without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("13498000");
         assertEquals("The value is not correct.", Duration.ofSeconds(13498L, 0),  value);
+    }
+
+    @Test
+    public void testDeserializationAsInt05() throws Exception
+    {
+        ObjectReader reader = newMapper().readerFor(WrapperWithReadTimestampsAsNanosEnabled.class);
+        WrapperWithReadTimestampsAsNanosEnabled expected =
+            new WrapperWithReadTimestampsAsNanosEnabled(Duration.ofSeconds(13498L, 0));
+        WrapperWithReadTimestampsAsNanosEnabled actual =
+            reader.readValue(wrapperPayload(13498));
+        assertEquals("The value is not correct.", expected.value, actual.value);
+    }
+
+    @Test
+    public void testDeserializationAsInt06() throws Exception
+    {
+        ObjectReader reader = newMapper().readerFor(WrapperWithReadTimestampsAsNanosDisabled.class);
+        WrapperWithReadTimestampsAsNanosDisabled expected =
+            new WrapperWithReadTimestampsAsNanosDisabled(Duration.ofSeconds(13498L, 0));
+        WrapperWithReadTimestampsAsNanosDisabled actual =
+            reader.readValue(wrapperPayload(13498000));
+        assertEquals("The value is not correct.", expected.value, actual.value);
     }
 
     @Test
