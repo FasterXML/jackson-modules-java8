@@ -10,7 +10,9 @@ Modules:
 
 2.16.0 (not yet released)
 
-No changes since 2.15
+#272: (datetime) `JsonFormat.Feature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS`
+  not respected when deserialising `Instant`s
+ (fix contributed by Raman B)
 
 2.15.2 (30-May-2023)
 2.15.1 (16-May-2023)

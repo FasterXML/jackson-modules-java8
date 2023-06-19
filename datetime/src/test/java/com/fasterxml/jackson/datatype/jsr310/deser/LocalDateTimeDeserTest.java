@@ -541,7 +541,9 @@ public class LocalDateTimeDeserTest
     @Test
     public void testDeserializationCaseInsensitiveEnabled() throws Throwable
     {
-        ObjectMapper mapper = newMapper().configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES, true);
+        ObjectMapper mapper = mapperBuilder()
+                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES, true)
+                .build();
         mapper.configOverride(LocalDateTime.class).setFormat(JsonFormat.Value.forPattern("dd-MMM-yyyy HH:mm"));
         ObjectReader reader = mapper.readerFor(LocalDateTime.class);
         String[] jsons = new String[] {"'01-Jan-2000 13:45'","'01-JAN-2000 13:45'", "'01-jan-2000 13:45'"};
@@ -553,7 +555,9 @@ public class LocalDateTimeDeserTest
     @Test
     public void testDeserializationCaseInsensitiveDisabled() throws Throwable
     {
-        ObjectMapper mapper = newMapper().configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES, false);
+        ObjectMapper mapper = mapperBuilder()
+                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES, false)
+                .build();
         mapper.configOverride(LocalDateTime.class).setFormat(JsonFormat.Value.forPattern("dd-MMM-yyyy HH:mm"));
         ObjectReader reader = mapper.readerFor(LocalDateTime.class);
         expectSuccess(reader, LocalDateTime.of(2000, Month.JANUARY, 1, 13, 45), "'01-Jan-2000 13:45'");
@@ -562,7 +566,9 @@ public class LocalDateTimeDeserTest
     @Test
     public void testDeserializationCaseInsensitiveDisabled_InvalidDate() throws Throwable
     {
-        ObjectMapper mapper = newMapper().configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES, false);
+        ObjectMapper mapper = mapperBuilder()
+                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES, false)
+                .build();
         mapper.configOverride(LocalDateTime.class).setFormat(JsonFormat.Value.forPattern("dd-MMM-yyyy"));
         ObjectReader reader = mapper.readerFor(LocalDateTime.class);
         String[] jsons = new String[] {"'01-JAN-2000'", "'01-jan-2000'"};
