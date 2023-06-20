@@ -73,16 +73,13 @@ public class OffsetTimeDeserializer extends JSR310DateTimeDeserializerBase<Offse
 
     @Override
     protected OffsetTimeDeserializer withDateFormat(DateTimeFormatter dtf) {
-        return new OffsetTimeDeserializer(dtf);
+        return new OffsetTimeDeserializer(this, _isLenient, dtf, _shape, _readTimestampsAsNanosOverride);
     }
 
     @Override
     protected OffsetTimeDeserializer withLeniency(Boolean leniency) {
         return new OffsetTimeDeserializer(this, leniency);
     }
-
-    @Override
-    protected OffsetTimeDeserializer withShape(JsonFormat.Shape shape) { return this; }
 
     @Override
     protected JSR310DateTimeDeserializerBase<?> _withFormatOverrides(DeserializationContext ctxt,

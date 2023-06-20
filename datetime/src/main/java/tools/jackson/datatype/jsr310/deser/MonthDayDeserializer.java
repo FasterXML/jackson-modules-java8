@@ -30,16 +30,21 @@ public class MonthDayDeserializer extends JSR310DateTimeDeserializerBase<MonthDa
         super(MonthDay.class, formatter);
     }
 
-    @Override
-    protected MonthDayDeserializer withDateFormat(DateTimeFormatter dtf) {
-        return new MonthDayDeserializer(dtf);
-    }
-
     /**
      * Since 2.12
      */
     protected MonthDayDeserializer(MonthDayDeserializer base, Boolean leniency) {
         super(base, leniency);
+    }
+
+    /**
+     * Since 2.16
+     */
+    protected MonthDayDeserializer(MonthDayDeserializer base,
+            Boolean leniency,
+            DateTimeFormatter formatter,
+            JsonFormat.Shape shape) {
+        super(base, leniency, formatter, shape);
     }
 
     @Override
@@ -48,7 +53,9 @@ public class MonthDayDeserializer extends JSR310DateTimeDeserializerBase<MonthDa
     }
 
     @Override
-    protected MonthDayDeserializer withShape(JsonFormat.Shape shape) { return this; }
+    protected MonthDayDeserializer withDateFormat(DateTimeFormatter dtf) {
+        return new MonthDayDeserializer(this, _isLenient, dtf, _shape);
+    }
 
     @Override
     public MonthDay deserialize(JsonParser parser, DeserializationContext context)

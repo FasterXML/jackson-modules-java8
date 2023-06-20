@@ -56,9 +56,19 @@ public class YearDeserializer extends JSR310DateTimeDeserializerBase<Year>
         super(base, leniency);
     }
 
+    /**
+     * Since 2.16
+     */
+    public YearDeserializer(YearDeserializer base,
+            Boolean leniency,
+            DateTimeFormatter formatter,
+            JsonFormat.Shape shape) {
+        super(base, leniency, formatter, shape);
+    }
+
     @Override
     protected YearDeserializer withDateFormat(DateTimeFormatter dtf) {
-        return new YearDeserializer(dtf);
+        return new YearDeserializer(this, _isLenient, dtf, _shape);
     }
 
     @Override
@@ -67,11 +77,7 @@ public class YearDeserializer extends JSR310DateTimeDeserializerBase<Year>
     }
 
     @Override
-    protected YearDeserializer withShape(JsonFormat.Shape shape) { return this; }
-
-    @Override
-    public Year deserialize(JsonParser parser, DeserializationContext context)
-        throws JacksonException
+    public Year deserialize(JsonParser parser, DeserializationContext context) throws JacksonException
     {
         JsonToken t = parser.currentToken();
         if (t == JsonToken.VALUE_STRING) {

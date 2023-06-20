@@ -58,9 +58,19 @@ public class YearMonthDeserializer extends JSR310DateTimeDeserializerBase<YearMo
         super(base, leniency);
     }
 
+    /**
+     * Since 2.16
+     */
+    public YearMonthDeserializer(YearMonthDeserializer base,
+            Boolean leniency,
+            DateTimeFormatter formatter,
+            JsonFormat.Shape shape) {
+        super(base, leniency, formatter, shape);
+    }
+
     @Override
     protected YearMonthDeserializer withDateFormat(DateTimeFormatter dtf)  {
-        return new YearMonthDeserializer(dtf);
+        return new YearMonthDeserializer(this, _isLenient, dtf, _shape);
     }
 
     @Override
@@ -69,11 +79,7 @@ public class YearMonthDeserializer extends JSR310DateTimeDeserializerBase<YearMo
     }
 
     @Override
-    protected YearMonthDeserializer withShape(JsonFormat.Shape shape) { return this; }
-
-    @Override
-    public YearMonth deserialize(JsonParser parser, DeserializationContext context)
-        throws JacksonException
+    public YearMonth deserialize(JsonParser parser, DeserializationContext context) throws JacksonException
     {
         if (parser.hasToken(JsonToken.VALUE_STRING)) {
             return _fromString(parser, context, parser.getText());

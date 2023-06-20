@@ -79,7 +79,13 @@ public abstract class JSR310DateTimeDeserializerBase<T>
     @Override
     protected abstract JSR310DateTimeDeserializerBase<T> withLeniency(Boolean leniency);
 
-    protected abstract JSR310DateTimeDeserializerBase<T> withShape(Shape shape);
+    /**
+     * The default implementation returns this, because shape is more likely applicable in case of the serialization,
+     * usage during deserialization could cover only very specific cases.
+     */
+    protected JSR310DateTimeDeserializerBase<T> withShape(Shape shape) {
+        return this;
+    }
 
     @Override
     public ValueDeserializer<?> createContextual(DeserializationContext ctxt,

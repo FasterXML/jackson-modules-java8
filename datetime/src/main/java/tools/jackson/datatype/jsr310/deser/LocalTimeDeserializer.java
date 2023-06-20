@@ -75,17 +75,14 @@ public class LocalTimeDeserializer extends JSR310DateTimeDeserializerBase<LocalT
     }
 
     @Override
-    protected LocalTimeDeserializer withDateFormat(DateTimeFormatter formatter) {
-        return new LocalTimeDeserializer(formatter);
+    protected LocalTimeDeserializer withDateFormat(DateTimeFormatter dtf) {
+        return new LocalTimeDeserializer(this, _isLenient, dtf, _shape, _readTimestampsAsNanosOverride);
     }
 
     @Override
     protected LocalTimeDeserializer withLeniency(Boolean leniency) {
         return new LocalTimeDeserializer(this, leniency);
     }
-
-    @Override
-    protected LocalTimeDeserializer withShape(JsonFormat.Shape shape) { return this; }
 
     @Override
     protected JSR310DateTimeDeserializerBase<?> _withFormatOverrides(DeserializationContext ctxt,
