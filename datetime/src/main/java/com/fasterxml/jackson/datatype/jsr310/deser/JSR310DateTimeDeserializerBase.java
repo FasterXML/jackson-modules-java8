@@ -104,9 +104,14 @@ public abstract class JSR310DateTimeDeserializerBase<T>
     protected abstract JSR310DateTimeDeserializerBase<T> withLeniency(Boolean leniency);
 
     /**
+     * The default implementation returns this, because shape is more likely applicable in case of the serialization,
+     * usage during deserialization could cover only very specific cases.
+     *
      * @since 2.11
      */
-    protected abstract JSR310DateTimeDeserializerBase<T> withShape(Shape shape);
+    protected JSR310DateTimeDeserializerBase<T> withShape(Shape shape) {
+        return this;
+    }
 
     @Override
     public JsonDeserializer<?> createContextual(DeserializationContext ctxt,
