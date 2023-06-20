@@ -84,17 +84,14 @@ public class LocalDateTimeDeserializer
     }
 
     @Override
-    protected LocalDateTimeDeserializer withDateFormat(DateTimeFormatter formatter) {
-        return new LocalDateTimeDeserializer(formatter);
+    protected LocalDateTimeDeserializer withDateFormat(DateTimeFormatter dtf) {
+        return new LocalDateTimeDeserializer(this, _isLenient, dtf, _shape, _readTimestampsAsNanosOverride);
     }
 
     @Override
     protected LocalDateTimeDeserializer withLeniency(Boolean leniency) {
         return new LocalDateTimeDeserializer(this, leniency);
     }
-
-    @Override
-    protected LocalDateTimeDeserializer withShape(JsonFormat.Shape shape) { return this; }
 
     @Override
     protected JSR310DateTimeDeserializerBase<?> _withFormatOverrides(DeserializationContext ctxt,

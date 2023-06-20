@@ -209,9 +209,6 @@ public class InstantDeserializer<T extends Temporal>
         return new InstantDeserializer<>(this, _formatter, leniency);
     }
 
-    @Override
-    protected InstantDeserializer<T> withShape(JsonFormat.Shape shape) { return this; }
-
     @SuppressWarnings("unchecked")
     @Override // @since 2.12.1
     protected JSR310DateTimeDeserializerBase<?> _withFormatOverrides(DeserializationContext ctxt,
