@@ -8,7 +8,7 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
-2.16.0 (not yet released)
+2.16.0 (20-Oct-2023)
 
 #272: (datetime) `JsonFormat.Feature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS`
   not respected when deserialising `Instant`s
