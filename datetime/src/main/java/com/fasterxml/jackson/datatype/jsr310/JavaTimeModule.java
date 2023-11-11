@@ -18,6 +18,7 @@ package com.fasterxml.jackson.datatype.jsr310;
 
 import java.time.*;
 
+import com.fasterxml.jackson.core.util.JacksonFeatureSet;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.DeserializationConfig;
 import com.fasterxml.jackson.databind.JavaType;
@@ -109,10 +110,17 @@ public final class JavaTimeModule extends SimpleModule
 {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * @since 2.16
+     */
+    private JacksonFeatureSet<JavaTimeFeature> _features;
+
     public JavaTimeModule()
     {
         super(PackageVersion.VERSION);
 
+        _features = JacksonFeatureSet.fromDefaults(JavaTimeFeature.values());
+        
         // First deserializers
 
         // // Instant variants:
@@ -178,6 +186,16 @@ public final class JavaTimeModule extends SimpleModule
         addKeyDeserializer(ZoneOffset.class, ZoneOffsetKeyDeserializer.INSTANCE);
     }
 
+    public JavaTimeModule enable(JavaTimeFeature f) {
+        _features = _features.with(f);
+        return this;
+    }
+
+    public JavaTimeModule disable(JavaTimeFeature f) {
+        _features = _features.without(f);
+        return this;
+    }
+    
     @Override
     public void setupModule(SetupContext context) {
         super.setupModule(context);
