@@ -40,6 +40,14 @@ public class DurationSerTest extends ModuleTestBase
         public Duration getDuration() { return duration; }
     }
 
+    // [datetime#282]
+    static class Bean282 {
+        @JsonFormat(pattern = "SECONDS")
+        public Duration duration;
+
+        public Bean282(Duration d) { duration = d; }
+    }
+
     @Test
     public void testSerializationAsTimestampNanoseconds01() throws Exception
     {
@@ -361,9 +369,19 @@ public class DurationSerTest extends ModuleTestBase
 
     // [datetime#224]
     @Test
-    public void testDurationFormatOverride() throws Exception
+    public void testDurationFormatOverrideMinutes() throws Exception
     {
         assertEquals(a2q("{'mins':120}"),
                 WRITER.writeValueAsString(new MyDto224(Duration.ofHours(2))));
     }
+
+    // [datetime#282]
+    @Test
+    public void testDurationFormatOverrideSeconds() throws Exception
+    {
+        final Duration maxDuration = Duration.ofSeconds(Long.MIN_VALUE);
+        assertEquals(a2q("{'duration':"+Long.MIN_VALUE+"}"),
+                WRITER.writeValueAsString(new Bean282(maxDuration)));
+    }
+
 }
