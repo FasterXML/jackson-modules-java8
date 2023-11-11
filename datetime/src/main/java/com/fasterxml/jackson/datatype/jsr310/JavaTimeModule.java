@@ -19,40 +19,22 @@ package com.fasterxml.jackson.datatype.jsr310;
 import java.time.*;
 
 import com.fasterxml.jackson.core.util.JacksonFeatureSet;
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.DeserializationConfig;
-import com.fasterxml.jackson.databind.JavaType;
+
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.deser.ValueInstantiator;
 import com.fasterxml.jackson.databind.deser.ValueInstantiators;
 import com.fasterxml.jackson.databind.deser.std.StdValueInstantiator;
 import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
 import com.fasterxml.jackson.databind.introspect.AnnotatedClassResolver;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
+import com.fasterxml.jackson.databind.module.SimpleDeserializers;
+import com.fasterxml.jackson.databind.module.SimpleKeyDeserializers;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.module.SimpleSerializers;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.DurationDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.JSR310StringParsableDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.MonthDayDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.OffsetTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.YearDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.YearMonthDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.*;
 import com.fasterxml.jackson.datatype.jsr310.deser.key.*;
-import com.fasterxml.jackson.datatype.jsr310.ser.DurationSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.InstantSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.MonthDaySerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.OffsetDateTimeSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.OffsetTimeSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.YearMonthSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.YearSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.ZoneIdSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.ZonedDateTimeSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.*;
 import com.fasterxml.jackson.datatype.jsr310.ser.key.ZonedDateTimeKeySerializer;
 
 /**
@@ -106,7 +88,8 @@ import com.fasterxml.jackson.datatype.jsr310.ser.key.ZonedDateTimeKeySerializer;
  * @see com.fasterxml.jackson.datatype.jsr310.ser.key.Jsr310NullKeySerializer
  */
 @SuppressWarnings("javadoc")
-public final class JavaTimeModule extends SimpleModule
+public final class JavaTimeModule
+    extends SimpleModule
 {
     private static final long serialVersionUID = 1L;
 
@@ -120,70 +103,6 @@ public final class JavaTimeModule extends SimpleModule
         super(PackageVersion.VERSION);
 
         _features = JacksonFeatureSet.fromDefaults(JavaTimeFeature.values());
-        
-        // First deserializers
-
-        // // Instant variants:
-        addDeserializer(Instant.class, InstantDeserializer.INSTANT);
-        addDeserializer(OffsetDateTime.class, InstantDeserializer.OFFSET_DATE_TIME);
-        addDeserializer(ZonedDateTime.class, InstantDeserializer.ZONED_DATE_TIME);
-
-        // // Other deserializers
-        addDeserializer(Duration.class, DurationDeserializer.INSTANCE);
-        addDeserializer(LocalDateTime.class, LocalDateTimeDeserializer.INSTANCE);
-        addDeserializer(LocalDate.class, LocalDateDeserializer.INSTANCE);
-        addDeserializer(LocalTime.class, LocalTimeDeserializer.INSTANCE);
-        addDeserializer(MonthDay.class, MonthDayDeserializer.INSTANCE);
-        addDeserializer(OffsetTime.class, OffsetTimeDeserializer.INSTANCE);
-        addDeserializer(Period.class, JSR310StringParsableDeserializer.PERIOD);
-        addDeserializer(Year.class, YearDeserializer.INSTANCE);
-        addDeserializer(YearMonth.class, YearMonthDeserializer.INSTANCE);
-        addDeserializer(ZoneId.class, JSR310StringParsableDeserializer.ZONE_ID);
-        addDeserializer(ZoneOffset.class, JSR310StringParsableDeserializer.ZONE_OFFSET);
-
-        // then serializers:
-        addSerializer(Duration.class, DurationSerializer.INSTANCE);
-        addSerializer(Instant.class, InstantSerializer.INSTANCE);
-        addSerializer(LocalDateTime.class, LocalDateTimeSerializer.INSTANCE);
-        addSerializer(LocalDate.class, LocalDateSerializer.INSTANCE);
-        addSerializer(LocalTime.class, LocalTimeSerializer.INSTANCE);
-        addSerializer(MonthDay.class, MonthDaySerializer.INSTANCE);
-        addSerializer(OffsetDateTime.class, OffsetDateTimeSerializer.INSTANCE);
-        addSerializer(OffsetTime.class, OffsetTimeSerializer.INSTANCE);
-        addSerializer(Period.class, new ToStringSerializer(Period.class));
-        addSerializer(Year.class, YearSerializer.INSTANCE);
-        addSerializer(YearMonth.class, YearMonthSerializer.INSTANCE);
-
-        /* 27-Jun-2015, tatu: This is the real difference from the old
-         *  {@link JSR310Module}: default is to produce ISO-8601 compatible
-         *  serialization with timezone offset only, not timezone id.
-         *  But this is configurable.
-         */
-        addSerializer(ZonedDateTime.class, ZonedDateTimeSerializer.INSTANCE);
-        
-        // since 2.11: need to override Type Id handling
-        // (actual concrete type is `ZoneRegion`, but that's not visible)
-        addSerializer(ZoneId.class, new ZoneIdSerializer());
-        addSerializer(ZoneOffset.class, new ToStringSerializer(ZoneOffset.class));
-
-        // key serializers
-        addKeySerializer(ZonedDateTime.class, ZonedDateTimeKeySerializer.INSTANCE);
-
-        // key deserializers
-        addKeyDeserializer(Duration.class, DurationKeyDeserializer.INSTANCE);
-        addKeyDeserializer(Instant.class, InstantKeyDeserializer.INSTANCE);
-        addKeyDeserializer(LocalDateTime.class, LocalDateTimeKeyDeserializer.INSTANCE);
-        addKeyDeserializer(LocalDate.class, LocalDateKeyDeserializer.INSTANCE);
-        addKeyDeserializer(LocalTime.class, LocalTimeKeyDeserializer.INSTANCE);
-        addKeyDeserializer(MonthDay.class, MonthDayKeyDeserializer.INSTANCE);
-        addKeyDeserializer(OffsetDateTime.class, OffsetDateTimeKeyDeserializer.INSTANCE);
-        addKeyDeserializer(OffsetTime.class, OffsetTimeKeyDeserializer.INSTANCE);
-        addKeyDeserializer(Period.class, PeriodKeyDeserializer.INSTANCE);
-        addKeyDeserializer(Year.class, YearKeyDeserializer.INSTANCE);
-        addKeyDeserializer(YearMonth.class, YearMonthKeyDeserializer.INSTANCE);
-        addKeyDeserializer(ZonedDateTime.class, ZonedDateTimeKeyDeserializer.INSTANCE);
-        addKeyDeserializer(ZoneId.class, ZoneIdKeyDeserializer.INSTANCE);
-        addKeyDeserializer(ZoneOffset.class, ZoneOffsetKeyDeserializer.INSTANCE);
     }
 
     public JavaTimeModule enable(JavaTimeFeature f) {
@@ -199,6 +118,77 @@ public final class JavaTimeModule extends SimpleModule
     @Override
     public void setupModule(SetupContext context) {
         super.setupModule(context);
+
+        SimpleDeserializers desers = new SimpleDeserializers();
+        // // Instant variants:
+        desers.addDeserializer(Instant.class, InstantDeserializer.INSTANT);
+        desers.addDeserializer(OffsetDateTime.class, InstantDeserializer.OFFSET_DATE_TIME);
+        desers.addDeserializer(ZonedDateTime.class, InstantDeserializer.ZONED_DATE_TIME);
+        // // Other deserializers
+        desers.addDeserializer(Duration.class, DurationDeserializer.INSTANCE);
+        desers.addDeserializer(LocalDateTime.class, LocalDateTimeDeserializer.INSTANCE);
+        desers.addDeserializer(LocalDate.class, LocalDateDeserializer.INSTANCE);
+        desers.addDeserializer(LocalTime.class, LocalTimeDeserializer.INSTANCE);
+        desers.addDeserializer(MonthDay.class, MonthDayDeserializer.INSTANCE);
+        desers.addDeserializer(OffsetTime.class, OffsetTimeDeserializer.INSTANCE);
+        desers.addDeserializer(Period.class, JSR310StringParsableDeserializer.PERIOD);
+        desers.addDeserializer(Year.class, YearDeserializer.INSTANCE);
+        desers.addDeserializer(YearMonth.class, YearMonthDeserializer.INSTANCE);
+        desers.addDeserializer(ZoneId.class, JSR310StringParsableDeserializer.ZONE_ID);
+        desers.addDeserializer(ZoneOffset.class, JSR310StringParsableDeserializer.ZONE_OFFSET);
+        context.addDeserializers(desers);
+
+        SimpleSerializers sers = new SimpleSerializers();
+
+        sers.addSerializer(Duration.class, DurationSerializer.INSTANCE);
+        sers.addSerializer(Instant.class, InstantSerializer.INSTANCE);
+        sers.addSerializer(LocalDateTime.class, LocalDateTimeSerializer.INSTANCE);
+        sers.addSerializer(LocalDate.class, LocalDateSerializer.INSTANCE);
+        sers.addSerializer(LocalTime.class, LocalTimeSerializer.INSTANCE);
+        sers.addSerializer(MonthDay.class, MonthDaySerializer.INSTANCE);
+        sers.addSerializer(OffsetDateTime.class, OffsetDateTimeSerializer.INSTANCE);
+        sers.addSerializer(OffsetTime.class, OffsetTimeSerializer.INSTANCE);
+        sers.addSerializer(Period.class, new ToStringSerializer(Period.class));
+        sers.addSerializer(Year.class, YearSerializer.INSTANCE);
+        sers.addSerializer(YearMonth.class, YearMonthSerializer.INSTANCE);
+
+        /* 27-Jun-2015, tatu: This is the real difference from the old
+         *  {@link JSR310Module}: default is to produce ISO-8601 compatible
+         *  serialization with timezone offset only, not timezone id.
+         *  But this is configurable.
+         */
+        sers.addSerializer(ZonedDateTime.class, ZonedDateTimeSerializer.INSTANCE);
+
+        // since 2.11: need to override Type Id handling
+        // (actual concrete type is `ZoneRegion`, but that's not visible)
+        sers.addSerializer(ZoneId.class, new ZoneIdSerializer());
+        sers.addSerializer(ZoneOffset.class, new ToStringSerializer(ZoneOffset.class));
+
+        context.addSerializers(sers);
+
+        // key serializers
+        SimpleSerializers keySers = new SimpleSerializers();
+        keySers.addSerializer(ZonedDateTime.class, ZonedDateTimeKeySerializer.INSTANCE);
+        context.addKeySerializers(keySers);
+
+        // key deserializers
+        SimpleKeyDeserializers keyDesers = new SimpleKeyDeserializers();
+        keyDesers.addDeserializer(Duration.class, DurationKeyDeserializer.INSTANCE);
+        keyDesers.addDeserializer(Instant.class, InstantKeyDeserializer.INSTANCE);
+        keyDesers.addDeserializer(LocalDateTime.class, LocalDateTimeKeyDeserializer.INSTANCE);
+        keyDesers.addDeserializer(LocalDate.class, LocalDateKeyDeserializer.INSTANCE);
+        keyDesers.addDeserializer(LocalTime.class, LocalTimeKeyDeserializer.INSTANCE);
+        keyDesers.addDeserializer(MonthDay.class, MonthDayKeyDeserializer.INSTANCE);
+        keyDesers.addDeserializer(OffsetDateTime.class, OffsetDateTimeKeyDeserializer.INSTANCE);
+        keyDesers.addDeserializer(OffsetTime.class, OffsetTimeKeyDeserializer.INSTANCE);
+        keyDesers.addDeserializer(Period.class, PeriodKeyDeserializer.INSTANCE);
+        keyDesers.addDeserializer(Year.class, YearKeyDeserializer.INSTANCE);
+        keyDesers.addDeserializer(YearMonth.class, YearMonthKeyDeserializer.INSTANCE);
+        keyDesers.addDeserializer(ZonedDateTime.class, ZonedDateTimeKeyDeserializer.INSTANCE);
+        keyDesers.addDeserializer(ZoneId.class, ZoneIdKeyDeserializer.INSTANCE);
+        keyDesers.addDeserializer(ZoneOffset.class, ZoneOffsetKeyDeserializer.INSTANCE);
+        context.addKeyDeserializers(keyDesers);
+
         context.addValueInstantiators(new ValueInstantiators.Base() {
             @Override
             public ValueInstantiator findValueInstantiator(DeserializationConfig config,
