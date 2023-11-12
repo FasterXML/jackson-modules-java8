@@ -10,9 +10,14 @@ import com.fasterxml.jackson.core.util.JacksonFeature;
 public enum JavaTimeFeature implements JacksonFeature
 {
     /**
-     * Placeholder
+     * Feature that determines whether {@link java.time.ZoneId} is normalized
+     * (via call to {@code java.time.ZoneId#normalized()}) when deserializing
+     * types like {@link java.time.ZonedDateTime}.
+     *<p>
+     * Default setting is enabled, for backwards-compatibility with
+     * Jackson 2.15.
      */
-    BOGUS(false);
+    NORMALIZE_DESERIALID_ZONE_ID(true);
 
     /**
      * Whether feature is enabled or disabled by default.
