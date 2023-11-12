@@ -17,7 +17,17 @@ public enum JavaTimeFeature implements JacksonFeature
      * Default setting is enabled, for backwards-compatibility with
      * Jackson 2.15.
      */
-    NORMALIZE_DESERIALIZED_ZONE_ID(true);
+    NORMALIZE_DESERIALIZED_ZONE_ID(true),
+
+    /**
+     * Feature that controls whether numeric strings are interpreted as numeric
+     * timestamps (enabled) nor not (disabled) in addition to an explicitly
+     * defined pattern.
+     * <p>
+     * Note that when a pattern is not explicitly defined numeric strings are
+     * interpreted as a numeric timestamp.
+     */
+    READ_NUMERIC_STRINGS_AS_DATE_TIMESTAMP(false);
 
     /**
      * Whether feature is enabled or disabled by default.

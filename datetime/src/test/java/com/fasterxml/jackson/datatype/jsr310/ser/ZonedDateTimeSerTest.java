@@ -32,6 +32,9 @@ import java.time.temporal.Temporal;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.Test;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -931,8 +934,11 @@ public class ZonedDateTimeSerTest
     {
         String input = a2q("{'value':'3.141592653'}");
 
-        Wrapper result = MAPPER.readerFor(Wrapper.class)
-            .with(DeserializationFeature.READ_NUMERIC_STRINGS_AS_DATE_TIMESTAMP)
+        Wrapper result = JsonMapper.builder()
+            .addModule(new JavaTimeModule()
+                    .enable(JavaTimeFeature.READ_NUMERIC_STRINGS_AS_DATE_TIMESTAMP))
+            .build()
+            .readerFor(Wrapper.class)
             .readValue(input);
 
         assertEquals(Instant.ofEpochSecond(3L, 141592653L), result.value.toInstant());
