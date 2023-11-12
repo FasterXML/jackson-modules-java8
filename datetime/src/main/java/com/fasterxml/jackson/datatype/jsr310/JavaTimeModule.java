@@ -121,9 +121,13 @@ public final class JavaTimeModule
 
         SimpleDeserializers desers = new SimpleDeserializers();
         // // Instant variants:
-        desers.addDeserializer(Instant.class, InstantDeserializer.INSTANT);
-        desers.addDeserializer(OffsetDateTime.class, InstantDeserializer.OFFSET_DATE_TIME);
-        desers.addDeserializer(ZonedDateTime.class, InstantDeserializer.ZONED_DATE_TIME);
+        desers.addDeserializer(Instant.class,
+                InstantDeserializer.INSTANT.withFeatures(_features));
+        desers.addDeserializer(OffsetDateTime.class,
+                InstantDeserializer.OFFSET_DATE_TIME.withFeatures(_features));
+        desers.addDeserializer(ZonedDateTime.class,
+                InstantDeserializer.ZONED_DATE_TIME.withFeatures(_features));
+
         // // Other deserializers
         desers.addDeserializer(Duration.class, DurationDeserializer.INSTANCE);
         desers.addDeserializer(LocalDateTime.class, LocalDateTimeDeserializer.INSTANCE);

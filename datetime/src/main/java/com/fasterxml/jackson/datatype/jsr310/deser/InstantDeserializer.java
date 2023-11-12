@@ -21,10 +21,12 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.JsonTokenId;
 import com.fasterxml.jackson.core.io.NumberInput;
+import com.fasterxml.jackson.core.util.JacksonFeatureSet;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeFeature;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -54,6 +56,8 @@ public class InstantDeserializer<T extends Temporal>
 {
     private static final long serialVersionUID = 1L;
 
+    private final static boolean DEFAULT_NORMALIZE_ZONE_ID = JavaTimeFeature.NORMALIZE_DESERIALIZED_ZONE_ID.enabledByDefault();
+
     /**
      * Constants used to check if ISO 8601 time string is colonless. See [jackson-modules-java8#131]
      *
@@ -68,7 +72,7 @@ public class InstantDeserializer<T extends Temporal>
             a -> Instant.ofEpochSecond(a.integer, a.fraction),
             null,
             true, // yes, replace zero offset with Z
-            true // default: yes, normalize ZoneId
+            DEFAULT_NORMALIZE_ZONE_ID 
     );
 
     public static final InstantDeserializer<OffsetDateTime> OFFSET_DATE_TIME = new InstantDeserializer<>(
@@ -78,7 +82,7 @@ public class InstantDeserializer<T extends Temporal>
             a -> OffsetDateTime.ofInstant(Instant.ofEpochSecond(a.integer, a.fraction), a.zoneId),
             (d, z) -> (d.isEqual(OffsetDateTime.MIN) || d.isEqual(OffsetDateTime.MAX) ? d : d.withOffsetSameInstant(z.getRules().getOffset(d.toLocalDateTime()))),
             true, // yes, replace zero offset with Z
-            true // default: yes, normalize ZoneId
+            DEFAULT_NORMALIZE_ZONE_ID 
     );
 
     public static final InstantDeserializer<ZonedDateTime> ZONED_DATE_TIME = new InstantDeserializer<>(
@@ -88,7 +92,7 @@ public class InstantDeserializer<T extends Temporal>
             a -> ZonedDateTime.ofInstant(Instant.ofEpochSecond(a.integer, a.fraction), a.zoneId),
             ZonedDateTime::withZoneSameInstant,
             false, // keep zero offset and Z separate since zones explicitly supported
-            true // default: yes, normalize ZoneId
+            DEFAULT_NORMALIZE_ZONE_ID 
     );
 
     protected final Function<FromIntegerArguments, T> fromMilliseconds;
@@ -212,6 +216,26 @@ public class InstantDeserializer<T extends Temporal>
         _normalizeZoneId = base._normalizeZoneId;
     }
 
+    /**
+     * @since 2.16
+     */
+    @SuppressWarnings("unchecked")
+    protected InstantDeserializer(InstantDeserializer<T> base,
+            JacksonFeatureSet<JavaTimeFeature> features)
+    {
+        super((Class<T>) base.handledType(), base._formatter);
+        parsedToValue = base.parsedToValue;
+        fromMilliseconds = base.fromMilliseconds;
+        fromNanoseconds = base.fromNanoseconds;
+        adjust = base.adjust;
+        replaceZeroOffsetAsZ = base.replaceZeroOffsetAsZ;
+        _adjustToContextTZOverride = base._adjustToContextTZOverride;
+        _readTimestampsAsNanosOverride = base._readTimestampsAsNanosOverride;
+
+        _normalizeZoneId = features.isEnabled(JavaTimeFeature.NORMALIZE_DESERIALIZED_ZONE_ID);
+    
+    }
+
     @Override
     protected InstantDeserializer<T> withDateFormat(DateTimeFormatter dtf) {
         if (dtf == _formatter) {
@@ -223,6 +247,14 @@ public class InstantDeserializer<T extends Temporal>
     @Override
     protected InstantDeserializer<T> withLeniency(Boolean leniency) {
         return new InstantDeserializer<>(this, _formatter, leniency);
+    }
+
+    // @since 2.16
+    public InstantDeserializer<T> withFeatures(JacksonFeatureSet<JavaTimeFeature> features) {
+        if (_normalizeZoneId == features.isEnabled(JavaTimeFeature.NORMALIZE_DESERIALIZED_ZONE_ID)) {
+            return this;
+        }
+        return new InstantDeserializer<>(this, features);
     }
 
     @SuppressWarnings("unchecked")
