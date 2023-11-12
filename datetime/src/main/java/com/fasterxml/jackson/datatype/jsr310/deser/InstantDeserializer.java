@@ -67,7 +67,8 @@ public class InstantDeserializer<T extends Temporal>
             a -> Instant.ofEpochMilli(a.value),
             a -> Instant.ofEpochSecond(a.integer, a.fraction),
             null,
-            true // yes, replace zero offset with Z
+            true, // yes, replace zero offset with Z
+            true // default: yes, normalize ZoneId
     );
 
     public static final InstantDeserializer<OffsetDateTime> OFFSET_DATE_TIME = new InstantDeserializer<>(
@@ -76,7 +77,8 @@ public class InstantDeserializer<T extends Temporal>
             a -> OffsetDateTime.ofInstant(Instant.ofEpochMilli(a.value), a.zoneId),
             a -> OffsetDateTime.ofInstant(Instant.ofEpochSecond(a.integer, a.fraction), a.zoneId),
             (d, z) -> (d.isEqual(OffsetDateTime.MIN) || d.isEqual(OffsetDateTime.MAX) ? d : d.withOffsetSameInstant(z.getRules().getOffset(d.toLocalDateTime()))),
-            true // yes, replace zero offset with Z
+            true, // yes, replace zero offset with Z
+            true // default: yes, normalize ZoneId
     );
 
     public static final InstantDeserializer<ZonedDateTime> ZONED_DATE_TIME = new InstantDeserializer<>(
@@ -85,7 +87,8 @@ public class InstantDeserializer<T extends Temporal>
             a -> ZonedDateTime.ofInstant(Instant.ofEpochMilli(a.value), a.zoneId),
             a -> ZonedDateTime.ofInstant(Instant.ofEpochSecond(a.integer, a.fraction), a.zoneId),
             ZonedDateTime::withZoneSameInstant,
-            false // keep zero offset and Z separate since zones explicitly supported
+            false, // keep zero offset and Z separate since zones explicitly supported
+            true // default: yes, normalize ZoneId
     );
 
     protected final Function<FromIntegerArguments, T> fromMilliseconds;
@@ -119,13 +122,21 @@ public class InstantDeserializer<T extends Temporal>
      */
     protected final Boolean _readTimestampsAsNanosOverride;
 
+    /**
+     * Flag set from
+     * {@link com.fasterxml.jackson.datatype.jsr310.JavaTimeFeature#NORMALIZE_DESERIALIZED_ZONE_ID} to
+     * determine whether {@link ZoneId} is to be normalized during deserialization.
+     */
+    protected final boolean _normalizeZoneId;
+
     protected InstantDeserializer(Class<T> supportedType,
             DateTimeFormatter formatter,
             Function<TemporalAccessor, T> parsedToValue,
             Function<FromIntegerArguments, T> fromMilliseconds,
             Function<FromDecimalArguments, T> fromNanoseconds,
             BiFunction<T, ZoneId, T> adjust,
-            boolean replaceZeroOffsetAsZ)
+            boolean replaceZeroOffsetAsZ,
+            boolean normalizeZoneId)
     {
         super(supportedType, formatter);
         this.parsedToValue = parsedToValue;
@@ -135,6 +146,7 @@ public class InstantDeserializer<T extends Temporal>
         this.replaceZeroOffsetAsZ = replaceZeroOffsetAsZ;
         this._adjustToContextTZOverride = null;
         this._readTimestampsAsNanosOverride = null;
+        _normalizeZoneId = normalizeZoneId;
     }
 
     @SuppressWarnings("unchecked")
@@ -148,6 +160,7 @@ public class InstantDeserializer<T extends Temporal>
         replaceZeroOffsetAsZ = (_formatter == DateTimeFormatter.ISO_INSTANT);
         _adjustToContextTZOverride = base._adjustToContextTZOverride;
         _readTimestampsAsNanosOverride = base._readTimestampsAsNanosOverride;
+        _normalizeZoneId = base._normalizeZoneId;
     }
 
     @SuppressWarnings("unchecked")
@@ -161,6 +174,7 @@ public class InstantDeserializer<T extends Temporal>
         replaceZeroOffsetAsZ = base.replaceZeroOffsetAsZ;
         _adjustToContextTZOverride = adjustToContextTimezoneOverride;
         _readTimestampsAsNanosOverride = base._readTimestampsAsNanosOverride;
+        _normalizeZoneId = base._normalizeZoneId;
     }
 
     @SuppressWarnings("unchecked")
@@ -174,6 +188,7 @@ public class InstantDeserializer<T extends Temporal>
         replaceZeroOffsetAsZ = (_formatter == DateTimeFormatter.ISO_INSTANT);
         _adjustToContextTZOverride = base._adjustToContextTZOverride;
         _readTimestampsAsNanosOverride = base._readTimestampsAsNanosOverride;
+        _normalizeZoneId = base._normalizeZoneId;
     }
 
     /**
@@ -194,6 +209,7 @@ public class InstantDeserializer<T extends Temporal>
         replaceZeroOffsetAsZ = base.replaceZeroOffsetAsZ;
         _adjustToContextTZOverride = adjustToContextTimezoneOverride;
         _readTimestampsAsNanosOverride = readTimestampsAsNanosOverride;
+        _normalizeZoneId = base._normalizeZoneId;
     }
 
     @Override
@@ -364,7 +380,11 @@ public class InstantDeserializer<T extends Temporal>
         // Instants are always in UTC, so don't waste compute cycles
         // Normalizing the zone to prevent discrepancies.
         // See https://github.com/FasterXML/jackson-modules-java8/pull/267 for details
-        return (_valueClass == Instant.class) ? null : context.getTimeZone().toZoneId().normalized();
+        if (_valueClass == Instant.class) {
+            return null;
+        }
+        ZoneId zoneId = context.getTimeZone().toZoneId();
+        return _normalizeZoneId ? zoneId.normalized() : zoneId;
     }
 
     private String replaceZeroOffsetAsZIfNecessary(String text)
