@@ -17,7 +17,7 @@ public enum JavaTimeFeature implements JacksonFeature
      * Default setting is enabled, for backwards-compatibility with
      * Jackson 2.15.
      */
-    NORMALIZE_DESERIALID_ZONE_ID(true);
+    NORMALIZE_DESERIALIZED_ZONE_ID(true);
 
     /**
      * Whether feature is enabled or disabled by default.
