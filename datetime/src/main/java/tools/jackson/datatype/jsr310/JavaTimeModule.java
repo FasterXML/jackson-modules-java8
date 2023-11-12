@@ -19,6 +19,7 @@ package tools.jackson.datatype.jsr310;
 import java.time.*;
 
 import tools.jackson.core.Version;
+import tools.jackson.core.util.JacksonFeatureSet;
 import tools.jackson.databind.*;
 import tools.jackson.databind.deser.ValueInstantiator;
 import tools.jackson.databind.deser.ValueInstantiators;
@@ -85,6 +86,9 @@ public final class JavaTimeModule
 {
     private static final long serialVersionUID = 1L;
 
+    private JacksonFeatureSet<JavaTimeFeature> _features
+        = JacksonFeatureSet.fromDefaults(JavaTimeFeature.values());
+
     @Override
     public String getModuleName() {
         return getClass().getName();
@@ -97,13 +101,26 @@ public final class JavaTimeModule
 
     public JavaTimeModule() { }
 
+    public JavaTimeModule enable(JavaTimeFeature f) {
+        _features = _features.with(f);
+        return this;
+    }
+    
+    public JavaTimeModule disable(JavaTimeFeature f) {
+        _features = _features.without(f);
+        return this;
+    }
+
     @Override
     public void setupModule(SetupContext context) {
         context.addDeserializers(new SimpleDeserializers()
             // // Instant variants:
-            .addDeserializer(Instant.class, InstantDeserializer.INSTANT)
-            .addDeserializer(OffsetDateTime.class, InstantDeserializer.OFFSET_DATE_TIME)
-            .addDeserializer(ZonedDateTime.class, InstantDeserializer.ZONED_DATE_TIME)
+            .addDeserializer(Instant.class,
+                    InstantDeserializer.INSTANT.withFeatures(_features))
+            .addDeserializer(OffsetDateTime.class,
+                    InstantDeserializer.OFFSET_DATE_TIME.withFeatures(_features))
+            .addDeserializer(ZonedDateTime.class,
+                    InstantDeserializer.ZONED_DATE_TIME.withFeatures(_features))
     
             // // Other deserializers
             .addDeserializer(Duration.class, DurationDeserializer.INSTANCE)

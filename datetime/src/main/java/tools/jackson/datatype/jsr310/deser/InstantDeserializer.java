@@ -17,11 +17,7 @@
 package tools.jackson.datatype.jsr310.deser;
 
 import java.math.BigDecimal;
-import java.time.DateTimeException;
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAccessor;
@@ -38,10 +34,11 @@ import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
 import tools.jackson.core.JsonTokenId;
 import tools.jackson.core.io.NumberInput;
-
+import tools.jackson.core.util.JacksonFeatureSet;
 import tools.jackson.databind.BeanProperty;
 import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.datatype.jsr310.JavaTimeFeature;
 import tools.jackson.datatype.jsr310.util.DecimalUtils;
 
 /**
@@ -49,11 +46,12 @@ import tools.jackson.datatype.jsr310.util.DecimalUtils;
  * and {@link ZonedDateTime}s.
  *
  * @author Nick Williams
- * @since 2.2
  */
 public class InstantDeserializer<T extends Temporal>
     extends JSR310DateTimeDeserializerBase<T>
 {
+    private final static boolean DEFAULT_NORMALIZE_ZONE_ID = JavaTimeFeature.NORMALIZE_DESERIALIZED_ZONE_ID.enabledByDefault();
+
     /**
      * Constants used to check if ISO 8601 time string is colonless. See [jackson-modules-java8#131]
      */
@@ -66,7 +64,7 @@ public class InstantDeserializer<T extends Temporal>
             a -> Instant.ofEpochSecond(a.integer, a.fraction),
             null,
             true, // yes, replace zero offset with Z
-            true // default: yes, normalize ZoneId
+            DEFAULT_NORMALIZE_ZONE_ID 
     );
 
     public static final InstantDeserializer<OffsetDateTime> OFFSET_DATE_TIME = new InstantDeserializer<>(
@@ -76,7 +74,7 @@ public class InstantDeserializer<T extends Temporal>
             a -> OffsetDateTime.ofInstant(Instant.ofEpochSecond(a.integer, a.fraction), a.zoneId),
             (d, z) -> (d.isEqual(OffsetDateTime.MIN) || d.isEqual(OffsetDateTime.MAX) ? d : d.withOffsetSameInstant(z.getRules().getOffset(d.toLocalDateTime()))),
             true, // yes, replace zero offset with Z
-            true // default: yes, normalize ZoneId
+            DEFAULT_NORMALIZE_ZONE_ID 
     );
 
     public static final InstantDeserializer<ZonedDateTime> ZONED_DATE_TIME = new InstantDeserializer<>(
@@ -86,7 +84,7 @@ public class InstantDeserializer<T extends Temporal>
             a -> ZonedDateTime.ofInstant(Instant.ofEpochSecond(a.integer, a.fraction), a.zoneId),
             ZonedDateTime::withZoneSameInstant,
             false, // keep zero offset and Z separate since zones explicitly supported
-            true // default: yes, normalize ZoneId
+            DEFAULT_NORMALIZE_ZONE_ID 
     );
 
     protected final Function<FromIntegerArguments, T> fromMilliseconds;
@@ -208,6 +206,26 @@ public class InstantDeserializer<T extends Temporal>
         _normalizeZoneId = base._normalizeZoneId;
     }
 
+    /**
+     * @since 2.16
+     */
+    @SuppressWarnings("unchecked")
+    protected InstantDeserializer(InstantDeserializer<T> base,
+            JacksonFeatureSet<JavaTimeFeature> features)
+    {
+        super((Class<T>) base.handledType(), base._formatter);
+        parsedToValue = base.parsedToValue;
+        fromMilliseconds = base.fromMilliseconds;
+        fromNanoseconds = base.fromNanoseconds;
+        adjust = base.adjust;
+        replaceZeroOffsetAsZ = base.replaceZeroOffsetAsZ;
+        _adjustToContextTZOverride = base._adjustToContextTZOverride;
+        _readTimestampsAsNanosOverride = base._readTimestampsAsNanosOverride;
+
+        _normalizeZoneId = features.isEnabled(JavaTimeFeature.NORMALIZE_DESERIALIZED_ZONE_ID);
+    
+    }
+
     @Override
     protected InstantDeserializer<T> withDateFormat(DateTimeFormatter dtf) {
         if (dtf == _formatter) {
@@ -219,6 +237,14 @@ public class InstantDeserializer<T extends Temporal>
     @Override
     protected InstantDeserializer<T> withLeniency(Boolean leniency) {
         return new InstantDeserializer<>(this, _formatter, leniency);
+    }
+
+    // @since 2.16
+    public InstantDeserializer<T> withFeatures(JacksonFeatureSet<JavaTimeFeature> features) {
+        if (_normalizeZoneId == features.isEnabled(JavaTimeFeature.NORMALIZE_DESERIALIZED_ZONE_ID)) {
+            return this;
+        }
+        return new InstantDeserializer<>(this, features);
     }
 
     @SuppressWarnings("unchecked")

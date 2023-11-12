@@ -6,6 +6,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.TimeZone;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Feature;
@@ -16,6 +17,9 @@ import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.ObjectReader;
 import tools.jackson.databind.exc.MismatchedInputException;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.datatype.jsr310.JavaTimeFeature;
+import tools.jackson.datatype.jsr310.JavaTimeModule;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
 
 import org.junit.Test;
@@ -27,6 +31,12 @@ import static org.junit.Assert.fail;
 public class ZonedDateTimeDeserTest extends ModuleTestBase
 {
     private final ObjectReader READER = newMapper().readerFor(ZonedDateTime.class);
+
+    private final ObjectReader READER_NON_NORMALIZED_ZONEID = JsonMapper.builder()
+            .addModule(new JavaTimeModule().disable(JavaTimeFeature.NORMALIZE_DESERIALIZED_ZONE_ID))
+            .build()
+            .readerFor(ZonedDateTime.class);
+    
     private final TypeReference<Map<String, ZonedDateTime>> MAP_TYPE_REF = new TypeReference<Map<String, ZonedDateTime>>() { };
 
     static class WrapperWithFeatures {
@@ -55,11 +65,22 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
     }
 
     @Test
-    public void testDeserializationAsString01() throws Exception
+    public void testDeserFromString() throws Exception
     {
         assertEquals("The value is not correct.",
                 ZonedDateTime.of(2000, 1, 1, 12, 0, 0, 0, ZoneOffset.UTC),
                 READER.readValue(q("2000-01-01T12:00Z")));
+    }
+
+    // [modules-java#281]
+    @Test
+    public void testDeserFromStringNoZoneIdNormalization() throws Exception
+    {
+        // 11-Nov-2023, tatu: Not sure this is great test but... does show diff
+        //   behavior with and without `JavaTimeFeature.NORMALIZE_DESERIALIZED_ZONE_ID`
+        assertEquals("The value is not correct.",
+                ZonedDateTime.of(2000, 1, 1, 12, 0, 0, 0, TimeZone.getTimeZone("UTC").toZoneId()),
+                READER_NON_NORMALIZED_ZONEID.readValue(q("2000-01-01T12:00Z")));
     }
 
     @Test
