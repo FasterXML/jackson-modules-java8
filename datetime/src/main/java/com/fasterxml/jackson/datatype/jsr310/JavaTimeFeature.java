@@ -27,9 +27,10 @@ public enum JavaTimeFeature implements JacksonFeature
      * Note that when a pattern is not explicitly defined numeric strings are
      * interpreted as a numeric timestamp.
      */
-    ALWAYS_ALLOW_STRINGIFIED_TIMESTAMPS(false);
+    ALWAYS_ALLOW_STRINGIFIED_TIMESTAMPS(false)
+    ;
 
-    /**
+  /**
      * Whether feature is enabled or disabled by default.
      */
     private final boolean _defaultState;

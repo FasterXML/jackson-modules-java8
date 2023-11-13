@@ -5,6 +5,7 @@ import java.util.Arrays;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.cfg.MapperConfig;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 
 public abstract class ModuleTestBase extends junit.framework.TestCase
@@ -27,9 +28,12 @@ public abstract class ModuleTestBase extends junit.framework.TestCase
      */
 
     static ObjectMapper mapperWithModule() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new Jdk8Module());
-        return mapper;
+        return mapperBuilderWithModule().build();
+    }
+
+    static JsonMapper.Builder mapperBuilderWithModule() {
+        return JsonMapper.builder()
+                .addModule(new Jdk8Module());
     }
 
     @SuppressWarnings("deprecation")
