@@ -57,7 +57,7 @@ public class InstantDeserializer<T extends Temporal>
     private static final long serialVersionUID = 1L;
 
     private final static boolean DEFAULT_NORMALIZE_ZONE_ID = JavaTimeFeature.NORMALIZE_DESERIALIZED_ZONE_ID.enabledByDefault();
-    private final static boolean DEFAULT_READ_NUMERIC_STRINGS_AS_DATE_TIMESTAMP = JavaTimeFeature.READ_NUMERIC_STRINGS_AS_DATE_TIMESTAMP.enabledByDefault();
+    private final static boolean DEFAULT_READ_NUMERIC_STRINGS_AS_DATE_TIMESTAMP = JavaTimeFeature.ALWAYS_ALLOW_STRINGIFIED_TIMESTAMPS.enabledByDefault();
 
     /**
      * Constants used to check if ISO 8601 time string is colonless. See [jackson-modules-java8#131]
@@ -134,14 +134,18 @@ public class InstantDeserializer<T extends Temporal>
      * Flag set from
      * {@link com.fasterxml.jackson.datatype.jsr310.JavaTimeFeature#NORMALIZE_DESERIALIZED_ZONE_ID} to
      * determine whether {@link ZoneId} is to be normalized during deserialization.
+     *
+     * @since 2.16
      */
     protected final boolean _normalizeZoneId;
 
     /**
      * Flag set from
-     * {@link com.fasterxml.jackson.datatype.jsr310.JavaTimeFeature#READ_NUMERIC_STRINGS_AS_DATE_TIMESTAMP}
+     * {@link com.fasterxml.jackson.datatype.jsr310.JavaTimeFeature#ALWAYS_ALLOW_STRINGIFIED_TIMESTAMPS}
      * to determine whether numeric strings are interpreted as numeric timestamps
      * (enabled) nor not (disabled) in addition to an explicitly defined pattern.
+     *
+     * @since 2.16
      */
     protected final boolean _readNumericStringsAsTimestamp;
 
@@ -252,7 +256,7 @@ public class InstantDeserializer<T extends Temporal>
         _readTimestampsAsNanosOverride = base._readTimestampsAsNanosOverride;
 
         _normalizeZoneId = features.isEnabled(JavaTimeFeature.NORMALIZE_DESERIALIZED_ZONE_ID);
-        _readNumericStringsAsTimestamp = features.isEnabled(JavaTimeFeature.READ_NUMERIC_STRINGS_AS_DATE_TIMESTAMP);
+        _readNumericStringsAsTimestamp = features.isEnabled(JavaTimeFeature.ALWAYS_ALLOW_STRINGIFIED_TIMESTAMPS);
     }
 
     @Override
@@ -270,8 +274,9 @@ public class InstantDeserializer<T extends Temporal>
 
     // @since 2.16
     public InstantDeserializer<T> withFeatures(JacksonFeatureSet<JavaTimeFeature> features) {
-        if (_normalizeZoneId == features.isEnabled(JavaTimeFeature.NORMALIZE_DESERIALIZED_ZONE_ID) &&
-            _readNumericStringsAsTimestamp == features.isEnabled(JavaTimeFeature.READ_NUMERIC_STRINGS_AS_DATE_TIMESTAMP)) {
+        if ((_normalizeZoneId == features.isEnabled(JavaTimeFeature.NORMALIZE_DESERIALIZED_ZONE_ID))
+                && (_readNumericStringsAsTimestamp == features.isEnabled(JavaTimeFeature.ALWAYS_ALLOW_STRINGIFIED_TIMESTAMPS))
+        ) {
             return this;
         }
         return new InstantDeserializer<>(this, features);
@@ -364,10 +369,11 @@ public class InstantDeserializer<T extends Temporal>
             return _fromEmptyString(p, ctxt, string);
         }
         // only check for other parsing modes if we are using default formatter or explicitly asked to
-        if (_formatter == DateTimeFormatter.ISO_INSTANT ||
-            _formatter == DateTimeFormatter.ISO_OFFSET_DATE_TIME ||
-            _formatter == DateTimeFormatter.ISO_ZONED_DATE_TIME ||
-            _readNumericStringsAsTimestamp) {
+        if (_readNumericStringsAsTimestamp ||
+                _formatter == DateTimeFormatter.ISO_INSTANT ||
+                _formatter == DateTimeFormatter.ISO_OFFSET_DATE_TIME ||
+                _formatter == DateTimeFormatter.ISO_ZONED_DATE_TIME
+            ) {
             // 22-Jan-2016, [datatype-jsr310#16]: Allow quoted numbers too
             int dots = _countPeriods(string);
             if (dots >= 0) { // negative if not simple number

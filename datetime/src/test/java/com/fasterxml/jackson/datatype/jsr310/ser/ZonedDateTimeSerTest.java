@@ -929,6 +929,7 @@ public class ZonedDateTimeSerTest
         assertEquals(input.value.toInstant(), result.value.toInstant());
     }
 
+    // [modules-java#269]
     @Test
     public void testCustomPatternWithNumericTimestamp() throws Exception
     {
@@ -936,7 +937,7 @@ public class ZonedDateTimeSerTest
 
         Wrapper result = JsonMapper.builder()
             .addModule(new JavaTimeModule()
-                    .enable(JavaTimeFeature.READ_NUMERIC_STRINGS_AS_DATE_TIMESTAMP))
+                    .enable(JavaTimeFeature.ALWAYS_ALLOW_STRINGIFIED_TIMESTAMPS))
             .build()
             .readerFor(Wrapper.class)
             .readValue(input);
