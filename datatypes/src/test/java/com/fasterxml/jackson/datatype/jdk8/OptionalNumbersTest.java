@@ -42,7 +42,9 @@ public class OptionalNumbersTest extends ModuleTestBase
     }
 
     private ObjectMapper MAPPER = mapperWithModule();
-    private ObjectMapper MAPPER_WITHOUT_COERCION = MAPPER.copy().disable(MapperFeature.ALLOW_COERCION_OF_SCALARS);
+    private ObjectMapper MAPPER_WITHOUT_COERCION = mapperBuilderWithModule()
+            .disable(MapperFeature.ALLOW_COERCION_OF_SCALARS)
+            .build();
 
     /*
     /**********************************************************
