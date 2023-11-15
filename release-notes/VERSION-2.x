@@ -11,7 +11,7 @@ Modules:
 Not yet released
 
 #263: Add `JavaTimeFeature.ALWAYS_ALLOW_STRINGIFIED_TIMESTAMPS` to allow parsing
-  quoted numbers when using a custom DateTimeFormatter
+  quoted numbers when using a custom pattern (DateTimeFormatter)
  (contributed by M.P. Korstanje)
 #281: (datetime) Add `JavaTimeFeature.NORMALIZE_DESERIALIZED_ZONE_ID` to allow
   disabling ZoneId normalization on deserialization

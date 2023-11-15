@@ -937,7 +937,7 @@ public class ZonedDateTimeSerTest
 
         Wrapper result = JsonMapper.builder()
             .addModule(new JavaTimeModule()
-                    .enable(JavaTimeFeature.ALWAYS_ALLOW_STRINGIFIED_TIMESTAMPS))
+                    .enable(JavaTimeFeature.ALWAYS_ALLOW_STRINGIFIED_DATE_TIMESTAMPS))
             .build()
             .readerFor(Wrapper.class)
             .readValue(input);

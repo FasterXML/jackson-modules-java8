@@ -20,14 +20,16 @@ public enum JavaTimeFeature implements JacksonFeature
     NORMALIZE_DESERIALIZED_ZONE_ID(true),
 
     /**
-     * Feature that controls whether numeric strings may be interpreted as numeric
-     * timestamps (enabled) or not (disabled), in addition to an explicitly
-     * defined pattern.
+     * Feature that controls whether stringified numbers (Strings that without
+     * quotes would be legal JSON Numbers) may be interpreted as
+     * timestamps (enabled) or not (disabled), in case where there is an
+     * explicitly defined pattern ({@code DateTimeFormatter}) for value.
      * <p>
-     * Note that when a pattern is not explicitly defined numeric strings are
-     * interpreted as a numeric timestamp.
+     * Note that when the default pattern is used (no custom pattern defined),
+     * stringified numbers are always accepted as timestamps regardless of
+     * this feature.
      */
-    ALWAYS_ALLOW_STRINGIFIED_TIMESTAMPS(false)
+    ALWAYS_ALLOW_STRINGIFIED_DATE_TIMESTAMPS(false)
     ;
 
   /**
