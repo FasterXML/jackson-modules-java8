@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.datatype.jsr310.deser;
+package com.fasterxml.jackson.datatype.jsr310.failing;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -19,7 +19,8 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
-public class MonthDeserTest extends ModuleTestBase
+// for [modules-java8#274]
+public class MonthDeser274Test extends ModuleTestBase
 {
     private final ObjectMapper MAPPER = newMapper();
     private final ObjectReader READER = MAPPER.readerFor(Month.class);
