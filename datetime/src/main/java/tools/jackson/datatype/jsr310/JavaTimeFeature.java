@@ -17,10 +17,22 @@ public enum JavaTimeFeature implements JacksonFeature
      * Default setting is enabled, for backwards-compatibility with
      * Jackson 2.15.
      */
-    NORMALIZE_DESERIALIZED_ZONE_ID(true)
-    ;
+    NORMALIZE_DESERIALIZED_ZONE_ID(true),
 
     /**
+     * Feature that controls whether stringified numbers (Strings that without
+     * quotes would be legal JSON Numbers) may be interpreted as
+     * timestamps (enabled) or not (disabled), in case where there is an
+     * explicitly defined pattern ({@code DateTimeFormatter}) for value.
+     * <p>
+     * Note that when the default pattern is used (no custom pattern defined),
+     * stringified numbers are always accepted as timestamps regardless of
+     * this feature.
+     */
+    ALWAYS_ALLOW_STRINGIFIED_DATE_TIMESTAMPS(false)
+    ;
+
+  /**
      * Whether feature is enabled or disabled by default.
      */
     private final boolean _defaultState;

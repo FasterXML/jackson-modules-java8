@@ -28,11 +28,15 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.ObjectReader;
 import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.module.SimpleModule;
+import tools.jackson.datatype.jsr310.JavaTimeFeature;
+import tools.jackson.datatype.jsr310.JavaTimeModule;
 import tools.jackson.datatype.jsr310.MockObjectConfiguration;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
 import tools.jackson.datatype.jsr310.util.DecimalUtils;
@@ -905,6 +909,22 @@ public class ZonedDateTimeSerTest
                 .readValue(json);
         // looks like timezone gets converted (is that correct or not?); verify just offsets for now
         assertEquals(input.value.toInstant(), result.value.toInstant());
+    }
+
+    // [modules-java#269]
+    @Test
+    public void testCustomPatternWithNumericTimestamp() throws Exception
+    {
+        String input = a2q("{'value':'3.141592653'}");
+
+        Wrapper result = JsonMapper.builder()
+            .addModule(new JavaTimeModule()
+                    .enable(JavaTimeFeature.ALWAYS_ALLOW_STRINGIFIED_DATE_TIMESTAMPS))
+            .build()
+            .readerFor(Wrapper.class)
+            .readValue(input);
+
+        assertEquals(Instant.ofEpochSecond(3L, 141592653L), result.value.toInstant());
     }
 
     @Test

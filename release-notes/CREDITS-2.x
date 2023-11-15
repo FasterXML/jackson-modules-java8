@@ -179,3 +179,9 @@ Raman Babich (raman-babich@github)
  * Contributed fix for #272: `JsonFormat.Feature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS`
     not respected when deserialising `Instant`s
   (2.16.0)
+
+M.P. Korstanje (mpkorstanje@github)
+
+ * Contributed #263: Add `JavaTimeFeature.ALWAYS_ALLOW_STRINGIFIED_TIMESTAMPS` to allow parsing
+   quoted numbers when using a custom DateTimeFormatter
+  (2.16.0)
