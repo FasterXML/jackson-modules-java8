@@ -18,11 +18,14 @@ package com.fasterxml.jackson.datatype.jsr310.ser;
 
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
@@ -40,25 +43,22 @@ public class LocalDateTimeSerTest
         public LDTWrapper(LocalDateTime v) { value = v; }
     }
 
-    private final ObjectMapper mapper = newMapper();
+    private final static ObjectMapper MAPPER = newMapper();
 
     @Test
     public void testSerializationAsTimestamp01() throws Exception
     {
         LocalDateTime time = LocalDateTime.of(1986, Month.JANUARY, 17, 15, 43);
-        String value = mapper.writeValueAsString(time);
-
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[1986,1,17,15,43]", value);
+        assertEquals("The value is not correct.", "[1986,1,17,15,43]",
+                MAPPER.writeValueAsString(time));
     }
 
     @Test
     public void testSerializationAsTimestamp02() throws Exception
     {
         LocalDateTime time = LocalDateTime.of(2013, Month.AUGUST, 21, 9, 22, 57);
-        String value = mapper.writeValueAsString(time);
+        String value = MAPPER.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.", "[2013,8,21,9,22,57]", value);
     }
 
@@ -66,12 +66,10 @@ public class LocalDateTimeSerTest
     public void testSerializationAsTimestamp03Nanosecond() throws Exception
     {
         LocalDateTime time = LocalDateTime.of(2013, Month.AUGUST, 21, 9, 22, 0, 57);
-
-        ObjectMapper m = newMapper().enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .enable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS);
-        String value = m.writeValueAsString(time);
-
-        assertNotNull("The value should not be null.", value);
+        String value = MAPPER.writer()
+                .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .with(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .writeValueAsString(time);
         assertEquals("The value is not correct.", "[2013,8,21,9,22,0,57]", value);
     }
 
@@ -83,7 +81,6 @@ public class LocalDateTimeSerTest
         ObjectMapper m = newMapper().disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS);
         String value = m.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.", "[2013,8,21,9,22,0,0]", value);
     }
 
@@ -96,7 +93,6 @@ public class LocalDateTimeSerTest
                 .enable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS);
         String value = m.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.", "[2005,11,5,22,31,5,829837]", value);
     }
 
@@ -109,7 +105,6 @@ public class LocalDateTimeSerTest
                 .disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS);
         String value = m.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.", "[2005,11,5,22,31,5,422]", value);
     }
 
@@ -157,7 +152,7 @@ public class LocalDateTimeSerTest
     {
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 999000);
         assertEquals(a2q("{'value':'2005-11-05A22:31:05'}"),
-                mapper.writeValueAsString(new LDTWrapper(time)));
+                MAPPER.writeValueAsString(new LDTWrapper(time)));
 
         ObjectMapper m = mapperBuilder().withConfigOverride(LocalDateTime.class,
                 cfg -> cfg.setFormat(JsonFormat.Value.forPattern("yyyy-MM-dd'X'HH:mm")))
@@ -176,7 +171,6 @@ public class LocalDateTimeSerTest
         m.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = m.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.",
                 "[\"" + LocalDateTime.class.getName() + "\",[2005,11,5,22,31,5,829837]]", value);
     }
@@ -192,7 +186,6 @@ public class LocalDateTimeSerTest
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 422829837);
         String value = m.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.",
                 "[\"" + LocalDateTime.class.getName() + "\",[2005,11,5,22,31,5,422]]", value);
     }
@@ -206,8 +199,20 @@ public class LocalDateTimeSerTest
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 829837);
         String value = m.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.",
                 "[\"" + LocalDateTime.class.getName() + "\",\"" + time.toString() + "\"]", value);
+    }
+
+    // [modules-java8#288]
+    @Test
+    public void testExplicitConstructionWithPattern() throws Exception
+    {
+        ObjectMapper mapper = JsonMapper.builder()
+                .addModule(new JavaTimeModule()
+                    .addSerializer(LocalDateTime.class,
+                            new LocalDateTimeSerializer(DateTimeFormatter.ofPattern("MM/dd/yyyy")))
+                    ).build();
+        LocalDateTime time = LocalDateTime.of(1986, Month.JANUARY, 17, 15, 43);
+        assertEquals(q("01/17/1986"), mapper.writeValueAsString(time));
     }
 }
