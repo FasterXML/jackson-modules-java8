@@ -143,6 +143,9 @@ public class InstantDeserializer<T extends Temporal>
      */
     protected final boolean _alwaysAllowStringifiedDateTimestamps;
 
+    /**
+     * @since 2.16
+     */
     protected InstantDeserializer(Class<T> supportedType,
             DateTimeFormatter formatter,
             Function<TemporalAccessor, T> parsedToValue,
@@ -164,6 +167,24 @@ public class InstantDeserializer<T extends Temporal>
         this._readTimestampsAsNanosOverride = null;
         _normalizeZoneId = normalizeZoneId;
         _alwaysAllowStringifiedDateTimestamps = readNumericStringsAsTimestamp;
+    }
+
+    /**
+     * @deprecated Since 2.16, use {@link #InstantDeserializer(Class,DateTimeFormatter,
+     * Function,Function,Function,BiFunction,boolean,boolean,boolean)} instead.
+     */
+    @Deprecated()
+    protected InstantDeserializer(Class<T> supportedType,
+                                  DateTimeFormatter formatter,
+                                  Function<TemporalAccessor, T> parsedToValue,
+                                  Function<FromIntegerArguments, T> fromMilliseconds,
+                                  Function<FromDecimalArguments, T> fromNanoseconds,
+                                  BiFunction<T, ZoneId, T> adjust,
+                                  boolean replaceZeroOffsetAsZ
+    ) {
+        this(supportedType, formatter, parsedToValue, fromMilliseconds, fromNanoseconds,
+                adjust, replaceZeroOffsetAsZ,
+                DEFAULT_NORMALIZE_ZONE_ID, DEFAULT_ALWAYS_ALLOW_STRINGIFIED_DATE_TIMESTAMPS);
     }
 
     @SuppressWarnings("unchecked")
