@@ -187,6 +187,6 @@ M.P. Korstanje (mpkorstanje@github)
   (2.16.0)
 
 Harald Kuhr (haraldk@github)
- * Reported #285: Breaking change in `InstantDeserializer API between 2.15 and 2.16
+ * Reported #286: Breaking change in `InstantDeserializer API between 2.15 and 2.16
   (2.16.1)
 
