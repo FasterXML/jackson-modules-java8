@@ -10,6 +10,8 @@ Modules:
 
 2.16.1 (not yet released)
 
+#285: Breaking change in `InstantDeserializer API between 2.15 and 2.16
+ (reported by Harald K)
 #288: `LocalDateTime` serialization issue with custom-configured
   `LocalDateTimeSerializer`
  (reported by @mklinkj)
