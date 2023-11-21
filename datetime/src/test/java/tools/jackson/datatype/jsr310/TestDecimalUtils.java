@@ -35,14 +35,10 @@ public class TestDecimalUtils extends ModuleTestBase
                 "-22704862.599000000", decimal);
     }
 
-    @SuppressWarnings("deprecation")
     private void checkExtractNanos(long expectedSeconds, int expectedNanos, BigDecimal decimal)
     {
         long seconds = decimal.longValue();
         assertEquals("The second part is not correct.", expectedSeconds, seconds);
-
-        int nanoseconds = DecimalUtils.extractNanosecondDecimal(decimal,  seconds);
-        assertEquals("The nanosecond part is not correct.", expectedNanos, nanoseconds);
     }
 
     @Test

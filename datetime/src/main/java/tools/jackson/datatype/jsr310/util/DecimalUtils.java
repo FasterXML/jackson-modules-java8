@@ -26,12 +26,9 @@ import java.util.function.BiFunction;
  * Utilities to aid in the translation of decimal types to/from multiple parts.
  *
  * @author Nick Williams
- * @since 2.2
  */
 public final class DecimalUtils
 {
-    private static final BigDecimal ONE_BILLION = new BigDecimal(1_000_000_000L);
-
     private DecimalUtils() { }
 
     public static String toDecimal(long seconds, int nanoseconds)
@@ -81,8 +78,6 @@ public final class DecimalUtils
     /**
      * Factory method for constructing {@link BigDecimal} out of second, nano-second
      * components.
-     *
-     * @since 2.8
      */
     public static BigDecimal toBigDecimal(long seconds, int nanoseconds)
     {
@@ -98,23 +93,9 @@ public final class DecimalUtils
     }
 
     /**
-     * @deprecated due to potential unbounded latency on some JRE releases.
-     */
-    @Deprecated // since 2.9.8
-    public static int extractNanosecondDecimal(BigDecimal value, long integer)
-    {
-        // !!! 14-Mar-2016, tatu: Somewhat inefficient; should replace with functionally
-        //   equivalent code that just subtracts integral part? (or, measure and show
-        //   there's no difference and do nothing... )
-        return value.subtract(BigDecimal.valueOf(integer)).multiply(ONE_BILLION).intValue();
-    }
-
-    /**
      * Extracts the seconds and nanoseconds component of {@code seconds} as {@code long} and {@code int}
      * values, passing them to the given converter.   The implementation avoids latency issues present
      * on some JRE releases.
-     *
-     * @since 2.9.8
      */
     public static <T> T extractSecondsAndNanos(BigDecimal seconds, BiFunction<Long, Integer, T> convert)
     {
