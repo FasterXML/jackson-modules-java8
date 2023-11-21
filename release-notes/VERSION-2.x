@@ -12,6 +12,12 @@ Modules:
 
 -
 
+2.16.1 (not yet released)
+
+#288: `LocalDateTime` serialization issue with custom-configured
+  `LocalDateTimeSerializer`
+ (reported by @mklinkj)
+
 2.16.0 (15-Nov-2023)
 
 #263: Add `JavaTimeFeature.ALWAYS_ALLOW_STRINGIFIED_TIMESTAMPS` to allow parsing

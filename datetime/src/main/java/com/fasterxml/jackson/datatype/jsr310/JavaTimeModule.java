@@ -140,7 +140,13 @@ public final class JavaTimeModule
         desers.addDeserializer(YearMonth.class, YearMonthDeserializer.INSTANCE);
         desers.addDeserializer(ZoneId.class, JSR310StringParsableDeserializer.ZONE_ID);
         desers.addDeserializer(ZoneOffset.class, JSR310StringParsableDeserializer.ZONE_OFFSET);
+
         context.addDeserializers(desers);
+        // 20-Nov-2023, tatu: [modules-java8#288]: someone may have directly
+        //     added entries, need to add for backwards compatibility
+        if (_deserializers != null) {
+            context.addDeserializers(_deserializers);
+        }
 
         SimpleSerializers sers = new SimpleSerializers();
 
@@ -169,11 +175,21 @@ public final class JavaTimeModule
         sers.addSerializer(ZoneOffset.class, new ToStringSerializer(ZoneOffset.class));
 
         context.addSerializers(sers);
+        // 20-Nov-2023, tatu: [modules-java8#288]: someone may have directly
+        //     added entries, need to add for backwards compatibility
+        if (_serializers != null) {
+            context.addSerializers(_serializers);
+        }
 
         // key serializers
         SimpleSerializers keySers = new SimpleSerializers();
         keySers.addSerializer(ZonedDateTime.class, ZonedDateTimeKeySerializer.INSTANCE);
         context.addKeySerializers(keySers);
+        // 20-Nov-2023, tatu: [modules-java8#288]: someone may have directly
+        //     added entries, need to add for backwards compatibility
+        if (_keySerializers != null) {
+            context.addKeySerializers(_keySerializers);
+        }
 
         // key deserializers
         SimpleKeyDeserializers keyDesers = new SimpleKeyDeserializers();
@@ -191,7 +207,13 @@ public final class JavaTimeModule
         keyDesers.addDeserializer(ZonedDateTime.class, ZonedDateTimeKeyDeserializer.INSTANCE);
         keyDesers.addDeserializer(ZoneId.class, ZoneIdKeyDeserializer.INSTANCE);
         keyDesers.addDeserializer(ZoneOffset.class, ZoneOffsetKeyDeserializer.INSTANCE);
+
         context.addKeyDeserializers(keyDesers);
+        // 20-Nov-2023, tatu: [modules-java8#288]: someone may have directly
+        //     added entries, need to add for backwards compatibility
+        if (_keyDeserializers != null) {
+            context.addKeyDeserializers(_keyDeserializers);
+        }
 
         context.addValueInstantiators(new ValueInstantiators.Base() {
             @Override
