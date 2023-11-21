@@ -145,7 +145,7 @@ public final class JavaTimeModule
         // 20-Nov-2023, tatu: [modules-java8#288]: someone may have directly
         //     added entries, need to add for backwards compatibility
         if (_deserializers != null) {
-            context.addDeserializers(desers);
+            context.addDeserializers(_deserializers);
         }
 
         SimpleSerializers sers = new SimpleSerializers();
