@@ -41,25 +41,22 @@ public class LocalDateTimeSerTest
         public LDTWrapper(LocalDateTime v) { value = v; }
     }
 
-    private final ObjectMapper mapper = newMapper();
+    private final static ObjectMapper MAPPER = newMapper();
 
     @Test
     public void testSerializationAsTimestamp01() throws Exception
     {
         LocalDateTime time = LocalDateTime.of(1986, Month.JANUARY, 17, 15, 43);
-        String value = mapper.writeValueAsString(time);
-
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[1986,1,17,15,43]", value);
+        assertEquals("The value is not correct.", "[1986,1,17,15,43]",
+                MAPPER.writeValueAsString(time));
     }
 
     @Test
     public void testSerializationAsTimestamp02() throws Exception
     {
         LocalDateTime time = LocalDateTime.of(2013, Month.AUGUST, 21, 9, 22, 57);
-        String value = mapper.writeValueAsString(time);
+        String value = MAPPER.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
         assertEquals("The value is not correct.", "[2013,8,21,9,22,57]", value);
     }
 
@@ -68,11 +65,10 @@ public class LocalDateTimeSerTest
     {
         LocalDateTime time = LocalDateTime.of(2013, Month.AUGUST, 21, 9, 22, 0, 57);
 
-        ObjectMapper m = newMapperBuilder()
-                .enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .enable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
-                .build();
-        String value = m.writeValueAsString(time);
+        String value = MAPPER.writer()
+                .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .with(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .writeValueAsString(time);
         assertEquals("The value is not correct.", "[2013,8,21,9,22,0,57]", value);
     }
 
@@ -150,7 +146,7 @@ public class LocalDateTimeSerTest
     {
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 999000);
         assertEquals(a2q("{'value':'2005-11-05A22:31:05'}"),
-                mapper.writeValueAsString(new LDTWrapper(time)));
+                MAPPER.writeValueAsString(new LDTWrapper(time)));
 
         ObjectMapper m = mapperBuilder().withConfigOverride(LocalDateTime.class,
                 cfg -> cfg.setFormat(JsonFormat.Value.forPattern("yyyy-MM-dd'X'HH:mm")))
