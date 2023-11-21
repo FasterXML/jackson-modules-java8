@@ -185,3 +185,8 @@ M.P. Korstanje (mpkorstanje@github)
  * Contributed #263: Add `JavaTimeFeature.ALWAYS_ALLOW_STRINGIFIED_TIMESTAMPS` to allow parsing
    quoted numbers when using a custom DateTimeFormatter
   (2.16.0)
+
+Harald Kuhr (haraldk@github)
+ * Reported #286: Breaking change in `InstantDeserializer API between 2.15 and 2.16
+  (2.16.1)
+
