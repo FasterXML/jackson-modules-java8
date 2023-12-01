@@ -18,7 +18,6 @@ package com.fasterxml.jackson.datatype.jsr310;
 
 import java.time.*;
 
-import com.fasterxml.jackson.core.json.PackageVersion;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.DeserializationConfig;
 import com.fasterxml.jackson.databind.JavaType;
@@ -37,7 +36,6 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.MonthDayDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.MonthDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.OffsetTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.YearDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.YearMonthDeserializer;

@@ -18,7 +18,6 @@ package com.fasterxml.jackson.datatype.jsr310;
 
 import java.time.*;
 
-import com.fasterxml.jackson.core.json.PackageVersion;
 import com.fasterxml.jackson.core.util.JacksonFeatureSet;
 
 import com.fasterxml.jackson.databind.*;

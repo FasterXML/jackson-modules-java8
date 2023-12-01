@@ -26,6 +26,12 @@ import static org.junit.Assert.*;
 
 public class MonthDeserTest extends ModuleTestBase
 {
+    static class Wrapper {
+        @JsonFormat(pattern="MM")
+        public Month value;
+
+        public Wrapper(Month v) { value = v; }
+    }
 
     @Test
     public void testDeserializationAsString01_feature() throws Exception
@@ -38,33 +44,23 @@ public class MonthDeserTest extends ModuleTestBase
         assertEquals(Month.JANUARY, READER.readValue("\"01\""));
     }
 
-
     @Test
-    public void testDeserializationAsString01_default() throws Exception
+    public void testDeserializationAsString01_zeroBased() throws Exception
     {
-        ObjectReader READER = newMapper().readerFor(Month.class);
-
-        assertEquals(Month.FEBRUARY, READER.readValue("\"01\""));
+        assertEquals(Month.FEBRUARY, readerForZeroBased().readValue("\"01\""));
     }
 
 
     @Test
-    public void testDeserializationAsString02_feature() throws Exception
+    public void testDeserializationAsString02_oneBased() throws Exception
     {
-        ObjectReader READER = JsonMapper.builder()
-            .addModule(new JavaTimeModule().enable(JavaTimeFeature.ONE_BASED_MONTHS))
-            .build()
-            .readerFor(Month.class);
-
-        assertEquals(Month.JANUARY, READER.readValue("\"JANUARY\""));
+        assertEquals(Month.JANUARY, readerForOneBased().readValue("\"JANUARY\""));
     }
 
     @Test
-    public void testDeserializationAsString02_default() throws Exception
+    public void testDeserializationAsString02_zeroBased() throws Exception
     {
-        ObjectReader READER = newMapper().readerFor(Month.class);
-
-        assertEquals(Month.JANUARY, READER.readValue("\"JANUARY\""));
+        assertEquals(Month.JANUARY, readerForZeroBased().readValue("\"JANUARY\""));
     }
 
     @Test
@@ -74,39 +70,27 @@ public class MonthDeserTest extends ModuleTestBase
     }
 
     @Test
-    public void testDeserialization01_default() throws Exception
+    public void testDeserialization01_zeroBased() throws Exception
     {
-        ObjectMapper MAPPER = newMapper();
-
-        assertEquals(Month.FEBRUARY, MAPPER.readValue("1", Month.class));
+        assertEquals(Month.FEBRUARY, readerForZeroBased().readValue("1"));
     }
 
     @Test
-    public void testDeserialization01_feature() throws Exception
+    public void testDeserialization01_oneBased() throws Exception
     {
-        ObjectMapper MAPPER = JsonMapper.builder()
-            .addModule(new JavaTimeModule().enable(JavaTimeFeature.ONE_BASED_MONTHS))
-            .build();
-
-        assertEquals(Month.JANUARY, MAPPER.readValue("1", Month.class));
+        assertEquals(Month.JANUARY, readerForOneBased().readValue("1"));
     }
 
     @Test
-    public void testDeserialization02_default() throws Exception
+    public void testDeserialization02_zeroBased() throws Exception
     {
-        ObjectMapper MAPPER = newMapper();
-
-        assertEquals(Month.SEPTEMBER, MAPPER.readValue("\"08\"", Month.class));
+        assertEquals(Month.SEPTEMBER, readerForZeroBased().readValue("\"08\""));
     }
 
     @Test
-    public void testDeserialization02_feature() throws Exception
+    public void testDeserialization02_oneBased() throws Exception
     {
-        ObjectMapper MAPPER = JsonMapper.builder()
-            .addModule(new JavaTimeModule().enable(JavaTimeFeature.ONE_BASED_MONTHS))
-            .build();
-
-        assertEquals(Month.AUGUST, MAPPER.readValue("\"08\"", Month.class));
+        assertEquals(Month.AUGUST, readerForOneBased().readValue("\"08\""));
     }
 
     @Test
@@ -116,7 +100,7 @@ public class MonthDeserTest extends ModuleTestBase
             .registerModule(new JavaTimeModule().enable(JavaTimeFeature.ONE_BASED_MONTHS));
         MAPPER.addMixIn(TemporalAccessor.class, MockObjectConfiguration.class);
 
-        TemporalAccessor value = MAPPER.readValue("[\"java.time.Month\",\"11\"]", TemporalAccessor.class);
+        TemporalAccessor value = MAPPER.readValue("[\"java.time.Month\",11]", TemporalAccessor.class);
         assertEquals(Month.NOVEMBER, value);
     }
 
@@ -149,17 +133,8 @@ public class MonthDeserTest extends ModuleTestBase
             .registerModule(new JavaTimeModule().enable(JavaTimeFeature.ONE_BASED_MONTHS));
         mapper.addMixIn(TemporalAccessor.class, MockObjectConfiguration.class);
 
-        TemporalAccessor value = mapper.readValue("[\"java.time.Month\",\"11\"]", TemporalAccessor.class);
+        TemporalAccessor value = mapper.readValue("[\"java.time.Month\", 11]", TemporalAccessor.class);
         assertEquals(Month.NOVEMBER, value);
-    }
-
-
-
-    static class Wrapper {
-        @JsonFormat(pattern="MM")
-        public Month value;
-
-        public Wrapper(Month v) { value = v; }
     }
 
     @Test
@@ -227,4 +202,17 @@ public class MonthDeserTest extends ModuleTestBase
         }
     }
 
+    private ObjectReader readerForZeroBased() {
+        return JsonMapper.builder()
+                .addModule(new JavaTimeModule().disable(JavaTimeFeature.ONE_BASED_MONTHS))
+                .build()
+                .readerFor(Month.class);
+    }
+
+    private ObjectReader readerForOneBased() {
+        return JsonMapper.builder()
+                .addModule(new JavaTimeModule().enable(JavaTimeFeature.ONE_BASED_MONTHS))
+                .build()
+                .readerFor(Month.class);
+    }
 }
