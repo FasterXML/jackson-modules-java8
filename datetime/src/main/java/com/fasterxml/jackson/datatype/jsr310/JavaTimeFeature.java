@@ -29,7 +29,9 @@ public enum JavaTimeFeature implements JacksonFeature
      * stringified numbers are always accepted as timestamps regardless of
      * this feature.
      */
-    ALWAYS_ALLOW_STRINGIFIED_DATE_TIMESTAMPS(false)
+    ALWAYS_ALLOW_STRINGIFIED_DATE_TIMESTAMPS(false),
+
+    ONE_BASED_MONTHS(false)
     ;
 
   /**

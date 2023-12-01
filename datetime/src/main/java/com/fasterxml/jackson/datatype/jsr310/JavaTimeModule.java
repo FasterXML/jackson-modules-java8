@@ -18,6 +18,7 @@ package com.fasterxml.jackson.datatype.jsr310;
 
 import java.time.*;
 
+import com.fasterxml.jackson.core.json.PackageVersion;
 import com.fasterxml.jackson.core.util.JacksonFeatureSet;
 
 import com.fasterxml.jackson.databind.*;
@@ -133,6 +134,7 @@ public final class JavaTimeModule
         desers.addDeserializer(LocalDateTime.class, LocalDateTimeDeserializer.INSTANCE);
         desers.addDeserializer(LocalDate.class, LocalDateDeserializer.INSTANCE);
         desers.addDeserializer(LocalTime.class, LocalTimeDeserializer.INSTANCE);
+        desers.addDeserializer(Month.class, MonthDeserializer.INSTANCE.withFeatures(_features));
         desers.addDeserializer(MonthDay.class, MonthDayDeserializer.INSTANCE);
         desers.addDeserializer(OffsetTime.class, OffsetTimeDeserializer.INSTANCE);
         desers.addDeserializer(Period.class, JSR310StringParsableDeserializer.PERIOD);
