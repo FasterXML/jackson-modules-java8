@@ -6,7 +6,6 @@ import java.time.MonthDay;
 import java.time.format.DateTimeFormatter;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.StreamReadCapability;
 import com.fasterxml.jackson.core.io.NumberInput;
@@ -25,7 +24,7 @@ public class MonthDeserializer extends JSR310DateTimeDeserializerBase<Month>
 
     public static final MonthDeserializer INSTANCE = new MonthDeserializer();
 
-    private boolean _oneBaseMonths = false;
+    private final boolean _oneBaseMonths;
 
     /**
      * NOTE: only {@code public} so that use via annotations (see [modules-java8#202])
@@ -36,12 +35,12 @@ public class MonthDeserializer extends JSR310DateTimeDeserializerBase<Month>
     }
 
     public MonthDeserializer(DateTimeFormatter formatter) {
-        super(Month.class, formatter);
+        this(formatter, false);
     }
 
-    public MonthDeserializer(DateTimeFormatter formatter, boolean _oneBaseMonths) {
+    public MonthDeserializer(DateTimeFormatter formatter, boolean oneBaseMonths) {
         super(Month.class, formatter);
-        this._oneBaseMonths = _oneBaseMonths;
+        _oneBaseMonths = oneBaseMonths;
     }
 
     @Override
