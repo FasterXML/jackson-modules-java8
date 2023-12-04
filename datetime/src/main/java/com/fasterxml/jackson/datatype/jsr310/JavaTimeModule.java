@@ -133,7 +133,6 @@ public final class JavaTimeModule
         desers.addDeserializer(LocalDateTime.class, LocalDateTimeDeserializer.INSTANCE);
         desers.addDeserializer(LocalDate.class, LocalDateDeserializer.INSTANCE);
         desers.addDeserializer(LocalTime.class, LocalTimeDeserializer.INSTANCE);
-        desers.addDeserializer(Month.class, MonthDeserializer.INSTANCE.withFeatures(_features));
         desers.addDeserializer(MonthDay.class, MonthDayDeserializer.INSTANCE);
         desers.addDeserializer(OffsetTime.class, OffsetTimeDeserializer.INSTANCE);
         desers.addDeserializer(Period.class, JSR310StringParsableDeserializer.PERIOD);
@@ -143,6 +142,7 @@ public final class JavaTimeModule
         desers.addDeserializer(ZoneOffset.class, JSR310StringParsableDeserializer.ZONE_OFFSET);
 
         context.addDeserializers(desers);
+        context.addBeanDeserializerModifier(new MonthEnumDeserializerModifier().withFeatures(_features));
         // 20-Nov-2023, tatu: [modules-java8#288]: someone may have directly
         //     added entries, need to add for backwards compatibility
         if (_deserializers != null) {
