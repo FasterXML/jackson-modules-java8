@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeFeature;
@@ -15,6 +16,7 @@ import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
 import org.junit.Test;
+import org.junit.function.ThrowingRunnable;
 
 import java.io.IOException;
 import java.time.Month;
@@ -22,6 +24,7 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAccessor;
 import java.util.Map;
 
+import static java.lang.String.format;
 import static org.junit.Assert.*;
 
 public class MonthDeserTest extends ModuleTestBase
@@ -64,10 +67,28 @@ public class MonthDeserTest extends ModuleTestBase
     }
 
     @Test
-    public void testBadDeserializationAsString01() throws Throwable
-    {
-        expectFailure("\"notamonth\"");
+    public void testBadDeserializationAsString01() {
+        assertError(
+            () -> readerForOneBased().readValue("\"notamonth\""),
+            InvalidFormatException.class,
+            "Cannot deserialize value of type `java.time.Month` from String \"notamonth\": not one of the values accepted for Enum class: [OCTOBER, SEPTEMBER, JUNE, MARCH, MAY, APRIL, JULY, JANUARY, FEBRUARY, DECEMBER, AUGUST, NOVEMBER]"
+        );
     }
+
+    static void assertError(ThrowingRunnable codeToRun, Class<? extends Throwable> expectedException, String expectedMessage) {
+        try {
+            codeToRun.run();
+            fail(format("Expecting %s, but nothing was thrown!", expectedException.getName()));
+        } catch (Throwable actualException) {
+            if (!expectedException.isInstance(actualException)) {
+                fail(format("Expecting exception of type %s, but %s was thrown instead", expectedException.getName(), actualException.getClass().getName()));
+            }
+            if (actualException.getMessage() == null || !actualException.getMessage().contains(expectedMessage)) {
+                fail(format("Expecting exception with message containing:'%s', but the actual error message was:'%s'", expectedMessage, actualException.getMessage()));
+            }
+        }
+    }
+
 
     @Test
     public void testDeserialization01_zeroBased() throws Exception
@@ -215,4 +236,5 @@ public class MonthDeserTest extends ModuleTestBase
                 .build()
                 .readerFor(Month.class);
     }
+
 }

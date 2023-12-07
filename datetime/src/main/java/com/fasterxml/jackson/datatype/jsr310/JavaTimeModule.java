@@ -142,7 +142,10 @@ public final class JavaTimeModule
         desers.addDeserializer(ZoneOffset.class, JSR310StringParsableDeserializer.ZONE_OFFSET);
 
         context.addDeserializers(desers);
-        context.addBeanDeserializerModifier(new MonthEnumDeserializerModifier().withFeatures(_features));
+
+        boolean oneBasedMonth = _features.isEnabled(JavaTimeFeature.ONE_BASED_MONTHS);
+        context.addBeanDeserializerModifier(new JavaTimeDeserializerModifier(oneBasedMonth));
+
         // 20-Nov-2023, tatu: [modules-java8#288]: someone may have directly
         //     added entries, need to add for backwards compatibility
         if (_deserializers != null) {
