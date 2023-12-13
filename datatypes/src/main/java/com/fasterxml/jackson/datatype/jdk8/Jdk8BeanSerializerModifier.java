@@ -18,6 +18,8 @@ import java.util.OptionalLong;
  */
 public class Jdk8BeanSerializerModifier extends BeanSerializerModifier
 {
+    private static final long serialVersionUID = 1L;
+
     @Override
     public List<BeanPropertyWriter> changeProperties(SerializationConfig config,
             BeanDescription beanDesc,
