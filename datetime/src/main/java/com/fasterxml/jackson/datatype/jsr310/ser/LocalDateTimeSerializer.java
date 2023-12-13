@@ -85,17 +85,21 @@ public class LocalDateTimeSerializer extends JSR310FormattedSerializerBase<Local
     {
         WritableTypeId typeIdDef = typeSer.writeTypePrefix(g,
                 typeSer.typeId(value, serializationShape(provider)));
-        // need to write out to avoid double-writing array markers
-        if (typeIdDef != null && typeIdDef.valueShape == JsonToken.START_ARRAY) {
-            _serializeAsArrayContents(value, g, provider);
+        if (typeIdDef == null) {
+            serialize(value, g, provider);
         } else {
-            DateTimeFormatter dtf = _formatter;
-            if (dtf == null) {
-                dtf = _defaultFormatter();
+            // need to write out to avoid double-writing array markers
+            if (typeIdDef.valueShape == JsonToken.START_ARRAY) {
+                _serializeAsArrayContents(value, g, provider);
+            } else {
+                DateTimeFormatter dtf = _formatter;
+                if (dtf == null) {
+                    dtf = _defaultFormatter();
+                }
+                g.writeString(value.format(dtf));
             }
-            g.writeString(value.format(dtf));
+            typeSer.writeTypeSuffix(g, typeIdDef);
         }
-        typeSer.writeTypeSuffix(g, typeIdDef);
     }
 
     private final void _serializeAsArrayContents(LocalDateTime value, JsonGenerator g,
