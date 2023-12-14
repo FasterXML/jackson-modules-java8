@@ -15,7 +15,7 @@
   <artifactId>jackson-datatype-jdk8</artifactId>
   <name>Jackson datatype: jdk8</name>
   <packaging>bundle</packaging>
-  <description>Add-on module for Jackson (http://jackson.codehaus.org) to support
+  <description>Add-on module for Jackson (https://github.com/FasterXML/jackson) to support
 JDK 8 data types.
   </description>
 

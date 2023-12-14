@@ -14,7 +14,7 @@
   <artifactId>jackson-module-parameter-names</artifactId>
   <name>Jackson-module-parameter-names</name>
   <packaging>bundle</packaging>
-  <description>Add-on module for Jackson (http://jackson.codehaus.org) to support
+  <description>Add-on module for Jackson (https://github.com/FasterXML/jackson) to support
 introspection of method/constructor parameter names, without having to add explicit property name annotation.
 </description>
 
