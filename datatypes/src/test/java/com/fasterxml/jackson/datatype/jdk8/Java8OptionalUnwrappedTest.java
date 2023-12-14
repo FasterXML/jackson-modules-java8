@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrappe
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonObjectFormatVisitor;
 import com.fasterxml.jackson.databind.ser.DefaultSerializerProvider;
 
-public class OptionalUnwrappedTest extends ModuleTestBase
+public class Java8OptionalUnwrappedTest extends ModuleTestBase
 {
 	static class Child {
 		public String name = "Bob";
