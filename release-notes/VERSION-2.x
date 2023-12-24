@@ -12,7 +12,7 @@ Modules:
 
 -
 
-2.16.1 (not yet released)
+2.16.1 (24-Dec-2023)
 
 #286: Breaking change in `InstantDeserializer API between 2.15 and 2.16
  (reported by Harald K)
