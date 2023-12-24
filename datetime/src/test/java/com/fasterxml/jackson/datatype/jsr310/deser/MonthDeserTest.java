@@ -30,21 +30,16 @@ import static org.junit.Assert.*;
 public class MonthDeserTest extends ModuleTestBase
 {
     static class Wrapper {
-        @JsonFormat(pattern="MM")
         public Month value;
 
         public Wrapper(Month v) { value = v; }
+        public Wrapper() { }
     }
 
     @Test
-    public void testDeserializationAsString01_feature() throws Exception
+    public void testDeserializationAsString01_oneBased() throws Exception
     {
-        ObjectReader READER = JsonMapper.builder()
-            .addModule(new JavaTimeModule().enable(JavaTimeFeature.ONE_BASED_MONTHS))
-            .build()
-            .readerFor(Month.class);
-
-        assertEquals(Month.JANUARY, READER.readValue("\"01\""));
+        assertEquals(Month.JANUARY, readerForOneBased().readValue("\"01\""));
     }
 
     @Test
@@ -67,7 +62,7 @@ public class MonthDeserTest extends ModuleTestBase
     }
 
     @Test
-    public void testBadDeserializationAsString01() {
+    public void testBadDeserializationAsString01_oneBased() {
         assertError(
             () -> readerForOneBased().readValue("\"notamonth\""),
             InvalidFormatException.class,
@@ -115,7 +110,7 @@ public class MonthDeserTest extends ModuleTestBase
     }
 
     @Test
-    public void testDeserializationWithTypeInfo01_feature() throws Exception
+    public void testDeserializationWithTypeInfo01_oneBased() throws Exception
     {
         ObjectMapper MAPPER = new ObjectMapper()
             .registerModule(new JavaTimeModule().enable(JavaTimeFeature.ONE_BASED_MONTHS));
@@ -126,7 +121,7 @@ public class MonthDeserTest extends ModuleTestBase
     }
 
     @Test
-    public void testDeserializationWithTypeInfo01_default() throws Exception
+    public void testDeserializationWithTypeInfo01_zeroBased() throws Exception
     {
         ObjectMapper MAPPER = new ObjectMapper();
         MAPPER.addMixIn(TemporalAccessor.class, MockObjectConfiguration.class);
@@ -135,38 +130,18 @@ public class MonthDeserTest extends ModuleTestBase
         assertEquals(Month.DECEMBER, value);
     }
 
-
     @Test
-    public void _testDeserializationWithTypeInfo01_default() throws Exception
+    public void testFormatAnnotation_zeroBased() throws Exception
     {
-        ObjectMapper mapper = new ObjectMapper()
-            .registerModule(new JavaTimeModule());
-        mapper.addMixIn(TemporalAccessor.class, MockObjectConfiguration.class);
-
-        TemporalAccessor value = mapper.readValue("[\"java.time.Month\",\"11\"]", TemporalAccessor.class);
-        assertEquals(Month.DECEMBER, value);
+        Wrapper output = readerForZeroBased().readValue("{\"value\":\"11\"}", Wrapper.class);
+        assertEquals(new Wrapper(Month.DECEMBER).value, output.value);
     }
 
     @Test
-    public void _testDeserializationWithTypeInfo01_feature() throws Exception
+    public void testFormatAnnotation_oneBased() throws Exception
     {
-        ObjectMapper mapper = new ObjectMapper()
-            .registerModule(new JavaTimeModule().enable(JavaTimeFeature.ONE_BASED_MONTHS));
-        mapper.addMixIn(TemporalAccessor.class, MockObjectConfiguration.class);
-
-        TemporalAccessor value = mapper.readValue("[\"java.time.Month\", 11]", TemporalAccessor.class);
-        assertEquals(Month.NOVEMBER, value);
-    }
-
-    @Test
-    public void testFormatAnnotation() throws Exception
-    {
-        ObjectMapper MAPPER = newMapper();
-        String json = newMapper().writeValueAsString(new Wrapper(Month.DECEMBER));
-        assertEquals("{\"value\":\"12\"}", json);
-
-        Wrapper output = MAPPER.readValue(json, Wrapper.class);
-        assertEquals(new Wrapper(Month.of(12)).value, output.value);
+        Wrapper output = readerForOneBased().readValue("{\"value\":\"11\"}", Wrapper.class);
+        assertEquals(new Wrapper(Month.NOVEMBER).value, output.value);
     }
 
     /*

@@ -18,6 +18,7 @@ package com.fasterxml.jackson.datatype.jsr310;
 
 import java.time.*;
 
+import com.fasterxml.jackson.core.json.PackageVersion;
 import com.fasterxml.jackson.core.util.JacksonFeatureSet;
 
 import com.fasterxml.jackson.databind.*;
@@ -145,6 +146,7 @@ public final class JavaTimeModule
 
         boolean oneBasedMonth = _features.isEnabled(JavaTimeFeature.ONE_BASED_MONTHS);
         context.addBeanDeserializerModifier(new JavaTimeDeserializerModifier(oneBasedMonth));
+        context.addBeanSerializerModifier(new JavaTimeSerializerModifier(oneBasedMonth));
 
         // 20-Nov-2023, tatu: [modules-java8#288]: someone may have directly
         //     added entries, need to add for backwards compatibility
