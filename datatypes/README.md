@@ -73,4 +73,4 @@ System.out.println(withEmailJson);
 
 ## More
 
-See [Wiki](../../wiki) for more information (javadocs, downloads).
+See [Wiki](https://github.com/FasterXML/jackson-modules-java8/wiki) for more information (javadocs, downloads).
