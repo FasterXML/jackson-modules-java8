@@ -81,7 +81,8 @@ public class MonthDaySerializer extends JSR310FormattedSerializerBase<MonthDay>
         WritableTypeId typeIdDef = typeSer.writeTypePrefix(g,
                 typeSer.typeId(value, serializationShape(provider)));
         // need to write out to avoid double-writing array markers
-        if (typeIdDef.valueShape == JsonToken.START_ARRAY) {
+        if ((typeIdDef != null)
+                && typeIdDef.valueShape == JsonToken.START_ARRAY) {
             _serializeAsArrayContents(value, g, provider);
         } else {
             g.writeString((_formatter == null) ? value.toString() : value.format(_formatter));
