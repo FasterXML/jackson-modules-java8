@@ -79,7 +79,8 @@ public class OffsetTimeSerializer extends JSR310FormattedSerializerBase<OffsetTi
         WritableTypeId typeIdDef = typeSer.writeTypePrefix(g,
                 typeSer.typeId(value, serializationShape(provider)));
         // need to write out to avoid double-writing array markers
-        if (typeIdDef.valueShape == JsonToken.START_ARRAY) {
+        if ((typeIdDef != null)
+                && typeIdDef.valueShape == JsonToken.START_ARRAY) {
             _serializeAsArrayContents(value, g, provider);
         } else {
             String str = (_formatter == null) ? value.toString() : value.format(_formatter);

@@ -12,6 +12,11 @@ Modules:
 
 -
 
+2.16.2 (not yet released)
+
+#296: NPE when serializing a `LocalDate` or `LocalDateTime` using `AsDeductionTypeSerializer`
+ (reported by @mike-reynolds-savient)
+
 2.16.1 (24-Dec-2023)
 
 #286: Breaking change in `InstantDeserializer API between 2.15 and 2.16
