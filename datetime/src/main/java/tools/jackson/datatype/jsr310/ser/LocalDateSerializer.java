@@ -84,14 +84,12 @@ public class LocalDateSerializer extends JSR310FormattedSerializerBase<LocalDate
         WritableTypeId typeIdDef = typeSer.writeTypePrefix(g, ctxt,
                 typeSer.typeId(value, serializationShape(ctxt)));
         // need to write out to avoid double-writing array markers
-        switch (typeIdDef.valueShape) {
-        case START_ARRAY:
+        JsonToken shape = (typeIdDef == null) ? null : typeIdDef.valueShape;
+        if (shape == JsonToken.START_ARRAY) {
             _serializeAsArrayContents(value, g, ctxt);
-            break;
-        case VALUE_NUMBER_INT:
+        } else if (shape == JsonToken.VALUE_NUMBER_INT) {
             g.writeNumber(value.toEpochDay());
-            break;
-        default:
+        } else {
             g.writeString((_formatter == null) ? value.toString() : value.format(_formatter));
         }
         typeSer.writeTypeSuffix(g, ctxt, typeIdDef);

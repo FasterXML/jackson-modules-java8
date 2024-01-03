@@ -7,6 +7,8 @@ import java.time.temporal.Temporal;
 import java.util.Map;
 import java.util.regex.Matcher;
 
+import org.junit.Test;
+
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.exc.MismatchedInputException;
 import tools.jackson.datatype.jsr310.MockObjectConfiguration;
@@ -20,10 +22,7 @@ import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.ObjectReader;
 import tools.jackson.databind.SerializationFeature;
 
-import org.junit.Test;
-
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assume.assumeTrue;
 
 import static tools.jackson.datatype.jsr310.deser.InstantDeserializer.ISO8601_COLONLESS_OFFSET_REGEX;

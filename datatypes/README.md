@@ -73,3 +73,6 @@ String withEmailJson = mapper.writeValueAsString(withEmail);
 // prints:  {"name":"Example Co.","email":"info@example.com"}
 System.out.println(withEmailJson);
 ```
+## More
+
+See [Wiki](https://github.com/FasterXML/jackson-modules-java8/wiki) for more information (javadocs, downloads).

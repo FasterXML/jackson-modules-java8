@@ -83,7 +83,8 @@ public class YearMonthSerializer extends JSR310FormattedSerializerBase<YearMonth
         WritableTypeId typeIdDef = typeSer.writeTypePrefix(g, ctxt,
                 typeSer.typeId(value, serializationShape(ctxt)));
         // need to write out to avoid double-writing array markers
-        if (typeIdDef.valueShape == JsonToken.START_ARRAY) {
+        if ((typeIdDef != null)
+                && typeIdDef.valueShape == JsonToken.START_ARRAY) {
             _serializeAsArrayContents(value, g, ctxt);
         } else {
             g.writeString((_formatter == null) ? value.toString() : value.format(_formatter));
