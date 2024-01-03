@@ -7,9 +7,10 @@ import java.time.temporal.Temporal;
 import java.util.Map;
 import java.util.regex.Matcher;
 
+import org.junit.Test;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import org.junit.Test;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -22,7 +23,6 @@ import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
 import static com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer.ISO8601_COLONLESS_OFFSET_REGEX;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assume.assumeTrue;
 
 public class InstantDeserTest extends ModuleTestBase
