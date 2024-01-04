@@ -94,7 +94,7 @@ public final class DecimalUtils
             }
             return BigDecimal.valueOf(seconds).setScale(9);
         }
-        return NumberInput.parseBigDecimal(toDecimal(seconds, nanoseconds));
+        return NumberInput.parseBigDecimal(toDecimal(seconds, nanoseconds), false);
     }
 
     /**

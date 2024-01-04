@@ -407,7 +407,7 @@ public class InstantDeserializer<T extends Temporal>
                         return _fromLong(ctxt, NumberInput.parseLong(string));
                     }
                     if (dots == 1) {
-                        return _fromDecimal(ctxt, NumberInput.parseBigDecimal(string));
+                        return _fromDecimal(ctxt, NumberInput.parseBigDecimal(string, false));
                     }
                 } catch (NumberFormatException e) {
                     // fall through to default handling, to get error there

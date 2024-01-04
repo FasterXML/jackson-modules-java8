@@ -157,44 +157,45 @@ public class OptionalBasicTest extends ModuleTestBase
 		assertEquals("{\"myString\":null}", value);
 	}
 
-	public void testSerOptNull() throws Exception {
-		OptionalData data = new OptionalData();
-		data.myString = null;
-		String value = mapperWithModule().setSerializationInclusion(
-				JsonInclude.Include.NON_NULL).writeValueAsString(data);
-		assertEquals("{}", value);
-	}
+    public void testSerOptNull() throws Exception {
+        OptionalData data = new OptionalData();
+        data.myString = null;
+        String value = mapperWithModule().setSerializationInclusion(
+                JsonInclude.Include.NON_NULL).writeValueAsString(data);
+        assertEquals("{}", value);
+    }
 
-	public void testSerOptDisableAsNull() throws Exception {
-		final OptionalData data = new OptionalData();
-		data.myString = Optional.empty();
+    @SuppressWarnings("deprecation")
+    public void testSerOptDisableAsNull() throws Exception {
+        final OptionalData data = new OptionalData();
+        data.myString = Optional.empty();
 
-		Jdk8Module mod = new Jdk8Module().configureAbsentsAsNulls(false);
-		ObjectMapper mapper = new ObjectMapper().registerModule(mod)
-				.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        Jdk8Module mod = new Jdk8Module().configureAbsentsAsNulls(false);
+        ObjectMapper mapper = new ObjectMapper().registerModule(mod)
+                .setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
-		assertEquals("{\"myString\":null}", mapper.writeValueAsString(data));
+        assertEquals("{\"myString\":null}", mapper.writeValueAsString(data));
 
-		// but do exclude with NON_EMPTY
-		mapper = new ObjectMapper().registerModule(mod)
-				.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
-		assertEquals("{}", mapper.writeValueAsString(data));
+        // but do exclude with NON_EMPTY
+        mapper = new ObjectMapper().registerModule(mod)
+                .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+        assertEquals("{}", mapper.writeValueAsString(data));
 
-		// and with new (2.6) NON_ABSENT
-		mapper = new ObjectMapper().registerModule(mod)
-				.setSerializationInclusion(JsonInclude.Include.NON_ABSENT);
-		assertEquals("{}", mapper.writeValueAsString(data));
-	}
+        // and with new (2.6) NON_ABSENT
+        mapper = new ObjectMapper().registerModule(mod)
+                .setSerializationInclusion(JsonInclude.Include.NON_ABSENT);
+        assertEquals("{}", mapper.writeValueAsString(data));
+    }
 
-	public void testSerOptNonEmpty() throws Exception {
-		OptionalData data = new OptionalData();
-		data.myString = null;
-		String value = mapperWithModule().setSerializationInclusion(
-				JsonInclude.Include.NON_EMPTY).writeValueAsString(data);
-		assertEquals("{}", value);
-	}
+    public void testSerOptNonEmpty() throws Exception {
+        OptionalData data = new OptionalData();
+        data.myString = null;
+        String value = mapperWithModule().setSerializationInclusion(
+                JsonInclude.Include.NON_EMPTY).writeValueAsString(data);
+        assertEquals("{}", value);
+    }
 
-	public void testWithTypingEnabled() throws Exception {
+    public void testWithTypingEnabled() throws Exception {
 		final ObjectMapper objectMapper = mapperWithModule();
 		// ENABLE TYPING
 		objectMapper.activateDefaultTyping(new NoCheckSubTypeValidator(),
