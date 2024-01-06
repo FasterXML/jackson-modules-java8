@@ -14,10 +14,6 @@ import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 public class JavaTimeSerializerModifier extends BeanSerializerModifier {
     private final boolean _oneBaseMonths;
 
-    public JavaTimeSerializerModifier() {
-        this(false);
-    }
-
     public JavaTimeSerializerModifier(boolean oneBaseMonths) {
         _oneBaseMonths = oneBaseMonths;
     }
