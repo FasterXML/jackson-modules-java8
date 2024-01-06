@@ -27,7 +27,7 @@ import java.util.Map;
 import static java.lang.String.format;
 import static org.junit.Assert.*;
 
-public class MonthDeserTest extends ModuleTestBase
+public class OneBasedMonthDeserTest extends ModuleTestBase
 {
     static class Wrapper {
         public Month value;

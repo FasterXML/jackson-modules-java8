@@ -14,20 +14,18 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 /**
  * @since 2.17
  */
-public class MonthDeserializer extends DelegatingDeserializer {
+public class OneBasedMonthDeserializer extends DelegatingDeserializer {
     private static final Pattern HAS_ONE_OR_TWO_DIGITS = Pattern.compile("^\\d{1,2}$");
-    private final boolean _enableOneBaseMonths;
 
-    public MonthDeserializer(JsonDeserializer<Enum> defaultDeserializer, boolean oneBaseMonths) {
+    public OneBasedMonthDeserializer(JsonDeserializer<Enum> defaultDeserializer) {
         super(defaultDeserializer);
-        _enableOneBaseMonths = oneBaseMonths;
     }
 
     @Override
     public Object deserialize(JsonParser parser, DeserializationContext context) throws IOException {
         JsonToken token = parser.currentToken();
         Month zeroBaseMonth = (Month) getDelegatee().deserialize(parser, context);
-        if (!_enableOneBaseMonths || !_isNumericValue(parser.getText(), token)) {
+        if (!_isNumericValue(parser.getText(), token)) {
             return zeroBaseMonth;
         }
         if (zeroBaseMonth == Month.JANUARY) {
@@ -46,6 +44,6 @@ public class MonthDeserializer extends DelegatingDeserializer {
 
     @Override
     protected JsonDeserializer<?> newDelegatingInstance(JsonDeserializer<?> newDelegatee) {
-        return new MonthDeserializer((JsonDeserializer<Enum>) newDelegatee, _enableOneBaseMonths);
+        return new OneBasedMonthDeserializer((JsonDeserializer<Enum>) newDelegatee);
     }
 }

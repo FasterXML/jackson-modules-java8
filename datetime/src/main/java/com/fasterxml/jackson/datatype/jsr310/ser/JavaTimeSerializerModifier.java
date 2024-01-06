@@ -1,7 +1,6 @@
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
 import java.time.Month;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import com.fasterxml.jackson.databind.BeanDescription;
@@ -24,8 +23,8 @@ public class JavaTimeSerializerModifier extends BeanSerializerModifier {
 
     @Override
     public JsonSerializer<?> modifyEnumSerializer(SerializationConfig config, JavaType valueType, BeanDescription beanDesc, JsonSerializer<?> serializer) {
-        if (valueType.hasRawClass(Month.class)) {
-            return new MonthSerializer((JsonSerializer<Enum>) serializer, _oneBaseMonths, _serializeEnumsByIndex);
+        if (_oneBaseMonths && valueType.hasRawClass(Month.class)) {
+            return new OneBasedMonthSerializer((JsonSerializer<Enum>) serializer, _serializeEnumsByIndex);
         }
         return serializer;
     }

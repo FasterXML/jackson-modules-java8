@@ -6,7 +6,6 @@ import java.time.Month;
 
 import org.junit.Test;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -14,7 +13,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-public class MonthSerTest extends ModuleTestBase
+public class OneBasedMonthSerTest extends ModuleTestBase
 {
     static class Wrapper {
         public Month month;
