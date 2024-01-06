@@ -26,8 +26,12 @@ public class MonthSerTest extends ModuleTestBase
     @Test
     public void testSerializationFromEnum() throws Exception
     {
-        assertEquals( "\"JANUARY\"" , mapperForOneBased().writeValueAsString(Month.JANUARY));
-        assertEquals( "\"JANUARY\"" , mapperForZeroBased().writeValueAsString(Month.JANUARY));
+        assertEquals( "\"JANUARY\"" , mapperForOneBased()
+            .enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
+            .writeValueAsString(Month.JANUARY));
+        assertEquals( "\"JANUARY\"" , mapperForZeroBased()
+            .enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
+            .writeValueAsString(Month.JANUARY));
     }
 
     @Test

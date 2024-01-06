@@ -17,6 +17,7 @@
 package com.fasterxml.jackson.datatype.jsr310;
 
 import java.time.*;
+import java.util.function.Supplier;
 
 import com.fasterxml.jackson.core.json.PackageVersion;
 import com.fasterxml.jackson.core.util.JacksonFeatureSet;
@@ -144,9 +145,12 @@ public final class JavaTimeModule
 
         context.addDeserializers(desers);
 
+
         boolean oneBasedMonth = _features.isEnabled(JavaTimeFeature.ONE_BASED_MONTHS);
+        Supplier<Boolean> serializeEnumsByIndex = () -> context.isEnabled(SerializationFeature.WRITE_ENUMS_USING_INDEX);
+
         context.addBeanDeserializerModifier(new JavaTimeDeserializerModifier(oneBasedMonth));
-        context.addBeanSerializerModifier(new JavaTimeSerializerModifier(oneBasedMonth));
+        context.addBeanSerializerModifier(new JavaTimeSerializerModifier(oneBasedMonth, serializeEnumsByIndex));
 
         // 20-Nov-2023, tatu: [modules-java8#288]: someone may have directly
         //     added entries, need to add for backwards compatibility
