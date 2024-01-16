@@ -1,7 +1,6 @@
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
 import java.time.Month;
-import java.util.function.Supplier;
 
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JavaType;
@@ -28,5 +27,4 @@ public class JavaTimeSerializerModifier extends BeanSerializerModifier {
         }
         return serializer;
     }
-
 }

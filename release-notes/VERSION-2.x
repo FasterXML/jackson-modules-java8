@@ -10,7 +10,10 @@ Modules:
 
 2.17.0 (not yet released)
 
--
+#274: Deserializing `java.time.Month` from an int causes an off-by-one
+  error (`0`->`Jan`,`11`->`Dec`), because it's an enum
+ (reported by Christoffer H)
+ (fix contributed Emanuel T)
 
 2.16.1 (not yet released)
 

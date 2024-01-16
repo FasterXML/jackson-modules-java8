@@ -24,6 +24,9 @@ public class OneBasedMonthSerializer extends JsonSerializer<Month> {
     public void serialize(Month value, JsonGenerator gen, SerializerProvider ctxt)
         throws IOException
     {
+        // 15-Jan-2024, tatu: [modules-java8#274] This is not really sufficient
+        //   (see `jackson-databind` `EnumSerializer` for full logic), but has to
+        //   do for now. May need to add `@JsonFormat.shape` handling in future.
         if (ctxt.isEnabled(SerializationFeature.WRITE_ENUMS_USING_INDEX)) {
             gen.writeNumber(value.ordinal() + 1);
             return;
