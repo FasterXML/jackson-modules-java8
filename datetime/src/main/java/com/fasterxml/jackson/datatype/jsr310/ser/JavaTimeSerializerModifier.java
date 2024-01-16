@@ -16,17 +16,15 @@ public class JavaTimeSerializerModifier extends BeanSerializerModifier {
     private static final long serialVersionUID = 1L;
 
     private final boolean _oneBaseMonths;
-    private final Supplier<Boolean> _serializeEnumsByIndex;
 
-    public JavaTimeSerializerModifier(boolean oneBaseMonths, Supplier<Boolean> serializeEnumsByIndex) {
+    public JavaTimeSerializerModifier(boolean oneBaseMonths) {
         _oneBaseMonths = oneBaseMonths;
-        _serializeEnumsByIndex = serializeEnumsByIndex;
     }
 
     @Override
     public JsonSerializer<?> modifyEnumSerializer(SerializationConfig config, JavaType valueType, BeanDescription beanDesc, JsonSerializer<?> serializer) {
         if (_oneBaseMonths && valueType.hasRawClass(Month.class)) {
-            return new OneBasedMonthSerializer(serializer, _serializeEnumsByIndex);
+            return new OneBasedMonthSerializer(serializer);
         }
         return serializer;
     }

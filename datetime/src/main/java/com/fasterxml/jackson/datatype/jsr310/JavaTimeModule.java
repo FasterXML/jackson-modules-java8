@@ -17,9 +17,7 @@
 package com.fasterxml.jackson.datatype.jsr310;
 
 import java.time.*;
-import java.util.function.Supplier;
 
-import com.fasterxml.jackson.core.json.PackageVersion;
 import com.fasterxml.jackson.core.util.JacksonFeatureSet;
 
 import com.fasterxml.jackson.databind.*;
@@ -103,7 +101,6 @@ public final class JavaTimeModule
     public JavaTimeModule()
     {
         super(PackageVersion.VERSION);
-
         _features = JacksonFeatureSet.fromDefaults(JavaTimeFeature.values());
     }
 
@@ -144,14 +141,11 @@ public final class JavaTimeModule
         desers.addDeserializer(ZoneOffset.class, JSR310StringParsableDeserializer.ZONE_OFFSET);
 
         context.addDeserializers(desers);
+        
+        final boolean oneBasedMonthEnabled = _features.isEnabled(JavaTimeFeature.ONE_BASED_MONTHS);
 
-
-        boolean oneBasedMonth = _features.isEnabled(JavaTimeFeature.ONE_BASED_MONTHS);
-        Supplier<Boolean> serializeEnumsByIndex = () -> context.isEnabled(SerializationFeature.WRITE_ENUMS_USING_INDEX);
-
-        context.addBeanDeserializerModifier(new JavaTimeDeserializerModifier(oneBasedMonth));
-        context.addBeanSerializerModifier(new JavaTimeSerializerModifier(oneBasedMonth, serializeEnumsByIndex));
-
+        context.addBeanDeserializerModifier(new JavaTimeDeserializerModifier(oneBasedMonthEnabled));
+        context.addBeanSerializerModifier(new JavaTimeSerializerModifier(oneBasedMonthEnabled));
         // 20-Nov-2023, tatu: [modules-java8#288]: someone may have directly
         //     added entries, need to add for backwards compatibility
         if (_deserializers != null) {
