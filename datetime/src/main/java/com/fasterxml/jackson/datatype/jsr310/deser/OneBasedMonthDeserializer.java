@@ -15,9 +15,11 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException;
  * @since 2.17
  */
 public class OneBasedMonthDeserializer extends DelegatingDeserializer {
+    private static final long serialVersionUID = 1L;
+
     private static final Pattern HAS_ONE_OR_TWO_DIGITS = Pattern.compile("^\\d{1,2}$");
 
-    public OneBasedMonthDeserializer(JsonDeserializer<Enum> defaultDeserializer) {
+    public OneBasedMonthDeserializer(JsonDeserializer<?> defaultDeserializer) {
         super(defaultDeserializer);
     }
 
@@ -44,6 +46,6 @@ public class OneBasedMonthDeserializer extends DelegatingDeserializer {
 
     @Override
     protected JsonDeserializer<?> newDelegatingInstance(JsonDeserializer<?> newDelegatee) {
-        return new OneBasedMonthDeserializer((JsonDeserializer<Enum>) newDelegatee);
+        return new OneBasedMonthDeserializer(newDelegatee);
     }
 }

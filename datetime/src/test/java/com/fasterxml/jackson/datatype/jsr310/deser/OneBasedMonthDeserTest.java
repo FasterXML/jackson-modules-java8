@@ -1,10 +1,16 @@
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
+import java.time.Month;
+import java.time.temporal.TemporalAccessor;
+import java.util.Map;
 
+import org.junit.Test;
+import org.junit.function.ThrowingRunnable;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.core.JsonProcessingException;
+
 import com.fasterxml.jackson.core.type.TypeReference;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
@@ -15,16 +21,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import org.junit.Test;
-import org.junit.function.ThrowingRunnable;
-
-import java.io.IOException;
-import java.time.Month;
-import java.time.format.DateTimeParseException;
-import java.time.temporal.TemporalAccessor;
-import java.util.Map;
-
-import static java.lang.String.format;
 import static org.junit.Assert.*;
 
 public class OneBasedMonthDeserTest extends ModuleTestBase
@@ -73,13 +69,13 @@ public class OneBasedMonthDeserTest extends ModuleTestBase
     static void assertError(ThrowingRunnable codeToRun, Class<? extends Throwable> expectedException, String expectedMessage) {
         try {
             codeToRun.run();
-            fail(format("Expecting %s, but nothing was thrown!", expectedException.getName()));
+            fail(String.format("Expecting %s, but nothing was thrown!", expectedException.getName()));
         } catch (Throwable actualException) {
             if (!expectedException.isInstance(actualException)) {
-                fail(format("Expecting exception of type %s, but %s was thrown instead", expectedException.getName(), actualException.getClass().getName()));
+                fail(String.format("Expecting exception of type %s, but %s was thrown instead", expectedException.getName(), actualException.getClass().getName()));
             }
             if (actualException.getMessage() == null || !actualException.getMessage().contains(expectedMessage)) {
-                fail(format("Expecting exception with message containing:'%s', but the actual error message was:'%s'", expectedMessage, actualException.getMessage()));
+                fail(String.format("Expecting exception with message containing:'%s', but the actual error message was:'%s'", expectedMessage, actualException.getMessage()));
             }
         }
     }
@@ -150,7 +146,6 @@ public class OneBasedMonthDeserTest extends ModuleTestBase
     /**********************************************************
      */
 
-    // minor changes in 2.12
     @Test
     public void testDeserializeFromEmptyString() throws Exception
     {
@@ -177,24 +172,6 @@ public class OneBasedMonthDeserTest extends ModuleTestBase
             fail("Should not pass");
         } catch (MismatchedInputException e) {
             verifyException(e, "not allowed because 'strict' mode set for");
-        }
-    }
-
-    private void expectFailure(String aposJson) throws Throwable {
-        try {
-            newMapper().registerModule(new JavaTimeModule())
-                .readerFor(Month.class)
-                .readValue(aposJson);
-            fail("expected DateTimeParseException");
-        } catch (JsonProcessingException e) {
-            if (e.getCause() == null) {
-                throw e;
-            }
-            if (!(e.getCause() instanceof DateTimeParseException)) {
-                throw e.getCause();
-            }
-        } catch (IOException e) {
-            throw e;
         }
     }
 

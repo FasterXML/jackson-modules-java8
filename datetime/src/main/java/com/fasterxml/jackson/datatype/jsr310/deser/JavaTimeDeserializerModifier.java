@@ -12,6 +12,8 @@ import com.fasterxml.jackson.databind.deser.BeanDeserializerModifier;
  * @since 2.17
  */
 public class JavaTimeDeserializerModifier extends BeanDeserializerModifier {
+    private static final long serialVersionUID = 1L;
+
     private final boolean _oneBaseMonths;
 
     public JavaTimeDeserializerModifier(boolean oneBaseMonths) {
@@ -21,7 +23,7 @@ public class JavaTimeDeserializerModifier extends BeanDeserializerModifier {
     @Override
     public JsonDeserializer<?> modifyEnumDeserializer(DeserializationConfig config, JavaType type, BeanDescription beanDesc, JsonDeserializer<?> defaultDeserializer) {
         if (_oneBaseMonths && type.hasRawClass(Month.class)) {
-            return new OneBasedMonthDeserializer((JsonDeserializer<Enum>) defaultDeserializer);
+            return new OneBasedMonthDeserializer(defaultDeserializer);
         }
         return defaultDeserializer;
     }

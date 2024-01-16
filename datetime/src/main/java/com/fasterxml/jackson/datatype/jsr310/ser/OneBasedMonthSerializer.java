@@ -13,10 +13,11 @@ import com.fasterxml.jackson.databind.SerializerProvider;
  */
 public class OneBasedMonthSerializer extends JsonSerializer<Enum<Month>> {
     private final Supplier<Boolean> _serializeEnumsByIndex;
-    private final JsonSerializer<Enum> _defaultSerializer;
+    private final JsonSerializer<Object> _defaultSerializer;
 
-    public OneBasedMonthSerializer(JsonSerializer<Enum> defaultSerializer, Supplier<Boolean> serializeEnumsByIndex) {
-        _defaultSerializer = defaultSerializer;
+    @SuppressWarnings("unchecked")
+    public OneBasedMonthSerializer(JsonSerializer<?> defaultSerializer, Supplier<Boolean> serializeEnumsByIndex) {
+        _defaultSerializer = (JsonSerializer<Object>) defaultSerializer;
         _serializeEnumsByIndex = serializeEnumsByIndex;
     }
 
@@ -28,5 +29,4 @@ public class OneBasedMonthSerializer extends JsonSerializer<Enum<Month>> {
         }
         _defaultSerializer.serialize(value, gen, serializers);
     }
-
 }
