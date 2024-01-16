@@ -2,17 +2,14 @@ package com.fasterxml.jackson.datatype.jsr310.deser;
 
 import java.time.Month;
 import java.time.temporal.TemporalAccessor;
-import java.util.Map;
 
 import org.junit.Test;
 import org.junit.function.ThrowingRunnable;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.cfg.CoercionAction;
+import com.fasterxml.jackson.databind.cfg.CoercionInputShape;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -149,35 +146,32 @@ public class OneBasedMonthDeserTest extends ModuleTestBase
     @Test
     public void testDeserializeFromEmptyString() throws Exception
     {
-        // First: by default, lenient, so empty String fine
-        TypeReference<Map<String, Month>> MAP_TYPE_REF = new TypeReference<Map<String, Month>>() { };
-        ObjectReader objectReader = newMapper().registerModule(new JavaTimeModule())
-            .readerFor(MAP_TYPE_REF);
+        final ObjectMapper mapper = newMapper();
 
-        Map<String, Month> map = objectReader.readValue("{\"month\":null}");
-        assertNull(map.get("month"));
+        // Nulls are handled in general way, not by deserializer so they are ok
+        Month m = mapper.readerFor(Month.class).readValue(" null ");
+        assertNull(m);
 
-        Map<String, Month> map2 = objectReader.readValue("{\"month\":\"\"}");
-        assertNotNull(map2);
-
-        // But can make strict:
-        ObjectMapper strictMapper = mapperBuilder()
-            .addModule(new JavaTimeModule())
-            .build();
-        strictMapper.configOverride(Month.class)
-            .setFormat(JsonFormat.Value.forLeniency(false));
-
+        // But coercion from empty String not enabled for Enums by default:
         try {
-            strictMapper.readerFor(MAP_TYPE_REF).readValue("{\"date\":\"\"}");
+            mapper.readerFor(Month.class).readValue("\"\"");
             fail("Should not pass");
         } catch (MismatchedInputException e) {
-            verifyException(e, "not allowed because 'strict' mode set for");
+            verifyException(e, "Cannot coerce empty String");
         }
+        // But can allow coercion of empty String to, say, null
+        ObjectMapper emptyStringMapper = mapperBuilder()
+                .withCoercionConfig(Month.class,
+                        h -> h.setCoercion(CoercionInputShape.EmptyString, CoercionAction.AsNull))
+                .build();
+        m = emptyStringMapper.readerFor(Month.class).readValue("\"\"");
+        assertNull(m);
     }
 
     private ObjectReader readerForZeroBased() {
         return JsonMapper.builder()
-                .addModule(new JavaTimeModule().disable(JavaTimeFeature.ONE_BASED_MONTHS))
+                .addModule(new JavaTimeModule()
+                        .disable(JavaTimeFeature.ONE_BASED_MONTHS))
                 .build()
                 .readerFor(Month.class);
     }
@@ -188,5 +182,4 @@ public class OneBasedMonthDeserTest extends ModuleTestBase
                 .build()
                 .readerFor(Month.class);
     }
-
 }

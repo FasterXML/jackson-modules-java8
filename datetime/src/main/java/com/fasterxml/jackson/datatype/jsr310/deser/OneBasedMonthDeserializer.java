@@ -41,7 +41,7 @@ public class OneBasedMonthDeserializer extends DelegatingDeserializer {
     }
 
     private boolean _isNumberAsString(String text, JsonToken token) {
-        return token == JsonToken.VALUE_STRING &&  HAS_ONE_OR_TWO_DIGITS.matcher(text).find();
+        return token == JsonToken.VALUE_STRING && HAS_ONE_OR_TWO_DIGITS.matcher(text).matches();
     }
 
     @Override
