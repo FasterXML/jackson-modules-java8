@@ -14,6 +14,8 @@ Modules:
   error (`0`->`Jan`,`11`->`Dec`), because it's an enum
  (reported by Christoffer H)
  (fix contributed Emanuel T)
+#294: `Optional` deserialization, serialization ignore `contentConverter`
+ (reported by @richardsonwk)
 
 2.16.2 (not yet released)
 

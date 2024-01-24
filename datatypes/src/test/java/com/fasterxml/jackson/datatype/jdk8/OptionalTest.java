@@ -118,14 +118,7 @@ public class OptionalTest extends ModuleTestBase
         }
     }
 
-    private ObjectMapper MAPPER;
-
-    @Override
-    protected void setUp() throws Exception
-    {
-        super.setUp();
-        MAPPER = mapperWithModule();
-    }
+    private final ObjectMapper MAPPER = mapperWithModule();
 
     /*
     /**********************************************************
