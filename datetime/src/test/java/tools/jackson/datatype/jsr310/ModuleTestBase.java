@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 
+import tools.jackson.core.json.JsonWriteFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.cfg.MapperBuilder;
 import tools.jackson.databind.json.JsonMapper;
@@ -29,12 +30,14 @@ public class ModuleTestBase
 
     protected static MapperBuilder<?,?> newMapperBuilder() {
         return JsonMapper.builder()
+                .disable(JsonWriteFeature.ESCAPE_FORWARD_SLASHES)
                 .addModule(new JavaTimeModule());
     }
 
     protected static MapperBuilder<?,?> newMapperBuilder(TimeZone tz) {
         return JsonMapper.builder()
                 .defaultTimeZone(tz)
+                .disable(JsonWriteFeature.ESCAPE_FORWARD_SLASHES)
                 .addModule(new JavaTimeModule());
     }
 
@@ -45,6 +48,7 @@ public class ModuleTestBase
     protected static JsonMapper.Builder mapperBuilder() {
         return JsonMapper.builder()
                 .defaultLocale(Locale.ENGLISH)
+                .disable(JsonWriteFeature.ESCAPE_FORWARD_SLASHES)
                 .addModule(new JavaTimeModule());
     }
 
