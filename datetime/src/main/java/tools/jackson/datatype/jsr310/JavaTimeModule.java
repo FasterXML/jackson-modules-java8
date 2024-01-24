@@ -182,6 +182,11 @@ public final class JavaTimeModule
             .addDeserializer(ZoneOffset.class, ZoneOffsetKeyDeserializer.INSTANCE)
         );
 
+        // [modules-java8#274]: 1-based Month (de)serializer need to be applied via modifiers:
+        final boolean oneBasedMonthEnabled = _features.isEnabled(JavaTimeFeature.ONE_BASED_MONTHS);
+        context.addDeserializerModifier(new JavaTimeDeserializerModifier(oneBasedMonthEnabled));
+        context.addSerializerModifier(new JavaTimeSerializerModifier(oneBasedMonthEnabled));
+
         context.addValueInstantiators(new ValueInstantiators.Base() {
             @Override
             public ValueInstantiator modifyValueInstantiator(DeserializationConfig config,
