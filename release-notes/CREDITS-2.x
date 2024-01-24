@@ -190,3 +190,12 @@ Harald Kuhr (haraldk@github)
  * Reported #286: Breaking change in `InstantDeserializer API between 2.15 and 2.16
   (2.16.1)
 
+Christoffer Hammarström (@kreiger)
+ * Reported #274: Deserializing `java.time.Month` from an int causes an off-by-one
+   error (`0`->`Jan`,`11`->`Dec`), because it's an enum
+  (2.17.0)
+
+Emanuel Trandafir (@etrandafir93)
+ * Contribtued fix for #274: Deserializing `java.time.Month` from an int causes an off-by-one
+   error (`0`->`Jan`,`11`->`Dec`), because it's an enum
+  (2.17.0)

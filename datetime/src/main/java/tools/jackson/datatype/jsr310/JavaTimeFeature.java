@@ -29,7 +29,16 @@ public enum JavaTimeFeature implements JacksonFeature
      * stringified numbers are always accepted as timestamps regardless of
      * this feature.
      */
-    ALWAYS_ALLOW_STRINGIFIED_DATE_TIMESTAMPS(false)
+    ALWAYS_ALLOW_STRINGIFIED_DATE_TIMESTAMPS(false),
+
+    /**
+     * Feature that determines whether {@link java.time.Month} is serialized
+     * and deserialized as using a zero-based index (FALSE) or a one-based index (TRUE).
+     * For example, "1" would be serialized/deserialized as Month.JANUARY if TRUE and Month.FEBRUARY if FALSE.
+     *<p>
+     * Default setting is false, meaning that Month is serialized/deserialized as a zero-based index.
+     */
+    ONE_BASED_MONTHS(false)
     ;
 
   /**
