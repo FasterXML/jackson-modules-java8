@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import tools.jackson.core.json.JsonWriteFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.module.SimpleModule;
@@ -35,6 +36,7 @@ public class TestLocalDateSerializationWithCustomFormatter {
 
     private String serializeWith(LocalDate date, DateTimeFormatter f) throws Exception {
         ObjectMapper mapper = JsonMapper.builder()
+                .disable(JsonWriteFeature.ESCAPE_FORWARD_SLASHES)
                 .addModule(new SimpleModule()
                         .addSerializer(new LocalDateSerializer(f)))
                 .build();
