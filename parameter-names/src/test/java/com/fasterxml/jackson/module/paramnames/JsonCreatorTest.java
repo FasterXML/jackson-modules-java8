@@ -2,6 +2,9 @@ package com.fasterxml.jackson.module.paramnames;
 
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.*;
 
@@ -24,6 +27,17 @@ public class JsonCreatorTest extends ModuleTestBase
         }
     }
 
+    // [modules-base#178]
+    static class Bean178
+    {
+        int _a, _b;
+
+        public Bean178(@JsonDeserialize() int a, int b) {
+            _a = a;
+            _b = b;
+        }
+    }
+
     private final ObjectMapper MAPPER = newMapper();
 
     @Test
@@ -34,5 +48,13 @@ public class JsonCreatorTest extends ModuleTestBase
 		ClassWithJsonCreatorOnStaticMethod actual = MAPPER.readValue(json, ClassWithJsonCreatorOnStaticMethod.class);
 
 		then(actual).isEqualToComparingFieldByField(new ClassWithJsonCreatorOnStaticMethod("1st", "2nd"));
+    }
+
+    // [modules-base#178]
+    @Test
+    public void testJsonCreatorWithOtherAnnotations() throws Exception
+    {
+        Bean178 bean = MAPPER.readValue(a2q("{'a':1,'b':2}"), Bean178.class);
+        assertNotNull(bean);
     }
 }
