@@ -1,8 +1,7 @@
-package com.fasterxml.jackson.module.paramnames.failing;
+package com.fasterxml.jackson.module.paramnames;
 
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.module.paramnames.ModuleTestBase;
 
 import org.junit.*;
 
