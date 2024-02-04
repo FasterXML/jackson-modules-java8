@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.*;
@@ -38,6 +39,20 @@ public class JsonCreatorTest extends ModuleTestBase
         }
     }
 
+    // [modules-base#301]
+    static class Bean301
+    {
+        int _a, _b, _c;
+
+        public Bean301(@JsonProperty(required=true) int a,
+                @JsonProperty(value="", required=false) int b,
+                int c) {
+            _a = a;
+            _b = b;
+            _c = c;
+        }
+    }
+
     private final ObjectMapper MAPPER = newMapper();
 
     @Test
@@ -56,5 +71,16 @@ public class JsonCreatorTest extends ModuleTestBase
     {
         Bean178 bean = MAPPER.readValue(a2q("{'a':1,'b':2}"), Bean178.class);
         assertNotNull(bean);
+    }
+
+    // [modules-base#301]
+    @Test
+    public void testCreatorNameMasking310() throws Exception
+    {
+        Bean301 bean = MAPPER.readValue(a2q("{'a':1,'b':2, 'c':3}"), Bean301.class);
+        assertNotNull(bean);
+        assertEquals(1, bean._a);
+        assertEquals(2, bean._b);
+        assertEquals(3, bean._c);
     }
 }
