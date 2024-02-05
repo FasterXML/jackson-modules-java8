@@ -26,7 +26,6 @@ introspection of method/constructor parameter names, without having to add expli
     <packageVersion.dir>com/fasterxml/jackson/module/paramnames</packageVersion.dir>
     <packageVersion.package>${project.groupId}.paramnames</packageVersion.package>
 
-    <assertj-core.version>3.8.0</assertj-core.version>
     <mockito-core.version>4.5.0</mockito-core.version>
   </properties>
 
@@ -34,7 +33,6 @@ introspection of method/constructor parameter names, without having to add expli
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
-      <version>${assertj-core.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -70,7 +68,6 @@ introspection of method/constructor parameter names, without having to add expli
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.2</version>
         <inherited>true</inherited>
         <configuration>
           <source>${javac.src.version}</source>
