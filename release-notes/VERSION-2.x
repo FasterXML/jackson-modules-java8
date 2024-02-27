@@ -8,7 +8,7 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
-2.17.0 (not yet released)
+2.17.0-rc1 (26-Feb-2024)
 
 #274: Deserializing `java.time.Month` from an int causes an off-by-one
   error (`0`->`Jan`,`11`->`Dec`), because it's an enum
@@ -42,6 +42,7 @@ Modules:
   disabling ZoneId normalization on deserialization
  (requested by @indyana)
 
+2.15.4 (15-Feb-2024)
 2.15.3 (12-Oct-2023)
 2.15.2 (30-May-2023)
 2.15.1 (16-May-2023)
