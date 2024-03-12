@@ -32,13 +32,13 @@ public class OneBasedMonthDeserTest extends ModuleTestBase
     @Test
     public void testDeserializationAsString01_oneBased() throws Exception
     {
-        assertEquals(Month.JANUARY, readerForOneBased().readValue("\"01\""));
+        assertEquals(Month.JANUARY, readerForOneBased().readValue("\"1\""));
     }
 
     @Test
     public void testDeserializationAsString01_zeroBased() throws Exception
     {
-        assertEquals(Month.FEBRUARY, readerForZeroBased().readValue("\"01\""));
+        assertEquals(Month.FEBRUARY, readerForZeroBased().readValue("\"1\""));
     }
 
 
@@ -93,13 +93,13 @@ public class OneBasedMonthDeserTest extends ModuleTestBase
     @Test
     public void testDeserialization02_zeroBased() throws Exception
     {
-        assertEquals(Month.SEPTEMBER, readerForZeroBased().readValue("\"08\""));
+        assertEquals(Month.SEPTEMBER, readerForZeroBased().readValue("\"8\""));
     }
 
     @Test
     public void testDeserialization02_oneBased() throws Exception
     {
-        assertEquals(Month.AUGUST, readerForOneBased().readValue("\"08\""));
+        assertEquals(Month.AUGUST, readerForOneBased().readValue("\"8\""));
     }
 
     @Test
