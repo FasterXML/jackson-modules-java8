@@ -8,7 +8,7 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
-2.17.0-rc1 (26-Feb-2024)
+2.17.0 (12-Mar-2024)
 
 #274: Deserializing `java.time.Month` from an int causes an off-by-one
   error (`0`->`Jan`,`11`->`Dec`), because it's an enum
