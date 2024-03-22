@@ -10,6 +10,7 @@ import java.time.ZonedDateTime;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assume.*;
 
 public class ZonedDateTimeKeyDeserializerTest {
 
@@ -45,12 +46,29 @@ public class ZonedDateTimeKeyDeserializerTest {
 
     @Test
     public void ZonedDateTime_with_place_name_can_be_deserialized() throws Exception {
+        String javaVersion = System.getProperty("java.version");
+        assumeFalse(javaVersion.startsWith("1.8"));
+
         String input = "2015-07-24T12:23:34.184Z[Europe/London]";
 
         Map<ZonedDateTime, String> map = objectMapper.readValue(getMap(input), MAP_TYPE_REF);
 
         Map.Entry<ZonedDateTime, String> entry = map.entrySet().iterator().next();
         assertEquals("2015-07-24T13:23:34.184+01:00[Europe/London]", entry.getKey().toString());
+    }
+
+    @Test
+    public void ZonedDateTime_with_place_name_can_be_deserialized_Java_8() throws Exception {
+        // Java 8 parses this format differently for some reason
+        String javaVersion = System.getProperty("java.version");
+        assumeTrue(javaVersion.startsWith("1.8"));
+
+        String input = "2015-07-24T12:23:34.184Z[Europe/London]";
+
+        Map<ZonedDateTime, String> map = objectMapper.readValue(getMap(input), MAP_TYPE_REF);
+
+        Map.Entry<ZonedDateTime, String> entry = map.entrySet().iterator().next();
+        assertEquals("2015-07-24T12:23:34.184+01:00[Europe/London]", entry.getKey().toString());
     }
 
     @Test
