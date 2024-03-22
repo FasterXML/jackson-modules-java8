@@ -59,7 +59,7 @@ public class ZonedDateTimeKeyDeserializerTest {
 
     @Test
     public void ZonedDateTime_with_place_name_can_be_deserialized_Java_8() throws Exception {
-        // Java 8 parses this format differently for some reason
+        // Java 8 parses this format incorrectly due to https://bugs.openjdk.org/browse/JDK-8066982
         String javaVersion = System.getProperty("java.version");
         assumeTrue(javaVersion.startsWith("1.8"));
 
