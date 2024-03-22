@@ -17,6 +17,7 @@ public class ZonedDateTimeKeyDeserializer extends Jsr310KeyDeserializer {
     @Override
     protected ZonedDateTime deserialize(String key, DeserializationContext ctxt) throws IOException {
         try {
+            // Not supplying a formatter allows the use of all supported formats
             return ZonedDateTime.parse(key);
         } catch (DateTimeException e) {
             return _handleDateTimeException(ctxt, ZonedDateTime.class, e, key);

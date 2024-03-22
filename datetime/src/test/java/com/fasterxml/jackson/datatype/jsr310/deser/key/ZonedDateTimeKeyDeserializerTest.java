@@ -1,6 +1,5 @@
 package com.fasterxml.jackson.datatype.jsr310.deser.key;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -25,7 +24,7 @@ public class ZonedDateTimeKeyDeserializerTest {
     }
 
     @Test
-    public void Instant_style_can_be_deserialized() throws JsonProcessingException {
+    public void Instant_style_can_be_deserialized() throws Exception {
         String input = "2015-07-24T12:23:34.184Z";
 
         Map<ZonedDateTime, String> map = objectMapper.readValue(getMap(input), MAP_TYPE_REF);
@@ -35,7 +34,7 @@ public class ZonedDateTimeKeyDeserializerTest {
     }
 
     @Test
-    public void ZonedDateTime_with_zone_name_can_be_deserialized() throws JsonProcessingException {
+    public void ZonedDateTime_with_zone_name_can_be_deserialized() throws Exception {
         String input = "2015-07-24T12:23:34.184Z[UTC]";
 
         Map<ZonedDateTime, String> map = objectMapper.readValue(getMap(input), MAP_TYPE_REF);
@@ -45,7 +44,7 @@ public class ZonedDateTimeKeyDeserializerTest {
     }
 
     @Test
-    public void ZonedDateTime_with_place_name_can_be_deserialized() throws JsonProcessingException {
+    public void ZonedDateTime_with_place_name_can_be_deserialized() throws Exception {
         String input = "2015-07-24T12:23:34.184Z[Europe/London]";
 
         Map<ZonedDateTime, String> map = objectMapper.readValue(getMap(input), MAP_TYPE_REF);
@@ -55,7 +54,7 @@ public class ZonedDateTimeKeyDeserializerTest {
     }
 
     @Test
-    public void ZonedDateTime_with_offset_can_be_deserialized() throws JsonProcessingException {
+    public void ZonedDateTime_with_offset_can_be_deserialized() throws Exception {
         String input = "2015-07-24T12:23:34.184+02:00";
 
         Map<ZonedDateTime, String> map = objectMapper.readValue(getMap(input), MAP_TYPE_REF);
