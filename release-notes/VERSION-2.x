@@ -8,6 +8,15 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
+2.18.0 (not yet released)
+
+No changes since 2.17
+
+2.17.1 (not yet released)
+
+#306: Only `DateTimeFormatter.ISO_OFFSET_DATE_TIME` accepted by `ZonedDateTimeKeyDeserializer`
+ (fix contributed by @caluml)
+
 2.17.0 (12-Mar-2024)
 
 #274: Deserializing `java.time.Month` from an int causes an off-by-one
