@@ -59,7 +59,9 @@ public class OneBasedMonthDeserTest extends ModuleTestBase
         assertError(
             () -> readerForOneBased().readValue("\"notamonth\""),
             InvalidFormatException.class,
-            "Cannot deserialize value of type `java.time.Month` from String \"notamonth\": not one of the values accepted for Enum class: [OCTOBER, SEPTEMBER, JUNE, MARCH, MAY, APRIL, JULY, JANUARY, FEBRUARY, DECEMBER, AUGUST, NOVEMBER]"
+            // Order of enumerated values not stable, so don't check:
+            "Cannot deserialize value of type `java.time.Month` from String \"notamonth\":"
+            +" not one of the values accepted for Enum class: ["
         );
     }
 
@@ -72,7 +74,7 @@ public class OneBasedMonthDeserTest extends ModuleTestBase
                 fail(String.format("Expecting exception of type %s, but %s was thrown instead", expectedException.getName(), actualException.getClass().getName()));
             }
             if (actualException.getMessage() == null || !actualException.getMessage().contains(expectedMessage)) {
-                fail(String.format("Expecting exception with message containing:'%s', but the actual error message was:'%s'", expectedMessage, actualException.getMessage()));
+                fail(String.format("Expecting exception with message containing: '%s', but the actual error message was:'%s'", expectedMessage, actualException.getMessage()));
             }
         }
     }
