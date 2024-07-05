@@ -12,6 +12,10 @@ Modules:
 
 No changes since 2.17
 
+2.17.2 (05-Jul-2024)
+
+No changes since 2.17.1
+
 2.17.1 (04-May-2024)
 
 #306: Only `DateTimeFormatter.ISO_OFFSET_DATE_TIME` accepted by `ZonedDateTimeKeyDeserializer`
