@@ -66,7 +66,7 @@ public class OffsetDateTimeDeserTest
         public WrapperWithReadTimestampsAsNanosEnabled(OffsetDateTime v) { value = v; }
     }
 
-    private ObjectMapper MAPPER = newMapper();
+    private final ObjectMapper MAPPER = newMapper();
 
     @Test
     public void testDeserializationAsFloat01WithoutTimeZone() throws Exception
