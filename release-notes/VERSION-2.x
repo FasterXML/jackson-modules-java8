@@ -8,6 +8,11 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
+2.18.1 (not yet released)
+
+#319: `java.time.DateTimeException` serialization fails
+ (repored by Ólafur B)
+
 2.18.0 (26-Sep-2024)
 
 No changes since 2.17
