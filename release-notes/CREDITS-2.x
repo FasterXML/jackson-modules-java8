@@ -199,3 +199,7 @@ Emanuel Trandafir (@etrandafir93)
  * Contribtued fix for #274: Deserializing `java.time.Month` from an int causes an off-by-one
    error (`0`->`Jan`,`11`->`Dec`), because it's an enum
   (2.17.0)
+
+Ólafur Bragason (@olibraga)
+ * Reported #319: `java.time.DateTimeException` serialization fails
+  (2.18.1)
