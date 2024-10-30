@@ -34,17 +34,13 @@ public class PeriodSerTest extends ModuleTestBase
     @Test
     public void testSerialization01() throws Exception
     {
-        Period period = Period.of(1, 6, 15);
-        String value = MAPPER.writeValueAsString(period);
-        assertEquals("The value is not correct.", '"' + period.toString() + '"', value);
+        assertEquals(q("P1Y6M15D"), MAPPER.writeValueAsString(Period.of(1, 6, 15)));
     }
 
     @Test
     public void testSerialization02() throws Exception
     {
-        Period period = Period.of(0, 0, 21);
-        String value = MAPPER.writeValueAsString(period);
-        assertEquals("The value is not correct.", '"' + period.toString() + '"', value);
+        assertEquals(q("P21D"), MAPPER.writeValueAsString(Period.of(0, 0, 21)));
     }
 
     @Test
@@ -55,8 +51,8 @@ public class PeriodSerTest extends ModuleTestBase
                 .addMixIn(TemporalAmount.class, MockObjectConfiguration.class)
                 .build();
         String value = mapper.writeValueAsString(period);
-        assertEquals("The value is not correct.",
-                "[\"" + Period.class.getName() + "\",\"" + period.toString() + "\"]", value);
+        assertEquals(
+                "[" + q(Period.class.getName()) + ",\"P5Y1M12D\"]", value);
     }
 }
 
