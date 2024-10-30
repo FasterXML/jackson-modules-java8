@@ -37,6 +37,8 @@ public class ZonedDateTimeKeyDeserializerTest
         assertEquals("2015-07-24T12:23:34.184Z[UTC]", entry.getKey().toString());
     }
 
+    // 29-Oct-2024, tatu: Following two tests are for Java 8+ only vs Java 9 or later
+    
     @Test
     public void ZonedDateTime_with_place_name_can_be_deserialized() throws Exception {
         assumeFalse(System.getProperty("java.version").startsWith("1.8"));
