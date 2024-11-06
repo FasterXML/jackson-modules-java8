@@ -1,14 +1,17 @@
+NOTE: OBSOLETE NOTES FOR VERSIONS BEFORE 2.8.5, when Java 8 modules repo
+was created. Original repo was at
+
+https://github.com/FasterXML/jackson-datatype-jsr310
+
+see new release notes at main level `release-notes/VERSION-2.x`
+
+------------------------------------------------------------------------
+
 Project: jackson-datatype-jsr310
 
 ------------------------------------------------------------------------
 === Releases ===
 ------------------------------------------------------------------------
-
-2.8.5 (not yet released)
-
-#89: If the JsonFormat pattern is all numeric, the InstantDeserializer will
-  do the wrong thing
- (reported, contributed fix, by ubik2@github)
 
 2.8.4 (14-Oct-2016)
 
