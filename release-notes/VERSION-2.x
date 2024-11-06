@@ -312,6 +312,8 @@ No changes since 2.8.5
 
 The very first release from this repository!
 
+(note: issue from https://github.com/FasterXML/jackson-datatype-jsr310/)
+
 #89: If the JsonFormat pattern is all numeric, the `InstantDeserializer` will
   do the wrong thing
  (reported, contributed fix, by ubik2@github)
