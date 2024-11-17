@@ -10,6 +10,7 @@ import java.util.TimeZone;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Feature;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -801,6 +802,24 @@ public class OffsetDateTimeDeserTest
         OffsetDateTime actualValue = (OffsetDateTime) value;
         assertIsEqual(date, actualValue);
         assertEquals(date.getOffset(),actualValue.getOffset());
+    }
+
+    // [jackson-modules-java8#308] Can't deserialize OffsetDateTime.MIN: Invalid value for EpochDay
+    @Test
+    public void testOffsetDateTimeMinOrMax()
+            throws Exception
+    {
+        _testOffsetDateTimeMinOrMax(OffsetDateTime.MIN);
+        _testOffsetDateTimeMinOrMax(OffsetDateTime.MAX);
+    }
+
+    private void _testOffsetDateTimeMinOrMax(OffsetDateTime offsetDateTime)
+        throws Exception
+    {
+        ObjectMapper mapper = newMapper();
+        String ser = mapper.writeValueAsString(offsetDateTime);
+        OffsetDateTime result = mapper.readValue(ser, OffsetDateTime.class);
+        assertIsEqual(offsetDateTime, result);
     }
 
     private static void assertIsEqual(OffsetDateTime expected, OffsetDateTime actual)

@@ -67,6 +67,24 @@ public class InstantDeserializer<T extends Temporal>
      */
     protected static final Pattern ISO8601_COLONLESS_OFFSET_REGEX = Pattern.compile("[+-][0-9]{4}(?=\\[|$)");
 
+    /**
+     *
+     * @param args
+     * @return
+     */
+    private static OffsetDateTime decimalToOffsetDateTime(FromDecimalArguments args) {
+        // [jackson-modules-java8#308] Fix can't deserialize OffsetDateTime.MIN: Invalid value for EpochDay
+        if (args.integer == OffsetDateTime.MIN.toEpochSecond() && args.fraction == OffsetDateTime.MIN.getNano()) {
+            return OffsetDateTime.ofInstant(Instant.ofEpochSecond(OffsetDateTime.MIN.toEpochSecond(), OffsetDateTime.MIN.getNano()), OffsetDateTime.MIN.getOffset());
+        }
+        // [jackson-modules-java8#308] For OffsetDateTime.MAX case
+        if (args.integer == OffsetDateTime.MAX.toEpochSecond() && args.fraction == OffsetDateTime.MAX.getNano()) {
+            return OffsetDateTime.ofInstant(Instant.ofEpochSecond(OffsetDateTime.MAX.toEpochSecond(), OffsetDateTime.MAX.getNano()), OffsetDateTime.MAX.getOffset());
+        }
+        return OffsetDateTime.ofInstant(Instant.ofEpochSecond(args.integer, args.fraction), args.zoneId);
+    }
+
+
     public static final InstantDeserializer<Instant> INSTANT = new InstantDeserializer<>(
             Instant.class, DateTimeFormatter.ISO_INSTANT,
             Instant::from,
@@ -82,7 +100,7 @@ public class InstantDeserializer<T extends Temporal>
             OffsetDateTime.class, DateTimeFormatter.ISO_OFFSET_DATE_TIME,
             OffsetDateTime::from,
             a -> OffsetDateTime.ofInstant(Instant.ofEpochMilli(a.value), a.zoneId),
-            a -> OffsetDateTime.ofInstant(Instant.ofEpochSecond(a.integer, a.fraction), a.zoneId),
+            InstantDeserializer::decimalToOffsetDateTime,
             (d, z) -> (d.isEqual(OffsetDateTime.MIN) || d.isEqual(OffsetDateTime.MAX) ? d : d.withOffsetSameInstant(z.getRules().getOffset(d.toLocalDateTime()))),
             true, // yes, replace zero offset with Z
             DEFAULT_NORMALIZE_ZONE_ID,
@@ -541,6 +559,17 @@ public class InstantDeserializer<T extends Temporal>
             this.integer = integer;
             this.fraction = fraction;
             this.zoneId = zoneId;
+        }
+
+        public static boolean matches(FromDecimalArguments a, FromDecimalArguments b) {
+            if (a == b) {
+                return true;
+            }
+            if (a == null || b == null) {
+                return false;
+            }
+            return a.integer == b.integer && a.fraction == b.fraction
+                    && a.zoneId.equals(b.zoneId);
         }
     }
 }
