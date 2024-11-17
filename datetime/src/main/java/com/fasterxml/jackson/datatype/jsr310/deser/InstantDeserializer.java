@@ -79,7 +79,6 @@ public class InstantDeserializer<T extends Temporal>
         return OffsetDateTime.ofInstant(Instant.ofEpochSecond(args.integer, args.fraction), args.zoneId);
     }
 
-
     public static final InstantDeserializer<Instant> INSTANT = new InstantDeserializer<>(
             Instant.class, DateTimeFormatter.ISO_INSTANT,
             Instant::from,
