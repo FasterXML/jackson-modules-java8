@@ -203,3 +203,7 @@ Emanuel Trandafir (@etrandafir93)
 Ólafur Bragason (@olibraga)
  * Reported #319: `java.time.DateTimeException` serialization fails
   (2.18.1)
+
+Joo Hyuk Kim (@JooHyukKim)
+ * Fixed #308: Can't deserialize `OffsetDateTime.MIN`: Invalid value for EpochDay
+  (2.18.2)
