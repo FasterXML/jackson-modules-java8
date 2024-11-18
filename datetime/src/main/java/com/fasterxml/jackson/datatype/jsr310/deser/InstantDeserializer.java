@@ -61,11 +61,24 @@ public class InstantDeserializer<T extends Temporal>
         = JavaTimeFeature.ALWAYS_ALLOW_STRINGIFIED_DATE_TIMESTAMPS.enabledByDefault();
 
     /**
-     * Constants used to check if ISO 8601 time string is colonless. See [jackson-modules-java8#131]
+     * Constants used to check if ISO 8601 time string is colon-less. See [jackson-modules-java8#131]
      *
      * @since 2.13
      */
     protected static final Pattern ISO8601_COLONLESS_OFFSET_REGEX = Pattern.compile("[+-][0-9]{4}(?=\\[|$)");
+
+    // @since 2.18.2
+    private static OffsetDateTime decimalToOffsetDateTime(FromDecimalArguments args) {
+        // [jackson-modules-java8#308] Since 2.18.2 : Fix can't deserialize OffsetDateTime.MIN: Invalid value for EpochDay
+        if (args.integer == OffsetDateTime.MIN.toEpochSecond() && args.fraction == OffsetDateTime.MIN.getNano()) {
+            return OffsetDateTime.ofInstant(Instant.ofEpochSecond(OffsetDateTime.MIN.toEpochSecond(), OffsetDateTime.MIN.getNano()), OffsetDateTime.MIN.getOffset());
+        }
+        // [jackson-modules-java8#308] Since 2.18.2 : For OffsetDateTime.MAX case
+        if (args.integer == OffsetDateTime.MAX.toEpochSecond() && args.fraction == OffsetDateTime.MAX.getNano()) {
+            return OffsetDateTime.ofInstant(Instant.ofEpochSecond(OffsetDateTime.MAX.toEpochSecond(), OffsetDateTime.MAX.getNano()), OffsetDateTime.MAX.getOffset());
+        }
+        return OffsetDateTime.ofInstant(Instant.ofEpochSecond(args.integer, args.fraction), args.zoneId);
+    }
 
     public static final InstantDeserializer<Instant> INSTANT = new InstantDeserializer<>(
             Instant.class, DateTimeFormatter.ISO_INSTANT,
@@ -82,7 +95,7 @@ public class InstantDeserializer<T extends Temporal>
             OffsetDateTime.class, DateTimeFormatter.ISO_OFFSET_DATE_TIME,
             OffsetDateTime::from,
             a -> OffsetDateTime.ofInstant(Instant.ofEpochMilli(a.value), a.zoneId),
-            a -> OffsetDateTime.ofInstant(Instant.ofEpochSecond(a.integer, a.fraction), a.zoneId),
+            InstantDeserializer::decimalToOffsetDateTime,
             (d, z) -> (d.isEqual(OffsetDateTime.MIN) || d.isEqual(OffsetDateTime.MAX) ? d : d.withOffsetSameInstant(z.getRules().getOffset(d.toLocalDateTime()))),
             true, // yes, replace zero offset with Z
             DEFAULT_NORMALIZE_ZONE_ID,
