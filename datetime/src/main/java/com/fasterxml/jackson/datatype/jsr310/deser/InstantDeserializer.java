@@ -61,12 +61,13 @@ public class InstantDeserializer<T extends Temporal>
         = JavaTimeFeature.ALWAYS_ALLOW_STRINGIFIED_DATE_TIMESTAMPS.enabledByDefault();
 
     /**
-     * Constants used to check if ISO 8601 time string is colonless. See [jackson-modules-java8#131]
+     * Constants used to check if ISO 8601 time string is colon-less. See [jackson-modules-java8#131]
      *
      * @since 2.13
      */
     protected static final Pattern ISO8601_COLONLESS_OFFSET_REGEX = Pattern.compile("[+-][0-9]{4}(?=\\[|$)");
 
+    // @since 2.18.2
     private static OffsetDateTime decimalToOffsetDateTime(FromDecimalArguments args) {
         // [jackson-modules-java8#308] Since 2.18.2 : Fix can't deserialize OffsetDateTime.MIN: Invalid value for EpochDay
         if (args.integer == OffsetDateTime.MIN.toEpochSecond() && args.fraction == OffsetDateTime.MIN.getNano()) {

@@ -805,8 +805,7 @@ public class OffsetDateTimeDeserTest
 
     // [jackson-modules-java8#308] Can't deserialize OffsetDateTime.MIN: Invalid value for EpochDay
     @Test
-    public void testOffsetDateTimeMinOrMax()
-            throws Exception
+    public void testOffsetDateTimeMinOrMax() throws Exception
     {
         _testOffsetDateTimeMinOrMax(OffsetDateTime.MIN);
         _testOffsetDateTimeMinOrMax(OffsetDateTime.MAX);
@@ -815,9 +814,8 @@ public class OffsetDateTimeDeserTest
     private void _testOffsetDateTimeMinOrMax(OffsetDateTime offsetDateTime)
         throws Exception
     {
-        ObjectMapper mapper = newMapper();
-        String ser = mapper.writeValueAsString(offsetDateTime);
-        OffsetDateTime result = mapper.readValue(ser, OffsetDateTime.class);
+        String ser = MAPPER.writeValueAsString(offsetDateTime);
+        OffsetDateTime result = MAPPER.readValue(ser, OffsetDateTime.class);
         assertIsEqual(offsetDateTime, result);
     }
 
