@@ -732,6 +732,22 @@ public class OffsetDateTimeDeserTest
         assertEquals(date.getOffset(),actualValue.getOffset());
     }
 
+    // [jackson-modules-java8#308] Can't deserialize OffsetDateTime.MIN: Invalid value for EpochDay
+    @Test
+    public void testOffsetDateTimeMinOrMax() throws Exception
+    {
+        _testOffsetDateTimeMinOrMax(OffsetDateTime.MIN);
+        _testOffsetDateTimeMinOrMax(OffsetDateTime.MAX);
+    }
+
+    private void _testOffsetDateTimeMinOrMax(OffsetDateTime offsetDateTime)
+        throws Exception
+    {
+        String ser = MAPPER.writeValueAsString(offsetDateTime);
+        OffsetDateTime result = MAPPER.readValue(ser, OffsetDateTime.class);
+        assertIsEqual(offsetDateTime, result);
+    }
+
     private static void assertIsEqual(OffsetDateTime expected, OffsetDateTime actual)
     {
         assertTrue("The value is not correct. Expected timezone-adjusted <" + expected + ">, actual <" + actual + ">.",
