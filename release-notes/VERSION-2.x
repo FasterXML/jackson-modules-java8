@@ -12,6 +12,12 @@ Modules:
 
 -
 
+2.18.2 (not yet released)
+
+#308: Can't deserialize `OffsetDateTime.MIN`: Invalid value for EpochDay
+ (reported by @sszuev)
+ (fix by Joo-Hyuk K)
+
 2.18.1 (28-Oct-2024)
 
 #319: `java.time.DateTimeException` serialization fails
