@@ -675,6 +675,29 @@ public class LocalDateTimeDeserTest
         assertEquals(w.value, LocalDateTime.of(2019, 11, 30, 20, 45));
     }
 
+    // [datatype-jsr310#124] Issue serializing and deserializing LocalDateTime.MAX and LocalDateTime.MIN
+    @Test
+    public void testDeserializationOfLocalDateTimeMax() throws Exception
+    {
+        ObjectMapper enabledMapper = mapperBuilder()
+                .enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS).build();
+        _testLocalDateTimeRoundTrip(enabledMapper, LocalDateTime.MAX);
+        _testLocalDateTimeRoundTrip(enabledMapper, LocalDateTime.MIN);
+
+        ObjectMapper disabledMapper = mapperBuilder()
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS).build();
+        _testLocalDateTimeRoundTrip(disabledMapper, LocalDateTime.MAX);
+        _testLocalDateTimeRoundTrip(disabledMapper, LocalDateTime.MIN);
+    }
+
+    private void _testLocalDateTimeRoundTrip(ObjectMapper mapper, LocalDateTime localDateTime)
+        throws Exception
+    {
+        String ser = mapper.writeValueAsString(localDateTime);
+        LocalDateTime result = mapper.readValue(ser, LocalDateTime.class);
+        assertEquals(localDateTime, result);
+    }
+
     private void expectSuccess(ObjectReader reader, Object exp, String json) throws IOException {
         final LocalDateTime value = reader.readValue(a2q(json));
         assertNotNull("The value should not be null.", value);
