@@ -10,7 +10,11 @@ Modules:
 
 2.18.0 (not yet released)
 
-No changes since 2.17
+2.17.4 (not yet released)
+
+#124 Issue serializing and deserializing `LocalDateTime.MAX` and `LocalDateTime.MIN`
+ (reported by @bachilast)
+ (fix verified by Joo-Hyuk K)
 
 2.17.3 (01-Nov-2024)
 2.17.2 (05-Jul-2024)
