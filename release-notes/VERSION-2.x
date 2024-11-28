@@ -12,7 +12,7 @@ Modules:
 
 -
 
-2.18.2 (not yet released)
+2.18.2 (27-Nov-2024)
 
 #308: Can't deserialize `OffsetDateTime.MIN`: Invalid value for EpochDay
  (reported by @sszuev)
