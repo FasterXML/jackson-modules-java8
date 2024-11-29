@@ -25,7 +25,7 @@ import tools.jackson.core.JsonGenerator;
 import tools.jackson.core.JsonToken;
 import tools.jackson.core.type.WritableTypeId;
 
-import tools.jackson.databind.SerializerProvider;
+import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.jsontype.TypeSerializer;
 
 /**
@@ -60,12 +60,12 @@ public class MonthDaySerializer extends JSR310FormattedSerializerBase<MonthDay>
     }
 
     @Override
-    public void serialize(MonthDay value, JsonGenerator g, SerializerProvider provider)
+    public void serialize(MonthDay value, JsonGenerator g, SerializationContext ctxt)
         throws JacksonException
     {
-        if (_useTimestampExplicitOnly(provider)) {
+        if (_useTimestampExplicitOnly(ctxt)) {
             g.writeStartArray();
-            _serializeAsArrayContents(value, g, provider);
+            _serializeAsArrayContents(value, g, ctxt);
             g.writeEndArray();
         } else {
             g.writeString((_formatter == null) ? value.toString() : value.format(_formatter));
@@ -74,7 +74,7 @@ public class MonthDaySerializer extends JSR310FormattedSerializerBase<MonthDay>
 
     @Override
     public void serializeWithType(MonthDay value, JsonGenerator g,
-            SerializerProvider ctxt, TypeSerializer typeSer)
+            SerializationContext ctxt, TypeSerializer typeSer)
         throws JacksonException
     {
         WritableTypeId typeIdDef = typeSer.writeTypePrefix(g, ctxt,
@@ -90,7 +90,7 @@ public class MonthDaySerializer extends JSR310FormattedSerializerBase<MonthDay>
     }
     
     protected void _serializeAsArrayContents(MonthDay value, JsonGenerator g,
-            SerializerProvider provider)
+            SerializationContext ctxt)
         throws JacksonException
     {
         g.writeNumber(value.getMonthValue());
@@ -98,7 +98,7 @@ public class MonthDaySerializer extends JSR310FormattedSerializerBase<MonthDay>
     }
 
     @Override
-    protected JsonToken serializationShape(SerializerProvider provider) {
-        return _useTimestampExplicitOnly(provider) ? JsonToken.START_ARRAY : JsonToken.VALUE_STRING;
+    protected JsonToken serializationShape(SerializationContext ctxt) {
+        return _useTimestampExplicitOnly(ctxt) ? JsonToken.START_ARRAY : JsonToken.VALUE_STRING;
     }
 }

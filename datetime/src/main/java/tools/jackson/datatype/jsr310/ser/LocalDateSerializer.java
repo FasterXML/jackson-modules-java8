@@ -60,15 +60,15 @@ public class LocalDateSerializer extends JSR310FormattedSerializerBase<LocalDate
     }
 
     @Override
-    public void serialize(LocalDate date, JsonGenerator g, SerializerProvider provider)
+    public void serialize(LocalDate date, JsonGenerator g, SerializationContext ctxt)
         throws JacksonException
     {
-        if (useTimestamp(provider)) {
+        if (useTimestamp(ctxt)) {
             if (_shape == JsonFormat.Shape.NUMBER_INT) {
                 g.writeNumber(date.toEpochDay());
             } else {
                 g.writeStartArray();
-                _serializeAsArrayContents(date, g, provider);
+                _serializeAsArrayContents(date, g, ctxt);
                 g.writeEndArray();
             }
         } else {
@@ -78,7 +78,7 @@ public class LocalDateSerializer extends JSR310FormattedSerializerBase<LocalDate
 
     @Override
     public void serializeWithType(LocalDate value, JsonGenerator g,
-            SerializerProvider ctxt, TypeSerializer typeSer)
+            SerializationContext ctxt, TypeSerializer typeSer)
         throws JacksonException
     {
         WritableTypeId typeIdDef = typeSer.writeTypePrefix(g, ctxt,
@@ -96,7 +96,7 @@ public class LocalDateSerializer extends JSR310FormattedSerializerBase<LocalDate
     }
 
     protected void _serializeAsArrayContents(LocalDate value, JsonGenerator g,
-            SerializerProvider provider)
+            SerializationContext ctxt)
         throws JacksonException
     {
         g.writeNumber(value.getYear());
@@ -107,8 +107,8 @@ public class LocalDateSerializer extends JSR310FormattedSerializerBase<LocalDate
     @Override
     public void acceptJsonFormatVisitor(JsonFormatVisitorWrapper visitor, JavaType typeHint)
     {
-        SerializerProvider provider = visitor.getProvider();
-        boolean useTimestamp = (provider != null) && useTimestamp(provider);
+        SerializationContext ctxt = visitor.getContext();
+        boolean useTimestamp = (ctxt != null) && useTimestamp(ctxt);
         if (useTimestamp) {
             _acceptTimestampVisitor(visitor, typeHint);
         } else {
@@ -120,8 +120,8 @@ public class LocalDateSerializer extends JSR310FormattedSerializerBase<LocalDate
     }
 
     @Override // since 2.9
-    protected JsonToken serializationShape(SerializerProvider provider) {
-        if (useTimestamp(provider)) {
+    protected JsonToken serializationShape(SerializationContext ctxt) {
+        if (useTimestamp(ctxt)) {
             if (_shape == JsonFormat.Shape.NUMBER_INT) {
                 return JsonToken.VALUE_NUMBER_INT;
             }

@@ -26,7 +26,7 @@ import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
 
 import tools.jackson.databind.JavaType;
-import tools.jackson.databind.SerializerProvider;
+import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import tools.jackson.databind.jsonFormatVisitors.JsonIntegerFormatVisitor;
 
@@ -59,10 +59,10 @@ public class YearSerializer extends JSR310FormattedSerializerBase<Year>
     }
 
     @Override
-    public void serialize(Year year, JsonGenerator generator, SerializerProvider provider)
+    public void serialize(Year year, JsonGenerator generator, SerializationContext ctxt)
         throws JacksonException
     {
-        if (useTimestamp(provider)) {
+        if (useTimestamp(ctxt)) {
             generator.writeNumber(year.getValue());
         } else {
             String str = (_formatter == null) ? year.toString() : year.format(_formatter);
@@ -81,7 +81,7 @@ public class YearSerializer extends JSR310FormattedSerializerBase<Year>
     }
 
     @Override // since 2.9
-    protected JsonToken serializationShape(SerializerProvider provider) {
-        return useTimestamp(provider) ? JsonToken.VALUE_NUMBER_INT : JsonToken.VALUE_STRING;
+    protected JsonToken serializationShape(SerializationContext ctxt) {
+        return useTimestamp(ctxt) ? JsonToken.VALUE_NUMBER_INT : JsonToken.VALUE_STRING;
     }
 }

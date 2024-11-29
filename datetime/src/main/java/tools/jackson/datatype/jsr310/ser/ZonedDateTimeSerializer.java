@@ -8,8 +8,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.core.JsonToken;
+import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.SerializationFeature;
-import tools.jackson.databind.SerializerProvider;
 
 public class ZonedDateTimeSerializer extends InstantSerializerBase<ZonedDateTime> {
     public static final ZonedDateTimeSerializer INSTANCE = new ZonedDateTimeSerializer();
@@ -62,29 +62,29 @@ public class ZonedDateTimeSerializer extends InstantSerializerBase<ZonedDateTime
     }
 
     @Override
-    public void serialize(ZonedDateTime value, JsonGenerator g, SerializerProvider provider)
+    public void serialize(ZonedDateTime value, JsonGenerator g, SerializationContext ctxt)
         throws JacksonException
     {
-        if (!useTimestamp(provider)) {
-            if (shouldWriteWithZoneId(provider)) {
+        if (!useTimestamp(ctxt)) {
+            if (shouldWriteWithZoneId(ctxt)) {
                 // write with zone
                 g.writeString(DateTimeFormatter.ISO_ZONED_DATE_TIME.format(value));
                 return;
             }
         }
-        super.serialize(value, g, provider);
+        super.serialize(value, g, ctxt);
     }
 
-    public boolean shouldWriteWithZoneId(SerializerProvider ctxt) {
+    public boolean shouldWriteWithZoneId(SerializationContext ctxt) {
         return (_writeZoneId != null) ? _writeZoneId :
             ctxt.isEnabled(SerializationFeature.WRITE_DATES_WITH_ZONE_ID);
     }
 
     @Override
-    protected JsonToken serializationShape(SerializerProvider provider) {
-        if (!useTimestamp(provider) && shouldWriteWithZoneId(provider)) {
+    protected JsonToken serializationShape(SerializationContext ctxt) {
+        if (!useTimestamp(ctxt) && shouldWriteWithZoneId(ctxt)) {
             return JsonToken.VALUE_STRING;
         }
-        return super.serializationShape(provider);
+        return super.serializationShape(ctxt);
     }
 }

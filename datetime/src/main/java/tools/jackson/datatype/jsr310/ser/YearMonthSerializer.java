@@ -27,7 +27,7 @@ import tools.jackson.core.JsonToken;
 import tools.jackson.core.type.WritableTypeId;
 
 import tools.jackson.databind.JavaType;
-import tools.jackson.databind.SerializerProvider;
+import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import tools.jackson.databind.jsonFormatVisitors.JsonStringFormatVisitor;
 import tools.jackson.databind.jsonFormatVisitors.JsonValueFormat;
@@ -63,12 +63,12 @@ public class YearMonthSerializer extends JSR310FormattedSerializerBase<YearMonth
     }
 
     @Override
-    public void serialize(YearMonth value, JsonGenerator g, SerializerProvider provider)
+    public void serialize(YearMonth value, JsonGenerator g, SerializationContext ctxt)
         throws JacksonException
     {
-        if (useTimestamp(provider)) {
+        if (useTimestamp(ctxt)) {
             g.writeStartArray();
-            _serializeAsArrayContents(value, g, provider);
+            _serializeAsArrayContents(value, g, ctxt);
             g.writeEndArray();
             return;
         }
@@ -77,7 +77,7 @@ public class YearMonthSerializer extends JSR310FormattedSerializerBase<YearMonth
 
     @Override
     public void serializeWithType(YearMonth value, JsonGenerator g,
-            SerializerProvider ctxt, TypeSerializer typeSer)
+            SerializationContext ctxt, TypeSerializer typeSer)
         throws JacksonException
     {
         WritableTypeId typeIdDef = typeSer.writeTypePrefix(g, ctxt,
@@ -93,7 +93,7 @@ public class YearMonthSerializer extends JSR310FormattedSerializerBase<YearMonth
     }
 
     protected void _serializeAsArrayContents(YearMonth value, JsonGenerator g,
-            SerializerProvider provider)
+            SerializationContext ctxt)
         throws JacksonException
     {
         g.writeNumber(value.getYear());
@@ -103,8 +103,8 @@ public class YearMonthSerializer extends JSR310FormattedSerializerBase<YearMonth
     @Override
     protected void _acceptTimestampVisitor(JsonFormatVisitorWrapper visitor, JavaType typeHint)
     {
-        SerializerProvider provider = visitor.getProvider();
-        boolean useTimestamp = (provider != null) && useTimestamp(provider);
+        SerializationContext ctxt = visitor.getContext();
+        boolean useTimestamp = (ctxt != null) && useTimestamp(ctxt);
         if (useTimestamp) {
             super._acceptTimestampVisitor(visitor, typeHint);
         } else {
@@ -116,7 +116,7 @@ public class YearMonthSerializer extends JSR310FormattedSerializerBase<YearMonth
     }
 
     @Override // since 2.9
-    protected JsonToken serializationShape(SerializerProvider provider) {
-        return useTimestamp(provider) ? JsonToken.START_ARRAY : JsonToken.VALUE_STRING;
+    protected JsonToken serializationShape(SerializationContext ctxt) {
+        return useTimestamp(ctxt) ? JsonToken.START_ARRAY : JsonToken.VALUE_STRING;
     }
 }

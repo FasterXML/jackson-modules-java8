@@ -109,10 +109,10 @@ abstract class JSR310FormattedSerializerBase<T>
     }
 
     @Override
-    public ValueSerializer<?> createContextual(SerializerProvider prov,
+    public ValueSerializer<?> createContextual(SerializationContext ctxt,
             BeanProperty property)
     {
-        JsonFormat.Value format = findFormatOverrides(prov, property, handledType());
+        JsonFormat.Value format = findFormatOverrides(ctxt, property, handledType());
         if (format != null) {
             Boolean useTimestamp = null;
 
@@ -127,7 +127,7 @@ abstract class JSR310FormattedSerializerBase<T>
 
             // If not, do we have a pattern?
             if (format.hasPattern()) {
-                dtf = _useDateTimeFormatter(prov, format);
+                dtf = _useDateTimeFormatter(ctxt, format);
             }
             JSR310FormattedSerializerBase<?> ser = this;
             if ((shape != _shape) || (useTimestamp != _useTimestamp) || (dtf != _formatter)) {
@@ -150,7 +150,7 @@ abstract class JSR310FormattedSerializerBase<T>
     @Override
     public void acceptJsonFormatVisitor(JsonFormatVisitorWrapper visitor, JavaType typeHint)
     {
-        if (useTimestamp(visitor.getProvider())) {
+        if (useTimestamp(visitor.getContext())) {
             _acceptTimestampVisitor(visitor, typeHint);
         } else {
             JsonStringFormatVisitor v2 = visitor.expectStringFormat(typeHint);
@@ -164,16 +164,16 @@ abstract class JSR310FormattedSerializerBase<T>
     {
         // By default, most sub-types use JSON Array, so do this:
         // 28-May-2019, tatu: serialized as a List<Integer>, presumably
-        JsonArrayFormatVisitor v2 = visitor.expectArrayFormat(_integerListType(visitor.getProvider()));
+        JsonArrayFormatVisitor v2 = visitor.expectArrayFormat(_integerListType(visitor.getContext()));
         if (v2 != null) {
             v2.itemsFormat(JsonFormatTypes.INTEGER);
         }
     }
 
-    protected JavaType _integerListType(SerializerProvider prov) {
+    protected JavaType _integerListType(SerializationContext ctxt) {
         JavaType t = _integerListType;
         if (t == null) {
-            t = prov.getTypeFactory()
+            t = ctxt.getTypeFactory()
                     .constructCollectionType(List.class, Integer.class);
             _integerListType = t;
         }
@@ -194,7 +194,7 @@ abstract class JSR310FormattedSerializerBase<T>
         return SerializationFeature.WRITE_DATES_AS_TIMESTAMPS;
     }
 
-    protected boolean useTimestamp(SerializerProvider provider) {
+    protected boolean useTimestamp(SerializationContext ctxt) {
         if (_useTimestamp != null) {
             return _useTimestamp.booleanValue();
         }
@@ -207,18 +207,17 @@ abstract class JSR310FormattedSerializerBase<T>
             }
         }
         // assume that explicit formatter definition implies use of textual format
-        return (_formatter == null) && (provider != null)
-                && provider.isEnabled(getTimestampsFeature());
+        return (_formatter == null) && (ctxt != null) && ctxt.isEnabled(getTimestampsFeature());
     }
 
-    protected boolean _useTimestampExplicitOnly(SerializerProvider provider) {
+    protected boolean _useTimestampExplicitOnly(SerializationContext ctxt) {
         if (_useTimestamp != null) {
             return _useTimestamp.booleanValue();
         }
         return false;
     }
 
-    protected boolean useNanoseconds(SerializerProvider provider) {
+    protected boolean useNanoseconds(SerializationContext ctxt) {
         if (_useNanoseconds != null) {
             return _useNanoseconds.booleanValue();
         }
@@ -230,15 +229,15 @@ abstract class JSR310FormattedSerializerBase<T>
                 return true;
             }
         }
-        return (provider != null)
-                && provider.isEnabled(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS);
+        return (ctxt != null)
+                && ctxt.isEnabled(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS);
     }
 
     // modules-java8#189: to be overridden by other formatters using this as base class
-    protected DateTimeFormatter _useDateTimeFormatter(SerializerProvider prov, JsonFormat.Value format) {
+    protected DateTimeFormatter _useDateTimeFormatter(SerializationContext ctxt, JsonFormat.Value format) {
         DateTimeFormatter dtf;
         final String pattern = format.getPattern();
-        final Locale locale = format.hasLocale() ? format.getLocale() : prov.getLocale();
+        final Locale locale = format.hasLocale() ? format.getLocale() : ctxt.getLocale();
         if (locale == null) {
             dtf = DateTimeFormatter.ofPattern(pattern);
         } else {

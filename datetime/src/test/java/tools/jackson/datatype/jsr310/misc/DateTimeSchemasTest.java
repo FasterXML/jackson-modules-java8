@@ -16,18 +16,18 @@ import tools.jackson.datatype.jsr310.ModuleTestBase;
 public class DateTimeSchemasTest extends ModuleTestBase
 {
     static class VisitorWrapper implements JsonFormatVisitorWrapper {
-        SerializerProvider serializerProvider;
+        SerializationContext serializationContext;
         final String baseName;
         final Map<String, String> traversedProperties;
 
-        public VisitorWrapper(SerializerProvider serializerProvider, String baseName, Map<String, String> traversedProperties) {
-            this.serializerProvider = serializerProvider;
+        public VisitorWrapper(SerializationContext ctxt, String baseName, Map<String, String> traversedProperties) {
+            this.serializationContext = ctxt;
             this.baseName = baseName;
             this.traversedProperties = traversedProperties;
         }
 
         VisitorWrapper createSubtraverser(String bn) {
-            return new VisitorWrapper(getProvider(), bn, traversedProperties);
+            return new VisitorWrapper(getContext(), bn, traversedProperties);
         }
 
         public Map<String, String> getTraversedProperties() {
@@ -36,7 +36,7 @@ public class DateTimeSchemasTest extends ModuleTestBase
 
         @Override
         public JsonObjectFormatVisitor expectObjectFormat(JavaType type) {
-            return new JsonObjectFormatVisitor.Base(serializerProvider) {
+            return new JsonObjectFormatVisitor.Base(serializationContext) {
                 @Override
                 public void property(BeanProperty prop) {
                     anyProperty(prop);
@@ -50,7 +50,7 @@ public class DateTimeSchemasTest extends ModuleTestBase
                 private void anyProperty(BeanProperty prop) {
                     final String propertyName = prop.getFullName().toString();
                     traversedProperties.put(baseName + propertyName, "");
-                    serializerProvider.findPrimaryPropertySerializer(prop.getType(), prop)
+                    serializationContext.findPrimaryPropertySerializer(prop.getType(), prop)
                             .acceptJsonFormatVisitor(createSubtraverser(baseName + propertyName + "."), prop.getType());
                 }
             };
@@ -117,17 +117,17 @@ public class DateTimeSchemasTest extends ModuleTestBase
         @Override
         public JsonMapFormatVisitor expectMapFormat(JavaType type) {
             traversedProperties.put(baseName, "MAP");
-            return new JsonMapFormatVisitor.Base(serializerProvider);
+            return new JsonMapFormatVisitor.Base(serializationContext);
         }
 
         @Override
-        public SerializerProvider getProvider() {
-            return serializerProvider;
+        public SerializationContext getContext() {
+            return serializationContext;
         }
 
         @Override
-        public void setProvider(SerializerProvider provider) {
-            this.serializerProvider = provider;
+        public void setContext(SerializationContext ctxt) {
+            this.serializationContext = ctxt;
         }
     }
 
