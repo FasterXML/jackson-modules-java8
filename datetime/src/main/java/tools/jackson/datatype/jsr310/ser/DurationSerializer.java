@@ -26,11 +26,7 @@ import tools.jackson.core.JsonGenerator;
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
 
-import tools.jackson.databind.BeanProperty;
-import tools.jackson.databind.JavaType;
-import tools.jackson.databind.ValueSerializer;
-import tools.jackson.databind.SerializationFeature;
-import tools.jackson.databind.SerializerProvider;
+import tools.jackson.databind.*;
 import tools.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import tools.jackson.databind.jsonFormatVisitors.JsonIntegerFormatVisitor;
 import tools.jackson.databind.jsonFormatVisitors.JsonValueFormat;
@@ -97,15 +93,15 @@ public class DurationSerializer extends JSR310FormattedSerializerBase<Duration>
     }
 
     @Override
-    public ValueSerializer<?> createContextual(SerializerProvider prov, BeanProperty property)
+    public ValueSerializer<?> createContextual(SerializationContext ctxt, BeanProperty property)
     {
-        DurationSerializer ser = (DurationSerializer) super.createContextual(prov, property);
-        JsonFormat.Value format = findFormatOverrides(prov, property, handledType());
+        DurationSerializer ser = (DurationSerializer) super.createContextual(ctxt, property);
+        JsonFormat.Value format = findFormatOverrides(ctxt, property, handledType());
         if (format != null && format.hasPattern()) {
             final String pattern = format.getPattern();
             DurationUnitConverter p = DurationUnitConverter.from(pattern);
             if (p == null) {
-                prov.reportBadDefinition(handledType(),
+                ctxt.reportBadDefinition(handledType(),
                         String.format(
                                 "Bad 'pattern' definition (\"%s\") for `Duration`: expected one of [%s]",
                                 pattern, DurationUnitConverter.descForAllowed()));
@@ -116,15 +112,15 @@ public class DurationSerializer extends JSR310FormattedSerializerBase<Duration>
     }
 
     @Override
-    public void serialize(Duration duration, JsonGenerator generator, SerializerProvider provider)
+    public void serialize(Duration duration, JsonGenerator generator, SerializationContext ctxt)
         throws JacksonException
     {
-        if (useTimestamp(provider)) {
+        if (useTimestamp(ctxt)) {
             // 03-Aug-2022, tatu: As per [modules-java8#224] need to consider
             //     Pattern first, and only then nano-seconds/millis difference
             if (_durationUnitConverter != null) {
                 generator.writeNumber(_durationUnitConverter.convert(duration));
-            } else if (useNanoseconds(provider)) {
+            } else if (useNanoseconds(ctxt)) {
                 generator.writeNumber(_toNanos(duration));
             } else {
                 generator.writeNumber(duration.toMillis());
@@ -157,8 +153,8 @@ public class DurationSerializer extends JSR310FormattedSerializerBase<Duration>
         JsonIntegerFormatVisitor v2 = visitor.expectIntegerFormat(typeHint);
         if (v2 != null) {
             v2.numberType(JsonParser.NumberType.LONG);
-            SerializerProvider provider = visitor.getProvider();
-            if ((provider != null) && useNanoseconds(provider)) {
+            SerializationContext ctxt = visitor.getContext();
+            if ((ctxt != null) && useNanoseconds(ctxt)) {
                 // big number, no more specific qualifier to use...
             } else { // otherwise good old Unix timestamp, in milliseconds
                 v2.format(JsonValueFormat.UTC_MILLISEC);
@@ -167,9 +163,9 @@ public class DurationSerializer extends JSR310FormattedSerializerBase<Duration>
     }
 
     @Override
-    protected JsonToken serializationShape(SerializerProvider provider) {
-        if (useTimestamp(provider)) {
-            if (useNanoseconds(provider)) {
+    protected JsonToken serializationShape(SerializationContext ctxt) {
+        if (useTimestamp(ctxt)) {
+            if (useNanoseconds(ctxt)) {
                 return JsonToken.VALUE_NUMBER_FLOAT;
             }
             return JsonToken.VALUE_NUMBER_INT;
@@ -183,7 +179,7 @@ public class DurationSerializer extends JSR310FormattedSerializerBase<Duration>
     }
 
     @Override
-    protected DateTimeFormatter _useDateTimeFormatter(SerializerProvider prov, JsonFormat.Value format) {
+    protected DateTimeFormatter _useDateTimeFormatter(SerializationContext ctxt, JsonFormat.Value format) {
         return null;
     }
 }

@@ -8,8 +8,8 @@ import tools.jackson.core.JsonGenerator;
 
 import tools.jackson.databind.ValueSerializer;
 import tools.jackson.datatype.jsr310.util.DecimalUtils;
+import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.SerializationFeature;
-import tools.jackson.databind.SerializerProvider;
 
 public class ZonedDateTimeKeySerializer extends ValueSerializer<ZonedDateTime> {
 
@@ -20,16 +20,16 @@ public class ZonedDateTimeKeySerializer extends ValueSerializer<ZonedDateTime> {
     }
 
     @Override
-    public void serialize(ZonedDateTime value, JsonGenerator g, SerializerProvider serializers)
+    public void serialize(ZonedDateTime value, JsonGenerator g, SerializationContext ctxt)
         throws JacksonException
     {
         /* [modules-java8#127]: Serialization of timezone data is disabled by default, but can be
          * turned on by enabling `SerializationFeature.WRITE_DATES_WITH_ZONE_ID`
          */
-        if (serializers.isEnabled(SerializationFeature.WRITE_DATES_WITH_ZONE_ID)) {
+        if (ctxt.isEnabled(SerializationFeature.WRITE_DATES_WITH_ZONE_ID)) {
             g.writeName(DateTimeFormatter.ISO_ZONED_DATE_TIME.format(value));
-        } else if (useTimestamps(serializers)) {
-            if (useNanos(serializers)) {
+        } else if (useTimestamps(ctxt)) {
+            if (useNanos(ctxt)) {
                 g.writeName(DecimalUtils.toBigDecimal(value.toEpochSecond(), value.getNano()).toString());
             } else {
                 g.writeName(String.valueOf(value.toInstant().toEpochMilli()));
@@ -39,11 +39,11 @@ public class ZonedDateTimeKeySerializer extends ValueSerializer<ZonedDateTime> {
         }
     }
 
-    private static boolean useNanos(SerializerProvider serializers) {
-        return serializers.isEnabled(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS);
+    private static boolean useNanos(SerializationContext ctxt) {
+        return ctxt.isEnabled(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS);
     }
 
-    private static boolean useTimestamps(SerializerProvider serializers) {
-        return serializers.isEnabled(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS);
+    private static boolean useTimestamps(SerializationContext ctxt) {
+        return ctxt.isEnabled(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS);
     }
 }

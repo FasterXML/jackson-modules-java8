@@ -5,7 +5,7 @@ import tools.jackson.core.JsonGenerator;
 import tools.jackson.core.JsonToken;
 import tools.jackson.core.type.WritableTypeId;
 
-import tools.jackson.databind.SerializerProvider;
+import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.jsontype.TypeSerializer;
 import tools.jackson.databind.ser.std.StdSerializer;
 
@@ -21,7 +21,7 @@ abstract class JSR310SerializerBase<T> extends StdSerializer<T>
     }
 
     @Override
-    public void serializeWithType(T value, JsonGenerator g, SerializerProvider ctxt,
+    public void serializeWithType(T value, JsonGenerator g, SerializationContext ctxt,
             TypeSerializer typeSer)
         throws JacksonException
     {
@@ -36,5 +36,5 @@ abstract class JSR310SerializerBase<T> extends StdSerializer<T>
      * shape of value during serialization; needed to know how type id is to be
      * serialized.
      */
-    protected abstract JsonToken serializationShape(SerializerProvider provider);
+    protected abstract JsonToken serializationShape(SerializationContext ctxt);
 }

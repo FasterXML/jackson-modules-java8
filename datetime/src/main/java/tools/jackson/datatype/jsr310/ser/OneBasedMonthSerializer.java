@@ -19,7 +19,7 @@ public class OneBasedMonthSerializer extends ValueSerializer<Month> {
     }
 
     @Override
-    public void serialize(Month value, JsonGenerator gen, SerializerProvider ctxt)
+    public void serialize(Month value, JsonGenerator gen, SerializationContext ctxt)
     {
         // 15-Jan-2024, tatu: [modules-java8#274] This is not really sufficient
         //   (see `jackson-databind` `EnumSerializer` for full logic), but has to

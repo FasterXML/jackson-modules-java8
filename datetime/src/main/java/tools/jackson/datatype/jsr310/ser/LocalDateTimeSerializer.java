@@ -25,7 +25,7 @@ import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.core.JsonToken;
 import tools.jackson.core.type.WritableTypeId;
-import tools.jackson.databind.SerializerProvider;
+import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.jsontype.TypeSerializer;
 
 /**
@@ -61,12 +61,12 @@ public class LocalDateTimeSerializer extends JSR310FormattedSerializerBase<Local
     }
 
     @Override
-    public void serialize(LocalDateTime value, JsonGenerator g, SerializerProvider provider)
+    public void serialize(LocalDateTime value, JsonGenerator g, SerializationContext ctxt)
         throws JacksonException
     {
-        if (useTimestamp(provider)) {
+        if (useTimestamp(ctxt)) {
             g.writeStartArray();
-            _serializeAsArrayContents(value, g, provider);
+            _serializeAsArrayContents(value, g, ctxt);
             g.writeEndArray();
         } else {
             DateTimeFormatter dtf = _formatter;
@@ -78,7 +78,7 @@ public class LocalDateTimeSerializer extends JSR310FormattedSerializerBase<Local
     }
 
     @Override
-    public void serializeWithType(LocalDateTime value, JsonGenerator g, SerializerProvider ctxt,
+    public void serializeWithType(LocalDateTime value, JsonGenerator g, SerializationContext ctxt,
             TypeSerializer typeSer)
         throws JacksonException
     {
@@ -99,7 +99,7 @@ public class LocalDateTimeSerializer extends JSR310FormattedSerializerBase<Local
     }
 
     private final void _serializeAsArrayContents(LocalDateTime value, JsonGenerator g,
-            SerializerProvider provider)
+            SerializationContext ctxt)
         throws JacksonException
     {
         g.writeNumber(value.getYear());
@@ -112,7 +112,7 @@ public class LocalDateTimeSerializer extends JSR310FormattedSerializerBase<Local
         if ((secs > 0) || (nanos > 0)) {
             g.writeNumber(secs);
             if (nanos > 0) {
-                if (useNanoseconds(provider)) {
+                if (useNanoseconds(ctxt)) {
                     g.writeNumber(nanos);
                 } else {
                     g.writeNumber(value.get(ChronoField.MILLI_OF_SECOND));
@@ -122,8 +122,8 @@ public class LocalDateTimeSerializer extends JSR310FormattedSerializerBase<Local
     }
 
     @Override
-    protected JsonToken serializationShape(SerializerProvider provider) {
-        return useTimestamp(provider) ? JsonToken.START_ARRAY : JsonToken.VALUE_STRING;
+    protected JsonToken serializationShape(SerializationContext ctxt) {
+        return useTimestamp(ctxt) ? JsonToken.START_ARRAY : JsonToken.VALUE_STRING;
     }
 
     @Override

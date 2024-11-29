@@ -28,7 +28,7 @@ import tools.jackson.core.JsonToken;
 import tools.jackson.core.type.WritableTypeId;
 
 import tools.jackson.databind.JavaType;
-import tools.jackson.databind.SerializerProvider;
+import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import tools.jackson.databind.jsonFormatVisitors.JsonStringFormatVisitor;
 import tools.jackson.databind.jsonFormatVisitors.JsonValueFormat;
@@ -68,12 +68,12 @@ public class LocalTimeSerializer extends JSR310FormattedSerializerBase<LocalTime
     }
 
     @Override
-    public void serialize(LocalTime value, JsonGenerator g, SerializerProvider provider)
+    public void serialize(LocalTime value, JsonGenerator g, SerializationContext ctxt)
         throws JacksonException
     {
-        if (useTimestamp(provider)) {
+        if (useTimestamp(ctxt)) {
             g.writeStartArray();
-            _serializeAsArrayContents(value, g, provider);
+            _serializeAsArrayContents(value, g, ctxt);
             g.writeEndArray();
         } else {
             DateTimeFormatter dtf = _formatter;
@@ -86,7 +86,7 @@ public class LocalTimeSerializer extends JSR310FormattedSerializerBase<LocalTime
 
     @Override
     public void serializeWithType(LocalTime value, JsonGenerator g,
-            SerializerProvider ctxt, TypeSerializer typeSer)
+            SerializationContext ctxt, TypeSerializer typeSer)
         throws JacksonException
     {
         WritableTypeId typeIdDef = typeSer.writeTypePrefix(g, ctxt,
@@ -106,7 +106,7 @@ public class LocalTimeSerializer extends JSR310FormattedSerializerBase<LocalTime
     }
 
     private final void _serializeAsArrayContents(LocalTime value, JsonGenerator g,
-            SerializerProvider provider)
+            SerializationContext ctxt)
         throws JacksonException
     {
         g.writeNumber(value.getHour());
@@ -117,7 +117,7 @@ public class LocalTimeSerializer extends JSR310FormattedSerializerBase<LocalTime
         {
             g.writeNumber(secs);
             if (nanos > 0) {
-                if (useNanoseconds(provider)) {
+                if (useNanoseconds(ctxt)) {
                     g.writeNumber(nanos);
                 } else {
                     g.writeNumber(value.get(ChronoField.MILLI_OF_SECOND));
@@ -127,8 +127,8 @@ public class LocalTimeSerializer extends JSR310FormattedSerializerBase<LocalTime
     }
 
     @Override
-    protected JsonToken serializationShape(SerializerProvider provider) {
-        return useTimestamp(provider) ? JsonToken.START_ARRAY : JsonToken.VALUE_STRING;
+    protected JsonToken serializationShape(SerializationContext ctxt) {
+        return useTimestamp(ctxt) ? JsonToken.START_ARRAY : JsonToken.VALUE_STRING;
     }
 
     @Override
@@ -141,7 +141,7 @@ public class LocalTimeSerializer extends JSR310FormattedSerializerBase<LocalTime
     @Override
     public void acceptJsonFormatVisitor(JsonFormatVisitorWrapper visitor, JavaType typeHint)
     {
-        if (useTimestamp(visitor.getProvider())) {
+        if (useTimestamp(visitor.getContext())) {
             _acceptTimestampVisitor(visitor, typeHint);
         } else {
             JsonStringFormatVisitor v2 = visitor.expectStringFormat(typeHint);

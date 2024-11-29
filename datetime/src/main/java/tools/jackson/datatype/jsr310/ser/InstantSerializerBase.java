@@ -28,9 +28,7 @@ import tools.jackson.core.JsonGenerator;
 import tools.jackson.core.JsonToken;
 import tools.jackson.core.JsonParser.NumberType;
 
-import tools.jackson.databind.JavaType;
-import tools.jackson.databind.SerializationFeature;
-import tools.jackson.databind.SerializerProvider;
+import tools.jackson.databind.*;
 import tools.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import tools.jackson.databind.jsonFormatVisitors.JsonIntegerFormatVisitor;
 import tools.jackson.databind.jsonFormatVisitors.JsonNumberFormatVisitor;
@@ -83,11 +81,11 @@ public abstract class InstantSerializerBase<T extends Temporal>
         JsonFormat.Shape shape);
 
     @Override
-    public void serialize(T value, JsonGenerator generator, SerializerProvider provider)
+    public void serialize(T value, JsonGenerator generator, SerializationContext ctxt)
         throws JacksonException
     {
-        if (useTimestamp(provider)) {
-            if (useNanoseconds(provider)) {
+        if (useTimestamp(ctxt)) {
+            if (useNanoseconds(ctxt)) {
                 generator.writeNumber(DecimalUtils.toBigDecimal(
                         getEpochSeconds.applyAsLong(value), getNanoseconds.applyAsInt(value)
                 ));
@@ -97,14 +95,14 @@ public abstract class InstantSerializerBase<T extends Temporal>
             return;
         }
 
-        generator.writeString(formatValue(value, provider));
+        generator.writeString(formatValue(value, ctxt));
     }
 
     // Overridden to ensure that our timestamp handling is as expected
     @Override
     protected void _acceptTimestampVisitor(JsonFormatVisitorWrapper visitor, JavaType typeHint)
     {
-        if (useNanoseconds(visitor.getProvider())) {
+        if (useNanoseconds(visitor.getContext())) {
             JsonNumberFormatVisitor v2 = visitor.expectNumberFormat(typeHint);
             if (v2 != null) {
                 v2.numberType(NumberType.BIG_DECIMAL);
@@ -119,9 +117,9 @@ public abstract class InstantSerializerBase<T extends Temporal>
     }
 
     @Override
-    protected JsonToken serializationShape(SerializerProvider provider) {
-        if (useTimestamp(provider)) {
-            if (useNanoseconds(provider)) {
+    protected JsonToken serializationShape(SerializationContext ctxt) {
+        if (useTimestamp(ctxt)) {
+            if (useNanoseconds(ctxt)) {
                 return JsonToken.VALUE_NUMBER_FLOAT;
             }
             return JsonToken.VALUE_NUMBER_INT;
@@ -129,16 +127,16 @@ public abstract class InstantSerializerBase<T extends Temporal>
         return JsonToken.VALUE_STRING;
     }
 
-    protected String formatValue(T value, SerializerProvider provider)
+    protected String formatValue(T value, SerializationContext ctxt)
     {
         DateTimeFormatter formatter = (_formatter != null) ? _formatter : defaultFormat;
         if (formatter != null) {
             if (formatter.getZone() == null) { // timezone set if annotated on property
                 // If the user specified to use the context TimeZone explicitly, and the formatter provided doesn't contain a TZ
                 // Then we use the TZ specified in the objectMapper
-                if (provider.getConfig().hasExplicitTimeZone()
-                        && provider.isEnabled(SerializationFeature.WRITE_DATES_WITH_CONTEXT_TIME_ZONE)) {
-                    formatter = formatter.withZone(provider.getTimeZone().toZoneId());
+                if (ctxt.getConfig().hasExplicitTimeZone()
+                        && ctxt.isEnabled(SerializationFeature.WRITE_DATES_WITH_CONTEXT_TIME_ZONE)) {
+                    formatter = formatter.withZone(ctxt.getTimeZone().toZoneId());
                 }
             }
             return formatter.format(value);
