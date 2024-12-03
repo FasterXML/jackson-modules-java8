@@ -26,7 +26,7 @@ jobs:
       matrix:
         java_version: ['17', '21']
         include:
-          - java_version: '8'
+          - java_version: '17'
             release_build: 'R'
     env:
       JAVA_OPTS: "-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
