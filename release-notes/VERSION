@@ -17,6 +17,7 @@ due to number of types.
 
 - #68: Parsing of `ZoneId` should respect `ALLOW_COERCION_OF_SCALARS`
   wrt empty String
+- Minimum Java baseline: Java 17
 - Deprecate "paramater names" and "datatypes" modules as functionality
   now included directly in `jackson-databind`
 - Remove legacy `JSR310Module`
