@@ -33,6 +33,12 @@
     <url>https://github.com/FasterXML/jackson-modules-java8/issues</url>
   </issueManagement>
 
+  <properties>
+    <!-- [databind#4820]: Java 17 baseline -->
+    <javac.src.version>17</javac.src.version>
+    <javac.target.version>17</javac.target.version>
+  </properties>
+
   <!-- NOTE: `dependencyManagement` comes from jackson-bom -->
 
   <dependencies>
