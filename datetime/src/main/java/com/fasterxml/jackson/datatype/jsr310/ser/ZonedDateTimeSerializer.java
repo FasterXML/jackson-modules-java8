@@ -100,8 +100,9 @@ public class ZonedDateTimeSerializer extends InstantSerializerBase<ZonedDateTime
     @Override
     protected String formatValue(ZonedDateTime value, SerializerProvider provider) {
         String formatted = super.formatValue(value, provider);
+        // [modules-java8#333]: `@JsonFormat` with pattern should override `SerializationFeature.WRITE_DATES_WITH_ZONE_ID`
         if (_formatter != null && _shape == JsonFormat.Shape.STRING) {
-            if (shouldWriteWithZoneId(provider)) {
+            if (Boolean.TRUE.equals(_writeZoneId)) {
                 formatted += "[" + value.getZone().getId() + "]";
             }
         }
