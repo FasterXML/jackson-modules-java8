@@ -97,6 +97,17 @@ public class ZonedDateTimeSerializer extends InstantSerializerBase<ZonedDateTime
         super.serialize(value, g, provider);
     }
 
+    @Override
+    protected String formatValue(ZonedDateTime value, SerializerProvider provider) {
+        String formatted = super.formatValue(value, provider);
+        if (_formatter != null && _shape == JsonFormat.Shape.STRING) {
+            if (shouldWriteWithZoneId(provider)) {
+                formatted += "[" + value.getZone().getId() + "]";
+            }
+        }
+        return formatted;
+    }
+
     /**
      * @since 2.8
      */
