@@ -82,6 +82,11 @@ public class ZonedDateTimeSerializer extends InstantSerializerBase<ZonedDateTime
     public void serialize(ZonedDateTime value, JsonGenerator g, SerializerProvider provider)
         throws IOException
     {
+        // [modules-java8#333]: `@JsonFormat` with pattern should override `SerializationFeature.WRITE_DATES_WITH_ZONE_ID`
+        if (_formatter != null && _shape == JsonFormat.Shape.STRING) {
+            super.serialize(value, g, provider);
+            return;
+        }
         if (!useTimestamp(provider)) {
             if (shouldWriteWithZoneId(provider)) {
                 // write with zone
