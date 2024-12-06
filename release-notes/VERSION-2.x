@@ -12,6 +12,14 @@ Modules:
 
 -
 
+2.18.3 (not yet released)
+
+#333: `ZonedDateTime` serialization with `@JsonFormat.pattern` never uses it
+  while `WRITE_DATES_WITH_ZONE_ID` enabled
+ (reported by @verve111)
+ (fix by Joo-Hyuk K)
+>>>>>>> 2.18
+
 2.18.2 (27-Nov-2024)
 
 #308: Can't deserialize `OffsetDateTime.MIN`: Invalid value for EpochDay
