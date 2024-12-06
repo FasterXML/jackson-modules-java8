@@ -59,7 +59,7 @@ abstract class JSR310FormattedSerializerBase<T>
     protected final Boolean _useNanoseconds;
 
     /**
-     * Specific format to use, if not default format: non null value
+     * Specific format to use, if not default format: non-null value
      * also indicates that serialization is to be done as JSON String,
      * not numeric timestamp, unless {@code #_useTimestamp} is true.
      */

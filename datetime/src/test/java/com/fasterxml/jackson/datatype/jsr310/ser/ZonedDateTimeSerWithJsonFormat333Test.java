@@ -1,20 +1,21 @@
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
+import java.time.ZonedDateTime;
+
+import org.junit.Test;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
-import org.junit.Test;
-
-import java.time.ZonedDateTime;
 
 import static org.junit.Assert.assertEquals;
 
-// [module-java8#333] : ZonedDateTime serialization with @JsonFormat pattern never uses it while WRITE_DATES_WITH_ZONE_ID enabled #333
-public class ZonedDateTimeSerializationWithJsonFormat333Test
+// [module-java8#333]: ZonedDateTime serialization with @JsonFormat pattern never uses
+//  while WRITE_DATES_WITH_ZONE_ID enabled #333
+public class ZonedDateTimeSerWithJsonFormat333Test
     extends ModuleTestBase
 {
-
     public static class ContainerWithPattern333 {
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss z")
         public ZonedDateTime value;
@@ -35,9 +36,7 @@ public class ZonedDateTimeSerializationWithJsonFormat333Test
         ContainerWithPattern333 input = new ContainerWithPattern333();
         input.value = zonedDateTime;
 
-        String json = MAPPER.writeValueAsString(input);
-
-        assertEquals(a2q("{'value':'2024-11-15 18:27:06 CET'}"), json);
+        assertEquals(a2q("{'value':'2024-11-15 18:27:06 CET'}"),
+                MAPPER.writeValueAsString(input));
     }
-
 }
