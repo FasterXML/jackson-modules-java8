@@ -1,7 +1,10 @@
 package com.fasterxml.jackson.datatype.jdk8;
 
+import java.io.IOException;
 import java.util.Optional;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.deser.ValueInstantiator;
 import com.fasterxml.jackson.databind.deser.std.ReferenceTypeDeserializer;
@@ -103,5 +106,41 @@ final class OptionalDeserializer
 
     // Default ought to be fine:
 //    public Boolean supportsUpdate(DeserializationConfig config) { }
+
+    /*
+    /**********************************************************
+    /* Deserialization
+    /**********************************************************
+     */
+
+    /**
+     * [modules-java8#86] Cannot read {@link java.util.Optional}'s written with
+     * {@link com.fasterxml.jackson.databind.jsontype.impl.StdTypeResolverBuilder}.
+     * This override implementation was removed in 2.9, but restored and
+     * modified in 2.19 due to [modules-java8#86].
+     *
+     * @since 2.19
+     */
+    @Override
+    public Optional<?> deserializeWithType(JsonParser p, DeserializationContext ctxt, TypeDeserializer typeDeserializer)
+            throws IOException
+    {
+        final JsonToken t = p.getCurrentToken();
+        if (t == JsonToken.VALUE_NULL) {
+            return getNullValue(ctxt);
+        }
+        // 03-Nov-2013, tatu: This gets rather tricky with "natural" types
+        //   (String, Integer, Boolean), which do NOT include type information.
+        //   These might actually be handled ok except that nominal type here
+        //   is `Optional`, so special handling is not invoked; instead, need
+        //   to do a work-around here.
+        // 22-Oct-2015, tatu: Most likely this is actually wrong, result of incorrewct
+        //   serialization (up to 2.6, was omitting necessary type info after all);
+        //   but safest to leave in place for now
+        if (t != null && t.isScalarValue()) {
+            return deserialize(p, ctxt);
+        }
+        return (Optional<?>) typeDeserializer.deserializeTypedFromAny(p, ctxt);
+    }
 
 }

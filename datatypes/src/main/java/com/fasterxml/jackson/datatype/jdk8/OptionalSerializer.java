@@ -1,7 +1,11 @@
 package com.fasterxml.jackson.datatype.jdk8;
 
+import java.io.IOException;
 import java.util.Optional;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.type.WritableTypeId;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.std.ReferenceTypeSerializer;
@@ -71,4 +75,37 @@ public class OptionalSerializer
     protected Object _getReferencedIfPresent(Optional<?> value) {
         return value.isPresent() ? value.get() : null;
     }
+
+    /*
+    /**********************************************************
+    /* Serialization
+    /**********************************************************
+     */
+
+    /**
+     * [modules-java8#86] Cannot read {@link java.util.Optional}'s written with
+     * {@link com.fasterxml.jackson.databind.jsontype.impl.StdTypeResolverBuilder}.
+     * This override implementation was removed in 2.9, but restored and
+     * modified in 2.19 due to [modules-java8#86].
+     *
+     * @since 2.19
+     */
+    @Override
+    public void serializeWithType(Optional<?> ref, JsonGenerator g,
+                                  SerializerProvider provider, TypeSerializer typeSer)
+            throws IOException
+    {
+        if (!ref.isPresent()) {
+            // [datatype-jdk8#20]: can not write `null` if unwrapped
+            if (_unwrapper == null) {
+                provider.defaultSerializeNull(g);
+            }
+            return;
+        }
+        WritableTypeId typeId = typeSer.writeTypePrefix(g,
+                typeSer.typeId(ref, JsonToken.VALUE_STRING));
+        serialize(ref, g, provider);
+        typeSer.writeTypeSuffix(g, typeId);
+    }
+
 }
