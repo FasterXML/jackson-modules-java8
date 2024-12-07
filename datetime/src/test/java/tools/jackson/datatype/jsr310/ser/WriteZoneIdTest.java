@@ -21,7 +21,7 @@ public class WriteZoneIdTest extends ModuleTestBase
 {
     static class DummyClassWithDate {
         @JsonFormat(shape = JsonFormat.Shape.STRING,
-                pattern = "dd-MM-yyyy hh:mm:ss Z",
+                pattern = "dd-MM-yyyy'T'hh:mm:ss Z",
                 with = JsonFormat.Feature.WRITE_DATES_WITH_ZONE_ID)
         public ZonedDateTime date;
 
@@ -73,7 +73,7 @@ public class WriteZoneIdTest extends ModuleTestBase
         // 30-Jun-2016, tatu: Exact time seems to vary a bit based on DST, so let's actually
         //    just verify appending of timezone id itself:
         String json = MAPPER.writeValueAsString(input);
-        if (!json.contains("\"1970-01-01T")) {
+        if (!json.contains("\"01-01-1970T")) {
             Assert.fail("Should contain time prefix, did not: "+json);
         }
         String match = String.format("[%s]", ZONE_ID_STR);

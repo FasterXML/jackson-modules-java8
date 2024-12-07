@@ -66,7 +66,11 @@ public class ZonedDateTimeSerializer extends InstantSerializerBase<ZonedDateTime
         throws JacksonException
     {
         if (!useTimestamp(ctxt)) {
-            if (shouldWriteWithZoneId(ctxt)) {
+            // [modules-java8#333]: `@JsonFormat` with pattern should override
+            //   `SerializationFeature.WRITE_DATES_WITH_ZONE_ID`
+            if ((_formatter != null) && (_shape == JsonFormat.Shape.STRING)) {
+                ; // use default handling
+            } else if (shouldWriteWithZoneId(ctxt)) {
                 // write with zone
                 g.writeString(DateTimeFormatter.ISO_ZONED_DATE_TIME.format(value));
                 return;
@@ -75,6 +79,19 @@ public class ZonedDateTimeSerializer extends InstantSerializerBase<ZonedDateTime
         super.serialize(value, g, ctxt);
     }
 
+    @Override
+    protected String formatValue(ZonedDateTime value, SerializationContext ctxt) {
+        String formatted = super.formatValue(value, ctxt);
+        // [modules-java8#333]: `@JsonFormat` with pattern should override
+        //   `SerializationFeature.WRITE_DATES_WITH_ZONE_ID`
+        if (_formatter != null && _shape == JsonFormat.Shape.STRING) {
+            // Why not `if (shouldWriteWithZoneId(provider))` ?
+            if (Boolean.TRUE.equals(_writeZoneId)) {
+                formatted += "[" + value.getZone().getId() + "]";
+            }
+        }
+        return formatted;
+    }    
     public boolean shouldWriteWithZoneId(SerializationContext ctxt) {
         return (_writeZoneId != null) ? _writeZoneId :
             ctxt.isEnabled(SerializationFeature.WRITE_DATES_WITH_ZONE_ID);
