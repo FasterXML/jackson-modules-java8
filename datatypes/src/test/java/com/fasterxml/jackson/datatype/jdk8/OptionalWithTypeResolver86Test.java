@@ -8,7 +8,7 @@ import org.junit.Test;
 import java.util.Objects;
 import java.util.Optional;
 
-// [modules-java8#86] Cannot read Optionals written with StdTypeResolverBuilder
+// [modules-java8#86] Cannot read `Optional`s written with `StdTypeResolverBuilder`
 public class OptionalWithTypeResolver86Test
         extends ModuleTestBase
 {
