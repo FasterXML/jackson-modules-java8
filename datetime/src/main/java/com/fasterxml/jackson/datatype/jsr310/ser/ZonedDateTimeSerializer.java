@@ -83,13 +83,31 @@ public class ZonedDateTimeSerializer extends InstantSerializerBase<ZonedDateTime
         throws IOException
     {
         if (!useTimestamp(provider)) {
-            if (shouldWriteWithZoneId(provider)) {
+            // [modules-java8#333]: `@JsonFormat` with pattern should override
+            //   `SerializationFeature.WRITE_DATES_WITH_ZONE_ID`
+            if ((_formatter != null) && (_shape == JsonFormat.Shape.STRING)) {
+                ; // use default handling
+            } else if (shouldWriteWithZoneId(provider)) {
                 // write with zone
                 g.writeString(DateTimeFormatter.ISO_ZONED_DATE_TIME.format(value));
                 return;
             }
         }
         super.serialize(value, g, provider);
+    }
+
+    @Override
+    protected String formatValue(ZonedDateTime value, SerializerProvider provider) {
+        String formatted = super.formatValue(value, provider);
+        // [modules-java8#333]: `@JsonFormat` with pattern should override
+        //   `SerializationFeature.WRITE_DATES_WITH_ZONE_ID`
+        if (_formatter != null && _shape == JsonFormat.Shape.STRING) {
+            // Why not `if (shouldWriteWithZoneId(provider))` ?
+            if (Boolean.TRUE.equals(_writeZoneId)) {
+                formatted += "[" + value.getZone().getId() + "]";
+            }
+        }
+        return formatted;
     }
 
     /**
