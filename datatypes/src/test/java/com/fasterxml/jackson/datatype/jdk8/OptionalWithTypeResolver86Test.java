@@ -1,12 +1,11 @@
 package com.fasterxml.jackson.datatype.jdk8;
 
+import java.util.Objects;
+import java.util.Optional;
+
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.StdTypeResolverBuilder;
-import org.junit.Test;
-
-import java.util.Objects;
-import java.util.Optional;
 
 // [modules-java8#86] Cannot read `Optional`s written with `StdTypeResolverBuilder`
 public class OptionalWithTypeResolver86Test
@@ -41,11 +40,13 @@ public class OptionalWithTypeResolver86Test
         }
     }
 
-    @Test
-    public void test() throws Exception {
+    public void testRoundTrip()
+            throws Exception
+    {
         _testOptionalWith(Optional.of("MyName"), String.class, "MyName");
         _testOptionalWith(Optional.of(42), Integer.class, 42);
-        _testOptionalWith(Optional.of(Pojo86.valueOf("PojoName")), Pojo86.class, Pojo86.valueOf("PojoName"));
+        _testOptionalWith(Optional.of(Pojo86.valueOf("PojoName")),
+                Pojo86.class, Pojo86.valueOf("PojoName"));
     }
 
     private <T> void _testOptionalWith(Optional<T> value, Class<T> type, T expectedValue)
@@ -66,7 +67,8 @@ public class OptionalWithTypeResolver86Test
         assertEquals(expectedJSON, json);
 
         // Deserialize
-        Foo<T> bean = mapper.readValue(json, mapper.getTypeFactory().constructParametricType(Foo.class, type));
+        Foo<T> bean = mapper.readValue(json,
+                mapper.getTypeFactory().constructParametricType(Foo.class, type));
         assertEquals(value, bean.value);
     }
 
