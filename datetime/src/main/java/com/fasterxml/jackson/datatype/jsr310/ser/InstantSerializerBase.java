@@ -57,12 +57,12 @@ public abstract class InstantSerializerBase<T extends Temporal>
 
     protected InstantSerializerBase(Class<T> supportedType, ToLongFunction<T> getEpochMillis,
             ToLongFunction<T> getEpochSeconds, ToIntFunction<T> getNanoseconds,
-            DateTimeFormatter formatter)
+            DateTimeFormatter defaultFormat)
     {
         // Bit complicated, just because we actually want to "hide" default formatter,
         // so that it won't accidentally force use of textual presentation
         super(supportedType, null);
-        defaultFormat = formatter;
+        this.defaultFormat = defaultFormat;
         this.getEpochMillis = getEpochMillis;
         this.getEpochSeconds = getEpochSeconds;
         this.getNanoseconds = getNanoseconds;
@@ -147,7 +147,7 @@ public abstract class InstantSerializerBase<T extends Temporal>
     // @since 2.12
     protected String formatValue(T value, SerializerProvider provider)
     {
-        DateTimeFormatter formatter = (_formatter != null) ? _formatter : defaultFormat;
+        DateTimeFormatter formatter = (_formatter == null) ? defaultFormat :_formatter;
         if (formatter != null) {
             if (formatter.getZone() == null) { // timezone set if annotated on property
                 // If the user specified to use the context TimeZone explicitly, and the formatter provided doesn't contain a TZ
