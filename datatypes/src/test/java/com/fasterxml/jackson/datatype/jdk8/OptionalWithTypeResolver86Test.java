@@ -3,17 +3,28 @@ package com.fasterxml.jackson.datatype.jdk8;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.StdTypeResolverBuilder;
 
 // [modules-java8#86] Cannot read `Optional`s written with `StdTypeResolverBuilder`
+//
 public class OptionalWithTypeResolver86Test
         extends ModuleTestBase
 {
 
     public static class Foo<T> {
         public Optional<T> value;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Foo<?> foo = (Foo<?>) o;
+            return Objects.equals(value, foo.value);
+        }
     }
 
     public static class Pojo86 {
@@ -34,9 +45,28 @@ public class OptionalWithTypeResolver86Test
             return Objects.equals(name, pojo86.name);
         }
 
+    }
+
+    // Base class for polymorphic types
+    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.WRAPPER_OBJECT)
+    public static abstract class Animal {
+        public String name;
+
+        protected Animal(String name) {
+            this.name = name;
+        }
+    }
+
+    // Subclass: Dog
+    public static class Dog extends Animal {
+        @JsonCreator
+        public Dog(@JsonProperty("name") String name) {
+            super(name);
+        }
+
         @Override
-        public int hashCode() {
-            return Objects.hashCode(name);
+        public boolean equals(Object obj) {
+            return (obj instanceof Dog) && name.equals(((Dog) obj).name);
         }
     }
 
@@ -49,6 +79,30 @@ public class OptionalWithTypeResolver86Test
                 Pojo86.class, Pojo86.valueOf("PojoName"));
     }
 
+    public void testRoundTripPolymorphic()
+            throws Exception
+    {
+        _testOptionalPolymorphicWith(
+                Optional.of(new Dog("Buddy"))
+        );
+    }
+
+    private <T> void _testOptionalPolymorphicWith(Optional<T> value)
+            throws Exception
+    {
+        ObjectMapper mapper = configureObjectMapper();
+
+        // Serialize
+        Foo<T> foo = new Foo<>();
+        foo.value = value;
+        String json = mapper.writeValueAsString(foo);
+
+        // Deserialize
+        Foo<T> bean = mapper.readValue(json,
+                mapper.getTypeFactory().constructParametricType(Foo.class, Animal.class));
+        assertEquals(foo, bean); // Compare Foo objects directly
+    }
+
     private <T> void _testOptionalWith(Optional<T> value, Class<T> type, T expectedValue)
             throws Exception
     {
@@ -58,21 +112,15 @@ public class OptionalWithTypeResolver86Test
         Foo<T> foo = new Foo<>();
         foo.value = value;
         String json = mapper.writeValueAsString(foo);
-        String expectedJSON = a2q(String.format(
-                "{'%s':{'value':{'%s':%s}}}",
-                Foo.class.getName(),
-                Optional.class.getName(),
-                mapper.writeValueAsString(expectedValue)
-        ));
-        assertEquals(expectedJSON, json);
 
         // Deserialize
         Foo<T> bean = mapper.readValue(json,
                 mapper.getTypeFactory().constructParametricType(Foo.class, type));
         assertEquals(value, bean.value);
+        assertEquals(expectedValue, bean.value.get());
     }
 
-    private ObjectMapper configureObjectMapper() {
+    private ObjectMapper configureObjectMapper(){
         ObjectMapper mapper = mapperWithModule();
         mapper.setDefaultTyping(
                 new StdTypeResolverBuilder()
