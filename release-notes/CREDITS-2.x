@@ -170,6 +170,8 @@ Michał Ostrowski (karbi@github)
 David Schlosnagle (schlosna@github)
  * Contributed #266: Optimize `InstantDeserializer` method `replaceZeroOffsetAsZIfNecessary()`
   (2.15.0)
+ * Contributed #336: Optimize `InstantDeserializer` `addInColonToOffsetIfMissing()`
+  (2.19.0)
 
 Daniel Scalzi (dscalzi@github)
  * Contributed #267: Normalize zone id during ZonedDateTime deserialization
