@@ -519,14 +519,42 @@ public class InstantDeserializer<T extends Temporal>
     }
 
     // @since 2.13
-    private String addInColonToOffsetIfMissing(String text)
+    private static String addInColonToOffsetIfMissing(String text)
     {
-        final Matcher matcher = ISO8601_COLONLESS_OFFSET_REGEX.matcher(text);
-        if (matcher.find()){
-            StringBuilder sb = new StringBuilder(matcher.group(0));
-            sb.insert(3, ":");
+        int timeIndex = text.indexOf('T');
+        if (timeIndex < 0 || timeIndex > text.length() - 1) {
+            return text;
+        }
 
-            return matcher.replaceFirst(sb.toString());
+        int offsetIndex = text.indexOf('+', timeIndex + 1);
+        if (offsetIndex < 0) {
+            offsetIndex = text.indexOf('-', timeIndex + 1);
+        }
+
+        if (offsetIndex < 0 || offsetIndex > text.length() - 5) {
+            return text;
+        }
+
+        int colonIndex = text.indexOf(':', offsetIndex);
+        if (colonIndex == offsetIndex + 3) {
+            return text;
+        }
+
+        if (Character.isDigit(text.charAt(offsetIndex + 1))
+                && Character.isDigit(text.charAt(offsetIndex + 2))
+                && Character.isDigit(text.charAt(offsetIndex + 3))
+                && Character.isDigit(text.charAt(offsetIndex + 4))) {
+            String match = text.substring(offsetIndex, offsetIndex + 5);
+            return text.substring(0, offsetIndex)
+                    + match.substring(0, 3) + ':' + match.substring(3)
+                    + text.substring(offsetIndex + match.length());
+        }
+
+        // fallback to slow regex path, should be fully handled by the above
+        final Matcher matcher = ISO8601_COLONLESS_OFFSET_REGEX.matcher(text);
+        if (matcher.find()) {
+            String match = matcher.group(0);
+            return matcher.replaceFirst(match.substring(0, 3) + ':' + match.substring(3));
         }
         return text;
     }
