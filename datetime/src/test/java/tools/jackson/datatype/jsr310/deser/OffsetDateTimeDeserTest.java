@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -738,6 +739,40 @@ public class OffsetDateTimeDeserTest
     {
         _testOffsetDateTimeMinOrMax(OffsetDateTime.MIN);
         _testOffsetDateTimeMinOrMax(OffsetDateTime.MAX);
+    }
+
+    @Test
+    public void OffsetDateTime_with_offset_can_be_deserialized() throws Exception {
+        ObjectReader r = MAPPER.readerFor(OffsetDateTime.class)
+                .without(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
+
+        String base = "2015-07-24T12:23:34.184";
+        for (String offset : Arrays.asList("+00", "-00")) {
+            String time = base + offset;
+            if (!System.getProperty("java.version").startsWith("1.8")) {
+                // JDK 8 cannot parse hour offsets without minutes
+                assertIsEqual(OffsetDateTime.parse("2015-07-24T12:23:34.184Z"), r.readValue('"' + time + '"'));
+            }
+            assertIsEqual(OffsetDateTime.parse("2015-07-24T12:23:34.184Z"), r.readValue('"' + time + "00" + '"'));
+            assertIsEqual(OffsetDateTime.parse("2015-07-24T12:23:34.184Z"), r.readValue('"' + time + ":00" + '"'));
+            assertIsEqual(OffsetDateTime.parse("2015-07-24T12:23:34.184" + offset + ":30"), r.readValue('"' + time + "30" + '"'));
+            assertIsEqual(OffsetDateTime.parse("2015-07-24T12:23:34.184" + offset + ":30"), r.readValue('"' + time + ":30" + '"'));
+        }
+
+        for (String prefix : Arrays.asList("-", "+")) {
+            for (String hours : Arrays.asList("00", "01", "02", "03", "11", "12")) {
+                String time = base + prefix + hours;
+                OffsetDateTime expectedHour = OffsetDateTime.parse(time + ":00");
+                if (!System.getProperty("java.version").startsWith("1.8")) {
+                    // JDK 8 cannot parse hour offsets without minutes
+                    assertIsEqual(expectedHour, r.readValue('"' + time + '"'));
+                }
+                assertIsEqual(expectedHour, r.readValue('"' + time + "00" + '"'));
+                assertIsEqual(expectedHour, r.readValue('"' + time + ":00" + '"'));
+                assertIsEqual(OffsetDateTime.parse(time + ":30"), r.readValue('"' + time + "30" + '"'));
+                assertIsEqual(OffsetDateTime.parse(time + ":30"), r.readValue('"' + time + ":30" + '"'));
+            }
+        }
     }
 
     private void _testOffsetDateTimeMinOrMax(OffsetDateTime offsetDateTime)

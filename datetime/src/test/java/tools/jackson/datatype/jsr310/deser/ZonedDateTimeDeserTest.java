@@ -1,16 +1,18 @@
 package tools.jackson.datatype.jsr310.deser;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.TimeZone;
+
+import org.junit.Test;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Feature;
 
+import tools.jackson.core.JacksonException;
 import tools.jackson.core.type.TypeReference;
 
 import tools.jackson.databind.DeserializationFeature;
@@ -21,8 +23,6 @@ import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.datatype.jsr310.JavaTimeFeature;
 import tools.jackson.datatype.jsr310.JavaTimeModule;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
-
-import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -277,5 +277,39 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
         assertEquals("Timezone should be preserved.",
                 ZonedDateTime.of(2000, 1, 1, 12, 0, 0 ,0, ZoneId.of("Europe/Paris")),
                 wrapper.value);
+    }
+
+    @Test
+    public void ZonedDateTime_with_offset_can_be_deserialized() throws Exception {
+        ObjectReader r = newMapper().readerFor(ZonedDateTime.class)
+                .without(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
+
+        String base = "2015-07-24T12:23:34.184";
+        for (String offset : Arrays.asList("+00", "-00")) {
+            String time = base + offset;
+            if (!System.getProperty("java.version").startsWith("1.8")) {
+                // JDK 8 cannot parse hour offsets without minutes
+                assertEquals(ZonedDateTime.parse("2015-07-24T12:23:34.184Z"), r.readValue('"' + time + '"'));
+            }
+            assertEquals(ZonedDateTime.parse("2015-07-24T12:23:34.184Z"), r.readValue('"' + time + "00" + '"'));
+            assertEquals(ZonedDateTime.parse("2015-07-24T12:23:34.184Z"), r.readValue('"' + time + ":00" + '"'));
+            assertEquals(ZonedDateTime.parse("2015-07-24T12:23:34.184" + offset + ":30" ), r.readValue('"' + time + "30" + '"'));
+            assertEquals(ZonedDateTime.parse("2015-07-24T12:23:34.184" + offset + ":30" ), r.readValue('"' + time + ":30" + '"'));
+        }
+
+        for (String prefix : Arrays.asList("-", "+")) {
+            for (String hours : Arrays.asList("00", "01", "02", "03", "11", "12")) {
+                String time = base + prefix + hours;
+                ZonedDateTime expectedHour = ZonedDateTime.parse(time + ":00");
+                if (!System.getProperty("java.version").startsWith("1.8")) {
+                    // JDK 8 cannot parse hour offsets without minutes
+                    assertEquals(expectedHour, r.readValue('"' + time + '"'));
+                }
+                assertEquals(expectedHour, r.readValue('"' + time + "00" + '"'));
+                assertEquals(expectedHour, r.readValue('"' + time + ":00" + '"'));
+                assertEquals(ZonedDateTime.parse(time + ":30"), r.readValue('"' + time + "30" + '"'));
+                assertEquals(ZonedDateTime.parse(time + ":30"), r.readValue('"' + time + ":30" + '"'));
+            }
+        }
     }
 }
