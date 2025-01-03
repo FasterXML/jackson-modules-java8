@@ -88,7 +88,7 @@ public class LocalDateDeserializer extends JSR310DateTimeDeserializerBase<LocalD
         throws JacksonException
     {
         if (parser.hasToken(JsonToken.VALUE_STRING)) {
-            return _fromString(parser, context, parser.getText());
+            return _fromString(parser, context, parser.getString());
         }
         // 30-Sep-2020, tatu: New! "Scalar from Object" (mostly for XML)
         if (parser.isExpectedStartObjectToken()) {

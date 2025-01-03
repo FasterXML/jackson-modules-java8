@@ -101,7 +101,7 @@ public class OffsetTimeDeserializer extends JSR310DateTimeDeserializerBase<Offse
         throws JacksonException
    {
         if (parser.hasToken(JsonToken.VALUE_STRING)) {
-            return _fromString(parser, context, parser.getText());
+            return _fromString(parser, context, parser.getString());
         }
         // 30-Sep-2020, tatu: New! "Scalar from Object" (mostly for XML)
         if (parser.isExpectedStartObjectToken()) {
@@ -160,7 +160,7 @@ public class OffsetTimeDeserializer extends JSR310DateTimeDeserializerBase<Offse
             }
         }
         if (parser.currentToken() == JsonToken.VALUE_STRING) {
-            OffsetTime result = OffsetTime.of(hour, minute, second, partialSecond, ZoneOffset.of(parser.getText()));
+            OffsetTime result = OffsetTime.of(hour, minute, second, partialSecond, ZoneOffset.of(parser.getString()));
             if (parser.nextToken() != JsonToken.END_ARRAY) {
                 _reportWrongToken(context, JsonToken.END_ARRAY, "timezone");
             }

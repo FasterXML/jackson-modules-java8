@@ -325,7 +325,7 @@ public class InstantDeserializer<T extends Temporal>
             case JsonTokenId.ID_NUMBER_INT:
                 return _fromLong(context, parser.getLongValue());
             case JsonTokenId.ID_STRING:
-                return _fromString(parser, context, parser.getText());
+                return _fromString(parser, context, parser.getString());
             // 30-Sep-2020, tatu: New! "Scalar from Object" (mostly for XML)
             case JsonTokenId.ID_START_OBJECT:
                 return _fromString(parser, context,

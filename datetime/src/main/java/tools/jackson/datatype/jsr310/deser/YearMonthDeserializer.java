@@ -82,7 +82,7 @@ public class YearMonthDeserializer extends JSR310DateTimeDeserializerBase<YearMo
     public YearMonth deserialize(JsonParser parser, DeserializationContext context) throws JacksonException
     {
         if (parser.hasToken(JsonToken.VALUE_STRING)) {
-            return _fromString(parser, context, parser.getText());
+            return _fromString(parser, context, parser.getString());
         }
         // 30-Sep-2020, tatu: New! "Scalar from Object" (mostly for XML)
         if (parser.isExpectedStartObjectToken()) {

@@ -150,7 +150,7 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
             case JsonTokenId.ID_NUMBER_INT:
                 return _fromTimestamp(context, parser.getLongValue());
             case JsonTokenId.ID_STRING:
-                return _fromString(parser, context, parser.getText());
+                return _fromString(parser, context, parser.getString());
             // 30-Sep-2020, tatu: New! "Scalar from Object" (mostly for XML)
             case JsonTokenId.ID_START_OBJECT:
                 return _fromString(parser, context,

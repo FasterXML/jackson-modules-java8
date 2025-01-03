@@ -24,7 +24,7 @@ public class OneBasedMonthDeserializer extends DelegatingDeserializer {
     public Object deserialize(JsonParser parser, DeserializationContext context) {
         JsonToken token = parser.currentToken();
         Month zeroBaseMonth = (Month) getDelegatee().deserialize(parser, context);
-        if (!_isNumericValue(parser.getText(), token)) {
+        if (!_isNumericValue(parser.getString(), token)) {
             return zeroBaseMonth;
         }
         if (zeroBaseMonth == Month.JANUARY) {

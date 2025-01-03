@@ -81,7 +81,7 @@ public class YearDeserializer extends JSR310DateTimeDeserializerBase<Year>
     {
         JsonToken t = parser.currentToken();
         if (t == JsonToken.VALUE_STRING) {
-            return _fromString(parser, context, parser.getText());
+            return _fromString(parser, context, parser.getString());
         }
         // 30-Sep-2020, tatu: New! "Scalar from Object" (mostly for XML)
         if (t == JsonToken.START_OBJECT) {
