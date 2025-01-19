@@ -1,8 +1,10 @@
-module tools.jackson.datatype.jsr310 {
+// Java-Time Main artifact Module descriptor
+module tools.jackson.datatype.jsr310
+{
     requires com.fasterxml.jackson.annotation;
 
     requires tools.jackson.core;
-    requires tools.jackson.databind;
+    requires transitive tools.jackson.databind;
 
     exports tools.jackson.datatype.jsr310;
     exports tools.jackson.datatype.jsr310.deser;
