@@ -261,14 +261,14 @@ public class LocalDateTimeDeserTest
         // First, defaults:
         assertEquals("The value is not correct.", EXP, r.readValue(input));
 
-        // but ensure that global timezone setting doesn't matter
+        // and ensure that global timezone setting matter
         LocalDateTime value = r.with(TimeZone.getTimeZone(Z_CHICAGO))
                 .readValue(input);
-        assertEquals("The value is not correct.", EXP, value);
+        assertEquals("The value is not correct.", EXP.minusHours(5), value);
 
         value = r.with(TimeZone.getTimeZone(Z_BUDAPEST))
                 .readValue(input);
-        assertEquals("The value is not correct.", EXP, value);
+        assertEquals("The value is not correct.", EXP.plusHours(2), value);
     }
 
     // [modules-java#94]: "Z" offset not allowed if strict mode

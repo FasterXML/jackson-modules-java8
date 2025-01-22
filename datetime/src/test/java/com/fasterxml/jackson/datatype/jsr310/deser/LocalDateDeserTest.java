@@ -9,6 +9,7 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.Temporal;
 import java.util.Map;
+import java.util.TimeZone;
 
 import com.fasterxml.jackson.annotation.OptBoolean;
 import com.fasterxml.jackson.databind.cfg.CoercionAction;
@@ -151,6 +152,15 @@ public class LocalDateDeserTest extends ModuleTestBase
         assertEquals("The value is not correct.",
                 LocalDateTime.ofInstant(instant, ZoneOffset.UTC).toLocalDate(),
                 value);
+    }
+
+    @Test
+    public void testDeserializationAsString04() throws Exception
+    {
+        ObjectReader reader = READER.with(TimeZone.getTimeZone(Z_BUDAPEST));
+        Instant instant = Instant.parse("2024-07-21T22:00:00Z");
+        LocalDate value = reader.readValue('"' + instant.toString() + '"');
+        assertEquals("The value is not correct.", LocalDate.parse("2024-07-22"), value);
     }
 
     @Test

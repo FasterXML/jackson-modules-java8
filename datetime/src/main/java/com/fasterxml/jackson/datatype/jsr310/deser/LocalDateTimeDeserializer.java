@@ -18,6 +18,7 @@ package com.fasterxml.jackson.datatype.jsr310.deser;
 
 import java.io.IOException;
 import java.time.DateTimeException;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
@@ -195,13 +196,10 @@ public class LocalDateTimeDeserializer
             if (_formatter == DEFAULT_FORMATTER) {
                 // ... only allow iff lenient mode enabled since
                 // JavaScript by default includes time and zone in JSON serialized Dates (UTC/ISO instant format).
-                // And if so, do NOT use zoned date parsing as that can easily produce
-                // incorrect answer.
                 if (string.length() > 10 && string.charAt(10) == 'T') {
                    if (string.endsWith("Z")) {
                        if (isLenient()) {
-                           return LocalDateTime.parse(string.substring(0, string.length()-1),
-                                   _formatter);
+                           return Instant.parse(string).atZone(ctxt.getTimeZone().toZoneId()).toLocalDateTime();
                        }
                        JavaType t = getValueType(ctxt);
                        return (LocalDateTime) ctxt.handleWeirdStringValue(t.getRawClass(),

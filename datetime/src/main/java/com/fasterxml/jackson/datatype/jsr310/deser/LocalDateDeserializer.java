@@ -18,6 +18,7 @@ package com.fasterxml.jackson.datatype.jsr310.deser;
 
 import java.io.IOException;
 import java.time.DateTimeException;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -161,8 +162,7 @@ public class LocalDateDeserializer extends JSR310DateTimeDeserializerBase<LocalD
                 if (string.length() > 10 && string.charAt(10) == 'T') {
                     if (isLenient()) {
                         if (string.endsWith("Z")) {
-                            return LocalDate.parse(string.substring(0, string.length() - 1),
-                                    DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                            return Instant.parse(string).atZone(ctxt.getTimeZone().toZoneId()).toLocalDate();
                         }
                         return LocalDate.parse(string, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
                     }
