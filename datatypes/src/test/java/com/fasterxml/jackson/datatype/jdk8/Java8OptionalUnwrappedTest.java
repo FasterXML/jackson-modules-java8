@@ -3,6 +3,8 @@ package com.fasterxml.jackson.datatype.jdk8;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.JavaType;
@@ -10,6 +12,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonObjectFormatVisitor;
 import com.fasterxml.jackson.databind.ser.DefaultSerializerProvider;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class Java8OptionalUnwrappedTest extends ModuleTestBase
 {
@@ -46,6 +50,7 @@ public class Java8OptionalUnwrappedTest extends ModuleTestBase
 	    public String name;
 	}	
 
+	@Test
 	public void testUntypedWithOptionalsNotNulls() throws Exception
 	{
 		final ObjectMapper mapper = mapperWithModule(false);
@@ -55,6 +60,7 @@ public class Java8OptionalUnwrappedTest extends ModuleTestBase
 	}
 
 	// for [datatype-jdk8#20]
+	@Test
 	public void testShouldSerializeUnwrappedOptional() throws Exception {
          final ObjectMapper mapper = mapperWithModule(false);
 	    
@@ -63,6 +69,7 @@ public class Java8OptionalUnwrappedTest extends ModuleTestBase
 	}
 
 	// for [datatype-jdk8#26]
+	@Test
 	public void testPropogatePrefixToSchema() throws Exception {
         final ObjectMapper mapper = mapperWithModule(false);
 

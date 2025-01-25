@@ -3,9 +3,11 @@ package com.fasterxml.jackson.datatype.jdk8;
 import java.io.*;
 import java.util.Optional;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JDKSerializabilityTest extends ModuleTestBase
 {

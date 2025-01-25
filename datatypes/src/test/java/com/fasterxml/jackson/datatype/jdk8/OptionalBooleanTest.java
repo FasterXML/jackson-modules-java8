@@ -2,7 +2,11 @@ package com.fasterxml.jackson.datatype.jdk8;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class OptionalBooleanTest extends ModuleTestBase
 {
@@ -18,6 +22,7 @@ public class OptionalBooleanTest extends ModuleTestBase
     private final ObjectMapper MAPPER = mapperWithModule();
 
     // for [datatype-jdk8#23]
+    @Test
     public void testBoolean() throws Exception
     {
         // First, serialization
