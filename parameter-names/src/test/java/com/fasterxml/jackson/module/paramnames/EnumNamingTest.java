@@ -1,13 +1,13 @@
 package com.fasterxml.jackson.module.paramnames;
 
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
 
 public class EnumNamingTest extends ModuleTestBase
 {

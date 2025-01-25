@@ -1,10 +1,10 @@
 package com.fasterxml.jackson.module.paramnames;
 
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.core.type.*;
 import com.fasterxml.jackson.databind.*;
-
-import org.junit.*;
 
 import java.io.*;
 import java.util.*;

@@ -1,8 +1,8 @@
 package com.fasterxml.jackson.module.paramnames;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.cfg.ConstructorDetector;

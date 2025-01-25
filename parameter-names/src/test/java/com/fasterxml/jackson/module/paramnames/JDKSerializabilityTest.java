@@ -2,7 +2,7 @@ package com.fasterxml.jackson.module.paramnames;
 
 import java.io.*;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.*;
 

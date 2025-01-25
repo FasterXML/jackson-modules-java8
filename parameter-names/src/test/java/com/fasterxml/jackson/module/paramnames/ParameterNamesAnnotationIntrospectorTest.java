@@ -4,12 +4,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.introspect.AnnotatedConstructor;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.fasterxml.jackson.databind.introspect.AnnotatedParameter;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.Mockito;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.MalformedParametersException;
@@ -19,20 +18,20 @@ import java.lang.reflect.Parameter;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Lovro Pandzic
  */
-@RunWith(MockitoJUnitRunner.class)
 public class ParameterNamesAnnotationIntrospectorTest {
 
-    @Mock
     private ParameterExtractor parameterExtractor;
 
     private ParameterNamesAnnotationIntrospector introspector;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
+        parameterExtractor = Mockito.mock(ParameterExtractor.class);
         introspector = new ParameterNamesAnnotationIntrospector(JsonCreator.Mode.DEFAULT, parameterExtractor);
     }
 
@@ -44,7 +43,7 @@ public class ParameterNamesAnnotationIntrospectorTest {
         Parameter[] givenParameters = givenConstructor.getParameters();
         AnnotatedConstructor owner = new AnnotatedConstructor(null, givenConstructor, null, null);
         AnnotatedParameter annotatedParameter = new AnnotatedParameter(owner, null, null, null, 0);
-        given(parameterExtractor.getParameters(any())).willReturn(givenParameters);
+        when(parameterExtractor.getParameters(any())).thenReturn(givenParameters);
 
         // when
         String actual = introspector.findImplicitPropertyName(annotatedParameter);
