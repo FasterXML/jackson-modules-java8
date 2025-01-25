@@ -41,9 +41,21 @@
     </dependency>
 
     <!-- 20-Apr-2024, tatu: JUnit4 no longer from jackson-base, so: -->
+    <!-- TODO, remove this JUnit 4 test dep after JSTEP-10 -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
