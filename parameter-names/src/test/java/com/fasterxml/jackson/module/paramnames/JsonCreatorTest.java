@@ -1,15 +1,14 @@
 package com.fasterxml.jackson.module.paramnames;
 
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import org.junit.*;
-
 import static org.assertj.core.api.BDDAssertions.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class JsonCreatorTest extends ModuleTestBase
 {

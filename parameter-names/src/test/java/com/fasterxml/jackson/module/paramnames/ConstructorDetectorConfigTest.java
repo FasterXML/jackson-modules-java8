@@ -2,10 +2,10 @@ package com.fasterxml.jackson.module.paramnames;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.cfg.ConstructorDetector;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ConstructorDetectorConfigTest
     extends ModuleTestBase
