@@ -1,11 +1,11 @@
 package com.fasterxml.jackson.datatype.jdk8;
 
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.stream.IntStream;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings({ "unqualified-field-access", "javadoc" })
 public class IntStreamSerializerTest extends StreamTestBase {

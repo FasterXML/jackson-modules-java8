@@ -1,11 +1,11 @@
 package com.fasterxml.jackson.datatype.jdk8;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.util.stream.LongStream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 @SuppressWarnings({ "unqualified-field-access", "javadoc" })
 public class LongStreamSerializerTest extends StreamTestBase {
