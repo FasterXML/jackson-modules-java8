@@ -5,9 +5,13 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.TimeZone;
 
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ContextualOptional17Test extends ModuleTestBase
 {
@@ -30,6 +34,7 @@ public class ContextualOptional17Test extends ModuleTestBase
     /**********************************************************
      */
 
+    @Test
     public void testContextualOptionals() throws Exception
     {
         final ObjectMapper mapper = mapperWithModule();

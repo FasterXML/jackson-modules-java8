@@ -8,7 +8,9 @@ import com.fasterxml.jackson.databind.cfg.MapperConfig;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 
-public abstract class ModuleTestBase extends junit.framework.TestCase
+import static org.junit.jupiter.api.Assertions.fail;
+
+public abstract class ModuleTestBase
 {
     public static class NoCheckSubTypeValidator
         extends PolymorphicTypeValidator.Base

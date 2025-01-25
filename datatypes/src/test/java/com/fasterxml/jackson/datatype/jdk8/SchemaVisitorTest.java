@@ -3,10 +3,14 @@ package com.fasterxml.jackson.datatype.jdk8;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonParser.NumberType;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 // trivial tests visitor used (mostly) for JSON Schema generation
 public class SchemaVisitorTest extends ModuleTestBase
@@ -14,6 +18,7 @@ public class SchemaVisitorTest extends ModuleTestBase
     private final ObjectMapper MAPPER = mapperWithModule();
 
     // for [datatype-jdk8#25]
+    @Test
     public void testOptionalInteger() throws Exception
     {
         final AtomicReference<Object> result = new AtomicReference<>();
@@ -33,6 +38,7 @@ public class SchemaVisitorTest extends ModuleTestBase
     }
 
     // for [datatype-jdk8#25]
+    @Test
     public void testOptionalLong() throws Exception
     {
         final AtomicReference<Object> result = new AtomicReference<>();
@@ -52,6 +58,7 @@ public class SchemaVisitorTest extends ModuleTestBase
     }
     
     // for [datatype-jdk8#25]
+    @Test
     public void testOptionalDouble() throws Exception
     {
         final AtomicReference<Object> result = new AtomicReference<>();

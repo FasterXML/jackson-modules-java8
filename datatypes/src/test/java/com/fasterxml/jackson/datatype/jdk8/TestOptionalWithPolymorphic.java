@@ -4,12 +4,16 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestOptionalWithPolymorphic extends ModuleTestBase
 {
@@ -69,6 +73,7 @@ public class TestOptionalWithPolymorphic extends ModuleTestBase
 
     final ObjectMapper MAPPER = mapperWithModule();
 
+    @Test
     public void testOptionalMapsFoo() throws Exception {
 
 		Map<String, Object> foo = new LinkedHashMap<>();
@@ -82,6 +87,7 @@ public class TestOptionalWithPolymorphic extends ModuleTestBase
 		_test(MAPPER, foo);
     }
 
+    @Test
     public void testOptionalMapsBar() throws Exception {
 		
 		Map<String, Object> bar = new LinkedHashMap<>();
@@ -95,6 +101,7 @@ public class TestOptionalWithPolymorphic extends ModuleTestBase
 		_test(MAPPER, bar);
     }
 
+    @Test
     public void testOptionalMapsBaz() throws Exception {
 		Map<String, Object> baz = new LinkedHashMap<>();
 		Map<String, Object> loop = new LinkedHashMap<>();
@@ -107,6 +114,7 @@ public class TestOptionalWithPolymorphic extends ModuleTestBase
 		_test(MAPPER, baz);
     }
 
+    @Test
     public void testOptionalWithTypeAnnotation13() throws Exception
     {
         AbstractOptional result = MAPPER.readValue("{\"value\" : 5}",

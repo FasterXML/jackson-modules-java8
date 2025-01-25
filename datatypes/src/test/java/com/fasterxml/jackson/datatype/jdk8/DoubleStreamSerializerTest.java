@@ -1,14 +1,14 @@
 package com.fasterxml.jackson.datatype.jdk8;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.util.stream.DoubleStream;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings({ "unqualified-field-access", "javadoc" })
 public class DoubleStreamSerializerTest extends StreamTestBase {
@@ -21,7 +21,7 @@ public class DoubleStreamSerializerTest extends StreamTestBase {
 
     final String exceptionMessage = "DoubleStream peek threw";
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new Jdk8Module());
