@@ -13,6 +13,9 @@ import static org.junit.Assert.assertEquals;
 
 // [module-java8#333]: ZonedDateTime serialization with @JsonFormat pattern never uses
 //  while WRITE_DATES_WITH_ZONE_ID enabled #333
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class ZonedDateTimeSerWithJsonFormat333Test
     extends ModuleTestBase
 {

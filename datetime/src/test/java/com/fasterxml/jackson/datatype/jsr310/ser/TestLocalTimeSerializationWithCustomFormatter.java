@@ -18,6 +18,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @RunWith(Parameterized.class)
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class TestLocalTimeSerializationWithCustomFormatter {
     private final DateTimeFormatter formatter;
 

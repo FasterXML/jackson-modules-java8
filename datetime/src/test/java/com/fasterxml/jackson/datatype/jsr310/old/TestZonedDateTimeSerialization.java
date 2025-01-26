@@ -38,6 +38,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class TestZonedDateTimeSerialization extends ModuleTestBase {
     private static final ZoneId Z1 = ZoneId.of("America/Chicago");
 

@@ -9,6 +9,9 @@ import org.junit.Test;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class UnsupportedTypesTest extends ModuleTestBase
 {
     // [modules-java8#207]

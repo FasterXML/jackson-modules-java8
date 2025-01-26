@@ -31,6 +31,9 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 import org.junit.Test;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class InstantSerTest extends ModuleTestBase
 {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_INSTANT;

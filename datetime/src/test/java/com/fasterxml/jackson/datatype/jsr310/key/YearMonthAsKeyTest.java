@@ -11,6 +11,9 @@ import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 import org.junit.Assert;
 import org.junit.Test;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class YearMonthAsKeyTest extends ModuleTestBase
 {
     private final ObjectMapper MAPPER = newMapper();

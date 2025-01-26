@@ -9,6 +9,9 @@ import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class DateTimeExceptionTest extends ModuleTestBase
 {
     private final ObjectMapper MAPPER = newMapper();

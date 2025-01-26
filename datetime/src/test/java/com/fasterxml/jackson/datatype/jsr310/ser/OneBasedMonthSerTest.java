@@ -13,6 +13,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class OneBasedMonthSerTest extends ModuleTestBase
 {
     static class Wrapper {

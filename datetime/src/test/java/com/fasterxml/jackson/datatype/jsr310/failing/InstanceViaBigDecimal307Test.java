@@ -12,6 +12,9 @@ import static org.junit.Assert.assertEquals;
 
 // [modules-java8#307]: Loss of precision via JsonNode for BigDecimal-valued
 // things (like Instant)
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class InstanceViaBigDecimal307Test extends ModuleTestBase
 {
     static class Wrapper307 {

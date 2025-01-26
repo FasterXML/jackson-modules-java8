@@ -2,7 +2,7 @@ package com.fasterxml.jackson.datatype.jsr310.deser.key;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
@@ -10,8 +10,7 @@ import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 import java.time.ZonedDateTime;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assume.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 // for [modules-java8#306]
 public class ZonedDateTimeKeyDeserializerTest
@@ -41,7 +40,7 @@ public class ZonedDateTimeKeyDeserializerTest
     
     @Test
     public void ZonedDateTime_with_place_name_can_be_deserialized() throws Exception {
-        assumeFalse(System.getProperty("java.version").startsWith("1.8"));
+        assertFalse(System.getProperty("java.version").startsWith("1.8"));
 
         Map<ZonedDateTime, String> map = MAPPER.readValue(getMap("2015-07-24T12:23:34.184Z[Europe/London]"),
                 MAP_TYPE_REF);
@@ -52,7 +51,7 @@ public class ZonedDateTimeKeyDeserializerTest
     @Test
     public void ZonedDateTime_with_place_name_can_be_deserialized_Java_8() throws Exception {
         // Java 8 parses this format incorrectly due to https://bugs.openjdk.org/browse/JDK-8066982
-        assumeTrue(System.getProperty("java.version").startsWith("1.8"));
+        assertTrue(System.getProperty("java.version").startsWith("1.8"));
 
         Map<ZonedDateTime, String> map = MAPPER.readValue(getMap("2015-07-24T12:23:34.184Z[Europe/London]"),
                 MAP_TYPE_REF);

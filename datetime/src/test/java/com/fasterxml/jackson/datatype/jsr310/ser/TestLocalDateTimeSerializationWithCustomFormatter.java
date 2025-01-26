@@ -18,6 +18,9 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class TestLocalDateTimeSerializationWithCustomFormatter {
     private final DateTimeFormatter formatter;
 

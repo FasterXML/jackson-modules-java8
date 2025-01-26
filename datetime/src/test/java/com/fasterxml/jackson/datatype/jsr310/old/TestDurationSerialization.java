@@ -12,6 +12,9 @@ import java.time.temporal.TemporalAmount;
 
 import static org.junit.Assert.*;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class TestDurationSerialization extends ModuleTestBase
 {
     private ObjectWriter WRITER;

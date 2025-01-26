@@ -13,6 +13,9 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class YearAsKeyTest extends ModuleTestBase
 {
     private static final TypeReference<Map<Year, String>> TYPE_REF = new TypeReference<Map<Year, String>>() {

@@ -2,6 +2,9 @@ package com.fasterxml.jackson.datatype.jsr310.old;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class ModuleTestBase
 {
     // 14-Mar-2016, tatu: Serialization of trailing zeroes may change [datatype-jsr310#67]

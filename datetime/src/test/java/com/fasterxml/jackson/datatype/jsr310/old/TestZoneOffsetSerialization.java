@@ -28,6 +28,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class TestZoneOffsetSerialization extends ModuleTestBase
 {
     private ObjectMapper mapper;

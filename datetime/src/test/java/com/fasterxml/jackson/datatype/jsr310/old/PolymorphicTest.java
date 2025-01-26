@@ -9,6 +9,9 @@ import static org.junit.Assert.assertEquals;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase.NoCheckSubTypeValidator;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class PolymorphicTest extends ModuleTestBase
 {
     private final ObjectMapper TYPING_MAPPER = newMapper();

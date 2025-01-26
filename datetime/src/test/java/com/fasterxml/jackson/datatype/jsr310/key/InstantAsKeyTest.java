@@ -13,6 +13,9 @@ import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 import org.junit.Assert;
 import org.junit.Test;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class InstantAsKeyTest extends ModuleTestBase
 {
     private static final Instant INSTANT_0 = Instant.ofEpochMilli(0);

@@ -11,6 +11,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class TestDurationKeySerialization extends ModuleTestBase {
 
     private static final TypeReference<Map<Duration, String>> TYPE_REF = new TypeReference<Map<Duration, String>>() {

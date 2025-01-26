@@ -15,6 +15,9 @@ import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
 import static org.junit.Assert.*;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class DurationSerTest extends ModuleTestBase
 {
     private final ObjectWriter WRITER = newMapper().writer();

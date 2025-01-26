@@ -11,6 +11,9 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
 // for [modules-java8#296]: problem with `JsonTypeInfo.Id.DEDUCTION`
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class DeductionTypeSerialization296Test extends ModuleTestBase
 {
     static class Wrapper {

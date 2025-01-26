@@ -20,6 +20,9 @@ import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
 import static org.junit.Assert.*;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class OneBasedMonthDeserTest extends ModuleTestBase
 {
     static class Wrapper {

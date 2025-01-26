@@ -18,6 +18,9 @@ import java.time.ZonedDateTime;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class WriteNanosecondsTest extends ModuleTestBase {
     public static final ZoneId UTC = ZoneId.of("UTC");
     private static ObjectMapper MAPPER = newMapper();

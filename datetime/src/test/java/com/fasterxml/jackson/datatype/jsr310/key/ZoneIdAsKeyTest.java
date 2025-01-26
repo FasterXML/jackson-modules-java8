@@ -11,6 +11,9 @@ import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 import org.junit.Assert;
 import org.junit.Test;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class ZoneIdAsKeyTest extends ModuleTestBase
 {
     private static final ZoneId ZONE_0 = ZoneId.of("UTC");

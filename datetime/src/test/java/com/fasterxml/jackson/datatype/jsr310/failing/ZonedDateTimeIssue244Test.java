@@ -14,6 +14,9 @@ import static org.junit.Assert.assertEquals;
 /**
  * Test case for https://github.com/FasterXML/jackson-modules-java8/issues/244
  */
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class ZonedDateTimeIssue244Test extends ModuleTestBase
 {
     private final ObjectMapper MAPPER = mapperBuilder()

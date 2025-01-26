@@ -14,6 +14,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class TestDurationDeserialization extends ModuleTestBase
 {
     private final ObjectReader READER = newMapper().readerFor(Duration.class);

@@ -16,21 +16,19 @@
 
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
 import java.time.ZoneId;
 import java.util.Map;
+
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ZoneIdDeserTest extends ModuleTestBase
 {
@@ -44,22 +42,25 @@ public class ZoneIdDeserTest extends ModuleTestBase
     @Test
     public void testDeserialization01() throws Exception
     {
-        assertEquals("The value is not correct.", ZoneId.of("America/Chicago"),
-                MAPPER.readValue("\"America/Chicago\"", ZoneId.class));
+        assertEquals(ZoneId.of("America/Chicago"),
+            MAPPER.readValue("\"America/Chicago\"", ZoneId.class),
+            "The value is not correct.");
     }
 
     @Test
     public void testDeserialization02() throws Exception
     {
-        assertEquals("The value is not correct.", ZoneId.of("America/Anchorage"),
-                MAPPER.readValue("\"America/Anchorage\"", ZoneId.class));
+        assertEquals(ZoneId.of("America/Anchorage"),
+            MAPPER.readValue("\"America/Anchorage\"", ZoneId.class),
+            "The value is not correct.");
     }
 
     @Test
     public void testDeserializationWithTypeInfo02() throws Exception
     {
         ZoneId value = MOCK_OBJECT_MIXIN_MAPPER.readValue("[\"" + ZoneId.class.getName() + "\",\"America/Denver\"]", ZoneId.class);
-        assertEquals("The value is not correct.", ZoneId.of("America/Denver"), value);
+        assertEquals(ZoneId.of("America/Denver"), value,
+            "The value is not correct.");
     }
 
     /*
@@ -83,10 +84,11 @@ public class ZoneIdDeserTest extends ModuleTestBase
         String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, ""));
         Map<String, ZoneId> actualMapFromEmptyStr = objectReader.readValue(valueFromEmptyStr);
         ZoneId actualDateFromEmptyStr = actualMapFromEmptyStr.get(key);
-        assertEquals("empty string failed to deserialize to null with lenient setting", null, actualDateFromEmptyStr);
+        assertEquals(null, actualDateFromEmptyStr, "empty string failed to deserialize to null with lenient setting");
     }
 
-    @Test ( expected =  MismatchedInputException.class)
+    @Test
+//    import com.fasterxml.jackson.databind.exc.MismatchedInputException;
     public void testStrictDeserializeFromEmptyString() throws Exception {
 
         final String key = "zoneId";

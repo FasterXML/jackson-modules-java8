@@ -30,6 +30,9 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class TestLocalDateSerialization extends ModuleTestBase
 {
     private ObjectMapper mapper;

@@ -33,6 +33,9 @@ import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class TestInstantSerialization extends ModuleTestBase
 {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_INSTANT;

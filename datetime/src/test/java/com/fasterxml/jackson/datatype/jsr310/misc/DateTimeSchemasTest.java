@@ -13,6 +13,9 @@ import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.*;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class DateTimeSchemasTest extends ModuleTestBase
 {
     static class VisitorWrapper implements JsonFormatVisitorWrapper {

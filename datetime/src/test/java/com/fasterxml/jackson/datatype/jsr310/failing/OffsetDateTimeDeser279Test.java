@@ -12,6 +12,9 @@ import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class OffsetDateTimeDeser279Test extends ModuleTestBase
 {
     // For [modules-java8#279]

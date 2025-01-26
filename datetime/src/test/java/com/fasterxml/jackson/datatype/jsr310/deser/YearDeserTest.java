@@ -42,6 +42,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class YearDeserTest extends ModuleTestBase
 {
     private final TypeReference<Map<String, Year>> MAP_TYPE_REF = new TypeReference<Map<String, Year>>() { };
