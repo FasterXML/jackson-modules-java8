@@ -16,10 +16,6 @@
 
 package com.fasterxml.jackson.datatype.jsr310.old;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -29,14 +25,15 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.util.TimeZone;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestZonedDateTimeSerialization extends ModuleTestBase {
     private static final ZoneId Z1 = ZoneId.of("America/Chicago");
@@ -51,16 +48,10 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
 
     private ObjectMapper mapper;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         this.mapper = newMapper();
-    }
-
-    @After
-    public void tearDown()
-    {
-
     }
 
     @Test
@@ -72,8 +63,8 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
         String value = this.mapper.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "0.0", value);
+        assertNotNull(value);
+        assertEquals("0.0", value);
     }
 
     @Test
@@ -85,8 +76,8 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
         String value = this.mapper.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "0", value);
+        assertNotNull(value);
+        assertEquals("0", value);
     }
 
     @Test
@@ -98,8 +89,8 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
         String value = this.mapper.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "123456789.183917322", value);
+        assertNotNull(value);
+        assertEquals("123456789.183917322", value);
     }
 
     @Test
@@ -111,8 +102,8 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
         String value = this.mapper.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "123456789183", value);
+        assertNotNull(value);
+        assertEquals("123456789183", value);
     }
 
     @Test
@@ -124,8 +115,8 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
         String value = this.mapper.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", DecimalUtils.toDecimal(date.toEpochSecond(), date.getNano()), value);
+        assertNotNull(value);
+        assertEquals(DecimalUtils.toDecimal(date.toEpochSecond(), date.getNano()), value);
     }
 
     @Test
@@ -137,8 +128,8 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
         String value = this.mapper.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", Long.toString(date.toInstant().toEpochMilli()), value);
+        assertNotNull(value);
+        assertEquals(Long.toString(date.toInstant().toEpochMilli()), value);
     }
 
     @Test
@@ -149,8 +140,8 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         String value = this.mapper.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", '"' + date.toString() + '"', value);
+        assertNotNull(value);
+        assertEquals('"' + date.toString() + '"', value);
     }
 
     @Test
@@ -161,8 +152,8 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         String value = this.mapper.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", '"' + date.toString() + '"', value);
+        assertNotNull(value);
+        assertEquals('"' + date.toString() + '"', value);
     }
 
     @Test
@@ -173,8 +164,8 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         String value = this.mapper.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", '"' + date.toString() + '"', value);
+        assertNotNull(value);
+        assertEquals('"' + date.toString() + '"', value);
     }
 
     @Test
@@ -186,7 +177,7 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
 
         String value = mapper.writeValueAsString(date);
 
-        assertEquals("The value is incorrect", "\"" + date.toString() + "\"", value);
+        assertEquals("\"" + date.toString() + "\"", value);
     }
 
     @Test
@@ -199,9 +190,8 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = this.mapper.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.",
-                "[\"" + ZonedDateTime.class.getName() + "\",123456789.183917322]", value);
+        assertNotNull(value);
+        assertEquals("[\"" + ZonedDateTime.class.getName() + "\",123456789.183917322]", value);
     }
 
     @Test
@@ -214,9 +204,8 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = this.mapper.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.",
-                "[\"" + ZonedDateTime.class.getName() + "\",123456789183]", value);
+        assertNotNull(value);
+        assertEquals("[\"" + ZonedDateTime.class.getName() + "\",123456789183]", value);
     }
 
     @Test
@@ -228,9 +217,8 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = this.mapper.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.",
-                "[\"" + ZonedDateTime.class.getName() + "\",\"" + date.toString() + "\"]", value);
+        assertNotNull(value);
+        assertEquals("[\"" + ZonedDateTime.class.getName() + "\",\"" + date.toString() + "\"]", value);
     }
 
     @Test
@@ -240,9 +228,9 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
 
         ZonedDateTime value = this.mapper.readValue("0.000000000", ZonedDateTime.class);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", DEFAULT_TZ, value.getZone());
+        assertEquals(DEFAULT_TZ, value.getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -253,9 +241,9 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.setTimeZone(TimeZone.getDefault());
         ZonedDateTime value = this.mapper.readValue("0.000000000", ZonedDateTime.class);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
+        assertEquals(ZoneId.systemDefault().normalized(), value.getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -265,9 +253,9 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
 
         ZonedDateTime value = this.mapper.readValue("123456789.183917322", ZonedDateTime.class);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", DEFAULT_TZ, value.getZone());
+        assertEquals(DEFAULT_TZ, value.getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -278,9 +266,9 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.setTimeZone(TimeZone.getDefault());
         ZonedDateTime value = this.mapper.readValue("123456789.183917322", ZonedDateTime.class);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
+        assertEquals(ZoneId.systemDefault().normalized(), value.getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -290,11 +278,11 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
 
         ZonedDateTime value = this.mapper.readValue(
                 DecimalUtils.toDecimal(date.toEpochSecond(), date.getNano()), ZonedDateTime.class
-                );
+        );
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", DEFAULT_TZ, value.getZone());
+        assertEquals(DEFAULT_TZ, value.getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -305,11 +293,11 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.setTimeZone(TimeZone.getDefault());
         ZonedDateTime value = this.mapper.readValue(
                 DecimalUtils.toDecimal(date.toEpochSecond(), date.getNano()), ZonedDateTime.class
-                );
+        );
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
+        assertEquals(ZoneId.systemDefault().normalized(), value.getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -320,9 +308,9 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
         ZonedDateTime value = this.mapper.readValue("0", ZonedDateTime.class);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", DEFAULT_TZ, value.getZone());
+        assertEquals(DEFAULT_TZ, value.getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -334,9 +322,9 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.setTimeZone(TimeZone.getDefault());
         ZonedDateTime value = this.mapper.readValue("0", ZonedDateTime.class);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
+        assertEquals(ZoneId.systemDefault().normalized(), value.getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -347,9 +335,9 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
         ZonedDateTime value = this.mapper.readValue("0", ZonedDateTime.class);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", DEFAULT_TZ, value.getZone());
+        assertEquals(DEFAULT_TZ, value.getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -361,9 +349,9 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.setTimeZone(TimeZone.getDefault());
         ZonedDateTime value = this.mapper.readValue("0", ZonedDateTime.class);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
+        assertEquals(ZoneId.systemDefault().normalized(), value.getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -374,9 +362,9 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
         ZonedDateTime value = this.mapper.readValue("123456789", ZonedDateTime.class);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", DEFAULT_TZ, value.getZone());
+        assertEquals(DEFAULT_TZ, value.getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -388,9 +376,9 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.setTimeZone(TimeZone.getDefault());
         ZonedDateTime value = this.mapper.readValue("123456789", ZonedDateTime.class);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
+        assertEquals(ZoneId.systemDefault().normalized(), value.getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -401,9 +389,9 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
         ZonedDateTime value = this.mapper.readValue("123456789422", ZonedDateTime.class);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", DEFAULT_TZ, value.getZone());
+        assertEquals(DEFAULT_TZ, value.getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -415,9 +403,9 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.setTimeZone(TimeZone.getDefault());
         ZonedDateTime value = this.mapper.readValue("123456789422", ZonedDateTime.class);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
+        assertEquals(ZoneId.systemDefault().normalized(), value.getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -429,9 +417,9 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
         ZonedDateTime value = this.mapper.readValue(Long.toString(date.toEpochSecond()), ZonedDateTime.class);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", DEFAULT_TZ, value.getZone());
+        assertEquals(DEFAULT_TZ, value.getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -444,9 +432,9 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.setTimeZone(TimeZone.getDefault());
         ZonedDateTime value = this.mapper.readValue(Long.toString(date.toEpochSecond()), ZonedDateTime.class);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
+        assertEquals(ZoneId.systemDefault().normalized(), value.getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -459,9 +447,9 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         ZonedDateTime value =
                 this.mapper.readValue(Long.toString(date.toInstant().toEpochMilli()), ZonedDateTime.class);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", DEFAULT_TZ, value.getZone());
+        assertEquals(DEFAULT_TZ, value.getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -475,9 +463,9 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         ZonedDateTime value =
                 this.mapper.readValue(Long.toString(date.toInstant().toEpochMilli()), ZonedDateTime.class);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
+        assertEquals(ZoneId.systemDefault().normalized(), value.getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -488,9 +476,9 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, true);
         ZonedDateTime value = this.mapper.readValue('"' + date.toString() + '"', ZonedDateTime.class);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", DEFAULT_TZ, value.getZone());
+        assertEquals(DEFAULT_TZ, value.getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -502,9 +490,9 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.setTimeZone(TimeZone.getDefault());
         ZonedDateTime value = this.mapper.readValue('"' + date.toString() + '"', ZonedDateTime.class);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
+        assertEquals(ZoneId.systemDefault().normalized(), value.getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -516,9 +504,9 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.setTimeZone(TimeZone.getDefault());
         ZonedDateTime value = this.mapper.readValue('"' + date.toString() + '"', ZonedDateTime.class);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", Z1, value.getZone());
+        assertEquals(Z1, value.getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -529,9 +517,9 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, true);
         ZonedDateTime value = this.mapper.readValue('"' + date.toString() + '"', ZonedDateTime.class);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", DEFAULT_TZ, value.getZone());
+        assertEquals(DEFAULT_TZ, value.getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -543,9 +531,9 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.setTimeZone(TimeZone.getDefault());
         ZonedDateTime value = this.mapper.readValue('"' + date.toString() + '"', ZonedDateTime.class);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
+        assertEquals(ZoneId.systemDefault().normalized(), value.getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -557,9 +545,9 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.setTimeZone(TimeZone.getDefault());
         ZonedDateTime value = this.mapper.readValue('"' + date.toString() + '"', ZonedDateTime.class);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", Z2, value.getZone());
+        assertEquals(Z2, value.getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -570,9 +558,9 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, true);
         ZonedDateTime value = this.mapper.readValue('"' + date.toString() + '"', ZonedDateTime.class);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", DEFAULT_TZ, value.getZone());
+        assertEquals(DEFAULT_TZ, value.getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -584,9 +572,9 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.setTimeZone(TimeZone.getDefault());
         ZonedDateTime value = this.mapper.readValue('"' + date.toString() + '"', ZonedDateTime.class);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
+        assertEquals(ZoneId.systemDefault().normalized(), value.getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -598,9 +586,9 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.setTimeZone(TimeZone.getDefault());
         ZonedDateTime value = this.mapper.readValue('"' + date.toString() + '"', ZonedDateTime.class);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertIsEqual(date, value);
-        assertEquals("The time zone is not correct.", Z3, value.getZone());
+        assertEquals(Z3, value.getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -611,12 +599,12 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         Temporal value = this.mapper.readValue(
                 "[\"" + ZonedDateTime.class.getName() + "\",123456789.183917322]", Temporal.class
-                );
+        );
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be an ZonedDateTime.", value instanceof ZonedDateTime);
+        assertNotNull(value);
+        assertInstanceOf(ZonedDateTime.class, value, "The value should be an ZonedDateTime.");
         assertIsEqual(date, (ZonedDateTime) value);
-        assertEquals("The time zone is not correct.", DEFAULT_TZ, ((ZonedDateTime) value).getZone());
+        assertEquals(DEFAULT_TZ, ((ZonedDateTime) value).getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -628,12 +616,12 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         Temporal value = this.mapper.readValue(
                 "[\"" + ZonedDateTime.class.getName() + "\",123456789.183917322]", Temporal.class
-                );
+        );
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be an ZonedDateTime.", value instanceof ZonedDateTime);
+        assertNotNull(value);
+        assertInstanceOf(ZonedDateTime.class, value, "The value should be an ZonedDateTime.");
         assertIsEqual(date, (ZonedDateTime) value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), ((ZonedDateTime) value).getZone());
+        assertEquals(ZoneId.systemDefault().normalized(), ((ZonedDateTime) value).getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -645,12 +633,12 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         Temporal value = this.mapper.readValue(
                 "[\"" + ZonedDateTime.class.getName() + "\",123456789]", Temporal.class
-                );
+        );
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be an ZonedDateTime.", value instanceof ZonedDateTime);
+        assertNotNull(value);
+        assertInstanceOf(ZonedDateTime.class, value, "The value should be an ZonedDateTime.");
         assertIsEqual(date, (ZonedDateTime) value);
-        assertEquals("The time zone is not correct.", DEFAULT_TZ, ((ZonedDateTime) value).getZone());
+        assertEquals(DEFAULT_TZ, ((ZonedDateTime) value).getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -663,12 +651,12 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         Temporal value = this.mapper.readValue(
                 "[\"" + ZonedDateTime.class.getName() + "\",123456789]", Temporal.class
-                );
+        );
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be an ZonedDateTime.", value instanceof ZonedDateTime);
+        assertNotNull(value);
+        assertInstanceOf(ZonedDateTime.class, value, "The value should be an ZonedDateTime.");
         assertIsEqual(date, (ZonedDateTime) value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), ((ZonedDateTime) value).getZone());
+        assertEquals(ZoneId.systemDefault().normalized(), ((ZonedDateTime) value).getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -680,12 +668,12 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         Temporal value = this.mapper.readValue(
                 "[\"" + ZonedDateTime.class.getName() + "\",123456789422]", Temporal.class
-                );
+        );
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be an ZonedDateTime.", value instanceof ZonedDateTime);
+        assertNotNull(value);
+        assertInstanceOf(ZonedDateTime.class, value, "The value should be an ZonedDateTime.");
         assertIsEqual(date, (ZonedDateTime) value);
-        assertEquals("The time zone is not correct.", DEFAULT_TZ, ((ZonedDateTime) value).getZone());
+        assertEquals(DEFAULT_TZ, ((ZonedDateTime) value).getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -698,12 +686,12 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         Temporal value = this.mapper.readValue(
                 "[\"" + ZonedDateTime.class.getName() + "\",123456789422]", Temporal.class
-                );
+        );
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be an ZonedDateTime.", value instanceof ZonedDateTime);
+        assertNotNull(value);
+        assertInstanceOf(ZonedDateTime.class, value, "The value should be an ZonedDateTime.");
         assertIsEqual(date, (ZonedDateTime) value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), ((ZonedDateTime) value).getZone());
+        assertEquals(ZoneId.systemDefault().normalized(), ((ZonedDateTime) value).getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -715,12 +703,12 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         Temporal value = this.mapper.readValue(
                 "[\"" + ZonedDateTime.class.getName() + "\",\"" + date.toString() + "\"]", Temporal.class
-                );
+        );
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be an ZonedDateTime.", value instanceof ZonedDateTime);
+        assertNotNull(value);
+        assertInstanceOf(ZonedDateTime.class, value, "The value should be an ZonedDateTime.");
         assertIsEqual(date, (ZonedDateTime) value);
-        assertEquals("The time zone is not correct.", DEFAULT_TZ, ((ZonedDateTime) value).getZone());
+        assertEquals(DEFAULT_TZ, ((ZonedDateTime) value).getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -733,12 +721,12 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         this.mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         Temporal value = this.mapper.readValue(
                 "[\"" + ZonedDateTime.class.getName() + "\",\"" + date.toString() + "\"]", Temporal.class
-                );
+        );
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be an ZonedDateTime.", value instanceof ZonedDateTime);
+        assertNotNull(value);
+        assertInstanceOf(ZonedDateTime.class, value, "The value should be an ZonedDateTime.");
         assertIsEqual(date, (ZonedDateTime) value);
-        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), ((ZonedDateTime) value).getZone());
+        assertEquals(ZoneId.systemDefault().normalized(), ((ZonedDateTime) value).getZone(), "The time zone is not correct.");
     }
 
     @Test
@@ -753,15 +741,16 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
                 "[\"" + ZonedDateTime.class.getName() + "\",\"" + date.toString() + "\"]", Temporal.class
         );
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be an ZonedDateTime.", value instanceof ZonedDateTime);
+        assertNotNull(value);
+        assertInstanceOf(ZonedDateTime.class, value, "The value should be an ZonedDateTime.");
         assertIsEqual(date, (ZonedDateTime) value);
-        assertEquals("The time zone is not correct.", Z3, ((ZonedDateTime) value).getZone());
+        assertEquals(Z3, ((ZonedDateTime) value).getZone(), "The time zone is not correct.");
     }
 
     private static void assertIsEqual(ZonedDateTime expected, ZonedDateTime actual)
     {
-        assertTrue("The value is not correct. Expected timezone-adjusted <" + expected + ">, actual <" + actual + ">.",
-                expected.isEqual(actual));
+        assertTrue(expected.isEqual(actual),
+                "The value is not correct. Expected timezone-adjusted <" + expected + ">, actual <" + actual + ">.");
     }
 }
+
