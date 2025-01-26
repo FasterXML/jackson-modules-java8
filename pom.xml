@@ -52,10 +52,15 @@
       <artifactId>jackson-databind</artifactId>
     </dependency>
 
-    <!-- 20-Apr-2024, tatu: JUnit4 no longer from jackson-base, so: -->
+    <!-- Test dependencies -->
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
