@@ -167,8 +167,7 @@ public class InstantSerTest extends ModuleTestBase
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         m.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = m.writeValueAsString(date);
-        assertEquals("The value is not correct.",
-                "[\"" + Instant.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", value);
+        assertEquals("[\"" + Instant.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", value);
     }
 
     static class Pojo1 {

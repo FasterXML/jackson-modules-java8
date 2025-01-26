@@ -162,8 +162,7 @@ public class TestOffsetTimeSerialization extends ModuleTestBase
         String value = this.mapper.writeValueAsString(time);
 
         assertNotNull(value);
-        assertEquals("The value is not correct.",
-                "[\"" + OffsetTime.class.getName() + "\",[22,31,5,829837,\"+11:00\"]]", value);
+        assertEquals("[\"" + OffsetTime.class.getName() + "\",[22,31,5,829837,\"+11:00\"]]", value);
     }
 
     @Test
@@ -177,8 +176,7 @@ public class TestOffsetTimeSerialization extends ModuleTestBase
         String value = this.mapper.writeValueAsString(time);
 
         assertNotNull(value);
-        assertEquals("The value is not correct.",
-                "[\"" + OffsetTime.class.getName() + "\",[22,31,5,422,\"+11:00\"]]", value);
+        assertEquals("[\"" + OffsetTime.class.getName() + "\",[22,31,5,422,\"+11:00\"]]", value);
     }
 
     @Test
@@ -191,8 +189,7 @@ public class TestOffsetTimeSerialization extends ModuleTestBase
         String value = this.mapper.writeValueAsString(time);
 
         assertNotNull(value);
-        assertEquals("The value is not correct.",
-                "[\"" + OffsetTime.class.getName() + "\",\"" + time.toString() + "\"]", value);
+        assertEquals("[\"" + OffsetTime.class.getName() + "\",\"" + time.toString() + "\"]", value);
     }
 
     @Test

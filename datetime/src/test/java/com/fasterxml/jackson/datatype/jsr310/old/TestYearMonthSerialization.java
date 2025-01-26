@@ -99,8 +99,7 @@ public class TestYearMonthSerialization extends ModuleTestBase
         String value = this.mapper.writeValueAsString(yearMonth);
 
         assertNotNull(value);
-        assertEquals("The value is not correct.",
-                "[\"" + YearMonth.class.getName() + "\",\"" + yearMonth.toString() + "\"]", value);
+        assertEquals("[\"" + YearMonth.class.getName() + "\",\"" + yearMonth.toString() + "\"]", value);
     }
 
     @Test

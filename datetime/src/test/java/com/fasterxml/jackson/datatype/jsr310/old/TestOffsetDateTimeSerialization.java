@@ -204,8 +204,7 @@ public class TestOffsetDateTimeSerialization extends ModuleTestBase
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true)
                 .configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, true)
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.",
-                "[\"" + OffsetDateTime.class.getName() + "\",123456789.183917322]", value);
+        assertEquals("[\"" + OffsetDateTime.class.getName() + "\",123456789.183917322]", value);
     }
 
     @Test
@@ -217,8 +216,7 @@ public class TestOffsetDateTimeSerialization extends ModuleTestBase
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true)
                 .configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false)
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.",
-                "[\"" + OffsetDateTime.class.getName() + "\",123456789183]", value);
+        assertEquals("[\"" + OffsetDateTime.class.getName() + "\",123456789183]", value);
     }
 
     @Test
@@ -229,8 +227,7 @@ public class TestOffsetDateTimeSerialization extends ModuleTestBase
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
                 .addMixIn(Temporal.class, MockObjectConfiguration.class)
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.",
-                "[\"" + OffsetDateTime.class.getName() + "\",\"" +
+        assertEquals("[\"" + OffsetDateTime.class.getName() + "\",\"" +
                         FORMATTER_UTC.withZone(Z3).format(date) + "\"]", value);
     }
 
@@ -244,8 +241,7 @@ public class TestOffsetDateTimeSerialization extends ModuleTestBase
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
                 .addMixIn(Temporal.class, MockObjectConfiguration.class)
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.",
-            "[\"" + OffsetDateTime.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", value);
+        assertEquals("[\"" + OffsetDateTime.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", value);
     }
 
     @Test

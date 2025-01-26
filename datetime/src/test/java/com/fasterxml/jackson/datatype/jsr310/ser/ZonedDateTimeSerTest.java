@@ -977,7 +977,7 @@ public class ZonedDateTimeSerTest
 
     private static void assertIsEqual(ZonedDateTime expected, ZonedDateTime actual)
     {
-        assertTrue(expected.isEqual(actual),
+        assertEquals(expected, actual,
                 "The value is not correct. Expected timezone-adjusted <" + expected + ">, actual <" + actual + ">.");
     }
 }

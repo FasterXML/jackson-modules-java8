@@ -51,8 +51,7 @@ public class PeriodSerTest extends ModuleTestBase
                 .addMixIn(TemporalAmount.class, MockObjectConfiguration.class)
                 .build();
         String value = mapper.writeValueAsString(period);
-        assertEquals(
-                "[" + q(Period.class.getName()) + ",\"P5Y1M12D\"]", value);
+        assertEquals("[" + q(Period.class.getName()) + ",\"P5Y1M12D\"]", value);
     }
 }
 

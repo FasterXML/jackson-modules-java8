@@ -122,8 +122,7 @@ public class LocalDateSerTest
         String value = mapper.writeValueAsString(date);
 
         assertNotNull(value);
-        assertEquals("The value is not correct.",
-                "[\"" + LocalDate.class.getName() + "\",\"" + date.toString() + "\"]", value);
+        assertEquals("[\"" + LocalDate.class.getName() + "\",\"" + date.toString() + "\"]", value);
     }
 
     // [modules-java8#46]

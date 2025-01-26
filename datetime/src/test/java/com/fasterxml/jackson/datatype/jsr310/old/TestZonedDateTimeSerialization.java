@@ -191,8 +191,7 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         String value = this.mapper.writeValueAsString(date);
 
         assertNotNull(value);
-        assertEquals("The value is not correct.",
-                "[\"" + ZonedDateTime.class.getName() + "\",123456789.183917322]", value);
+        assertEquals("[\"" + ZonedDateTime.class.getName() + "\",123456789.183917322]", value);
     }
 
     @Test
@@ -206,8 +205,7 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         String value = this.mapper.writeValueAsString(date);
 
         assertNotNull(value);
-        assertEquals("The value is not correct.",
-                "[\"" + ZonedDateTime.class.getName() + "\",123456789183]", value);
+        assertEquals("[\"" + ZonedDateTime.class.getName() + "\",123456789183]", value);
     }
 
     @Test
@@ -220,8 +218,7 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
         String value = this.mapper.writeValueAsString(date);
 
         assertNotNull(value);
-        assertEquals("The value is not correct.",
-                "[\"" + ZonedDateTime.class.getName() + "\",\"" + date.toString() + "\"]", value);
+        assertEquals("[\"" + ZonedDateTime.class.getName() + "\",\"" + date.toString() + "\"]", value);
     }
 
     @Test

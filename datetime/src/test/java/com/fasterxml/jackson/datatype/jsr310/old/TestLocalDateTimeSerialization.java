@@ -162,8 +162,7 @@ public class TestLocalDateTimeSerialization
         String value = m.writeValueAsString(time);
 
         assertNotNull(value);
-        assertEquals("The value is not correct.",
-                "[\"" + LocalDateTime.class.getName() + "\",[2005,11,5,22,31,5,829837]]", value);
+        assertEquals("[\"" + LocalDateTime.class.getName() + "\",[2005,11,5,22,31,5,829837]]", value);
     }
 
     @Test
@@ -178,8 +177,7 @@ public class TestLocalDateTimeSerialization
         String value = m.writeValueAsString(time);
 
         assertNotNull(value);
-        assertEquals("The value is not correct.",
-                "[\"" + LocalDateTime.class.getName() + "\",[2005,11,5,22,31,5,422]]", value);
+        assertEquals("[\"" + LocalDateTime.class.getName() + "\",[2005,11,5,22,31,5,422]]", value);
     }
 
     @Test
@@ -192,8 +190,7 @@ public class TestLocalDateTimeSerialization
         String value = m.writeValueAsString(time);
 
         assertNotNull(value);
-        assertEquals("The value is not correct.",
-                "[\"" + LocalDateTime.class.getName() + "\",\"" + time.toString() + "\"]", value);
+        assertEquals("[\"" + LocalDateTime.class.getName() + "\",\"" + time.toString() + "\"]", value);
     }
 
     @Test

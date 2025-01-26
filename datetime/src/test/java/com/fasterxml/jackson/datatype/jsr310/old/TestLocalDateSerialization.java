@@ -96,8 +96,7 @@ public class TestLocalDateSerialization extends ModuleTestBase
         String value = this.mapper.writeValueAsString(date);
 
         assertNotNull(value);
-        assertEquals("The value is not correct.",
-                "[\"" + LocalDate.class.getName() + "\",\"" + date.toString() + "\"]", value);
+        assertEquals("[\"" + LocalDate.class.getName() + "\",\"" + date.toString() + "\"]", value);
     }
 
     @Test

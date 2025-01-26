@@ -171,8 +171,7 @@ public class LocalDateTimeSerTest
         m.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = m.writeValueAsString(time);
 
-        assertEquals("The value is not correct.",
-                "[\"" + LocalDateTime.class.getName() + "\",[2005,11,5,22,31,5,829837]]", value);
+        assertEquals("[\"" + LocalDateTime.class.getName() + "\",[2005,11,5,22,31,5,829837]]", value);
     }
 
     @Test
@@ -186,8 +185,7 @@ public class LocalDateTimeSerTest
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 422829837);
         String value = m.writeValueAsString(time);
 
-        assertEquals("The value is not correct.",
-                "[\"" + LocalDateTime.class.getName() + "\",[2005,11,5,22,31,5,422]]", value);
+        assertEquals("[\"" + LocalDateTime.class.getName() + "\",[2005,11,5,22,31,5,422]]", value);
     }
 
     @Test
@@ -199,8 +197,7 @@ public class LocalDateTimeSerTest
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 829837);
         String value = m.writeValueAsString(time);
 
-        assertEquals("The value is not correct.",
-                "[\"" + LocalDateTime.class.getName() + "\",\"" + time.toString() + "\"]", value);
+        assertEquals("[\"" + LocalDateTime.class.getName() + "\",\"" + time.toString() + "\"]", value);
     }
 
     // [modules-java8#288]
