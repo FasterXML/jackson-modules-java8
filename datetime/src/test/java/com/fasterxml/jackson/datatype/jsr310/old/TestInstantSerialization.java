@@ -195,8 +195,7 @@ public class TestInstantSerialization extends ModuleTestBase
         String value = this.mapper.writeValueAsString(date);
 
         assertNotNull(value);
-        assertEquals("The value is not correct.",
-                "[\"" + Instant.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", value);
+        assertEquals("[\"" + Instant.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", value);
     }
 
     @Test

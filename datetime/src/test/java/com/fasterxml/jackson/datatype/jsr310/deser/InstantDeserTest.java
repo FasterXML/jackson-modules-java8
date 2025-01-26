@@ -624,7 +624,7 @@ public class InstantDeserTest extends ModuleTestBase
         Matcher matcher = ISO8601_COLONLESS_OFFSET_REGEX.matcher("2000-01-01T12:00+0100");
 
         assertTrue(matcher.find(), "Matcher finds +0100 as an colonless offset");
-        assertEquals("Matcher groups +0100 as an colonless offset", matcher.group(), "+0100");
+        assertEquals(matcher.group(), "+0100", "Matcher groups +0100 as an colonless offset");
     }
 
     @Test
@@ -632,7 +632,7 @@ public class InstantDeserTest extends ModuleTestBase
         Matcher matcher = ISO8601_COLONLESS_OFFSET_REGEX.matcher("2000-01-01T12:00+0100[Europe/Paris]");
 
         assertTrue(matcher.find(), "Matcher finds +0100 as an colonless offset");
-        assertEquals("Matcher groups +0100 as an colonless offset", matcher.group(), "+0100");
+        assertEquals(matcher.group(), "+0100", "Matcher groups +0100 as an colonless offset");
     }
 
     @Test
@@ -647,6 +647,6 @@ public class InstantDeserTest extends ModuleTestBase
         Matcher matcher = ISO8601_COLONLESS_OFFSET_REGEX.matcher("-2000-01-01T12:00+0100[Europe/Paris]");
 
         assertTrue(matcher.find(), "Matcher finds +0100 as an colonless offset");
-        assertEquals("Matcher groups +0100 as an colonless offset", matcher.group(), "+0100");
+        assertEquals(matcher.group(), "+0100", "Matcher groups +0100 as an colonless offset");
     }
 }

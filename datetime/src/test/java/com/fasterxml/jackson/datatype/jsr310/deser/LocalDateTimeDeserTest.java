@@ -597,7 +597,7 @@ public class LocalDateTimeDeserTest
     public void testStrictCustomFormatForInvalidFormatWithEra() throws Exception
     {
         assertThrows(InvalidFormatException.class,
-            () -> /*StrictWrapperWithYearOfEra w =*/ MAPPER.readValue("{\"value\":\"2019-11-30 15:45 AD\"}", StrictWrapperWithYearOfEra.class));
+            () -> /*StrictWrapperWithYearOfEra w =*/ MAPPER.readValue("{\"value\":\"2019-11-30 15:45\"}", StrictWrapperWithYearOfEra.class));
     }
 
     @Test

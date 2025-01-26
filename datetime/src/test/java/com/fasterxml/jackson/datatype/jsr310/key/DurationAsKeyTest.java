@@ -23,13 +23,12 @@ public class DurationAsKeyTest extends ModuleTestBase
 
     @Test
     public void testSerialization() throws Exception {
-        assertEquals("Value is not correct", mapAsString(DURATION_STRING, "test"),
+        assertEquals(mapAsString(DURATION_STRING, "test"),
                 MAPPER.writeValueAsString(Collections.singletonMap(DURATION, "test")));
     }
 
     @Test
     public void testDeserialization() throws Exception {
-        assertEquals(Collections.singletonMap(DURATION, "test"), READER.readValue(mapAsString(DURATION_STRING, "test")),
-                "Value is not correct");
+        assertEquals(Collections.singletonMap(DURATION, "test"), READER.readValue(mapAsString(DURATION_STRING, "test")));
     }
 }

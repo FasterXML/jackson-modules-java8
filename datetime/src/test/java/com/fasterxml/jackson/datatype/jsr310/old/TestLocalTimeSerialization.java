@@ -187,8 +187,7 @@ public class TestLocalTimeSerialization extends ModuleTestBase
         String value = this.mapper.writeValueAsString(time);
 
         assertNotNull(value);
-        assertEquals("The value is not correct.",
-                "[\"" + LocalTime.class.getName() + "\",\"" + time.toString() + "\"]", value);
+        assertEquals("[\"" + LocalTime.class.getName() + "\",\"" + time.toString() + "\"]", value);
     }
 
     @Test

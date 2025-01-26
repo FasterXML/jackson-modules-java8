@@ -257,7 +257,7 @@ public class ZonedDateTimeSerTest
                         SerializationFeature.WRITE_DATES_WITH_ZONE_ID)
                 .writeValueAsString(date);
 
-        assertEquals("The value is incorrect.", "\""
+        assertEquals("\""
                 + FORMATTER.withZone(Z3).format(date) + "\"", value);
     }
 
@@ -270,7 +270,7 @@ public class ZonedDateTimeSerTest
                         SerializationFeature.WRITE_DATES_WITH_ZONE_ID)
                 .writeValueAsString(date);
 
-        assertEquals("The value is incorrect.", "\"" + FORMATTER.format(date) + "\"", value);
+        assertEquals("\"" + FORMATTER.format(date) + "\"", value);
     }
 
     @Test
@@ -281,7 +281,7 @@ public class ZonedDateTimeSerTest
                 .with(SerializationFeature.WRITE_DATES_WITH_ZONE_ID)
                 .writeValueAsString(date);
 
-        assertEquals("The value is incorrect.", "\"" + DateTimeFormatter.ISO_ZONED_DATE_TIME.format(date) + "\"", value);
+        assertEquals("\"" + DateTimeFormatter.ISO_ZONED_DATE_TIME.format(date) + "\"", value);
     }
 
     @Test
@@ -352,8 +352,7 @@ public class ZonedDateTimeSerTest
                 .enable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .build()
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.",
-                "[\"" + ZonedDateTime.class.getName() + "\",123456789.183917322]", value);
+        assertEquals("[\"" + ZonedDateTime.class.getName() + "\",123456789.183917322]", value);
     }
 
     @Test
@@ -366,8 +365,7 @@ public class ZonedDateTimeSerTest
                 .disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .build()
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.",
-                "[\"" + ZonedDateTime.class.getName() + "\",123456789183]", value);
+        assertEquals("[\"" + ZonedDateTime.class.getName() + "\",123456789183]", value);
     }
 
     @Test
@@ -379,8 +377,7 @@ public class ZonedDateTimeSerTest
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .build()
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.",
-                "[\"" + ZonedDateTime.class.getName() + "\",\""
+        assertEquals("[\"" + ZonedDateTime.class.getName() + "\",\""
                         + FORMATTER.withZone(Z3).format(date) + "\"]", value);
     }
 
@@ -395,8 +392,7 @@ public class ZonedDateTimeSerTest
                 .writer()
                 .with(TimeZone.getTimeZone(Z3))
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.",
-            "[\"" + ZonedDateTime.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", value);
+        assertEquals("[\"" + ZonedDateTime.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", value);
     }
 
     @Test

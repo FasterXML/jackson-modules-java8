@@ -67,8 +67,7 @@ public class TestPeriodSerialization extends ModuleTestBase
         String value = this.mapper.writeValueAsString(period);
 
         assertNotNull(value);
-        assertEquals("The value is not correct.",
-                "[\"" + Period.class.getName() + "\",\"" + period.toString() + "\"]", value);
+        assertEquals("[\"" + Period.class.getName() + "\",\"" + period.toString() + "\"]", value);
     }
 
     @Test

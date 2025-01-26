@@ -204,8 +204,7 @@ public class OffsetDateTimeSerTest
                 .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .with(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.",
-                "[\"" + OffsetDateTime.class.getName() + "\",123456789.183917322]", value);
+        assertEquals("[\"" + OffsetDateTime.class.getName() + "\",123456789.183917322]", value);
     }
 
     @Test
@@ -218,8 +217,7 @@ public class OffsetDateTimeSerTest
                 .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .without(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.",
-                "[\"" + OffsetDateTime.class.getName() + "\",123456789183]", value);
+        assertEquals("[\"" + OffsetDateTime.class.getName() + "\",123456789183]", value);
     }
 
     @Test
@@ -230,8 +228,7 @@ public class OffsetDateTimeSerTest
             .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
             .addMixIn(Temporal.class, MockObjectConfiguration.class)
             .writeValueAsString(date);
-        assertEquals("The value is not correct.",
-            "[\"" + OffsetDateTime.class.getName() + "\",\""
+        assertEquals("[\"" + OffsetDateTime.class.getName() + "\",\""
                     + FORMATTER.withZone(Z3).format(date) + "\"]", value);
     }
 
@@ -245,8 +242,7 @@ public class OffsetDateTimeSerTest
             .addMixIn(Temporal.class, MockObjectConfiguration.class)
             .writeValueAsString(date);
 
-        assertEquals("The value is not correct.",
-                "[\"" + OffsetDateTime.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", value);
+        assertEquals("[\"" + OffsetDateTime.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", value);
     }
 
     @Test

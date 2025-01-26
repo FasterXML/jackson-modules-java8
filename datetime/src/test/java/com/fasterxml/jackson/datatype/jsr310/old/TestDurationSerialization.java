@@ -32,8 +32,7 @@ public class TestDurationSerialization extends ModuleTestBase
                 .writeValueAsString(duration);
 
         assertNotNull(value, "The value should not be null.");
-        assertEquals("The value is not correct.",
-                "60"+NO_NANOSECS_SUFFIX, value);
+        assertEquals("60"+NO_NANOSECS_SUFFIX, value);
     }
 
     @Test
@@ -123,8 +122,7 @@ public class TestDurationSerialization extends ModuleTestBase
         String value = mapper.writeValueAsString(duration);
 
         assertNotNull(value, "The value should not be null.");
-        assertEquals("The value is not correct.",
-                "[\"" + Duration.class.getName() + "\",13498.000008374]", value);
+        assertEquals("[\"" + Duration.class.getName() + "\",13498.000008374]", value);
     }
 
     @Test
@@ -138,8 +136,7 @@ public class TestDurationSerialization extends ModuleTestBase
         String value = mapper.writeValueAsString(duration);
 
         assertNotNull(value, "The value should not be null.");
-        assertEquals("The value is not correct.",
-                "[\"" + Duration.class.getName() + "\",13498837]", value);
+        assertEquals("[\"" + Duration.class.getName() + "\",13498837]", value);
     }
 
     @Test
@@ -152,7 +149,6 @@ public class TestDurationSerialization extends ModuleTestBase
         String value = mapper.writeValueAsString(duration);
 
         assertNotNull(value, "The value should not be null.");
-        assertEquals("The value is not correct.",
-                "[\"" + Duration.class.getName() + "\",\"" + duration.toString() + "\"]", value);
+        assertEquals("[\"" + Duration.class.getName() + "\",\"" + duration.toString() + "\"]", value);
     }
 }
