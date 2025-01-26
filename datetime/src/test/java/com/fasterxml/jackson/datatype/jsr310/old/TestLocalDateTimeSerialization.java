@@ -16,21 +16,18 @@
 
 package com.fasterxml.jackson.datatype.jsr310.old;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.temporal.Temporal;
 
-import static org.junit.Assert.*;
-
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestLocalDateTimeSerialization
@@ -38,7 +35,7 @@ public class TestLocalDateTimeSerialization
 {
     private ObjectMapper mapper;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         mapper = newMapper();
@@ -52,8 +49,8 @@ public class TestLocalDateTimeSerialization
 
         String value = this.mapper.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[1986,1,17,15,43]", value);
+        assertNotNull(value);
+        assertEquals("[1986,1,17,15,43]", value);
     }
 
     @Test
@@ -62,8 +59,8 @@ public class TestLocalDateTimeSerialization
         LocalDateTime time = LocalDateTime.of(2013, Month.AUGUST, 21, 9, 22, 57);
         String value = this.mapper.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[2013,8,21,9,22,57]", value);
+        assertNotNull(value);
+        assertEquals("[2013,8,21,9,22,57]", value);
     }
 
     @Test
@@ -74,8 +71,8 @@ public class TestLocalDateTimeSerialization
         this.mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
         String value = this.mapper.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[2013,8,21,9,22,0,57]", value);
+        assertNotNull(value);
+        assertEquals("[2013,8,21,9,22,0,57]", value);
     }
 
     @Test
@@ -86,8 +83,8 @@ public class TestLocalDateTimeSerialization
         this.mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
         String value = this.mapper.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[2013,8,21,9,22,0,0]", value);
+        assertNotNull(value);
+        assertEquals("[2013,8,21,9,22,0,0]", value);
     }
 
     @Test
@@ -98,8 +95,8 @@ public class TestLocalDateTimeSerialization
         this.mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
         String value = this.mapper.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[2005,11,5,22,31,5,829837]", value);
+        assertNotNull(value);
+        assertEquals("[2005,11,5,22,31,5,829837]", value);
     }
 
     @Test
@@ -110,8 +107,8 @@ public class TestLocalDateTimeSerialization
         this.mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
         String value = this.mapper.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[2005,11,5,22,31,5,422]", value);
+        assertNotNull(value);
+        assertEquals("[2005,11,5,22,31,5,422]", value);
     }
 
     @Test
@@ -123,8 +120,8 @@ public class TestLocalDateTimeSerialization
         m.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         String value = m.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "\"1986-01-17T15:43:06\"", value);
+        assertNotNull(value);
+        assertEquals("\"1986-01-17T15:43:06\"", value);
     }
 
     @Test
@@ -136,8 +133,8 @@ public class TestLocalDateTimeSerialization
         m.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         String value = m.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", '"' + time.toString() + '"', value);
+        assertNotNull(value);
+        assertEquals('"' + time.toString() + '"', value);
     }
 
     @Test
@@ -149,8 +146,8 @@ public class TestLocalDateTimeSerialization
         m.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         String value = m.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", '"' + time.toString() + '"', value);
+        assertNotNull(value);
+        assertEquals('"' + time.toString() + '"', value);
     }
 
     @Test
@@ -164,7 +161,7 @@ public class TestLocalDateTimeSerialization
         m.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = m.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertEquals("The value is not correct.",
                 "[\"" + LocalDateTime.class.getName() + "\",[2005,11,5,22,31,5,829837]]", value);
     }
@@ -180,7 +177,7 @@ public class TestLocalDateTimeSerialization
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 422829837);
         String value = m.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertEquals("The value is not correct.",
                 "[\"" + LocalDateTime.class.getName() + "\",[2005,11,5,22,31,5,422]]", value);
     }
@@ -194,7 +191,7 @@ public class TestLocalDateTimeSerialization
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 829837);
         String value = m.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertEquals("The value is not correct.",
                 "[\"" + LocalDateTime.class.getName() + "\",\"" + time.toString() + "\"]", value);
     }
@@ -204,9 +201,9 @@ public class TestLocalDateTimeSerialization
     {
         LocalDateTime value = this.mapper.readValue("[1986,1,17,15,43]", LocalDateTime.class);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         LocalDateTime time = LocalDateTime.of(1986, Month.JANUARY, 17, 15, 43);
-        assertEquals("The value is not correct.", time, value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -214,9 +211,9 @@ public class TestLocalDateTimeSerialization
     {
         LocalDateTime value = this.mapper.readValue("[2013,8,21,9,22,57]", LocalDateTime.class);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         LocalDateTime time = LocalDateTime.of(2013, Month.AUGUST, 21, 9, 22, 57);
-        assertEquals("The value is not correct.", time, value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -226,9 +223,9 @@ public class TestLocalDateTimeSerialization
                 .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
         LocalDateTime value = r.readValue("[2013,8,21,9,22,0,57]");
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         LocalDateTime time = LocalDateTime.of(2013, Month.AUGUST, 21, 9, 22, 0, 57);
-        assertEquals("The value is not correct.", time, value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -238,9 +235,9 @@ public class TestLocalDateTimeSerialization
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
         LocalDateTime value = r.readValue("[2013,8,21,9,22,0,57]");
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         LocalDateTime time = LocalDateTime.of(2013, Month.AUGUST, 21, 9, 22, 0, 57000000);
-        assertEquals("The value is not correct.", time, value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -250,9 +247,9 @@ public class TestLocalDateTimeSerialization
                 .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
         LocalDateTime value = r.readValue("[2005,11,5,22,31,5,829837]");
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 829837);
-        assertEquals("The value is not correct.", time, value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -262,9 +259,9 @@ public class TestLocalDateTimeSerialization
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
         LocalDateTime value = r.readValue("[2005,11,5,22,31,5,829837]");
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 829837);
-        assertEquals("The value is not correct.", time, value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -274,9 +271,9 @@ public class TestLocalDateTimeSerialization
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
         LocalDateTime value = r.readValue("[2005,11,5,22,31,5,829]");
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 829000000);
-        assertEquals("The value is not correct.", time, value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -286,8 +283,8 @@ public class TestLocalDateTimeSerialization
 
         LocalDateTime value = this.mapper.readValue('"' + time.toString() + '"', LocalDateTime.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -297,8 +294,8 @@ public class TestLocalDateTimeSerialization
 
         LocalDateTime value = this.mapper.readValue('"' + time.toString() + '"', LocalDateTime.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -308,8 +305,8 @@ public class TestLocalDateTimeSerialization
 
         LocalDateTime value = this.mapper.readValue('"' + time.toString() + '"', LocalDateTime.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -324,9 +321,9 @@ public class TestLocalDateTimeSerialization
                 "[\"" + LocalDateTime.class.getName() + "\",[2005,11,5,22,31,5,829837]]", Temporal.class
         );
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be a LocalDateTime.", value instanceof LocalDateTime);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertTrue(value instanceof LocalDateTime);
+        assertEquals(time, value);
     }
 
     @Test
@@ -340,9 +337,9 @@ public class TestLocalDateTimeSerialization
                 "[\"" + LocalDateTime.class.getName() + "\",[2005,11,5,22,31,5,422]]", Temporal.class
         );
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be a LocalDateTime.", value instanceof LocalDateTime);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertTrue(value instanceof LocalDateTime);
+        assertEquals(time, value);
     }
 
     @Test
@@ -355,8 +352,8 @@ public class TestLocalDateTimeSerialization
                 "[\"" + LocalDateTime.class.getName() + "\",\"" + time.toString() + "\"]", Temporal.class
         );
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be a LocalDateTime.", value instanceof LocalDateTime);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertTrue(value instanceof LocalDateTime);
+        assertEquals(time, value);
     }
 }

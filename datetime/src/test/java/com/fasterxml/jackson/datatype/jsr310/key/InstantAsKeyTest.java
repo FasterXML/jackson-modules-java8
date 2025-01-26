@@ -1,19 +1,15 @@
 package com.fasterxml.jackson.datatype.jsr310.key;
 
-import static org.junit.Assert.assertEquals;
-
 import java.time.Instant;
 import java.util.Map;
+
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import org.junit.Assert;
-import org.junit.Test;
-
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class InstantAsKeyTest extends ModuleTestBase
@@ -29,26 +25,26 @@ public class InstantAsKeyTest extends ModuleTestBase
     @Test
     public void testSerialization0() throws Exception {
         String value = MAPPER.writeValueAsString(asMap(INSTANT_0, "test"));
-        Assert.assertEquals("Value is incorrect", mapAsString(INSTANT_0_STRING, "test"), value);
+        assertEquals(mapAsString(INSTANT_0_STRING, "test"), value);
     }
 
     @Test
     public void testSerialization1() throws Exception {
         String value = MAPPER.writeValueAsString(asMap(INSTANT, "test"));
-        assertEquals("Value is incorrect", mapAsString(INSTANT_STRING, "test"), value);
+        assertEquals(mapAsString(INSTANT_STRING, "test"), value);
     }
 
     @Test
     public void testDeserialization0() throws Exception {
         Map<Instant, String> value = READER.readValue(mapAsString(INSTANT_0_STRING, "test"));
         Map<Instant, String> EXP = asMap(INSTANT_0, "test");
-        assertEquals("Value is incorrect", EXP, value);
+        assertEquals(EXP, value, "Value is incorrect");
     }
 
     @Test
     public void testDeserialization1() throws Exception {
         Map<Instant, String> value = READER.readValue(mapAsString(INSTANT_STRING, "test"));
         Map<Instant, String> EXP = asMap(INSTANT, "test");
-        assertEquals("Value is incorrect", EXP, value);
+        assertEquals(EXP, value, "Value is incorrect");
     }
 }

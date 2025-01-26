@@ -4,14 +4,12 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestNullKeySerialization extends ModuleTestBase {
@@ -24,7 +22,7 @@ public class TestNullKeySerialization extends ModuleTestBase {
     private ObjectMapper om;
     private Map<LocalDate, String> map;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.om = newMapper();
         map = new HashMap<>();
@@ -38,7 +36,7 @@ public class TestNullKeySerialization extends ModuleTestBase {
         map.put(null, "test");
         String value = om.writeValueAsString(map);
 
-        Assert.assertEquals(map(NULL_KEY, "test"), value);
+        assertEquals(map(NULL_KEY, "test"), value);
     }
 
     @Test
@@ -46,7 +44,7 @@ public class TestNullKeySerialization extends ModuleTestBase {
         Map<LocalDate, String> value = om.readValue(map(NULL_KEY, "test"), TYPE_REF);
 
         map.put(null, "test");
-        Assert.assertEquals(map, value);
+        assertEquals(map, value);
     }
 
     private String map(String key, String value) {

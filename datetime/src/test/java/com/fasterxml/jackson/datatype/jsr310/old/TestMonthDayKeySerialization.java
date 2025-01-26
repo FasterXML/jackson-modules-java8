@@ -4,14 +4,12 @@ import java.time.MonthDay;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestMonthDayKeySerialization extends ModuleTestBase {
@@ -24,7 +22,7 @@ public class TestMonthDayKeySerialization extends ModuleTestBase {
     private ObjectMapper om;
     private Map<MonthDay, String> map;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.om = newMapper();
         map = new HashMap<>();
@@ -40,7 +38,7 @@ public class TestMonthDayKeySerialization extends ModuleTestBase {
 
         String value = om.writeValueAsString(map);
 
-        Assert.assertEquals("Value is incorrect", map(MONTH_DAY_STRING, "test"), value);
+        assertEquals(map(MONTH_DAY_STRING, "test"), value);
     }
 
     @Test
@@ -48,7 +46,7 @@ public class TestMonthDayKeySerialization extends ModuleTestBase {
         Map<MonthDay, String> value = om.readValue(map(MONTH_DAY_STRING, "test"), TYPE_REF);
 
         map.put(MONTH_DAY, "test");
-        Assert.assertEquals("Value is incorrect", map, value);
+        assertEquals(map, value);
     }
 
     private String map(String key, String value) {

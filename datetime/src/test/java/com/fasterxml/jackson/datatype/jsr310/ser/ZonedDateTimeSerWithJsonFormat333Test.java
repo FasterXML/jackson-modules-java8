@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.assertEquals;
 
 // [module-java8#333]: ZonedDateTime serialization with @JsonFormat pattern never uses
 //  while WRITE_DATES_WITH_ZONE_ID enabled #333

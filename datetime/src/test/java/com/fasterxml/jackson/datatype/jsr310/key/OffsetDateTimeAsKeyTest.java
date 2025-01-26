@@ -5,15 +5,13 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Map;
 
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import org.junit.Assert;
-import org.junit.Test;
-
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class OffsetDateTimeAsKeyTest extends ModuleTestBase
@@ -33,36 +31,40 @@ public class OffsetDateTimeAsKeyTest extends ModuleTestBase
     @Test
     public void testSerialization0() throws Exception {
         String value = MAPPER.writeValueAsString(asMap(DATE_TIME_0, "test"));
-        Assert.assertEquals("Value is incorrect", mapAsString(DATE_TIME_0_STRING, "test"), value);
+        assertEquals(mapAsString(DATE_TIME_0_STRING, "test"), value,
+                "Value is incorrect");
     }
 
     @Test
     public void testSerialization1() throws Exception {
-        Assert.assertEquals("Value is incorrect", mapAsString(DATE_TIME_1_STRING, "test"),
-                MAPPER.writeValueAsString(asMap(DATE_TIME_1, "test")));
+        assertEquals(mapAsString(DATE_TIME_1_STRING, "test"),
+                MAPPER.writeValueAsString(asMap(DATE_TIME_1, "test")),
+                "Value is incorrect");
     }
 
     @Test
     public void testSerialization2() throws Exception {
-        Assert.assertEquals("Value is incorrect", mapAsString(DATE_TIME_2_STRING, "test"),
-                MAPPER.writeValueAsString(asMap(DATE_TIME_2, "test")));
+        assertEquals(mapAsString(DATE_TIME_2_STRING, "test"),
+                MAPPER.writeValueAsString(asMap(DATE_TIME_2, "test")),
+                "Value is incorrect");
     }
 
     @Test
     public void testDeserialization0() throws Exception {
-        Assert.assertEquals("Value is incorrect", asMap(DATE_TIME_0, "test"),
-                READER.readValue(mapAsString(DATE_TIME_0_STRING, "test")));
+        assertEquals(asMap(DATE_TIME_0, "test"), READER.readValue(mapAsString(DATE_TIME_0_STRING, "test")),
+                "Value is incorrect");
     }
 
     @Test
     public void testDeserialization1() throws Exception {
-        Assert.assertEquals("Value is incorrect", asMap(DATE_TIME_1, "test"),
-                READER.readValue(mapAsString(DATE_TIME_1_STRING, "test")));
+        assertEquals(asMap(DATE_TIME_1, "test"), READER.readValue(mapAsString(DATE_TIME_1_STRING, "test")),
+                "Value is incorrect");
     }
 
     @Test
     public void testDeserialization2() throws Exception {
-        Assert.assertEquals("Value is incorrect", asMap(DATE_TIME_2, "test"),
-                READER.readValue(mapAsString(DATE_TIME_2_STRING, "test")));
+        assertEquals(asMap(DATE_TIME_2, "test"),
+                READER.readValue(mapAsString(DATE_TIME_2_STRING, "test")),
+                "Value is incorrect");
     }
 }

@@ -15,7 +15,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.MatcherassertThat;
 import static org.hamcrest.CoreMatchers.containsString;
 
 import org.junit.jupiter.api.Test;

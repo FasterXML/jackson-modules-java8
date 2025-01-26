@@ -16,29 +16,24 @@
 
 package com.fasterxml.jackson.datatype.jsr310.old;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.time.OffsetTime;
 import java.time.ZoneOffset;
 import java.time.temporal.Temporal;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestOffsetTimeSerialization extends ModuleTestBase
 {
     private ObjectMapper mapper;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         this.mapper = newMapper();
@@ -52,8 +47,8 @@ public class TestOffsetTimeSerialization extends ModuleTestBase
         this.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
         String value = this.mapper.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[15,43,\"+03:00\"]", value);
+        assertNotNull(value);
+        assertEquals("[15,43,\"+03:00\"]", value);
     }
 
     @Test
@@ -64,8 +59,8 @@ public class TestOffsetTimeSerialization extends ModuleTestBase
         this.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
         String value = this.mapper.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[9,22,57,\"-06:30\"]", value);
+        assertNotNull(value);
+        assertEquals("[9,22,57,\"-06:30\"]", value);
     }
 
     @Test
@@ -77,8 +72,8 @@ public class TestOffsetTimeSerialization extends ModuleTestBase
         this.mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
         String value = this.mapper.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[9,22,0,57,\"-06:30\"]", value);
+        assertNotNull(value);
+        assertEquals("[9,22,0,57,\"-06:30\"]", value);
     }
 
     @Test
@@ -90,8 +85,8 @@ public class TestOffsetTimeSerialization extends ModuleTestBase
         this.mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
         String value = this.mapper.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[9,22,0,0,\"-06:30\"]", value);
+        assertNotNull(value);
+        assertEquals("[9,22,0,0,\"-06:30\"]", value);
     }
 
     @Test
@@ -103,8 +98,8 @@ public class TestOffsetTimeSerialization extends ModuleTestBase
         this.mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
         String value = this.mapper.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[22,31,5,829837,\"+11:00\"]", value);
+        assertNotNull(value);
+        assertEquals("[22,31,5,829837,\"+11:00\"]", value);
     }
 
     @Test
@@ -116,8 +111,8 @@ public class TestOffsetTimeSerialization extends ModuleTestBase
         this.mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
         String value = this.mapper.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[22,31,5,422,\"+11:00\"]", value);
+        assertNotNull(value);
+        assertEquals("[22,31,5,422,\"+11:00\"]", value);
     }
 
     @Test
@@ -128,8 +123,8 @@ public class TestOffsetTimeSerialization extends ModuleTestBase
         this.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         String value = this.mapper.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", '"' + time.toString() + '"', value);
+        assertNotNull(value);
+        assertEquals('"' + time.toString() + '"', value);
     }
 
     @Test
@@ -140,8 +135,8 @@ public class TestOffsetTimeSerialization extends ModuleTestBase
         this.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         String value = this.mapper.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", '"' + time.toString() + '"', value);
+        assertNotNull(value);
+        assertEquals('"' + time.toString() + '"', value);
     }
 
     @Test
@@ -152,8 +147,8 @@ public class TestOffsetTimeSerialization extends ModuleTestBase
         this.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         String value = this.mapper.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", '"' + time.toString() + '"', value);
+        assertNotNull(value);
+        assertEquals('"' + time.toString() + '"', value);
     }
 
     @Test
@@ -166,7 +161,7 @@ public class TestOffsetTimeSerialization extends ModuleTestBase
         this.mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = this.mapper.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertEquals("The value is not correct.",
                 "[\"" + OffsetTime.class.getName() + "\",[22,31,5,829837,\"+11:00\"]]", value);
     }
@@ -181,7 +176,7 @@ public class TestOffsetTimeSerialization extends ModuleTestBase
         this.mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = this.mapper.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertEquals("The value is not correct.",
                 "[\"" + OffsetTime.class.getName() + "\",[22,31,5,422,\"+11:00\"]]", value);
     }
@@ -195,7 +190,7 @@ public class TestOffsetTimeSerialization extends ModuleTestBase
         this.mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = this.mapper.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertEquals("The value is not correct.",
                 "[\"" + OffsetTime.class.getName() + "\",\"" + time.toString() + "\"]", value);
     }
@@ -207,8 +202,8 @@ public class TestOffsetTimeSerialization extends ModuleTestBase
 
         OffsetTime value = this.mapper.readValue("[15,43,\"+0300\"]", OffsetTime.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -218,8 +213,8 @@ public class TestOffsetTimeSerialization extends ModuleTestBase
 
         OffsetTime value = this.mapper.readValue("[9,22,57,\"-06:30\"]", OffsetTime.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -230,8 +225,8 @@ public class TestOffsetTimeSerialization extends ModuleTestBase
         this.mapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
         OffsetTime value = this.mapper.readValue("[9,22,0,57,\"-06:30\"]", OffsetTime.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -242,8 +237,8 @@ public class TestOffsetTimeSerialization extends ModuleTestBase
         this.mapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
         OffsetTime value = this.mapper.readValue("[9,22,0,57,\"-06:30\"]", OffsetTime.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -254,8 +249,8 @@ public class TestOffsetTimeSerialization extends ModuleTestBase
         this.mapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
         OffsetTime value = this.mapper.readValue("[22,31,5,829837,\"+11:00\"]", OffsetTime.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -266,8 +261,8 @@ public class TestOffsetTimeSerialization extends ModuleTestBase
         this.mapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
         OffsetTime value = this.mapper.readValue("[22,31,5,829837,\"+11:00\"]", OffsetTime.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -278,8 +273,8 @@ public class TestOffsetTimeSerialization extends ModuleTestBase
         this.mapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
         OffsetTime value = this.mapper.readValue("[22,31,5,829,\"+11:00\"]", OffsetTime.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -289,8 +284,8 @@ public class TestOffsetTimeSerialization extends ModuleTestBase
 
         OffsetTime value = this.mapper.readValue('"' + time.toString() + '"', OffsetTime.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -300,8 +295,8 @@ public class TestOffsetTimeSerialization extends ModuleTestBase
 
         OffsetTime value = this.mapper.readValue('"' + time.toString() + '"', OffsetTime.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -311,8 +306,8 @@ public class TestOffsetTimeSerialization extends ModuleTestBase
 
         OffsetTime value = this.mapper.readValue('"' + time.toString() + '"', OffsetTime.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -326,9 +321,9 @@ public class TestOffsetTimeSerialization extends ModuleTestBase
                 "[\"" + OffsetTime.class.getName() + "\",[22,31,5,829837,\"+11:00\"]]", Temporal.class
                 );
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be a OffsetTime.", value instanceof OffsetTime);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertInstanceOf(OffsetTime.class, value, "The value should be a OffsetTime.");
+        assertEquals(time, value);
     }
 
     @Test
@@ -342,9 +337,9 @@ public class TestOffsetTimeSerialization extends ModuleTestBase
                 "[\"" + OffsetTime.class.getName() + "\",[22,31,5,422,\"+11:00\"]]", Temporal.class
                 );
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be a OffsetTime.", value instanceof OffsetTime);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertInstanceOf(OffsetTime.class, value, "The value should be a OffsetTime.");
+        assertEquals(time, value);
     }
 
     @Test
@@ -357,8 +352,8 @@ public class TestOffsetTimeSerialization extends ModuleTestBase
                 "[\"" + OffsetTime.class.getName() + "\",\"" + time.toString() + "\"]", Temporal.class
                 );
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be a OffsetTime.", value instanceof OffsetTime);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertInstanceOf(OffsetTime.class, value, "The value should be a OffsetTime.");
+        assertEquals(time, value);
     }
 }

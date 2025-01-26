@@ -16,24 +16,19 @@
 
 package com.fasterxml.jackson.datatype.jsr310.old;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestInstantSerialization extends ModuleTestBase
@@ -42,7 +37,7 @@ public class TestInstantSerialization extends ModuleTestBase
 
     private ObjectMapper mapper;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         this.mapper = newMapper();
@@ -57,8 +52,8 @@ public class TestInstantSerialization extends ModuleTestBase
         this.mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
         String value = this.mapper.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "0.0", value);
+        assertNotNull(value);
+        assertEquals("0.0", value);
     }
 
     @Test
@@ -70,8 +65,8 @@ public class TestInstantSerialization extends ModuleTestBase
         this.mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
         String value = this.mapper.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "0", value);
+        assertNotNull(value);
+        assertEquals("0", value);
     }
 
     @Test
@@ -83,8 +78,8 @@ public class TestInstantSerialization extends ModuleTestBase
         this.mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
         String value = this.mapper.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "123456789.183917322", value);
+        assertNotNull(value);
+        assertEquals("123456789.183917322", value);
     }
 
     @Test
@@ -96,8 +91,8 @@ public class TestInstantSerialization extends ModuleTestBase
         this.mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
         String value = this.mapper.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "123456789183", value);
+        assertNotNull(value);
+        assertEquals("123456789183", value);
     }
 
     @Test
@@ -109,8 +104,8 @@ public class TestInstantSerialization extends ModuleTestBase
         this.mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
         String value = this.mapper.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", DecimalUtils.toDecimal(date.getEpochSecond(), date.getNano()), value);
+        assertNotNull(value);
+        assertEquals(DecimalUtils.toDecimal(date.getEpochSecond(), date.getNano()), value);
     }
 
     @Test
@@ -122,8 +117,8 @@ public class TestInstantSerialization extends ModuleTestBase
         this.mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
         String value = this.mapper.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", Long.toString(date.toEpochMilli()), value);
+        assertNotNull(value);
+        assertEquals(Long.toString(date.toEpochMilli()), value);
     }
 
     @Test
@@ -134,8 +129,8 @@ public class TestInstantSerialization extends ModuleTestBase
         this.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         String value = this.mapper.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", '"' + FORMATTER.format(date) + '"', value);
+        assertNotNull(value);
+        assertEquals('"' + FORMATTER.format(date) + '"', value);
     }
 
     @Test
@@ -146,8 +141,8 @@ public class TestInstantSerialization extends ModuleTestBase
         this.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         String value = this.mapper.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", '"' + FORMATTER.format(date) + '"', value);
+        assertNotNull(value);
+        assertEquals('"' + FORMATTER.format(date) + '"', value);
     }
 
     @Test
@@ -158,8 +153,8 @@ public class TestInstantSerialization extends ModuleTestBase
         this.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         String value = this.mapper.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", '"' + FORMATTER.format(date) + '"', value);
+        assertNotNull(value);
+        assertEquals('"' + FORMATTER.format(date) + '"', value);
     }
 
     @Test
@@ -172,8 +167,8 @@ public class TestInstantSerialization extends ModuleTestBase
         this.mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = this.mapper.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[\"" + Instant.class.getName() + "\",123456789.183917322]", value);
+        assertNotNull(value);
+        assertEquals("[\"" + Instant.class.getName() + "\",123456789.183917322]", value);
     }
 
     @Test
@@ -186,8 +181,8 @@ public class TestInstantSerialization extends ModuleTestBase
         this.mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = this.mapper.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[\"" + Instant.class.getName() + "\",123456789183]", value);
+        assertNotNull(value);
+        assertEquals("[\"" + Instant.class.getName() + "\",123456789183]", value);
     }
 
     @Test
@@ -199,7 +194,7 @@ public class TestInstantSerialization extends ModuleTestBase
         this.mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = this.mapper.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertEquals("The value is not correct.",
                 "[\"" + Instant.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", value);
     }
@@ -211,8 +206,8 @@ public class TestInstantSerialization extends ModuleTestBase
 
         Instant value = this.mapper.readValue("0.000000000", Instant.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", date, value);
+        assertNotNull(value);
+        assertEquals(date, value);
     }
 
     @Test
@@ -222,8 +217,8 @@ public class TestInstantSerialization extends ModuleTestBase
 
         Instant value = this.mapper.readValue("123456789.183917322", Instant.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", date, value);
+        assertNotNull(value);
+        assertEquals(date, value);
     }
 
     @Test
@@ -235,8 +230,8 @@ public class TestInstantSerialization extends ModuleTestBase
                 DecimalUtils.toDecimal(date.getEpochSecond(), date.getNano()), Instant.class
                 );
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", date, value);
+        assertNotNull(value);
+        assertEquals(date, value);
     }
 
     @Test
@@ -247,8 +242,8 @@ public class TestInstantSerialization extends ModuleTestBase
         this.mapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
         Instant value = this.mapper.readValue("0", Instant.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", date, value);
+        assertNotNull(value);
+        assertEquals(date, value);
     }
 
     @Test
@@ -259,8 +254,8 @@ public class TestInstantSerialization extends ModuleTestBase
         this.mapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
         Instant value = this.mapper.readValue("0", Instant.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", date, value);
+        assertNotNull(value);
+        assertEquals(date, value);
     }
 
     @Test
@@ -271,8 +266,8 @@ public class TestInstantSerialization extends ModuleTestBase
         this.mapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
         Instant value = this.mapper.readValue("123456789", Instant.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", date, value);
+        assertNotNull(value);
+        assertEquals(date, value);
     }
 
     @Test
@@ -283,8 +278,8 @@ public class TestInstantSerialization extends ModuleTestBase
         this.mapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
         Instant value = this.mapper.readValue("123456789422", Instant.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", date, value);
+        assertNotNull(value);
+        assertEquals(date, value);
     }
 
     @Test
@@ -296,8 +291,8 @@ public class TestInstantSerialization extends ModuleTestBase
         this.mapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
         Instant value = this.mapper.readValue(Long.toString(date.getEpochSecond()), Instant.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", date, value);
+        assertNotNull(value);
+        assertEquals(date, value);
     }
 
     @Test
@@ -309,8 +304,8 @@ public class TestInstantSerialization extends ModuleTestBase
         this.mapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
         Instant value = this.mapper.readValue(Long.toString(date.toEpochMilli()), Instant.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", date, value);
+        assertNotNull(value);
+        assertEquals(date, value);
     }
 
     @Test
@@ -320,8 +315,8 @@ public class TestInstantSerialization extends ModuleTestBase
 
         Instant value = this.mapper.readValue('"' + FORMATTER.format(date) + '"', Instant.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", date, value);
+        assertNotNull(value);
+        assertEquals(date, value);
     }
 
     @Test
@@ -331,8 +326,8 @@ public class TestInstantSerialization extends ModuleTestBase
 
         Instant value = this.mapper.readValue('"' + FORMATTER.format(date) + '"', Instant.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", date, value);
+        assertNotNull(value);
+        assertEquals(date, value);
     }
 
     @Test
@@ -342,8 +337,8 @@ public class TestInstantSerialization extends ModuleTestBase
 
         Instant value = this.mapper.readValue('"' + FORMATTER.format(date) + '"', Instant.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", date, value);
+        assertNotNull(value);
+        assertEquals(date, value);
     }
 
     @Test
@@ -356,9 +351,9 @@ public class TestInstantSerialization extends ModuleTestBase
                 "[\"" + Instant.class.getName() + "\",123456789.183917322]", Temporal.class
                 );
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be an Instant.", value instanceof Instant);
-        assertEquals("The value is not correct.", date, value);
+        assertNotNull(value);
+        assertInstanceOf(Instant.class, value, "The value should be an Instant.");
+        assertEquals(date, value);
     }
 
     @Test
@@ -372,9 +367,9 @@ public class TestInstantSerialization extends ModuleTestBase
                 "[\"" + Instant.class.getName() + "\",123456789]", Temporal.class
                 );
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be an Instant.", value instanceof Instant);
-        assertEquals("The value is not correct.", date, value);
+        assertNotNull(value);
+        assertInstanceOf(Instant.class, value, "The value should be an Instant.");
+        assertEquals(date, value);
     }
 
     @Test
@@ -388,9 +383,9 @@ public class TestInstantSerialization extends ModuleTestBase
                 "[\"" + Instant.class.getName() + "\",123456789422]", Temporal.class
                 );
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be an Instant.", value instanceof Instant);
-        assertEquals("The value is not correct.", date, value);
+        assertNotNull(value);
+        assertInstanceOf(Instant.class, value, "The value should be an Instant.");
+        assertEquals(date, value);
     }
 
     @Test
@@ -403,8 +398,8 @@ public class TestInstantSerialization extends ModuleTestBase
                 "[\"" + Instant.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", Temporal.class
                 );
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be an Instant.", value instanceof Instant);
-        assertEquals("The value is not correct.", date, value);
+        assertNotNull(value);
+        assertInstanceOf(Instant.class, value, "The value should be an Instant.");
+        assertEquals(date, value);
     }
 }

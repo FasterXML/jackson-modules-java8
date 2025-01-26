@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.MatcherassertThat;
 
 import static org.hamcrest.core.StringContains.containsString;
 

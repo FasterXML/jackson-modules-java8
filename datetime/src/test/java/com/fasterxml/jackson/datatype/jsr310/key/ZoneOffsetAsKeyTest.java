@@ -4,15 +4,13 @@ import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ZoneOffsetAsKeyTest extends ModuleTestBase
@@ -28,7 +26,7 @@ public class ZoneOffsetAsKeyTest extends ModuleTestBase
 
     private Map<ZoneOffset, String> map;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         map = new HashMap<>();
     }
@@ -39,7 +37,7 @@ public class ZoneOffsetAsKeyTest extends ModuleTestBase
 
         String value = MAPPER.writeValueAsString(map);
 
-        Assert.assertEquals("Value is incorrect", map(OFFSET_0_STRING, "test"), value);
+        assertEquals(map(OFFSET_0_STRING, "test"), value);
     }
 
     @Test
@@ -48,7 +46,7 @@ public class ZoneOffsetAsKeyTest extends ModuleTestBase
 
         String value = MAPPER.writeValueAsString(map);
 
-        Assert.assertEquals("Value is incorrect", map(OFFSET_1_STRING, "test"), value);
+        assertEquals(map(OFFSET_1_STRING, "test"), value);
     }
 
     @Test
@@ -56,7 +54,7 @@ public class ZoneOffsetAsKeyTest extends ModuleTestBase
         Map<ZoneOffset, String> value = MAPPER.readValue(map(OFFSET_0_STRING, "test"), TYPE_REF);
 
         map.put(OFFSET_0, "test");
-        Assert.assertEquals("Value is incorrect", map, value);
+        assertEquals(map, value);
     }
 
     @Test
@@ -64,7 +62,7 @@ public class ZoneOffsetAsKeyTest extends ModuleTestBase
         Map<ZoneOffset, String> value = MAPPER.readValue(map(OFFSET_1_STRING, "test"), TYPE_REF);
 
         map.put(OFFSET_1, "test");
-        Assert.assertEquals("Value is incorrect", map, value);
+        assertEquals(map, value);
     }
 
     private String map(String key, String value) {

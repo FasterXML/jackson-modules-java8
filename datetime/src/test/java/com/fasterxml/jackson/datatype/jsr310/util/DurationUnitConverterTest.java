@@ -1,7 +1,7 @@
 package com.fasterxml.jackson.datatype.jsr310.util;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.assertNotNull;
+import static org.junit.assertNull;
 
 import java.time.temporal.ChronoUnit;
 

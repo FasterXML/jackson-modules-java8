@@ -16,26 +16,21 @@
 
 package com.fasterxml.jackson.datatype.jsr310.old;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestZoneOffsetSerialization extends ModuleTestBase
 {
     private ObjectMapper mapper;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         this.mapper = newMapper();
@@ -48,8 +43,8 @@ public class TestZoneOffsetSerialization extends ModuleTestBase
 
         String value = this.mapper.writeValueAsString(offset);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "\"Z\"", value);
+        assertNotNull(value);
+        assertEquals("\"Z\"", value);
     }
 
     @Test
@@ -59,8 +54,8 @@ public class TestZoneOffsetSerialization extends ModuleTestBase
 
         String value = this.mapper.writeValueAsString(offset);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "\"+03:00\"", value);
+        assertNotNull(value);
+        assertEquals("\"+03:00\"", value);
     }
 
     @Test
@@ -70,8 +65,8 @@ public class TestZoneOffsetSerialization extends ModuleTestBase
 
         String value = this.mapper.writeValueAsString(offset);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "\"-06:30\"", value);
+        assertNotNull(value);
+        assertEquals("\"-06:30\"", value);
     }
 
     @Test
@@ -82,8 +77,8 @@ public class TestZoneOffsetSerialization extends ModuleTestBase
         this.mapper.addMixIn(ZoneId.class, MockObjectConfiguration.class);
         String value = this.mapper.writeValueAsString(offset);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[\"" + ZoneOffset.class.getName() + "\",\"+04:15\"]", value);
+        assertNotNull(value);
+        assertEquals("[\"" + ZoneOffset.class.getName() + "\",\"+04:15\"]", value);
     }
 
     @Test
@@ -91,8 +86,8 @@ public class TestZoneOffsetSerialization extends ModuleTestBase
     {
         ZoneOffset value = this.mapper.readValue("\"Z\"", ZoneOffset.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", ZoneOffset.of("Z"), value);
+        assertNotNull(value);
+        assertEquals(ZoneOffset.of("Z"), value);
     }
 
     @Test
@@ -100,8 +95,8 @@ public class TestZoneOffsetSerialization extends ModuleTestBase
     {
         ZoneOffset value = this.mapper.readValue("\"+0300\"", ZoneOffset.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", ZoneOffset.of("+0300"), value);
+        assertNotNull(value);
+        assertEquals(ZoneOffset.of("+0300"), value);
     }
 
     @Test
@@ -109,8 +104,8 @@ public class TestZoneOffsetSerialization extends ModuleTestBase
     {
         ZoneOffset value = this.mapper.readValue("\"-06:30\"", ZoneOffset.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", ZoneOffset.of("-0630"), value);
+        assertNotNull(value);
+        assertEquals(ZoneOffset.of("-0630"), value);
     }
 
     @Test
@@ -119,8 +114,8 @@ public class TestZoneOffsetSerialization extends ModuleTestBase
         this.mapper.addMixIn(ZoneId.class, MockObjectConfiguration.class);
         ZoneId value = this.mapper.readValue("[\"" + ZoneOffset.class.getName() + "\",\"+0415\"]", ZoneId.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be a ZoneOffset.", value instanceof ZoneOffset);
-        assertEquals("The value is not correct.", ZoneOffset.of("+0415"), value);
+        assertNotNull(value);
+        assertInstanceOf(ZoneOffset.class, value);
+        assertEquals(ZoneOffset.of("+0415"), value);
     }
 }

@@ -4,14 +4,12 @@ import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestLocalTimeKeySerialization extends ModuleTestBase {
@@ -29,7 +27,7 @@ public class TestLocalTimeKeySerialization extends ModuleTestBase {
     private ObjectMapper om;
     private Map<LocalTime, String> map;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.om = newMapper();
         map = new HashMap<>();
@@ -45,7 +43,7 @@ public class TestLocalTimeKeySerialization extends ModuleTestBase {
 
         String value = om.writeValueAsString(map);
 
-        Assert.assertEquals("Value is incorrect", map(TIME_0_STRING, "test"), value);
+        assertEquals(map(TIME_0_STRING, "test"), value);
     }
 
     @Test
@@ -54,7 +52,7 @@ public class TestLocalTimeKeySerialization extends ModuleTestBase {
 
         String value = om.writeValueAsString(map);
 
-        Assert.assertEquals("Value is incorrect", map(TIME_STRING, "test"), value);
+        assertEquals(map(TIME_STRING, "test"), value);
     }
 
     @Test
@@ -62,7 +60,7 @@ public class TestLocalTimeKeySerialization extends ModuleTestBase {
         Map<LocalTime, String> value = om.readValue(map(TIME_0_STRING, "test"), TYPE_REF);
 
         map.put(TIME_0, "test");
-        Assert.assertEquals("Value is incorrect", map, value);
+        assertEquals(map, value);
     }
 
     @Test
@@ -70,7 +68,7 @@ public class TestLocalTimeKeySerialization extends ModuleTestBase {
         Map<LocalTime, String> value = om.readValue(map(TIME_STRING, "test"), TYPE_REF);
 
         map.put(TIME, "test");
-        Assert.assertEquals("Value is incorrect", map, value);
+        assertEquals(map, value);
     }
 
     private String map(String key, String value) {

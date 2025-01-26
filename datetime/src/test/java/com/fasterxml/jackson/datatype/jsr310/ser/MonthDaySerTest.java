@@ -20,7 +20,7 @@ import java.time.Month;
 import java.time.MonthDay;
 import java.time.temporal.TemporalAccessor;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.assertEquals;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -40,14 +40,14 @@ public class MonthDaySerTest
     @Test
     public void testSerialization01() throws Exception
     {
-        assertEquals("The value is not correct.", "\"--01-17\"",
+        assertEquals("\"--01-17\"",
                 MAPPER.writeValueAsString(MonthDay.of(Month.JANUARY, 17)));
     }
 
     @Test
     public void testSerialization02() throws Exception
     {
-        assertEquals("The value is not correct.", "\"--08-21\"",
+        assertEquals("\"--08-21\"",
                 MAPPER.writeValueAsString(MonthDay.of(Month.AUGUST, 21)));
     }
 
@@ -59,6 +59,6 @@ public class MonthDaySerTest
         mapper.addMixIn(TemporalAccessor.class, MockObjectConfiguration.class);
         MonthDay monthDay = MonthDay.of(Month.NOVEMBER, 5);
         String value = mapper.writeValueAsString(monthDay);
-        assertEquals("The value is not correct.", "[\"" + MonthDay.class.getName() + "\",\"--11-05\"]", value);
+        assertEquals("[\"" + MonthDay.class.getName() + "\",\"--11-05\"]", value);
     }
 }

@@ -16,9 +16,8 @@
 
 package com.fasterxml.jackson.datatype.jsr310.old;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -27,17 +26,13 @@ import java.time.temporal.Temporal;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestLocalDateSerialization extends ModuleTestBase
 {
     private ObjectMapper mapper;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         this.mapper = newMapper();
@@ -51,8 +46,8 @@ public class TestLocalDateSerialization extends ModuleTestBase
         this.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
         String value = this.mapper.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[1986,1,17]", value);
+        assertNotNull(value);
+        assertEquals("[1986,1,17]", value);
     }
 
     @Test
@@ -63,8 +58,8 @@ public class TestLocalDateSerialization extends ModuleTestBase
         this.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
         String value = this.mapper.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[2013,8,21]", value);
+        assertNotNull(value);
+        assertEquals("[2013,8,21]", value);
     }
 
     @Test
@@ -75,8 +70,8 @@ public class TestLocalDateSerialization extends ModuleTestBase
         this.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         String value = this.mapper.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", '"' + date.toString() + '"', value);
+        assertNotNull(value);
+        assertEquals('"' + date.toString() + '"', value);
     }
 
     @Test
@@ -87,8 +82,8 @@ public class TestLocalDateSerialization extends ModuleTestBase
         this.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         String value = this.mapper.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", '"' + date.toString() + '"', value);
+        assertNotNull(value);
+        assertEquals('"' + date.toString() + '"', value);
     }
 
     @Test
@@ -100,7 +95,7 @@ public class TestLocalDateSerialization extends ModuleTestBase
         this.mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = this.mapper.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertEquals("The value is not correct.",
                 "[\"" + LocalDate.class.getName() + "\",\"" + date.toString() + "\"]", value);
     }
@@ -112,8 +107,8 @@ public class TestLocalDateSerialization extends ModuleTestBase
 
         LocalDate value = this.mapper.readValue("[1986,1,17]", LocalDate.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", date, value);
+        assertNotNull(value);
+        assertEquals(date, value);
     }
 
     @Test
@@ -123,8 +118,8 @@ public class TestLocalDateSerialization extends ModuleTestBase
 
         LocalDate value = this.mapper.readValue("[2013,8,21]", LocalDate.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", date, value);
+        assertNotNull(value);
+        assertEquals(date, value);
     }
 
     @Test
@@ -134,8 +129,8 @@ public class TestLocalDateSerialization extends ModuleTestBase
 
         LocalDate value = this.mapper.readValue('"' + date.toString() + '"', LocalDate.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", date, value);
+        assertNotNull(value);
+        assertEquals(date, value);
     }
 
     @Test
@@ -145,8 +140,8 @@ public class TestLocalDateSerialization extends ModuleTestBase
 
         LocalDate value = this.mapper.readValue('"' + date.toString() + '"', LocalDate.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", date, value);
+        assertNotNull(value);
+        assertEquals(date, value);
     }
 
     @Test
@@ -159,8 +154,8 @@ public class TestLocalDateSerialization extends ModuleTestBase
                 "[\"" + LocalDate.class.getName() + "\",\"" + date.toString() + "\"]", Temporal.class
                 );
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be a LocalDate.", value instanceof LocalDate);
-        assertEquals("The value is not correct.", date, value);
+        assertNotNull(value);
+        assertInstanceOf(LocalDate.class, value);
+        assertEquals(date, value);
     }
 }

@@ -1,6 +1,6 @@
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.MatcherassertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

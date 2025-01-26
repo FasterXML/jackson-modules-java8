@@ -1,18 +1,15 @@
 package com.fasterxml.jackson.datatype.jsr310.old;
 
-import static org.junit.Assert.assertEquals;
-
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
 
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestInstantKeySerialization extends ModuleTestBase {
@@ -27,7 +24,7 @@ public class TestInstantKeySerialization extends ModuleTestBase {
     private ObjectMapper om;
     private Map<Instant, String> map;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.om = newMapper();
         map = new HashMap<>();
@@ -43,7 +40,7 @@ public class TestInstantKeySerialization extends ModuleTestBase {
 
         String value = om.writeValueAsString(map);
 
-        Assert.assertEquals("Value is incorrect", map(INSTANT_0_STRING, "test"), value);
+        assertEquals(map(INSTANT_0_STRING, "test"), value);
     }
 
     @Test
@@ -52,7 +49,7 @@ public class TestInstantKeySerialization extends ModuleTestBase {
 
         String value = om.writeValueAsString(map);
 
-        assertEquals("Value is incorrect", map(INSTANT_STRING, "test"), value);
+        assertEquals(map(INSTANT_STRING, "test"), value);
     }
 
     @Test
@@ -60,7 +57,7 @@ public class TestInstantKeySerialization extends ModuleTestBase {
         Map<Instant, String> value = om.readValue(map(INSTANT_0_STRING, "test"), TYPE_REF);
 
         map.put(INSTANT_0, "test");
-        assertEquals("Value is incorrect", map, value);
+        assertEquals(map, value);
     }
 
     @Test
@@ -68,7 +65,7 @@ public class TestInstantKeySerialization extends ModuleTestBase {
         Map<Instant, String> value = om.readValue(map(INSTANT_STRING, "test"), TYPE_REF);
 
         map.put(INSTANT, "test");
-        assertEquals("Value is incorrect", map, value);
+        assertEquals(map, value);
     }
 
     private String map(String key, String value) {

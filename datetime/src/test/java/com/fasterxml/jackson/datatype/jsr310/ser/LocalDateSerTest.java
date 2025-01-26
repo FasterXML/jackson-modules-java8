@@ -30,8 +30,8 @@ import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.assertEquals;
+import static org.junit.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -77,8 +77,8 @@ public class LocalDateSerTest
         		.with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
         		.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[1986,1,17]", value);
+        assertNotNull(value);
+        assertEquals("[1986,1,17]", value);
     }
 
     @Test
@@ -89,8 +89,8 @@ public class LocalDateSerTest
         		.with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
         		.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[2013,8,21]", value);
+        assertNotNull(value);
+        assertEquals("[2013,8,21]", value);
     }
 
     @Test
@@ -101,8 +101,8 @@ public class LocalDateSerTest
         		.without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
         		.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", '"' + date.toString() + '"', value);
+        assertNotNull(value);
+        assertEquals('"' + date.toString() + '"', value);
     }
 
     @Test
@@ -112,8 +112,8 @@ public class LocalDateSerTest
         String value = MAPPER.writer()
         		.without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
         		.writeValueAsString(date);
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", '"' + date.toString() + '"', value);
+        assertNotNull(value);
+        assertEquals('"' + date.toString() + '"', value);
     }
 
     @Test
@@ -125,7 +125,7 @@ public class LocalDateSerTest
         LocalDate date = LocalDate.of(2005, Month.NOVEMBER, 5);
         String value = mapper.writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertEquals("The value is not correct.",
                 "[\"" + LocalDate.class.getName() + "\",\"" + date.toString() + "\"]", value);
     }

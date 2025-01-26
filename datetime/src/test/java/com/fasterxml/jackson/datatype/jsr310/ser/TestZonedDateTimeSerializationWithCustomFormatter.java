@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.TimeZone;
 
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.MatcherassertThat;
 import static org.hamcrest.core.StringContains.containsString;
 
 @RunWith(Parameterized.class)

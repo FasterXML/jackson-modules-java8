@@ -16,38 +16,25 @@
 
 package com.fasterxml.jackson.datatype.jsr310.old;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.time.LocalTime;
 import java.time.temporal.Temporal;
+
+import org.junit.jupiter.api.*;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestLocalTimeSerialization extends ModuleTestBase
 {
     private ObjectMapper mapper;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         this.mapper = newMapper();
-    }
-
-    @After
-    public void tearDown()
-    {
-
     }
 
     @Test
@@ -58,8 +45,8 @@ public class TestLocalTimeSerialization extends ModuleTestBase
         this.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
         String value = this.mapper.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[15,43]", value);
+        assertNotNull(value);
+        assertEquals("[15,43]", value);
     }
 
     @Test
@@ -70,8 +57,8 @@ public class TestLocalTimeSerialization extends ModuleTestBase
         this.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
         String value = this.mapper.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[9,22,57]", value);
+        assertNotNull(value);
+        assertEquals("[9,22,57]", value);
     }
 
     @Test
@@ -83,8 +70,8 @@ public class TestLocalTimeSerialization extends ModuleTestBase
         this.mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
         String value = this.mapper.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[9,22,0,57]", value);
+        assertNotNull(value);
+        assertEquals("[9,22,0,57]", value);
     }
 
     @Test
@@ -96,8 +83,8 @@ public class TestLocalTimeSerialization extends ModuleTestBase
         this.mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
         String value = this.mapper.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[9,22,0,0]", value);
+        assertNotNull(value);
+        assertEquals("[9,22,0,0]", value);
     }
 
     @Test
@@ -109,8 +96,8 @@ public class TestLocalTimeSerialization extends ModuleTestBase
         this.mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
         String value = this.mapper.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[22,31,5,829837]", value);
+        assertNotNull(value);
+        assertEquals("[22,31,5,829837]", value);
     }
 
     @Test
@@ -122,8 +109,8 @@ public class TestLocalTimeSerialization extends ModuleTestBase
         this.mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
         String value = this.mapper.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[22,31,5,422]", value);
+        assertNotNull(value);
+        assertEquals("[22,31,5,422]", value);
     }
 
     @Test
@@ -134,8 +121,8 @@ public class TestLocalTimeSerialization extends ModuleTestBase
         this.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         String value = this.mapper.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "\"15:43:20\"", value);
+        assertNotNull(value);
+        assertEquals("\"15:43:20\"", value);
     }
 
     @Test
@@ -146,8 +133,8 @@ public class TestLocalTimeSerialization extends ModuleTestBase
         this.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         String value = this.mapper.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", '"' + time.toString() + '"', value);
+        assertNotNull(value);
+        assertEquals('"' + time.toString() + '"', value);
     }
 
     @Test
@@ -158,8 +145,8 @@ public class TestLocalTimeSerialization extends ModuleTestBase
         this.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         String value = this.mapper.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", '"' + time.toString() + '"', value);
+        assertNotNull(value);
+        assertEquals('"' + time.toString() + '"', value);
     }
 
     @Test
@@ -172,8 +159,8 @@ public class TestLocalTimeSerialization extends ModuleTestBase
         this.mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = this.mapper.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[\"" + LocalTime.class.getName() + "\",[22,31,5,829837]]", value);
+        assertNotNull(value);
+        assertEquals("[\"" + LocalTime.class.getName() + "\",[22,31,5,829837]]", value);
     }
 
     @Test
@@ -186,8 +173,8 @@ public class TestLocalTimeSerialization extends ModuleTestBase
         this.mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = this.mapper.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[\"" + LocalTime.class.getName() + "\",[22,31,5,422]]", value);
+        assertNotNull(value);
+        assertEquals("[\"" + LocalTime.class.getName() + "\",[22,31,5,422]]", value);
     }
 
     @Test
@@ -199,7 +186,7 @@ public class TestLocalTimeSerialization extends ModuleTestBase
         this.mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = this.mapper.writeValueAsString(time);
 
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value);
         assertEquals("The value is not correct.",
                 "[\"" + LocalTime.class.getName() + "\",\"" + time.toString() + "\"]", value);
     }
@@ -211,8 +198,8 @@ public class TestLocalTimeSerialization extends ModuleTestBase
 
         LocalTime value = this.mapper.readValue("[15,43]", LocalTime.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -222,8 +209,8 @@ public class TestLocalTimeSerialization extends ModuleTestBase
 
         LocalTime value = this.mapper.readValue("[9,22,57]", LocalTime.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -234,8 +221,8 @@ public class TestLocalTimeSerialization extends ModuleTestBase
         this.mapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
         LocalTime value = this.mapper.readValue("[9,22,0,57]", LocalTime.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -246,8 +233,8 @@ public class TestLocalTimeSerialization extends ModuleTestBase
         this.mapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
         LocalTime value = this.mapper.readValue("[9,22,0,57]", LocalTime.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -258,8 +245,8 @@ public class TestLocalTimeSerialization extends ModuleTestBase
         this.mapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
         LocalTime value = this.mapper.readValue("[22,31,5,829837]", LocalTime.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -270,8 +257,8 @@ public class TestLocalTimeSerialization extends ModuleTestBase
         this.mapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
         LocalTime value = this.mapper.readValue("[22,31,5,829837]", LocalTime.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -282,8 +269,8 @@ public class TestLocalTimeSerialization extends ModuleTestBase
         this.mapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
         LocalTime value = this.mapper.readValue("[22,31,5,829]", LocalTime.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -293,8 +280,8 @@ public class TestLocalTimeSerialization extends ModuleTestBase
 
         LocalTime value = this.mapper.readValue('"' + time.toString() + '"', LocalTime.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -304,8 +291,8 @@ public class TestLocalTimeSerialization extends ModuleTestBase
 
         LocalTime value = this.mapper.readValue('"' + time.toString() + '"', LocalTime.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -315,8 +302,8 @@ public class TestLocalTimeSerialization extends ModuleTestBase
 
         LocalTime value = this.mapper.readValue('"' + time.toString() + '"', LocalTime.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -330,9 +317,9 @@ public class TestLocalTimeSerialization extends ModuleTestBase
                 "[\"" + LocalTime.class.getName() + "\",[22,31,5,829837]]", Temporal.class
                 );
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be a LocalTime.", value instanceof LocalTime);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertInstanceOf(LocalTime.class, value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -346,9 +333,9 @@ public class TestLocalTimeSerialization extends ModuleTestBase
                 "[\"" + LocalTime.class.getName() + "\",[22,31,5,422]]", Temporal.class
                 );
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be a LocalTime.", value instanceof LocalTime);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertInstanceOf(LocalTime.class, value);
+        assertEquals(time, value);
     }
 
     @Test
@@ -361,8 +348,8 @@ public class TestLocalTimeSerialization extends ModuleTestBase
                 "[\"" + LocalTime.class.getName() + "\",\"" + time.toString() + "\"]", Temporal.class
                 );
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be a LocalTime.", value instanceof LocalTime);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value);
+        assertInstanceOf(LocalTime.class, value);
+        assertEquals(time, value);
     }
 }

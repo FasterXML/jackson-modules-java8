@@ -1,16 +1,14 @@
 package com.fasterxml.jackson.datatype.jsr310.old;
 
-import static org.junit.Assert.assertEquals;
-
 import java.math.BigDecimal;
 
-import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
-import org.junit.Test;
-
-@SuppressWarnings("deprecation")
 import org.junit.jupiter.api.Test;
+
+import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
+
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("deprecation")
 public class TestDecimalUtils extends ModuleTestBase
 {
     @Test
@@ -41,10 +39,10 @@ public class TestDecimalUtils extends ModuleTestBase
         BigDecimal value = new BigDecimal("0");
 
         long seconds = value.longValue();
-        assertEquals("The second part is not correct.", 0L, seconds);
+        assertEquals(0L, seconds, "The second part is not correct.");
 
         int nanoseconds = DecimalUtils.extractNanosecondDecimal(value, seconds);
-        assertEquals("The nanosecond part is not correct.", 0, nanoseconds);
+        assertEquals(0, nanoseconds, "The nanosecond part is not correct.");
     }
 
     @Test
@@ -53,10 +51,10 @@ public class TestDecimalUtils extends ModuleTestBase
         BigDecimal value = new BigDecimal("15.000000072");
 
         long seconds = value.longValue();
-        assertEquals("The second part is not correct.", 15L, seconds);
+        assertEquals(15L, seconds, "The second part is not correct.");
 
         int nanoseconds = DecimalUtils.extractNanosecondDecimal(value, seconds);
-        assertEquals("The nanosecond part is not correct.", 72, nanoseconds);
+        assertEquals(72, nanoseconds, "The nanosecond part is not correct.");
     }
 
     @Test
@@ -65,10 +63,10 @@ public class TestDecimalUtils extends ModuleTestBase
         BigDecimal value = new BigDecimal("15.72");
 
         long seconds = value.longValue();
-        assertEquals("The second part is not correct.", 15L, seconds);
+        assertEquals(15L, seconds, "The second part is not correct.");
 
         int nanoseconds = DecimalUtils.extractNanosecondDecimal(value, seconds);
-        assertEquals("The nanosecond part is not correct.", 720000000, nanoseconds);
+        assertEquals(720000000, nanoseconds, "The nanosecond part is not correct.");
     }
 
     @Test
@@ -77,10 +75,10 @@ public class TestDecimalUtils extends ModuleTestBase
         BigDecimal value = new BigDecimal("19827342231.192837465");
 
         long seconds = value.longValue();
-        assertEquals("The second part is not correct.", 19827342231L, seconds);
+        assertEquals(19827342231L, seconds, "The second part is not correct.");
 
         int nanoseconds = DecimalUtils.extractNanosecondDecimal(value, seconds);
-        assertEquals("The nanosecond part is not correct.", 192837465, nanoseconds);
+        assertEquals(192837465, nanoseconds, "The nanosecond part is not correct.");
     }
 
     @Test
@@ -89,10 +87,10 @@ public class TestDecimalUtils extends ModuleTestBase
         BigDecimal value = new BigDecimal("19827342231");
 
         long seconds = value.longValue();
-        assertEquals("The second part is not correct.", 19827342231L, seconds);
+        assertEquals(19827342231L, seconds, "The second part is not correct.");
 
         int nanoseconds = DecimalUtils.extractNanosecondDecimal(value, seconds);
-        assertEquals("The nanosecond part is not correct.", 0, nanoseconds);
+        assertEquals(0, nanoseconds, "The nanosecond part is not correct.");
     }
 
     @Test
@@ -101,9 +99,9 @@ public class TestDecimalUtils extends ModuleTestBase
         BigDecimal value = new BigDecimal("19827342231.999999999");
 
         long seconds = value.longValue();
-        assertEquals("The second part is not correct.", 19827342231L, seconds);
+        assertEquals(19827342231L, seconds, "The second part is not correct.");
 
         int nanoseconds = DecimalUtils.extractNanosecondDecimal(value, seconds);
-        assertEquals("The nanosecond part is not correct.", 999999999, nanoseconds);
+        assertEquals(999999999, nanoseconds, "The nanosecond part is not correct.");
     }
 }
