@@ -2,7 +2,7 @@ package com.fasterxml.jackson.module.paramnames;
 
 import static org.assertj.core.api.BDDAssertions.then;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

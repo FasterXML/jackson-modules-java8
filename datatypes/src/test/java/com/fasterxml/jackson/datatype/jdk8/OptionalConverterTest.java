@@ -2,10 +2,14 @@ package com.fasterxml.jackson.datatype.jdk8;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.util.StdConverter;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 // [modules-java#294]: Optional + converters
 public class OptionalConverterTest extends ModuleTestBase
@@ -56,6 +60,7 @@ public class OptionalConverterTest extends ModuleTestBase
     private final ObjectMapper MAPPER = mapperWithModule();
 
     // [modules-java#294]: Optional + converters, deser
+    @Test
     public void testDeserializeOptionalConverting() throws Exception {
         PointReferenceBean w = MAPPER.readerFor(PointReferenceBean.class)
                 .readValue("{\"opt\": [1,2]}");
@@ -68,6 +73,7 @@ public class OptionalConverterTest extends ModuleTestBase
     }
 
     // [modules-java#294]: Optional + converters, ser
+    @Test
     public void testSerializeOptionalConverting() throws Exception {
         assertEquals("{\"opt\":[3,4]}",
                 MAPPER.writeValueAsString(new PointReferenceBean(3, 4)));

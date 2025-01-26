@@ -1,12 +1,12 @@
 package com.fasterxml.jackson.module.paramnames;
 
+import org.junit.jupiter.api.Test;
+
 import static org.assertj.core.api.BDDAssertions.then;
 
 import com.fasterxml.jackson.annotation.*;
 
 import com.fasterxml.jackson.databind.*;
-
-import org.junit.Test;
 
 // for [java8-modules#74]
 public class CreatorWithNamingStrategy74Test

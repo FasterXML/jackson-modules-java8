@@ -2,10 +2,14 @@ package com.fasterxml.jackson.datatype.jdk8;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CreatorTest extends ModuleTestBase
 {
@@ -35,6 +39,7 @@ public class CreatorTest extends ModuleTestBase
      * Test to ensure that creator parameters use defaulting
      * (introduced in Jackson 2.6)
      */
+    @Test
     public void testCreatorWithOptionalDefault() throws Exception
     {
         CreatorWithOptionalStrings bean = MAPPER.readValue(
@@ -47,6 +52,7 @@ public class CreatorTest extends ModuleTestBase
         assertEquals("foo", bean.a.get());
     }
 
+    @Test
     public void testCreatorWithOptionalAbsentAsNull() throws Exception
     {
         Jdk8Module module = new Jdk8Module()

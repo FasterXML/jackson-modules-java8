@@ -1,7 +1,5 @@
 package com.fasterxml.jackson.datatype.jdk8;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,10 +7,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.datatype.jdk8.OptionalTest.TestBean;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings({ "javadoc", "unqualified-field-access" })
 public class StreamSerializerTest extends StreamTestBase {

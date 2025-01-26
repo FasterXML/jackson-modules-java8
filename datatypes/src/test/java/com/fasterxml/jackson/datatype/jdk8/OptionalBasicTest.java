@@ -2,12 +2,16 @@ package com.fasterxml.jackson.datatype.jdk8;
 
 import java.util.*;
 
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class OptionalBasicTest extends ModuleTestBase
 {
@@ -59,6 +63,7 @@ public class OptionalBasicTest extends ModuleTestBase
 
     private final ObjectMapper MAPPER = mapperWithModule();
 
+	@Test
     public void testOptionalTypeResolution() throws Exception {
 		// With 2.6, we need to recognize it as ReferenceType
 		JavaType t = MAPPER.constructType(Optional.class);
@@ -67,6 +72,7 @@ public class OptionalBasicTest extends ModuleTestBase
 		assertTrue(t.isReferenceType());
 	}
 
+	@Test
 	public void testDeserAbsent() throws Exception {
 		Optional<?> value = MAPPER.readValue("null",
 				new TypeReference<Optional<String>>() {
@@ -74,6 +80,7 @@ public class OptionalBasicTest extends ModuleTestBase
 		assertFalse(value.isPresent());
 	}
 
+	@Test
 	public void testDeserSimpleString() throws Exception {
 		Optional<?> value = MAPPER.readValue("\"simpleString\"",
 				new TypeReference<Optional<String>>() {
@@ -82,6 +89,7 @@ public class OptionalBasicTest extends ModuleTestBase
 		assertEquals("simpleString", value.get());
 	}
 
+	@Test
 	public void testDeserInsideObject() throws Exception {
 		OptionalData data = MAPPER.readValue("{\"myString\":\"simpleString\"}",
 				OptionalData.class);
@@ -89,6 +97,7 @@ public class OptionalBasicTest extends ModuleTestBase
 		assertEquals("simpleString", data.myString.get());
 	}
 
+	@Test
 	public void testDeserComplexObject() throws Exception {
 		TypeReference<Optional<OptionalData>> type = new TypeReference<Optional<OptionalData>>() {
 		};
@@ -99,6 +108,7 @@ public class OptionalBasicTest extends ModuleTestBase
 		assertEquals("simpleString", data.get().myString.get());
 	}
 
+	@Test
 	public void testDeserGeneric() throws Exception {
 		TypeReference<Optional<OptionalGenericData<String>>> type = new TypeReference<Optional<OptionalGenericData<String>>>() {
 		};
@@ -109,16 +119,19 @@ public class OptionalBasicTest extends ModuleTestBase
 		assertEquals("simpleString", data.get().myData.get());
 	}
 
+	@Test
 	public void testSerAbsent() throws Exception {
 		String value = MAPPER.writeValueAsString(Optional.empty());
 		assertEquals("null", value);
 	}
 
+	@Test
 	public void testSerSimpleString() throws Exception {
 		String value = MAPPER.writeValueAsString(Optional.of("simpleString"));
 		assertEquals("\"simpleString\"", value);
 	}
 
+	@Test
 	public void testSerInsideObject() throws Exception {
 		OptionalData data = new OptionalData();
 		data.myString = Optional.of("simpleString");
@@ -126,6 +139,7 @@ public class OptionalBasicTest extends ModuleTestBase
 		assertEquals("{\"myString\":\"simpleString\"}", value);
 	}
 
+	@Test
 	public void testSerComplexObject() throws Exception {
 		OptionalData data = new OptionalData();
 		data.myString = Optional.of("simpleString");
@@ -133,6 +147,7 @@ public class OptionalBasicTest extends ModuleTestBase
 		assertEquals("{\"myString\":\"simpleString\"}", value);
 	}
 
+	@Test
 	public void testSerGeneric() throws Exception {
 		OptionalGenericData<String> data = new OptionalGenericData<String>();
 		data.myData = Optional.of("simpleString");
@@ -140,6 +155,7 @@ public class OptionalBasicTest extends ModuleTestBase
 		assertEquals("{\"myData\":\"simpleString\"}", value);
 	}
 
+	@Test
 	public void testSerNonNull() throws Exception {
 		OptionalData data = new OptionalData();
 		data.myString = Optional.empty();
@@ -149,6 +165,7 @@ public class OptionalBasicTest extends ModuleTestBase
 		assertEquals("{}", value);
 	}
 
+	@Test
 	public void testSerOptDefault() throws Exception {
 		OptionalData data = new OptionalData();
 		data.myString = Optional.empty();
@@ -157,6 +174,7 @@ public class OptionalBasicTest extends ModuleTestBase
 		assertEquals("{\"myString\":null}", value);
 	}
 
+	@Test
     public void testSerOptNull() throws Exception {
         OptionalData data = new OptionalData();
         data.myString = null;
@@ -166,6 +184,7 @@ public class OptionalBasicTest extends ModuleTestBase
     }
 
     @SuppressWarnings("deprecation")
+	@Test
     public void testSerOptDisableAsNull() throws Exception {
         final OptionalData data = new OptionalData();
         data.myString = Optional.empty();
@@ -187,6 +206,7 @@ public class OptionalBasicTest extends ModuleTestBase
         assertEquals("{}", mapper.writeValueAsString(data));
     }
 
+	@Test
     public void testSerOptNonEmpty() throws Exception {
         OptionalData data = new OptionalData();
         data.myString = null;
@@ -195,6 +215,7 @@ public class OptionalBasicTest extends ModuleTestBase
         assertEquals("{}", value);
     }
 
+	@Test
     public void testWithTypingEnabled() throws Exception {
 		final ObjectMapper objectMapper = mapperWithModule();
 		// ENABLE TYPING
@@ -210,6 +231,7 @@ public class OptionalBasicTest extends ModuleTestBase
 		assertEquals(myData.myString, deserializedMyData.myString);
 	}
 
+	@Test
 	public void testObjectId() throws Exception {
 		final Unit input = new Unit();
 		input.link(input);
@@ -222,6 +244,7 @@ public class OptionalBasicTest extends ModuleTestBase
 		assertSame(result, base);
 	}
 
+	@Test
 	public void testOptionalCollection() throws Exception {
 
 		TypeReference<List<Optional<String>>> typeReference = new TypeReference<List<Optional<String>>>() {
@@ -238,10 +261,11 @@ public class OptionalBasicTest extends ModuleTestBase
 		List<Optional<String>> result = MAPPER.readValue(str, typeReference);
 		assertEquals(list.size(), result.size());
 		for (int i = 0; i < list.size(); ++i) {
-			assertEquals("Entry #" + i, list.get(i), result.get(i));
+			assertEquals(list.get(i), result.get(i), "Entry #" + i);
 		}
 	}
 
+	@Test
 	public void testPolymorphic() throws Exception
 	{
 	    final Container dto = new Container();

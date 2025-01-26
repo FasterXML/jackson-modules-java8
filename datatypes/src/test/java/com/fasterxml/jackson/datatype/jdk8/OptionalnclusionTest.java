@@ -4,12 +4,16 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class OptionalnclusionTest extends ModuleTestBase
 {
@@ -55,6 +59,7 @@ public class OptionalnclusionTest extends ModuleTestBase
 
     private final ObjectMapper MAPPER = mapperWithModule();
 
+    @Test
     public void testSerOptNonEmpty() throws Exception
     {
         OptionalData data = new OptionalData();
@@ -64,6 +69,7 @@ public class OptionalnclusionTest extends ModuleTestBase
         assertEquals("{}", value);
     }
 
+    @Test
     public void testSerOptNonDefault() throws Exception
     {
         OptionalData data = new OptionalData();
@@ -73,6 +79,7 @@ public class OptionalnclusionTest extends ModuleTestBase
         assertEquals("{}", value);
     }
 
+    @Test
     public void testSerOptNonAbsent() throws Exception
     {
         OptionalData data = new OptionalData();
@@ -82,6 +89,7 @@ public class OptionalnclusionTest extends ModuleTestBase
         assertEquals("{}", value);
     }
 
+    @Test
     public void testExcludeEmptyStringViaOptional() throws Exception
     {
         String json = MAPPER.writeValueAsString(new OptionalNonEmptyStringBean("x"));
@@ -92,6 +100,7 @@ public class OptionalnclusionTest extends ModuleTestBase
         assertEquals("{}", json);
     }
 
+    @Test
     public void testSerPropInclusionAlways() throws Exception
     {
         JsonInclude.Value incl =
@@ -101,6 +110,7 @@ public class OptionalnclusionTest extends ModuleTestBase
                 mapper.writeValueAsString(OptionalGenericData.construct(Boolean.TRUE)));
     }
 
+    @Test
     public void testSerPropInclusionNonNull() throws Exception
     {
         JsonInclude.Value incl =
@@ -110,6 +120,7 @@ public class OptionalnclusionTest extends ModuleTestBase
                 mapper.writeValueAsString(OptionalGenericData.construct(Boolean.TRUE)));
     }
 
+    @Test
     public void testSerPropInclusionNonAbsent() throws Exception
     {
         JsonInclude.Value incl =
@@ -119,6 +130,7 @@ public class OptionalnclusionTest extends ModuleTestBase
                 mapper.writeValueAsString(OptionalGenericData.construct(Boolean.TRUE)));
     }
 
+    @Test
     public void testSerPropInclusionNonEmpty() throws Exception
     {
         JsonInclude.Value incl =
@@ -128,6 +140,7 @@ public class OptionalnclusionTest extends ModuleTestBase
                 mapper.writeValueAsString(OptionalGenericData.construct(Boolean.TRUE)));
     }
 
+    @Test
     public void testMapElementInclusion() throws Exception
     {
         ObjectMapper mapper = mapperWithModule().setDefaultPropertyInclusion(

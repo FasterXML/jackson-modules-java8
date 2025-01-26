@@ -1,27 +1,18 @@
 package com.fasterxml.jackson.datatype.jdk8;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.stream.BaseStream;
 
-import org.hamcrest.CustomMatcher;
-import org.hamcrest.Description;
-import org.hamcrest.core.AllOf;
-import org.hamcrest.core.Is;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class StreamTestBase {
+import static org.junit.jupiter.api.Assertions.*;
 
-    @Rule
-    public final ExpectedException expectedException = ExpectedException.none();
+public class StreamTestBase {
 
     ObjectMapper objectMapper;
 
@@ -47,7 +38,7 @@ public class StreamTestBase {
         throw (T) t;
     }
 
-    @Before
+    @BeforeEach
     public void initObjectMapper() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new Jdk8Module());
@@ -63,77 +54,53 @@ public class StreamTestBase {
         assertTrue(closed.get());
     }
 
-    <T, S extends BaseStream<T, S>> void assertClosesOnRuntimeException(String exceptionMessage, Consumer<S> roundTrip,
+    <T, S extends BaseStream<T, S>> void assertClosesOnRuntimeException(String exMessage, Consumer<S> roundTrip,
             S baseStream) {
 
         AtomicBoolean closed = new AtomicBoolean();
 
-        initExpectedException(RuntimeException.class, exceptionMessage,closed);
+        Exception actualEx = assertThrows(Exception.class,
+            () -> roundTrip.accept(baseStream.onClose(() -> closed.set(true))));
 
-        roundTrip.accept(baseStream.onClose(() -> closed.set(true)));
-
+        initExpectedException(actualEx, exMessage, closed);
     }
 
-    <T, S extends BaseStream<T, S>> void assertClosesOnIoException(String exceptionMessage, Consumer<S> roundTrip,
+    <T, S extends BaseStream<T, S>> void assertClosesOnIoException(String exMessage, Consumer<S> roundTrip,
             S baseStream) {
 
         AtomicBoolean closed = new AtomicBoolean();
 
-        initExpectedExceptionIoException(exceptionMessage,closed);
+        Exception actual = assertThrows(Exception.class,
+            () -> roundTrip.accept(baseStream.onClose(() -> closed.set(true))));
 
-        roundTrip.accept(baseStream.onClose(() -> closed.set(true)));
-
+        initExpectedExceptionIoException(actual, closed,
+            "Unexpected IOException (of type java.io.IOException): " + exMessage);
     }
 
-    <T, S extends BaseStream<T, S>> void assertClosesOnWrappedIoException(String exceptionMessage,
+    <T, S extends BaseStream<T, S>> void assertClosesOnWrappedIoException(String expectedMsg,
             Consumer<S> roundTrip, S baseStream) {
 
         AtomicBoolean closed = new AtomicBoolean();
         
-        final String actualMessage = "Unexpected IOException (of type java.io.IOException): " + exceptionMessage;
+        Exception actual = assertThrows(Exception.class,
+            () -> roundTrip.accept(baseStream.onClose(() -> closed.set(true))));
 
-        initExpectedExceptionIoException(actualMessage,closed);
-
-        roundTrip.accept(baseStream.onClose(() -> closed.set(true)));
-
+        initExpectedExceptionIoException(actual, closed,
+            "Unexpected IOException (of type java.io.IOException): " + expectedMsg);
     }
 
-    void initExpectedExceptionIoException(final String exceptionMessage, AtomicBoolean closed) {
-
-        this.expectedException.expect(new IsClosedMatcher(closed));
-        this.expectedException.expect(Is.isA(IOException.class));
-        this.expectedException.expectMessage(exceptionMessage);
+    void initExpectedExceptionIoException(final Exception actualException, AtomicBoolean closed, final String exceptionMessage)
+    {
+        assertInstanceOf(IOException.class, actualException);
+        assertTrue(closed.get());
+        assertTrue(actualException.getMessage().contains(exceptionMessage));
     }
 
-    void initExpectedException(Class<? extends Throwable> cause, final String exceptionMessage, AtomicBoolean closed) {
-        this.expectedException.expect(AllOf.allOf(Is.isA(JsonMappingException.class), new IsClosedMatcher(closed)));
-        this.expectedException.expect(Is.isA(JsonMappingException.class));
-        this.expectedException.expectCause(Is.isA(cause));
-        this.expectedException.expectMessage(exceptionMessage);
+    void initExpectedException(final Exception actualException, final String exceptionMessage, AtomicBoolean closed)
+    {
+        assertInstanceOf(JsonMappingException.class, actualException);
+        assertTrue(closed.get());
+        assertTrue(actualException.getMessage().contains(exceptionMessage));
     }
 
-    /**
-     * Matcher that matches when the {@link StreamTestBase#closed} value is set to true.
-     */
-    static class IsClosedMatcher extends CustomMatcher<Object> {
-
-        final AtomicBoolean closed;
-        
-        public IsClosedMatcher(AtomicBoolean closed) {
-            super("Check flag closed");
-            this.closed = closed;
-        }
-
-        @Override
-        public void describeMismatch(Object item, Description description) {
-            description.appendText("The onClose method was not called");
-        }
-
-        @Override
-        public boolean matches(Object item) {
-
-            return closed.get();
-        }
-
-    }
 }

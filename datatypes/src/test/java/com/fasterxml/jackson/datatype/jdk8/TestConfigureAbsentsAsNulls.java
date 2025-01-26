@@ -5,10 +5,14 @@ import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
 
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("deprecation")
 public class TestConfigureAbsentsAsNulls extends ModuleTestBase
@@ -39,6 +43,7 @@ public class TestConfigureAbsentsAsNulls extends ModuleTestBase
     /**********************************************************************
      */
 
+    @Test
     public void testConfigAbsentsAsNullsTrue() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new Jdk8Module().configureAbsentsAsNulls(true));
@@ -48,6 +53,7 @@ public class TestConfigureAbsentsAsNulls extends ModuleTestBase
         assertEquals("{}", value);
     }
 
+    @Test
     public void testConfigAbsentsAsNullsFalse() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new Jdk8Module().configureAbsentsAsNulls(false));
@@ -57,6 +63,7 @@ public class TestConfigureAbsentsAsNulls extends ModuleTestBase
         assertEquals("{\"myString\":null}", value);
     }
 
+    @Test
     public void testConfigNonAbsentAbsentsAsNullsTrue() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new Jdk8Module().configureAbsentsAsNulls(true));
@@ -66,6 +73,7 @@ public class TestConfigureAbsentsAsNulls extends ModuleTestBase
         assertEquals("{}", value);
     }
 
+    @Test
     public void testConfigNonAbsentAbsentsAsNullsFalse() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new Jdk8Module().configureAbsentsAsNulls(false));
@@ -81,6 +89,7 @@ public class TestConfigureAbsentsAsNulls extends ModuleTestBase
     /**********************************************************************
      */
 
+    @Test
     public void testOptionalIntAbsentAsNulls() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new Jdk8Module().configureAbsentsAsNulls(true));
@@ -88,6 +97,7 @@ public class TestConfigureAbsentsAsNulls extends ModuleTestBase
         assertEquals("{}", value);
     }
 
+    @Test
     public void testOptionalLongAbsentAsNulls() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new Jdk8Module().configureAbsentsAsNulls(true));
@@ -95,6 +105,7 @@ public class TestConfigureAbsentsAsNulls extends ModuleTestBase
         assertEquals("{}", value);
     }
 
+    @Test
     public void testOptionalDoubleAbsentAsNulls() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new Jdk8Module().configureAbsentsAsNulls(true));

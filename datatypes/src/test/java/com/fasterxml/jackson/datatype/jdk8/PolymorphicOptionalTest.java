@@ -2,10 +2,14 @@ package com.fasterxml.jackson.datatype.jdk8;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PolymorphicOptionalTest extends ModuleTestBase
 {
@@ -25,6 +29,7 @@ public class PolymorphicOptionalTest extends ModuleTestBase
     private final ObjectMapper MAPPER = mapperWithModule();
     
     // [datatype-jdk8#14]
+    @Test
     public void testPolymorphic14() throws Exception
     {
         final Container dto = new Container();
