@@ -266,7 +266,7 @@ public class LocalDateDeserTest extends ModuleTestBase
         // TODO: nothing stops us from writing an empty string, maybe there should be a check there too?
         String valueFromEmptyStr = mapper.writeValueAsString(asMap("date", dateValAsEmptyStr));
         // with strict, deserializing an empty string is not permitted
-        objectReader.readValue(valueFromEmptyStr);
+        assertThrows(MismatchedInputException.class, () -> objectReader.readValue(valueFromEmptyStr));
     }
 
     /*

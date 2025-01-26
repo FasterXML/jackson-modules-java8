@@ -433,7 +433,6 @@ public class DurationDeserTest extends ModuleTestBase
     }
 
     @Test
-    //  ( expected =  MismatchedInputException.class)
     public void testStrictDeserializeFromEmptyString() throws Exception {
 
         final String key = "duration";
@@ -451,7 +450,7 @@ public class DurationDeserTest extends ModuleTestBase
 
         String dateValAsEmptyStr = "";
         String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, dateValAsEmptyStr));
-        objectReader.readValue(valueFromEmptyStr);
+        assertThrows(MismatchedInputException.class, () -> objectReader.readValue(valueFromEmptyStr));
     }
 
     /*
