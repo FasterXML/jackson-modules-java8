@@ -15,22 +15,22 @@ public class TestDecimalUtils extends ModuleTestBase
     public void testToDecimal01()
     {
         String decimal = DecimalUtils.toDecimal(0, 0);
-        assertEquals("The returned decimal is not correct.", NO_NANOSECS_SER, decimal);
+        assertEquals(NO_NANOSECS_SER, decimal, "The returned decimal is not correct.");
 
         decimal = DecimalUtils.toDecimal(15, 72);
-        assertEquals("The returned decimal is not correct.", "15.000000072", decimal);
+        assertEquals("15.000000072", decimal, "The returned decimal is not correct.");
 
         decimal = DecimalUtils.toDecimal(19827342231L, 192837465);
-        assertEquals("The returned decimal is not correct.", "19827342231.192837465",
-                decimal);
+        assertEquals("19827342231.192837465", decimal,
+                "The returned decimal is not correct.");
 
         decimal = DecimalUtils.toDecimal(19827342231L, 0);
-        assertEquals("The returned decimal is not correct.",
-                "19827342231"+NO_NANOSECS_SUFFIX, decimal);
+        assertEquals("19827342231"+NO_NANOSECS_SUFFIX, decimal,
+                "The returned decimal is not correct.");
 
         decimal = DecimalUtils.toDecimal(19827342231L, 987654321);
-        assertEquals("The returned decimal is not correct.",
-                "19827342231.987654321", decimal);
+        assertEquals("19827342231.987654321", decimal,
+                "The returned decimal is not correct.");
     }
 
     @Test

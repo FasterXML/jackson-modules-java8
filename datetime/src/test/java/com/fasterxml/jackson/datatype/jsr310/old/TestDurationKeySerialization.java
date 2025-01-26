@@ -38,7 +38,7 @@ public class TestDurationKeySerialization extends ModuleTestBase {
 
         String value = om.writeValueAsString(map);
 
-        assertEquals("Value is not correct", map(DURATION_STRING, "test"), value);
+        assertEquals(map(DURATION_STRING, "test"), value);
     }
 
     @Test

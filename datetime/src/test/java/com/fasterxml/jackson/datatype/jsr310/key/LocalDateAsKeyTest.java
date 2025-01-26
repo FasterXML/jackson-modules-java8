@@ -22,13 +22,12 @@ public class LocalDateAsKeyTest extends ModuleTestBase
 
     @Test
     public void testSerialization() throws Exception {
-        assertEquals("Incorrect value", mapAsString(DATE_STRING, "test"),
+        assertEquals(mapAsString(DATE_STRING, "test"),
                 MAPPER.writeValueAsString(asMap(DATE, "test")));
     }
 
     @Test
     public void testDeserialization() throws Exception {
-        assertEquals(asMap(DATE, "test"), READER.readValue(mapAsString(DATE_STRING, "test")),
-                "Incorrect value");
+        assertEquals(asMap(DATE, "test"), READER.readValue(mapAsString(DATE_STRING, "test")));
     }
 }

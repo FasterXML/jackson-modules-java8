@@ -139,12 +139,11 @@ public class InstantDeserTest extends ModuleTestBase
     }
 
     @Test
-    // (expected = DateTimeException.class)
     public void testDeserializationAsFloatEdgeCase03() throws Exception
     {
         // Instant can't go this low
         String input = Instant.MIN.getEpochSecond() + ".1";
-        READER.readValue(input);
+        assertThrows(DateTimeException.class, () -> READER.readValue(input));
     }
 
     /*
@@ -153,21 +152,19 @@ public class InstantDeserTest extends ModuleTestBase
      * Numbers at or above 1e64 will always result in zero.
      */
     @Test
-    // (expected = DateTimeException.class)
     public void testDeserializationAsFloatEdgeCase04() throws Exception
     {
         // 1ns beyond the upper-bound of Instant.
         String input = (Instant.MAX.getEpochSecond() + 1) + ".0";
-        READER.readValue(input);
+        assertThrows(DateTimeException.class, () -> READER.readValue(input));
     }
 
     @Test
-    // (expected = DateTimeException.class)
     public void testDeserializationAsFloatEdgeCase05() throws Exception
     {
         // 1ns beyond the lower-bound of Instant.
         String input = (Instant.MIN.getEpochSecond() - 1) + ".0";
-        READER.readValue(input);
+        assertThrows(DateTimeException.class, () -> READER.readValue(input));
     }
 
     @Test
@@ -596,7 +593,6 @@ public class InstantDeserTest extends ModuleTestBase
     }
 
     @Test
-    // ( expected =  MismatchedInputException.class)
     public void testStrictDeserializeFromEmptyString() throws Exception {
 
         final String key = "instant";
@@ -611,7 +607,7 @@ public class InstantDeserTest extends ModuleTestBase
         assertNull(actualMapFromNullStr.get(key));
 
         String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, ""));
-        objectReader.readValue(valueFromEmptyStr);
+        assertThrows(MismatchedInputException.class, () -> objectReader.readValue(valueFromEmptyStr));
     }
     
     /*
