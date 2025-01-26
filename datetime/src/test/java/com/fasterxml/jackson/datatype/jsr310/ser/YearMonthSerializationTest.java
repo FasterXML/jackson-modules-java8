@@ -16,13 +16,11 @@
 
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
-import static org.junit.assertEquals;
-import static org.junit.assertNotNull;
-import static org.junit.assertTrue;
-
 import java.time.Month;
 import java.time.YearMonth;
 import java.time.temporal.Temporal;
+
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -32,9 +30,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import org.junit.Test;
-
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class YearMonthSerializationTest
@@ -167,7 +162,7 @@ public class YearMonthSerializationTest
         Temporal value = mapper.readValue("[\"" + YearMonth.class.getName() + "\",\"" + yearMonth.toString() + "\"]", Temporal.class);
 
         assertNotNull(value);
-        assertTrue("The value should be a YearMonth.", value instanceof YearMonth);
+        assertInstanceOf(YearMonth.class, value, "The value should be a YearMonth.");
         assertEquals(yearMonth, value);
     }
 

@@ -16,18 +16,15 @@
 
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
-import static org.junit.assertEquals;
-
 import java.time.Period;
 import java.time.temporal.TemporalAmount;
+
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import org.junit.Test;
-
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PeriodSerTest extends ModuleTestBase

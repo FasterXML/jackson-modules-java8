@@ -1,37 +1,26 @@
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
-import static org.hamcrest.MatcherassertThat;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.hamcrest.core.StringContains.containsString;
+
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collection;
-
-@RunWith(Parameterized.class)
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestLocalTimeSerializationWithCustomFormatter {
-    private final DateTimeFormatter formatter;
 
-    public TestLocalTimeSerializationWithCustomFormatter(DateTimeFormatter formatter) {
-        this.formatter = formatter;
-    }
-
-    @Test
-    public void testSerialization() throws Exception {
+    @ParameterizedTest
+    @MethodSource("customFormatters")
+    void testSerialization(DateTimeFormatter formatter) throws Exception {
         LocalTime dateTime = LocalTime.now();
-        assertThat(serializeWith(dateTime, formatter), containsString(dateTime.format(formatter)));
+        assertTrue(serializeWith(dateTime, formatter).contains(dateTime.format(formatter)));
     }
 
     private String serializeWith(LocalTime dateTime, DateTimeFormatter f) throws Exception {
@@ -40,10 +29,11 @@ public class TestLocalTimeSerializationWithCustomFormatter {
         return mapper.writeValueAsString(dateTime);
     }
 
-    @Test
-    public void testDeserialization() throws Exception {
+    @ParameterizedTest
+    @MethodSource("customFormatters")
+    void testDeserialization(DateTimeFormatter formatter) throws Exception {
         LocalTime dateTime = LocalTime.now();
-        assertThat(deserializeWith(dateTime.format(formatter), formatter), equalTo(dateTime));
+        assertEquals(dateTime, deserializeWith(dateTime.format(formatter), formatter));
     }
 
     private LocalTime deserializeWith(String json, DateTimeFormatter f) throws Exception {
@@ -52,11 +42,10 @@ public class TestLocalTimeSerializationWithCustomFormatter {
         return mapper.readValue("\"" + json + "\"", LocalTime.class);
     }
 
-    @Parameters
-    public static Collection<Object[]> customFormatters() {
-        Collection<Object[]> formatters = new ArrayList<>();
-        formatters.add(new Object[]{DateTimeFormatter.ISO_LOCAL_TIME});
-        formatters.add(new Object[]{DateTimeFormatter.ISO_TIME});
-        return formatters;
+    static Stream<DateTimeFormatter> customFormatters() {
+        return Stream.of(
+                DateTimeFormatter.ISO_LOCAL_TIME,
+                DateTimeFormatter.ISO_TIME
+        );
     }
 }

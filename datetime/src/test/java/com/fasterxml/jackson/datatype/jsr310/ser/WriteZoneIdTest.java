@@ -5,6 +5,8 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -12,12 +14,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import org.junit.Assert;
-import org.junit.Test;
-
-import static org.junit.assertEquals;
-
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class WriteZoneIdTest extends ModuleTestBase
@@ -77,11 +73,11 @@ public class WriteZoneIdTest extends ModuleTestBase
         //    just verify appending of timezone id itself:
         String json = MAPPER.writeValueAsString(input);
         if (!json.contains("\"01-01-1970T")) {
-            Assert.fail("Should contain time prefix, did not: "+json);
+            fail("Should contain time prefix, did not: "+json);
         }
         String match = String.format("[%s]", ZONE_ID_STR);
         if (!json.contains(match)) {
-            Assert.fail("Should contain zone id "+match+", does not: "+json);
+            fail("Should contain zone id "+match+", does not: "+json);
         }
     }
 

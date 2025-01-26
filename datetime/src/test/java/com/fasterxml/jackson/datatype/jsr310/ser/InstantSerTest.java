@@ -16,9 +16,6 @@
 
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
-import static org.junit.assertEquals;
-import static org.junit.assertNotNull;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,9 +26,9 @@ import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
-import org.junit.Test;
 
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class InstantSerTest extends ModuleTestBase

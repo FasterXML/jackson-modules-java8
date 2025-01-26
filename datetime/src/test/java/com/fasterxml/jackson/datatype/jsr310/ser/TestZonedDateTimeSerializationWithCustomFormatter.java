@@ -4,37 +4,26 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.TimeZone;
+import java.util.stream.Stream;
 
-import static org.hamcrest.MatcherassertThat;
-import static org.hamcrest.core.StringContains.containsString;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 public class TestZonedDateTimeSerializationWithCustomFormatter {
-    private final DateTimeFormatter formatter;
 
-    public TestZonedDateTimeSerializationWithCustomFormatter(DateTimeFormatter formatter) {
-        this.formatter = formatter;
-    }
-
-    @Test
-    public void testSerialization() throws Exception {
+    @MethodSource("customFormatters")
+    @ParameterizedTest
+    public void testSerialization(DateTimeFormatter formatter) throws Exception {
         ZonedDateTime zonedDateTime = ZonedDateTime.now();
-        assertThat(serializeWith(zonedDateTime, formatter),
-                containsString(zonedDateTime.format(formatter.withZone(ZoneOffset.UTC))));
+        assertTrue(serializeWith(zonedDateTime, formatter).contains(zonedDateTime.format(formatter.withZone(ZoneOffset.UTC))));
     }
 
     private String serializeWith(ZonedDateTime zonedDateTime, DateTimeFormatter f) throws Exception {
@@ -47,13 +36,12 @@ public class TestZonedDateTimeSerializationWithCustomFormatter {
         return mapper.writeValueAsString(zonedDateTime);
     }
 
-    @Parameters
-    public static Collection<Object[]> customFormatters() {
-        Collection<Object[]> formatters = new ArrayList<>();
-        formatters.add(new Object[]{DateTimeFormatter.ISO_ZONED_DATE_TIME});
-        formatters.add(new Object[]{DateTimeFormatter.ISO_OFFSET_DATE_TIME});
-        formatters.add(new Object[]{DateTimeFormatter.ISO_LOCAL_DATE_TIME});
-        formatters.add(new Object[]{DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ")});
-        return formatters;
+    public static Stream<DateTimeFormatter> customFormatters() {
+        return Stream.of(
+            DateTimeFormatter.ISO_ZONED_DATE_TIME,
+            DateTimeFormatter.ISO_OFFSET_DATE_TIME,
+            DateTimeFormatter.ISO_LOCAL_DATE_TIME,
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+        );
     }
 }

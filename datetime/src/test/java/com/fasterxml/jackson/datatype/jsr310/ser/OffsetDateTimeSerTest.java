@@ -1,7 +1,5 @@
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
-import static org.junit.assertEquals;
-
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -10,7 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 import java.util.TimeZone;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,7 +17,6 @@ import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class OffsetDateTimeSerTest
@@ -263,7 +260,7 @@ public class OffsetDateTimeSerTest
                 .writeValueAsString(date);
 
         // We expect to have the date written with the ZoneId Z2
-        assertEquals("The value is incorrect", "\"" + FORMATTER.format(date.atZoneSameInstant(Z2)) + "\"", value);
+        assertEquals("\"" + FORMATTER.format(date.atZoneSameInstant(Z2)) + "\"", value);
     }
 
     @Test
@@ -277,7 +274,7 @@ public class OffsetDateTimeSerTest
                 .writeValueAsString(date);
 
         // We expect to have the date written with the ZoneId Z3
-        assertEquals("The value is incorrect", "\"" + FORMATTER.format(date) + "\"", value);
+        assertEquals("\"" + FORMATTER.format(date) + "\"", value);
     }
 
     static class Pojo1 {

@@ -177,7 +177,7 @@ public class TestZonedDateTimeSerialization extends ModuleTestBase {
 
         String value = mapper.writeValueAsString(date);
 
-        assertEquals("The value is incorrect", "\"" + date.toString() + "\"", value);
+        assertEquals("\"" + date.toString() + "\"", value);
     }
 
     @Test
