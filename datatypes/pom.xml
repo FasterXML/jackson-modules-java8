@@ -28,6 +28,19 @@ JDK 8 data types.
     <packageVersion.dir>com/fasterxml/jackson/datatype/jdk8</packageVersion.dir>
     <packageVersion.package>${project.groupId}.jdk8</packageVersion.package>
   </properties>
+  <dependencies>
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
   <build>
     <plugins>
