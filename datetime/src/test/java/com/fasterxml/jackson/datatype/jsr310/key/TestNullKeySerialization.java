@@ -3,14 +3,12 @@ package com.fasterxml.jackson.datatype.jsr310.key;
 import java.time.LocalDate;
 import java.util.Map;
 
-import org.junit.jupiter.api.Test;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class TestNullKeySerialization extends ModuleTestBase
 {
@@ -24,13 +22,13 @@ public class TestNullKeySerialization extends ModuleTestBase
         final ObjectMapper mapper = newMapper();
         mapper.getSerializerProvider().setNullKeySerializer(new com.fasterxml.jackson.datatype.jsr310.ser.key.Jsr310NullKeySerializer());
         String value = mapper.writeValueAsString(asMap(null, "test"));
-        assertEquals(mapAsString(com.fasterxml.jackson.datatype.jsr310.ser.key.Jsr310NullKeySerializer.NULL_KEY, "test"), value);
+        Assert.assertEquals(mapAsString(com.fasterxml.jackson.datatype.jsr310.ser.key.Jsr310NullKeySerializer.NULL_KEY, "test"), value);
     }
 
     @SuppressWarnings("deprecation")
     @Test
     public void testDeserialization() throws Exception {
         Map<LocalDate, String> value = READER.readValue(mapAsString(com.fasterxml.jackson.datatype.jsr310.ser.key.Jsr310NullKeySerializer.NULL_KEY, "test"));
-        assertEquals(asMap(null, "test"), value);
+        Assert.assertEquals(asMap(null, "test"), value);
     }
 }

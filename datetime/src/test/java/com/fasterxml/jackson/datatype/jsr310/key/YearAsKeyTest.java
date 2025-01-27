@@ -5,14 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
+import org.junit.Test;
 
 import java.time.Year;
 import java.util.Collections;
 import java.util.Map;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
 
 public class YearAsKeyTest extends ModuleTestBase
 {
@@ -23,34 +22,29 @@ public class YearAsKeyTest extends ModuleTestBase
 
     @Test
     public void testKeySerialization() throws Exception {
-        assertEquals(mapAsString("3141", "test"),
-                MAPPER.writeValueAsString(asMap(Year.of(3141), "test")),
-                "Value is incorrect");
+        assertEquals("Value is incorrect", mapAsString("3141", "test"),
+                MAPPER.writeValueAsString(asMap(Year.of(3141), "test")));
     }
 
     @Test
     public void testKeyDeserialization() throws Exception {
-        assertEquals(asMap(Year.of(3141), "test"), READER.readValue(mapAsString("3141", "test")),
-                "Value is incorrect");
+        assertEquals("Value is incorrect", asMap(Year.of(3141), "test"),
+                READER.readValue(mapAsString("3141", "test")));
         // Test both padded, unpadded
-        assertEquals(asMap(Year.of(476), "test"), READER.readValue(mapAsString("0476", "test")),
-                "Value is incorrect");
-        assertEquals(asMap(Year.of(476), "test"), READER.readValue(mapAsString("476", "test")),
-                "Value is incorrect");
+        assertEquals("Value is incorrect", asMap(Year.of(476), "test"),
+                READER.readValue(mapAsString("0476", "test")));
+        assertEquals("Value is incorrect", asMap(Year.of(476), "test"),
+                READER.readValue(mapAsString("476", "test")));
     }
 
-    @Test
+    @Test(expected = InvalidFormatException.class)
     public void deserializeYearKey_notANumber() throws Exception {
-        assertThrows(InvalidFormatException.class, () -> {
-            READER.readValue(mapAsString("10000BC", "test"));
-        });
+        READER.readValue(mapAsString("10000BC", "test"));
     }
 
-    @Test
+    @Test(expected = InvalidFormatException.class)
     public void deserializeYearKey_notAYear() throws Exception {
-        assertThrows(InvalidFormatException.class, () -> {
-            READER.readValue(mapAsString(Integer.toString(Year.MAX_VALUE+1), "test"));
-        });
+        READER.readValue(mapAsString(Integer.toString(Year.MAX_VALUE+1), "test"));
     }
 
     @Test

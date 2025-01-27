@@ -1,11 +1,11 @@
 package com.fasterxml.jackson.datatype.jsr310.key;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Map;
-
-import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.deser.DeserializationProblemHandler;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.Test;
 
 public class LocalDateTimeAsKeyTest extends ModuleTestBase
 {
@@ -33,27 +33,27 @@ public class LocalDateTimeAsKeyTest extends ModuleTestBase
     @Test
     public void testSerialization0() throws Exception {
         String value = MAPPER.writeValueAsString(asMap(DATE_TIME_0, "test"));
-        assertEquals(mapAsString(DATE_TIME_0_STRING, "test"), value);
+        assertEquals("Value is incorrect", mapAsString(DATE_TIME_0_STRING, "test"), value);
     }
 
     @Test
     public void testSerialization1() throws Exception {
         String value = MAPPER.writeValueAsString(asMap(DATE_TIME, "test"));
-        assertEquals(mapAsString(DATE_TIME_STRING, "test"), value);
+        assertEquals("Value is incorrect", mapAsString(DATE_TIME_STRING, "test"), value);
     }
 
     @Test
     public void testDeserialization0() throws Exception {
         Map<LocalDateTime, String> value = READER.readValue(
                 mapAsString(DATE_TIME_0_STRING, "test"));
-        assertEquals(asMap(DATE_TIME_0, "test"), value, "Value is incorrect");
+        assertEquals("Value is incorrect", asMap(DATE_TIME_0, "test"), value);
     }
 
     @Test
     public void testDeserialization1() throws Exception {
         Map<LocalDateTime, String> value = READER.readValue(
                 mapAsString(DATE_TIME_STRING, "test"));
-        assertEquals(asMap(DATE_TIME, "test"), value, "Value is incorrect");
+        assertEquals("Value is incorrect", asMap(DATE_TIME, "test"), value);
     }
 
     @Test

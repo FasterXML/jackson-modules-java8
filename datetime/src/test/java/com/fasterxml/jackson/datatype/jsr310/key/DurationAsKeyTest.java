@@ -1,17 +1,17 @@
 package com.fasterxml.jackson.datatype.jsr310.key;
 
+import static org.junit.Assert.assertEquals;
+
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Map;
-
-import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.Test;
 
 public class DurationAsKeyTest extends ModuleTestBase
 {
@@ -23,12 +23,13 @@ public class DurationAsKeyTest extends ModuleTestBase
 
     @Test
     public void testSerialization() throws Exception {
-        assertEquals(mapAsString(DURATION_STRING, "test"),
+        assertEquals("Value is not correct", mapAsString(DURATION_STRING, "test"),
                 MAPPER.writeValueAsString(Collections.singletonMap(DURATION, "test")));
     }
 
     @Test
     public void testDeserialization() throws Exception {
-        assertEquals(Collections.singletonMap(DURATION, "test"), READER.readValue(mapAsString(DURATION_STRING, "test")));
+        assertEquals("Value is not correct", Collections.singletonMap(DURATION, "test"),
+                READER.readValue(mapAsString(DURATION_STRING, "test")));
     }
 }

@@ -4,14 +4,13 @@ import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class ZoneOffsetAsKeyTest extends ModuleTestBase
 {
@@ -26,7 +25,7 @@ public class ZoneOffsetAsKeyTest extends ModuleTestBase
 
     private Map<ZoneOffset, String> map;
 
-    @BeforeEach
+    @Before
     public void setUp() {
         map = new HashMap<>();
     }
@@ -37,7 +36,7 @@ public class ZoneOffsetAsKeyTest extends ModuleTestBase
 
         String value = MAPPER.writeValueAsString(map);
 
-        assertEquals(map(OFFSET_0_STRING, "test"), value);
+        Assert.assertEquals("Value is incorrect", map(OFFSET_0_STRING, "test"), value);
     }
 
     @Test
@@ -46,7 +45,7 @@ public class ZoneOffsetAsKeyTest extends ModuleTestBase
 
         String value = MAPPER.writeValueAsString(map);
 
-        assertEquals(map(OFFSET_1_STRING, "test"), value);
+        Assert.assertEquals("Value is incorrect", map(OFFSET_1_STRING, "test"), value);
     }
 
     @Test
@@ -54,7 +53,7 @@ public class ZoneOffsetAsKeyTest extends ModuleTestBase
         Map<ZoneOffset, String> value = MAPPER.readValue(map(OFFSET_0_STRING, "test"), TYPE_REF);
 
         map.put(OFFSET_0, "test");
-        assertEquals(map, value);
+        Assert.assertEquals("Value is incorrect", map, value);
     }
 
     @Test
@@ -62,7 +61,7 @@ public class ZoneOffsetAsKeyTest extends ModuleTestBase
         Map<ZoneOffset, String> value = MAPPER.readValue(map(OFFSET_1_STRING, "test"), TYPE_REF);
 
         map.put(OFFSET_1, "test");
-        assertEquals(map, value);
+        Assert.assertEquals("Value is incorrect", map, value);
     }
 
     private String map(String key, String value) {

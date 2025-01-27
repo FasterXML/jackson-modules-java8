@@ -3,14 +3,13 @@ package com.fasterxml.jackson.datatype.jsr310.key;
 import java.time.Period;
 import java.util.Map;
 
-import org.junit.jupiter.api.Test;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class PeriodAsKeyTest extends ModuleTestBase
 {
@@ -26,29 +25,25 @@ public class PeriodAsKeyTest extends ModuleTestBase
 
     @Test
     public void testSerialization0() throws Exception {
-        assertEquals(mapAsString(PERIOD_0_STRING, "test"),
-                MAPPER.writeValueAsString(asMap(PERIOD_0, "test")),
-                "Value is incorrect");
+        Assert.assertEquals("Value is incorrect", mapAsString(PERIOD_0_STRING, "test"),
+                MAPPER.writeValueAsString(asMap(PERIOD_0, "test")));
     }
 
     @Test
     public void testSerialization1() throws Exception {
-        assertEquals(mapAsString(PERIOD_STRING, "test"),
-                MAPPER.writeValueAsString(asMap(PERIOD, "test")),
-                "Value is incorrect");
+        Assert.assertEquals("Value is incorrect", mapAsString(PERIOD_STRING, "test"),
+                MAPPER.writeValueAsString(asMap(PERIOD, "test")));
     }
 
     @Test
     public void testDeserialization0() throws Exception {
-        assertEquals(asMap(PERIOD_0, "test"),
-                READER.readValue(mapAsString(PERIOD_0_STRING, "test")),
-                "Value is incorrect");
+        Assert.assertEquals("Value is incorrect", asMap(PERIOD_0, "test"),
+                READER.readValue(mapAsString(PERIOD_0_STRING, "test")));
     }
 
     @Test
     public void testDeserialization1() throws Exception {
-        assertEquals(asMap(PERIOD, "test"),
-                READER.readValue(mapAsString(PERIOD_STRING, "test")),
-                "Value is incorrect");
+        Assert.assertEquals("Value is incorrect", asMap(PERIOD, "test"),
+                READER.readValue(mapAsString(PERIOD_STRING, "test")));
     }
 }

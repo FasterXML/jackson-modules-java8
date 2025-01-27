@@ -1,16 +1,16 @@
 package com.fasterxml.jackson.datatype.jsr310.key;
 
+import static org.junit.Assert.assertEquals;
+
 import java.time.LocalDate;
 import java.util.Map;
-
-import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.Test;
 
 public class LocalDateAsKeyTest extends ModuleTestBase
 {
@@ -22,12 +22,13 @@ public class LocalDateAsKeyTest extends ModuleTestBase
 
     @Test
     public void testSerialization() throws Exception {
-        assertEquals(mapAsString(DATE_STRING, "test"),
+        assertEquals("Incorrect value", mapAsString(DATE_STRING, "test"),
                 MAPPER.writeValueAsString(asMap(DATE, "test")));
     }
 
     @Test
     public void testDeserialization() throws Exception {
-        assertEquals(asMap(DATE, "test"), READER.readValue(mapAsString(DATE_STRING, "test")));
+        assertEquals("Incorrect value", asMap(DATE, "test"),
+                READER.readValue(mapAsString(DATE_STRING, "test")));
     }
 }

@@ -3,14 +3,13 @@ package com.fasterxml.jackson.datatype.jsr310.key;
 import java.time.ZoneId;
 import java.util.Map;
 
-import org.junit.jupiter.api.Test;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class ZoneIdAsKeyTest extends ModuleTestBase
 {
@@ -26,37 +25,37 @@ public class ZoneIdAsKeyTest extends ModuleTestBase
 
     @Test
     public void testSerialization0() throws Exception {
-        assertEquals(mapAsString(ZONE_0_STRING, "test"),
+        Assert.assertEquals("Value is incorrect", mapAsString(ZONE_0_STRING, "test"),
                 MAPPER.writeValueAsString(asMap(ZONE_0, "test")));
     }
 
     @Test
     public void testSerialization1() throws Exception {
-        assertEquals(mapAsString(ZONE_1_STRING, "test"),
+        Assert.assertEquals("Value is incorrect", mapAsString(ZONE_1_STRING, "test"),
                 MAPPER.writeValueAsString(asMap(ZONE_1, "test")));
     }
 
     @Test
     public void testSerialization2() throws Exception {
-        assertEquals(mapAsString(ZONE_2_STRING, "test"),
+        Assert.assertEquals("Value is incorrect", mapAsString(ZONE_2_STRING, "test"),
                 MAPPER.writeValueAsString(asMap(ZONE_2, "test")));
     }
 
     @Test
     public void testDeserialization0() throws Exception {
-        assertEquals(asMap(ZONE_0, "test"),
+        Assert.assertEquals("Value is incorrect", asMap(ZONE_0, "test"),
                 READER.readValue(mapAsString(ZONE_0_STRING, "test")));
     }
 
     @Test
     public void testDeserialization1() throws Exception {
-        assertEquals(asMap(ZONE_1, "test"),
+        Assert.assertEquals("Value is incorrect", asMap(ZONE_1, "test"),
                 READER.readValue(mapAsString(ZONE_1_STRING, "test")));
     }
 
     @Test
     public void testDeserialization2() throws Exception {
-        assertEquals(asMap(ZONE_2, "test"),
+        Assert.assertEquals("Value is incorrect", asMap(ZONE_2, "test"),
                 READER.readValue(mapAsString(ZONE_2_STRING, "test")));
     }
 }

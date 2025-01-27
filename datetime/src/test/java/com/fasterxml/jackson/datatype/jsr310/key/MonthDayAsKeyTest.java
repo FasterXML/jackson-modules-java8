@@ -3,14 +3,13 @@ package com.fasterxml.jackson.datatype.jsr310.key;
 import java.time.MonthDay;
 import java.util.Map;
 
-import org.junit.jupiter.api.Test;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class MonthDayAsKeyTest extends ModuleTestBase
 {
@@ -24,13 +23,13 @@ public class MonthDayAsKeyTest extends ModuleTestBase
 
     @Test
     public void testSerialization() throws Exception {
-        assertEquals(mapAsString(MONTH_DAY_STRING, "test"), MAPPER.writeValueAsString(asMap(MONTH_DAY, "test")),
-                "Value is incorrect");
+        Assert.assertEquals("Value is incorrect", mapAsString(MONTH_DAY_STRING, "test"),
+                MAPPER.writeValueAsString(asMap(MONTH_DAY, "test")));
     }
 
     @Test
     public void testDeserialization() throws Exception {
-        assertEquals(asMap(MONTH_DAY, "test"), READER.readValue(mapAsString(MONTH_DAY_STRING, "test")),
-                "Value is incorrect");
+        Assert.assertEquals("Value is incorrect", asMap(MONTH_DAY, "test"),
+                READER.readValue(mapAsString(MONTH_DAY_STRING, "test")));
     }
 }
