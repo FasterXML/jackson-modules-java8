@@ -16,33 +16,32 @@
 
 package com.fasterxml.jackson.datatype.jsr310;
 
-import org.junit.jupiter.api.Test;
-
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.junit.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
 public class TestFeatures
 {
     @Test
     public void testWriteDateTimestampsAsNanosecondsSettingEnabledByDefault()
     {
-        assertTrue(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS.enabledByDefault(),
-                "Write date timestamps as nanoseconds setting should be enabled by default.");
+        assertTrue("Write date timestamps as nanoseconds setting should be enabled by default.",
+                SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS.enabledByDefault());
     }
 
     @Test
     public void testReadDateTimestampsAsNanosecondsSettingEnabledByDefault()
     {
-        assertTrue(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS.enabledByDefault(),
-                "Read date timestamps as nanoseconds setting should be enabled by default.");
+        assertTrue("Read date timestamps as nanoseconds setting should be enabled by default.",
+                DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS.enabledByDefault());
     }
 
     @Test
     public void testAdjustDatesToContextTimeZoneSettingEnabledByDefault()
     {
-        assertTrue(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE.enabledByDefault(),
-                "Adjust dates to context time zone setting should be enabled by default.");
+        assertTrue("Adjust dates to context time zone setting should be enabled by default.",
+                DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE.enabledByDefault());
     }
 }

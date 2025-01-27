@@ -16,6 +16,10 @@
 
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -28,11 +32,10 @@ import java.time.temporal.Temporal;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import org.junit.jupiter.api.Test;
-
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.junit.Test;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -42,8 +45,6 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class ZonedDateTimeSerTest
     extends ModuleTestBase
@@ -94,7 +95,7 @@ public class ZonedDateTimeSerTest
                 .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .with(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .writeValueAsString(date);
-        assertEquals("0.0", value);
+        assertEquals("The value is not correct.", "0.0", value);
     }
 
     @Test
@@ -107,7 +108,7 @@ public class ZonedDateTimeSerTest
                 .with(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .writeValueAsString(date);
         ZonedDateTime actual = MAPPER.readValue(serialized, ZonedDateTime.class);
-        assertEquals(date, actual);
+        assertEquals("The value is not correct.", date, actual);
     }
 
     @Test
@@ -118,14 +119,14 @@ public class ZonedDateTimeSerTest
         ZonedDateTime original = ZonedDateTime.parse("Apr 13 1969 05:05:38.599 UTC", dtf);
         String serialized = MAPPER.writeValueAsString(original);
         ZonedDateTime deserialized = MAPPER.readValue(serialized, ZonedDateTime.class);
-        assertEquals(original.getDayOfMonth(), deserialized.getDayOfMonth(), "The day is not correct.");
-        assertEquals(original.getMonthValue(), deserialized.getMonthValue(), "The month is not correct.");
-        assertEquals(original.getYear(), deserialized.getYear(), "The year is not correct.");
-        assertEquals(original.getHour(), deserialized.getHour(), "The hour is not correct.");
-        assertEquals(original.getMinute(), deserialized.getMinute(), "The minute is not correct.");
-        assertEquals(original.getSecond(), deserialized.getSecond(), "The second is not correct.");
-        assertEquals(original.getNano(), deserialized.getNano(), "The nano is not correct.");
-        assertEquals(ZoneId.of("UTC").getRules(), deserialized.getZone().getRules(), "The time zone is not correct.");
+        assertEquals("The day is not correct.", original.getDayOfMonth(), deserialized.getDayOfMonth());
+        assertEquals("The month is not correct.", original.getMonthValue(), deserialized.getMonthValue());
+        assertEquals("The year is not correct.", original.getYear(), deserialized.getYear());
+        assertEquals("The hour is not correct.", original.getHour(), deserialized.getHour());
+        assertEquals("The minute is not correct.", original.getMinute(), deserialized.getMinute());
+        assertEquals("The second is not correct.", original.getSecond(), deserialized.getSecond());
+        assertEquals("The nano is not correct.", original.getNano(), deserialized.getNano());
+        assertEquals("The time zone is not correct.", ZoneId.of("UTC").getRules(), deserialized.getZone().getRules());
     }
 
     @Test
@@ -136,7 +137,7 @@ public class ZonedDateTimeSerTest
                 .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .without(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .writeValueAsString(date);
-        assertEquals("0", value);
+        assertEquals("The value is not correct.", "0", value);
     }
 
     @Test
@@ -147,7 +148,7 @@ public class ZonedDateTimeSerTest
                 .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .with(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .writeValueAsString(date);
-        assertEquals("123456789.183917322", value);
+        assertEquals("The value is not correct.", "123456789.183917322", value);
     }
 
     @Test
@@ -158,7 +159,7 @@ public class ZonedDateTimeSerTest
                 .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .without(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .writeValueAsString(date);
-        assertEquals("123456789183", value);
+        assertEquals("The value is not correct.", "123456789183", value);
     }
 
     @Test
@@ -169,7 +170,7 @@ public class ZonedDateTimeSerTest
                 .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .with(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .writeValueAsString(date);
-        assertEquals(DecimalUtils.toDecimal(date.toEpochSecond(), date.getNano()), value);
+        assertEquals("The value is not correct.", DecimalUtils.toDecimal(date.toEpochSecond(), date.getNano()), value);
     }
 
     @Test
@@ -180,7 +181,7 @@ public class ZonedDateTimeSerTest
                 .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .without(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .writeValueAsString(date);
-        assertEquals(Long.toString(date.toInstant().toEpochMilli()), value);
+        assertEquals("The value is not correct.", Long.toString(date.toInstant().toEpochMilli()), value);
     }
 
     @Test
@@ -190,7 +191,7 @@ public class ZonedDateTimeSerTest
         String value = MAPPER.writer()
                 .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .writeValueAsString(date);
-        assertEquals('"'
+        assertEquals("The value is not correct.", '"'
                 + FORMATTER.withZone(Z1).format(date) + '"', value);
     }
 
@@ -201,7 +202,7 @@ public class ZonedDateTimeSerTest
         String value = MAPPER.writer()
                 .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .writeValueAsString(date);
-        assertEquals('"'
+        assertEquals("The value is not correct.", '"'
                 + FORMATTER.withZone(Z2).format(date) + '"', value);
     }
 
@@ -212,7 +213,7 @@ public class ZonedDateTimeSerTest
         String value = MAPPER.writer()
                 .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .writeValueAsString(date);
-        assertEquals('"'
+        assertEquals("The value is not correct.", '"'
                 + FORMATTER.withZone(Z3).format(date) + '"', value);
     }
 
@@ -224,7 +225,7 @@ public class ZonedDateTimeSerTest
                 .with(TimeZone.getTimeZone(Z1))
                 .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .writeValueAsString(date);
-        assertEquals('"' + FORMATTER.format(date) + '"', value);
+        assertEquals("The value is not correct.", '"' + FORMATTER.format(date) + '"', value);
     }
 
     @Test
@@ -235,7 +236,7 @@ public class ZonedDateTimeSerTest
                 .with(TimeZone.getTimeZone(Z2))
                 .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .writeValueAsString(date);
-        assertEquals('"' + FORMATTER.format(date) + '"', value);
+        assertEquals("The value is not correct.", '"' + FORMATTER.format(date) + '"', value);
     }
 
     @Test
@@ -246,7 +247,7 @@ public class ZonedDateTimeSerTest
                 .with(TimeZone.getTimeZone(Z3))
                 .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .writeValueAsString(date);
-        assertEquals('"' + FORMATTER.format(date) + '"', value);
+        assertEquals("The value is not correct.", '"' + FORMATTER.format(date) + '"', value);
     }
 
     @Test
@@ -257,7 +258,7 @@ public class ZonedDateTimeSerTest
                         SerializationFeature.WRITE_DATES_WITH_ZONE_ID)
                 .writeValueAsString(date);
 
-        assertEquals("\""
+        assertEquals("The value is incorrect.", "\""
                 + FORMATTER.withZone(Z3).format(date) + "\"", value);
     }
 
@@ -270,7 +271,7 @@ public class ZonedDateTimeSerTest
                         SerializationFeature.WRITE_DATES_WITH_ZONE_ID)
                 .writeValueAsString(date);
 
-        assertEquals("\"" + FORMATTER.format(date) + "\"", value);
+        assertEquals("The value is incorrect.", "\"" + FORMATTER.format(date) + "\"", value);
     }
 
     @Test
@@ -281,7 +282,7 @@ public class ZonedDateTimeSerTest
                 .with(SerializationFeature.WRITE_DATES_WITH_ZONE_ID)
                 .writeValueAsString(date);
 
-        assertEquals("\"" + DateTimeFormatter.ISO_ZONED_DATE_TIME.format(date) + "\"", value);
+        assertEquals("The value is incorrect.", "\"" + DateTimeFormatter.ISO_ZONED_DATE_TIME.format(date) + "\"", value);
     }
 
     @Test
@@ -296,7 +297,7 @@ public class ZonedDateTimeSerTest
                 .writeValueAsString(date);
 
         // We expect to have the date written with the datetime of ZoneId Z2
-        assertEquals("\"" + date.withZoneSameInstant(Z2).format(FORMATTER_WITHOUT_ZONEID) + "\"", value);
+        assertEquals("The value is incorrect", "\"" + date.withZoneSameInstant(Z2).format(FORMATTER_WITHOUT_ZONEID) + "\"", value);
     }
 
     @Test
@@ -311,7 +312,7 @@ public class ZonedDateTimeSerTest
                 .writeValueAsString(date);
 
         // We expect to have the date written with the datetime of ZoneId Z3
-        assertEquals("\"" + date.format(FORMATTER_WITHOUT_ZONEID) + "\"", value);
+        assertEquals("The value is incorrect", "\"" + date.format(FORMATTER_WITHOUT_ZONEID) + "\"", value);
     }
 
     @Test
@@ -325,7 +326,7 @@ public class ZonedDateTimeSerTest
                 .writeValueAsString(date);
 
         // We expect to have the date written with the ZoneId Z2
-        assertEquals("\"" + DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(date.withZoneSameInstant(Z2)) + "\"", value);
+        assertEquals("The value is incorrect", "\"" + DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(date.withZoneSameInstant(Z2)) + "\"", value);
     }
 
     @Test
@@ -339,7 +340,7 @@ public class ZonedDateTimeSerTest
                 .writeValueAsString(date);
 
         // We expect to have the date written with the ZoneId Z3
-        assertEquals("\"" + DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(date) + "\"", value);
+        assertEquals("The value is incorrect", "\"" + DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(date) + "\"", value);
     }
 
     @Test
@@ -352,7 +353,8 @@ public class ZonedDateTimeSerTest
                 .enable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .build()
                 .writeValueAsString(date);
-        assertEquals("[\"" + ZonedDateTime.class.getName() + "\",123456789.183917322]", value);
+        assertEquals("The value is not correct.",
+                "[\"" + ZonedDateTime.class.getName() + "\",123456789.183917322]", value);
     }
 
     @Test
@@ -365,7 +367,8 @@ public class ZonedDateTimeSerTest
                 .disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .build()
                 .writeValueAsString(date);
-        assertEquals("[\"" + ZonedDateTime.class.getName() + "\",123456789183]", value);
+        assertEquals("The value is not correct.",
+                "[\"" + ZonedDateTime.class.getName() + "\",123456789183]", value);
     }
 
     @Test
@@ -377,7 +380,8 @@ public class ZonedDateTimeSerTest
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .build()
                 .writeValueAsString(date);
-        assertEquals("[\"" + ZonedDateTime.class.getName() + "\",\""
+        assertEquals("The value is not correct.",
+                "[\"" + ZonedDateTime.class.getName() + "\",\""
                         + FORMATTER.withZone(Z3).format(date) + "\"]", value);
     }
 
@@ -392,7 +396,8 @@ public class ZonedDateTimeSerTest
                 .writer()
                 .with(TimeZone.getTimeZone(Z3))
                 .writeValueAsString(date);
-        assertEquals("[\"" + ZonedDateTime.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", value);
+        assertEquals("The value is not correct.",
+            "[\"" + ZonedDateTime.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", value);
     }
 
     @Test
@@ -401,9 +406,9 @@ public class ZonedDateTimeSerTest
         ZonedDateTime date = ZonedDateTime.ofInstant(Instant.ofEpochSecond(0L), Z1);
         ZonedDateTime value = MAPPER.readValue("0.000000000", ZonedDateTime.class);
 
-        assertNotNull(value);
+        assertNotNull("The value should not be null.", value);
         assertIsEqual(date, value);
-        assertEquals(DEFAULT_TZ, value.getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", DEFAULT_TZ, value.getZone());
     }
 
     @Test
@@ -415,9 +420,9 @@ public class ZonedDateTimeSerTest
                 .with(TimeZone.getDefault())
                 .readValue("0.000000000");
 
-        assertNotNull(value);
+        assertNotNull("The value should not be null.", value);
         assertIsEqual(date, value);
-        assertEquals(ZoneId.systemDefault().normalized(), value.getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
     }
 
     @Test
@@ -427,9 +432,9 @@ public class ZonedDateTimeSerTest
 
         ZonedDateTime value = this.MAPPER.readValue("123456789.183917322", ZonedDateTime.class);
 
-        assertNotNull(value);
+        assertNotNull("The value should not be null.", value);
         assertIsEqual(date, value);
-        assertEquals(DEFAULT_TZ, value.getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", DEFAULT_TZ, value.getZone());
     }
 
     @Test
@@ -441,9 +446,9 @@ public class ZonedDateTimeSerTest
                 .with(TimeZone.getDefault())
                 .readValue("123456789.183917322");
 
-        assertNotNull(value);
+        assertNotNull("The value should not be null.", value);
         assertIsEqual(date, value);
-        assertEquals(ZoneId.systemDefault().normalized(), value.getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
     }
 
     @Test
@@ -454,7 +459,7 @@ public class ZonedDateTimeSerTest
                 DecimalUtils.toDecimal(date.toEpochSecond(), date.getNano()), ZonedDateTime.class
                 );
         assertIsEqual(date, value);
-        assertEquals(DEFAULT_TZ, value.getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", DEFAULT_TZ, value.getZone());
     }
 
     @Test
@@ -466,7 +471,7 @@ public class ZonedDateTimeSerTest
                 .readValue(DecimalUtils.toDecimal(date.toEpochSecond(), date.getNano()));
 
         assertIsEqual(date, value);
-        assertEquals(ZoneId.systemDefault().normalized(), value.getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
     }
 
     @Test
@@ -478,7 +483,7 @@ public class ZonedDateTimeSerTest
                 .readValue("0");
 
         assertIsEqual(date, value);
-        assertEquals(DEFAULT_TZ, value.getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", DEFAULT_TZ, value.getZone());
     }
 
     @Test
@@ -491,7 +496,7 @@ public class ZonedDateTimeSerTest
                 .readValue("0");
 
         assertIsEqual(date, value);
-        assertEquals(ZoneId.systemDefault().normalized(), value.getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
     }
 
     @Test
@@ -503,7 +508,7 @@ public class ZonedDateTimeSerTest
                 .readValue("0");
 
         assertIsEqual(date, value);
-        assertEquals(DEFAULT_TZ, value.getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", DEFAULT_TZ, value.getZone());
     }
 
     @Test
@@ -516,7 +521,7 @@ public class ZonedDateTimeSerTest
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("0");
         assertIsEqual(date, value);
-        assertEquals(ZoneId.systemDefault().normalized(), value.getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
     }
 
     @Test
@@ -527,7 +532,7 @@ public class ZonedDateTimeSerTest
                 .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("123456789");
         assertIsEqual(date, value);
-        assertEquals(DEFAULT_TZ, value.getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", DEFAULT_TZ, value.getZone());
     }
 
     @Test
@@ -539,7 +544,7 @@ public class ZonedDateTimeSerTest
                 .with(TimeZone.getDefault())
                 .readValue("123456789");
         assertIsEqual(date, value);
-        assertEquals(ZoneId.systemDefault().normalized(), value.getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
     }
 
     @Test
@@ -550,7 +555,7 @@ public class ZonedDateTimeSerTest
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("123456789422");
         assertIsEqual(date, value);
-        assertEquals(DEFAULT_TZ, value.getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", DEFAULT_TZ, value.getZone());
     }
 
     @Test
@@ -562,7 +567,7 @@ public class ZonedDateTimeSerTest
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("123456789422");
         assertIsEqual(date, value);
-        assertEquals(ZoneId.systemDefault().normalized(), value.getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
     }
 
     @Test
@@ -575,7 +580,7 @@ public class ZonedDateTimeSerTest
                 .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue(Long.toString(date.toEpochSecond()), ZonedDateTime.class);
         assertIsEqual(date, value);
-        assertEquals(DEFAULT_TZ, value.getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", DEFAULT_TZ, value.getZone());
     }
 
     @Test
@@ -589,7 +594,7 @@ public class ZonedDateTimeSerTest
                 .with(TimeZone.getDefault())
                 .readValue(Long.toString(date.toEpochSecond()), ZonedDateTime.class);
         assertIsEqual(date, value);
-        assertEquals(ZoneId.systemDefault().normalized(), value.getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
     }
 
     @Test
@@ -602,7 +607,7 @@ public class ZonedDateTimeSerTest
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue(Long.toString(date.toInstant().toEpochMilli()));
         assertIsEqual(date, value);
-        assertEquals(DEFAULT_TZ, value.getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", DEFAULT_TZ, value.getZone());
     }
 
     @Test
@@ -616,7 +621,7 @@ public class ZonedDateTimeSerTest
                 .with(TimeZone.getDefault())
                 .readValue(Long.toString(date.toInstant().toEpochMilli()));
         assertIsEqual(date, value);
-        assertEquals(ZoneId.systemDefault().normalized(), value.getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
     }
 
     @Test
@@ -627,7 +632,7 @@ public class ZonedDateTimeSerTest
                 .with(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
                 .readValue('"' + FORMATTER.format(date) + '"');
         assertIsEqual(date, value);
-        assertEquals(DEFAULT_TZ, value.getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", DEFAULT_TZ, value.getZone());
     }
 
     @Test
@@ -639,7 +644,7 @@ public class ZonedDateTimeSerTest
                 .with(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
                 .readValue('"' + FORMATTER.format(date) + '"');
         assertIsEqual(date, value);
-        assertEquals(ZoneId.systemDefault().normalized(), value.getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
     }
 
     @Test
@@ -651,7 +656,7 @@ public class ZonedDateTimeSerTest
                 .with(TimeZone.getDefault())
                 .readValue('"' + FORMATTER.format(date) + '"');
         assertIsEqual(date, value);
-        assertEquals(FIX_OFFSET, value.getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", FIX_OFFSET, value.getZone());
     }
 
     @Test
@@ -669,7 +674,7 @@ public class ZonedDateTimeSerTest
                 .with(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
                 .readValue('"' + FORMATTER.format(date) + '"');
         assertIsEqual(date, value);
-        assertEquals(DEFAULT_TZ, value.getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", DEFAULT_TZ, value.getZone());
     }
 
     @Test
@@ -681,7 +686,7 @@ public class ZonedDateTimeSerTest
                 .with(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
                 .readValue('"' + FORMATTER.format(date) + '"');
         assertIsEqual(date, value);
-        assertEquals(ZoneId.systemDefault().normalized(), value.getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
     }
 
     @Test
@@ -693,7 +698,7 @@ public class ZonedDateTimeSerTest
                 .without(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
                 .readValue('"' + FORMATTER.format(date) + '"');
         assertIsEqual(date, value);
-        assertEquals(FIX_OFFSET, value.getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", FIX_OFFSET, value.getZone());
     }
 
     @Test
@@ -711,7 +716,7 @@ public class ZonedDateTimeSerTest
                 .with(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
                 .readValue('"' + FORMATTER.format(date) + '"');
         assertIsEqual(date, value);
-        assertEquals(DEFAULT_TZ, value.getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", DEFAULT_TZ, value.getZone());
     }
 
     @Test
@@ -723,7 +728,7 @@ public class ZonedDateTimeSerTest
                 .with(TimeZone.getDefault())
                 .readValue('"' + FORMATTER.format(date) + '"');
         assertIsEqual(date, value);
-        assertEquals(ZoneId.systemDefault().normalized(), value.getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), value.getZone());
     }
 
     @Test
@@ -735,7 +740,7 @@ public class ZonedDateTimeSerTest
                 .without(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
                 .readValue('"' + FORMATTER.format(date) + '"');
         assertIsEqual(date, value);
-        assertEquals(FIX_OFFSET, value.getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", FIX_OFFSET, value.getZone());
     }
 
     @Test
@@ -755,10 +760,10 @@ public class ZonedDateTimeSerTest
                 .readValue(
                 "[\"" + ZonedDateTime.class.getName() + "\",123456789.183917322]", Temporal.class
                 );
-        assertNotNull(value);
-        assertInstanceOf(ZonedDateTime.class, value, "The value should be an ZonedDateTime.");
+        assertNotNull("The value should not be null.", value);
+        assertTrue("The value should be an ZonedDateTime.", value instanceof ZonedDateTime);
         assertIsEqual(date, (ZonedDateTime) value);
-        assertEquals(DEFAULT_TZ, ((ZonedDateTime) value).getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", DEFAULT_TZ, ((ZonedDateTime) value).getZone());
     }
 
     @Test
@@ -775,10 +780,10 @@ public class ZonedDateTimeSerTest
                 
                 );
 
-        assertNotNull(value);
-        assertInstanceOf(ZonedDateTime.class, value, "The value should be an ZonedDateTime.");
+        assertNotNull("The value should not be null.", value);
+        assertTrue("The value should be an ZonedDateTime.", value instanceof ZonedDateTime);
         assertIsEqual(date, (ZonedDateTime) value);
-        assertEquals(ZoneId.systemDefault().normalized(), ((ZonedDateTime) value).getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), ((ZonedDateTime) value).getZone());
     }
 
     @Test
@@ -792,9 +797,9 @@ public class ZonedDateTimeSerTest
                 .readerFor(Temporal.class)
                 .readValue(
                 "[\"" + ZonedDateTime.class.getName() + "\",123456789]");
-        assertInstanceOf(ZonedDateTime.class, value, "The value should be an ZonedDateTime.");
+        assertTrue("The value should be an ZonedDateTime.", value instanceof ZonedDateTime);
         assertIsEqual(date, (ZonedDateTime) value);
-        assertEquals(DEFAULT_TZ, ((ZonedDateTime) value).getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", DEFAULT_TZ, ((ZonedDateTime) value).getZone());
     }
 
     @Test
@@ -811,10 +816,10 @@ public class ZonedDateTimeSerTest
                 "[\"" + ZonedDateTime.class.getName() + "\",123456789]"
                 );
 
-        assertNotNull(value);
-        assertInstanceOf(ZonedDateTime.class, value, "The value should be an ZonedDateTime.");
+        assertNotNull("The value should not be null.", value);
+        assertTrue("The value should be an ZonedDateTime.", value instanceof ZonedDateTime);
         assertIsEqual(date, (ZonedDateTime) value);
-        assertEquals(ZoneId.systemDefault().normalized(), ((ZonedDateTime) value).getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), ((ZonedDateTime) value).getZone());
     }
 
     @Test
@@ -829,10 +834,10 @@ public class ZonedDateTimeSerTest
                 .readValue(
                 "[\"" + ZonedDateTime.class.getName() + "\",123456789422]");
 
-        assertNotNull(value);
-        assertInstanceOf(ZonedDateTime.class, value, "The value should be an ZonedDateTime.");
+        assertNotNull("The value should not be null.", value);
+        assertTrue("The value should be an ZonedDateTime.", value instanceof ZonedDateTime);
         assertIsEqual(date, (ZonedDateTime) value);
-        assertEquals(DEFAULT_TZ, ((ZonedDateTime) value).getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", DEFAULT_TZ, ((ZonedDateTime) value).getZone());
     }
 
     @Test
@@ -847,10 +852,10 @@ public class ZonedDateTimeSerTest
                 .with(TimeZone.getDefault())
                 .readValue("[\"" + ZonedDateTime.class.getName() + "\",123456789422]");
 
-        assertNotNull(value);
-        assertInstanceOf(ZonedDateTime.class, value, "The value should be an ZonedDateTime.");
+        assertNotNull("The value should not be null.", value);
+        assertTrue("The value should be an ZonedDateTime.", value instanceof ZonedDateTime);
         assertIsEqual(date, (ZonedDateTime) value);
-        assertEquals(ZoneId.systemDefault().normalized(), ((ZonedDateTime) value).getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), ((ZonedDateTime) value).getZone());
     }
 
     @Test
@@ -865,10 +870,10 @@ public class ZonedDateTimeSerTest
                 .readValue(
                 "[\"" + ZonedDateTime.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]");
 
-        assertNotNull(value);
-        assertInstanceOf(ZonedDateTime.class, value, "The value should be an ZonedDateTime.");
+        assertNotNull("The value should not be null.", value);
+        assertTrue("The value should be an ZonedDateTime.", value instanceof ZonedDateTime);
         assertIsEqual(date, (ZonedDateTime) value);
-        assertEquals(DEFAULT_TZ, ((ZonedDateTime) value).getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", DEFAULT_TZ, ((ZonedDateTime) value).getZone());
     }
 
     @Test
@@ -885,10 +890,10 @@ public class ZonedDateTimeSerTest
                 .readValue(
                 "[\"" + ZonedDateTime.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]");
 
-        assertNotNull(value);
-        assertInstanceOf(ZonedDateTime.class, value, "The value should be an ZonedDateTime.");
+        assertNotNull("The value should not be null.", value);
+        assertTrue("The value should be an ZonedDateTime.", value instanceof ZonedDateTime);
         assertIsEqual(date, (ZonedDateTime) value);
-        assertEquals(ZoneId.systemDefault().normalized(), ((ZonedDateTime) value).getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", ZoneId.systemDefault().normalized(), ((ZonedDateTime) value).getZone());
     }
 
     @Test
@@ -904,9 +909,9 @@ public class ZonedDateTimeSerTest
                 .without(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
                 .readValue(
                 "[\"" + ZonedDateTime.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]");
-        assertInstanceOf(ZonedDateTime.class, value, "The value should be an ZonedDateTime.");
+        assertTrue("The value should be an ZonedDateTime.", value instanceof ZonedDateTime);
         assertIsEqual(date, (ZonedDateTime) value);
-        assertEquals(FIX_OFFSET, ((ZonedDateTime) value).getZone(), "The time zone is not correct.");
+        assertEquals("The time zone is not correct.", FIX_OFFSET, ((ZonedDateTime) value).getZone());
     }
 
     @Test
@@ -977,7 +982,7 @@ public class ZonedDateTimeSerTest
 
     private static void assertIsEqual(ZonedDateTime expected, ZonedDateTime actual)
     {
-        assertTrue(expected.isEqual(actual),
-                "The value is not correct. Expected timezone-adjusted <" + expected + ">, actual <" + actual + ">.");
+        assertTrue("The value is not correct. Expected timezone-adjusted <" + expected + ">, actual <" + actual + ">.",
+                expected.isEqual(actual));
     }
 }

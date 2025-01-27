@@ -7,8 +7,6 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAccessor;
 import java.util.Map;
 
-import org.junit.jupiter.api.Test;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,7 +21,12 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 public class MonthDayDeserTest extends ModuleTestBase
 {
@@ -108,16 +111,15 @@ public class MonthDayDeserTest extends ModuleTestBase
     @Test
     public void testDeserialization01() throws Exception
     {
-        assertEquals(MonthDay.of(Month.JANUARY, 17), MAPPER.readValue("\"--01-17\"", MonthDay.class),
-                "The value is not correct.");
+        assertEquals("The value is not correct.", MonthDay.of(Month.JANUARY, 17),
+                MAPPER.readValue("\"--01-17\"", MonthDay.class));
     }
 
     @Test
     public void testDeserialization02() throws Exception
     {
-        assertEquals(MonthDay.of(Month.AUGUST, 21),
-                MAPPER.readValue("\"--08-21\"", MonthDay.class),
-                "The value is not correct.");
+        assertEquals("The value is not correct.", MonthDay.of(Month.AUGUST, 21),
+                MAPPER.readValue("\"--08-21\"", MonthDay.class));
     }
 
     @Test
@@ -129,7 +131,7 @@ public class MonthDayDeserTest extends ModuleTestBase
                
         MonthDay monthDay = MonthDay.of(Month.NOVEMBER, 5);
         TemporalAccessor value = mapper.readValue("[\"" + MonthDay.class.getName() + "\",\"--11-05\"]", TemporalAccessor.class);
-        assertEquals(monthDay, value, "The value is not correct.");
+        assertEquals("The value is not correct.", monthDay, value);
     }
 
     @Test
@@ -218,10 +220,10 @@ public class MonthDayDeserTest extends ModuleTestBase
     }
 
     private static void notNull(Object value) {
-        assertNotNull(value, "The value should not be null.");
+        assertNotNull("The value should not be null.", value);
     }
 
     private static void expect(Object exp, Object value) {
-        assertEquals(exp,  value, "The value is not correct.");
+        assertEquals("The value is not correct.", exp,  value);
     }
 }

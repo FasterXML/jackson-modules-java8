@@ -1,8 +1,10 @@
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
+import static org.junit.Assert.assertEquals;
+
 import java.time.Month;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -10,8 +12,6 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class OneBasedMonthSerTest extends ModuleTestBase
 {

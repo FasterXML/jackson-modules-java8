@@ -5,8 +5,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 
-import org.junit.jupiter.api.Test;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -14,7 +12,10 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.Assert;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class WriteZoneIdTest extends ModuleTestBase
 {
@@ -38,7 +39,7 @@ public class WriteZoneIdTest extends ModuleTestBase
     {
         ZoneId id = ZoneId.of("America/Chicago");
         String value = MAPPER.writeValueAsString(id);
-        assertEquals("\"America/Chicago\"", value);
+        assertEquals("The value is not correct.", "\"America/Chicago\"", value);
     }
 
     @Test
@@ -46,7 +47,7 @@ public class WriteZoneIdTest extends ModuleTestBase
     {
         ZoneId id = ZoneId.of("America/Anchorage");
         String value = MAPPER.writeValueAsString(id);
-        assertEquals("\"America/Anchorage\"", value);
+        assertEquals("The value is not correct.", "\"America/Anchorage\"", value);
     }
 
     @Test
@@ -58,7 +59,7 @@ public class WriteZoneIdTest extends ModuleTestBase
                 .addModule(new JavaTimeModule())
                 .build();
         String value = mapper.writeValueAsString(id);
-        assertEquals("[\"java.time.ZoneId\",\"America/Denver\"]", value);
+        assertEquals("The value is not correct.", "[\"java.time.ZoneId\",\"America/Denver\"]", value);
     }
 
     @Test
@@ -73,11 +74,11 @@ public class WriteZoneIdTest extends ModuleTestBase
         //    just verify appending of timezone id itself:
         String json = MAPPER.writeValueAsString(input);
         if (!json.contains("\"01-01-1970T")) {
-            fail("Should contain time prefix, did not: "+json);
+            Assert.fail("Should contain time prefix, did not: "+json);
         }
         String match = String.format("[%s]", ZONE_ID_STR);
         if (!json.contains(match)) {
-            fail("Should contain zone id "+match+", does not: "+json);
+            Assert.fail("Should contain zone id "+match+", does not: "+json);
         }
     }
 
@@ -90,6 +91,6 @@ public class WriteZoneIdTest extends ModuleTestBase
         String json = MAPPER.writer()
                 .with(SerializationFeature.WRITE_DATES_WITH_ZONE_ID)
                 .writeValueAsString(map);
-        assertEquals("{\"2007-12-03T10:15:30+01:00[Europe/Warsaw]\":\"\"}", json);
+        Assert.assertEquals("{\"2007-12-03T10:15:30+01:00[Europe/Warsaw]\":\"\"}", json);
     }
 }

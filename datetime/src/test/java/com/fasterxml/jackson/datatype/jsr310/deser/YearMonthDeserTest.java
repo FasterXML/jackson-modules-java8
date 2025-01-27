@@ -6,8 +6,6 @@ import java.time.YearMonth;
 import java.time.format.DateTimeParseException;
 import java.util.Map;
 
-import org.junit.jupiter.api.Test;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -19,7 +17,12 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 public class YearMonthDeserTest extends ModuleTestBase
 {
@@ -116,10 +119,10 @@ public class YearMonthDeserTest extends ModuleTestBase
         String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, dateValAsEmptyStr));
         Map<String, YearMonth> actualMapFromEmptyStr = objectReader.readValue(valueFromEmptyStr);
         YearMonth actualDateFromEmptyStr = actualMapFromEmptyStr.get(key);
-        assertNull(actualDateFromEmptyStr, "empty string failed to deserialize to null with lenient setting");
+        assertEquals("empty string failed to deserialize to null with lenient setting",null, actualDateFromEmptyStr);
     }
 
-    @Test
+    @Test( expected =  MismatchedInputException.class)
     public void testStrictDeserializeFromEmptyString() throws Exception {
 
         final String key = "YearMonth";
@@ -133,7 +136,7 @@ public class YearMonthDeserTest extends ModuleTestBase
         assertNull(actualMapFromNullStr.get(key));
 
         String valueFromEmptyStr = mapper.writeValueAsString(asMap("date", ""));
-        assertThrows(MismatchedInputException.class, () -> objectReader.readValue(valueFromEmptyStr));
+        objectReader.readValue(valueFromEmptyStr);
     }
 
     private void expectFailure(String json) throws Exception {
@@ -163,10 +166,10 @@ public class YearMonthDeserTest extends ModuleTestBase
     }
 
     private static void notNull(Object value) {
-        assertNotNull(value, "The value should not be null.");
+        assertNotNull("The value should not be null.", value);
     }
 
     private static void expect(Object exp, Object value) {
-        assertEquals(exp, value, "The value is not correct.");
+        assertEquals("The value is not correct.", exp,  value);
     }
 }

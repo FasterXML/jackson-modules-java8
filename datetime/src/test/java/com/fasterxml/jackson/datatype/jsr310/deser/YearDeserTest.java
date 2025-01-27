@@ -23,8 +23,6 @@ import java.time.temporal.Temporal;
 import java.util.Map;
 import java.util.Objects;
 
-import org.junit.jupiter.api.Test;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -36,7 +34,13 @@ import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class YearDeserTest extends ModuleTestBase
 {
@@ -58,8 +62,8 @@ public class YearDeserTest extends ModuleTestBase
     @Test
     public void testDeserializationAsString01() throws Exception
     {
-        assertEquals(Year.of(2000), READER.readValue(q("2000")),
-                "The value is not correct.");
+        assertEquals("The value is not correct.",Year.of(2000),
+                READER.readValue(q("2000")));
     }
 
     @Test
@@ -111,7 +115,7 @@ public class YearDeserTest extends ModuleTestBase
         Year value= newMapper()
                 .configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true)
                 .readerFor(Year.class).readValue("[\"2000\"]");
-        assertEquals(Year.of(2000), value, "The value is not correct.");
+        assertEquals("The value is not correct.", Year.of(2000), value);
     }
     
     @Test
@@ -129,9 +133,9 @@ public class YearDeserTest extends ModuleTestBase
     public void testDefaultDeserialization() throws Exception
     {
         Year value = READER.readValue("1986");
-        assertEquals(Year.of(1986), value, "The value is not correct.");
+        assertEquals("The value is not correct.", Year.of(1986), value);
         value = READER.readValue("2013");
-        assertEquals(Year.of(2013), value, "The value is not correct.");
+        assertEquals("The value is not correct.", Year.of(2013), value);
     }
 
     @Test
@@ -140,8 +144,8 @@ public class YearDeserTest extends ModuleTestBase
         ObjectMapper mapper = newMapper()
                 .addMixIn(Temporal.class, MockObjectConfiguration.class);
         Temporal value = mapper.readValue("[\"" + Year.class.getName() + "\",2005]", Temporal.class);
-        assertTrue(value instanceof Year, "The value should be a Year.");
-        assertEquals(Year.of(2005), value, "The value is not correct.");
+        assertTrue("The value should be a Year.", value instanceof Year);
+        assertEquals("The value is not correct.", Year.of(2005), value);
     }
 
     @Test

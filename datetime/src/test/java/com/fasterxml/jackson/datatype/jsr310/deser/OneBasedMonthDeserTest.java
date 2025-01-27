@@ -3,8 +3,8 @@ package com.fasterxml.jackson.datatype.jsr310.deser;
 import java.time.Month;
 import java.time.temporal.TemporalAccessor;
 
-import org.junit.jupiter.api.function.Executable;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.junit.function.ThrowingRunnable;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -18,7 +18,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
 public class OneBasedMonthDeserTest extends ModuleTestBase
 {
@@ -63,9 +63,9 @@ public class OneBasedMonthDeserTest extends ModuleTestBase
         );
     }
 
-    static void assertError(Executable codeToRun, Class<? extends Throwable> expectedException, String expectedMessage) {
+    static void assertError(ThrowingRunnable codeToRun, Class<? extends Throwable> expectedException, String expectedMessage) {
         try {
-            codeToRun.execute();
+            codeToRun.run();
             fail(String.format("Expecting %s, but nothing was thrown!", expectedException.getName()));
         } catch (Throwable actualException) {
             if (!expectedException.isInstance(actualException)) {

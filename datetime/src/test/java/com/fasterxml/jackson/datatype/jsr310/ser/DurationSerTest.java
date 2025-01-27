@@ -3,7 +3,7 @@ package com.fasterxml.jackson.datatype.jsr310.ser;
 import java.time.Duration;
 import java.time.temporal.TemporalAmount;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
 public class DurationSerTest extends ModuleTestBase
 {
@@ -146,7 +146,8 @@ public class DurationSerTest extends ModuleTestBase
         Duration duration = Duration.ofSeconds(13498L, 8374);
         String value = mapper.writeValueAsString(duration);
 
-        assertEquals("[\"" + Duration.class.getName() + "\",13498.000008374]", value);
+        assertEquals(
+                "[\"" + Duration.class.getName() + "\",13498.000008374]", value);
     }
 
     @Test
@@ -160,7 +161,8 @@ public class DurationSerTest extends ModuleTestBase
         Duration duration = Duration.ofSeconds(13498L, 837481723);
         String value = mapper.writeValueAsString(duration);
 
-        assertEquals("[\"" + Duration.class.getName() + "\",13498837]", value);
+        assertEquals(
+                "[\"" + Duration.class.getName() + "\",13498837]", value);
     }
 
     @Test
@@ -173,7 +175,8 @@ public class DurationSerTest extends ModuleTestBase
         Duration duration = Duration.ofSeconds(13498L, 8374);
         String value = mapper.writeValueAsString(duration);
 
-        assertEquals("[\"" + Duration.class.getName() + "\",\"" + duration.toString() + "\"]", value);
+        assertEquals(
+                "[\"" + Duration.class.getName() + "\",\"" + duration.toString() + "\"]", value);
     }
 
     /*

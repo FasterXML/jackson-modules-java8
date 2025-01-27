@@ -16,15 +16,15 @@
 
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
-import java.time.ZoneId;
+import static org.junit.Assert.assertEquals;
 
-import org.junit.jupiter.api.Test;
+import java.time.ZoneId;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.Test;
 
 public class ZoneIdSerTest extends ModuleTestBase
 {
@@ -38,20 +38,20 @@ public class ZoneIdSerTest extends ModuleTestBase
     public void testSerialization01() throws Exception
     {
         final String value = MAPPER.writeValueAsString(ZoneId.of("America/Chicago"));
-        assertEquals("\"America/Chicago\"", value);
+        assertEquals("The value is not correct.", "\"America/Chicago\"", value);
     }
 
     @Test
     public void testSerialization02() throws Exception
     {
         final String value = MAPPER.writeValueAsString(ZoneId.of("America/Anchorage"));
-        assertEquals("\"America/Anchorage\"", value);
+        assertEquals("The value is not correct.", "\"America/Anchorage\"", value);
     }
 
     @Test
     public void testSerializationWithTypeInfo01() throws Exception
     {
         String value = MOCK_OBJECT_MIXIN_MAPPER.writeValueAsString(ZoneId.of("America/Denver"));
-        assertEquals("[\"java.time.ZoneId\",\"America/Denver\"]", value);
+        assertEquals("The value is not correct.", "[\"java.time.ZoneId\",\"America/Denver\"]", value);
     }
 }

@@ -2,25 +2,34 @@ package com.fasterxml.jackson.datatype.jsr310.ser;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.Collection;
 
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import static org.hamcrest.core.StringContains.containsString;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+@RunWith(Parameterized.class)
 public class TestLocalDateSerializationWithCustomFormatter {
+    private final DateTimeFormatter formatter;
 
-    @ParameterizedTest
-    @MethodSource("customFormatters")
-    void testSerialization(DateTimeFormatter formatter) throws Exception {
+    public TestLocalDateSerializationWithCustomFormatter(DateTimeFormatter formatter) {
+        this.formatter = formatter;
+    }
+
+    @Test
+    public void testSerialization() throws Exception {
         LocalDate date = LocalDate.now();
-        assertTrue(serializeWith(date, formatter).contains(date.format(formatter)),
-            "Serialized value should contain the formatted date");
+        assertThat(serializeWith(date, formatter), containsString(date.format(formatter)));
     }
 
     private String serializeWith(LocalDate date, DateTimeFormatter f) throws Exception {
@@ -29,12 +38,10 @@ public class TestLocalDateSerializationWithCustomFormatter {
         return mapper.writeValueAsString(date);
     }
 
-    @ParameterizedTest
-    @MethodSource("customFormatters")
-    void testDeserialization(DateTimeFormatter formatter) throws Exception {
+    @Test
+    public void testDeserialization() throws Exception {
         LocalDate date = LocalDate.now();
-        assertEquals(date, deserializeWith(date.format(formatter), formatter),
-            "Deserialized value should match the original date");
+        assertThat(deserializeWith(date.format(formatter), formatter), equalTo(date));
     }
 
     private LocalDate deserializeWith(String json, DateTimeFormatter f) throws Exception {
@@ -43,14 +50,15 @@ public class TestLocalDateSerializationWithCustomFormatter {
         return mapper.readValue("\"" + json + "\"", LocalDate.class);
     }
 
-    static Stream<DateTimeFormatter> customFormatters() {
-        return Stream.of(
-            DateTimeFormatter.BASIC_ISO_DATE,
-            DateTimeFormatter.ISO_DATE,
-            DateTimeFormatter.ISO_LOCAL_DATE,
-            DateTimeFormatter.ISO_ORDINAL_DATE,
-            DateTimeFormatter.ISO_WEEK_DATE,
-            DateTimeFormatter.ofPattern("MM/dd/yyyy")
-        );
+    @Parameters
+    public static Collection<Object[]> customFormatters() {
+        Collection<Object[]> formatters = new ArrayList<>();
+        formatters.add(new Object[]{DateTimeFormatter.BASIC_ISO_DATE});
+        formatters.add(new Object[]{DateTimeFormatter.ISO_DATE});
+        formatters.add(new Object[]{DateTimeFormatter.ISO_LOCAL_DATE});
+        formatters.add(new Object[]{DateTimeFormatter.ISO_ORDINAL_DATE});
+        formatters.add(new Object[]{DateTimeFormatter.ISO_WEEK_DATE});
+        formatters.add(new Object[]{DateTimeFormatter.ofPattern("MM/dd/yyyy")});
+        return formatters;
     }
 }
