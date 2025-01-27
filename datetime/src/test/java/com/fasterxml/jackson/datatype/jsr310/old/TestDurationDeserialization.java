@@ -21,7 +21,7 @@ public class TestDurationDeserialization extends ModuleTestBase
         Duration value = READER.with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("60.0");
 
-        assertNotNull(value, "The value should not be null.");
+        assertNotNull(value);
         Duration exp = Duration.ofSeconds(60L, 0);
         assertEquals(exp,  value, "The value is not correct.");
     }
@@ -32,7 +32,7 @@ public class TestDurationDeserialization extends ModuleTestBase
         Duration value = READER.without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("60.0");
 
-        assertNotNull(value, "The value should not be null.");
+        assertNotNull(value);
         Duration exp = Duration.ofSeconds(60L, 0);
         assertEquals(exp, value, "The value is not correct.");
     }
@@ -42,7 +42,7 @@ public class TestDurationDeserialization extends ModuleTestBase
     {
         Duration value = READER.with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("13498.000008374");
-        assertNotNull(value, "The value should not be null.");
+        assertNotNull(value);
         assertEquals(Duration.ofSeconds(13498L, 8374), value, "The value is not correct.");
     }
 
@@ -51,7 +51,7 @@ public class TestDurationDeserialization extends ModuleTestBase
     {
         Duration value = READER.without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("13498.000008374");
-        assertNotNull(value, "The value should not be null.");
+        assertNotNull(value);
         assertEquals(Duration.ofSeconds(13498L, 8374), value, "The value is not correct.");
     }
 
@@ -60,7 +60,7 @@ public class TestDurationDeserialization extends ModuleTestBase
     {
         Duration value = READER.with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("60");
-        assertNotNull(value, "The value should not be null.");
+        assertNotNull(value);
         assertEquals(Duration.ofSeconds(60L, 0), value, "The value is not correct.");
     }
 
@@ -70,7 +70,7 @@ public class TestDurationDeserialization extends ModuleTestBase
         Duration value = READER.without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("60000");
 
-        assertNotNull(value, "The value should not be null.");
+        assertNotNull(value);
         assertEquals(Duration.ofSeconds(60L, 0), value, "The value is not correct.");
     }
 
@@ -80,7 +80,7 @@ public class TestDurationDeserialization extends ModuleTestBase
         Duration value = READER.with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("13498");
 
-        assertNotNull(value, "The value should not be null.");
+        assertNotNull(value);
         assertEquals(Duration.ofSeconds(13498L, 0), value, "The value is not correct.");
     }
 
@@ -90,7 +90,7 @@ public class TestDurationDeserialization extends ModuleTestBase
         Duration value = READER.without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("13498000");
 
-        assertNotNull(value, "The value should not be null.");
+        assertNotNull(value);
         assertEquals(Duration.ofSeconds(13498L, 0), value, "The value is not correct.");
     }
 
@@ -100,7 +100,7 @@ public class TestDurationDeserialization extends ModuleTestBase
         Duration exp = Duration.ofSeconds(60L, 0);
         Duration value = READER.readValue('"' + exp.toString() + '"');
 
-        assertNotNull(value, "The value should not be null.");
+        assertNotNull(value);
         assertEquals(exp, value, "The value is not correct.");
     }
 
@@ -110,7 +110,7 @@ public class TestDurationDeserialization extends ModuleTestBase
         Duration exp = Duration.ofSeconds(13498L, 8374);
         Duration value = READER.readValue('"' + exp.toString() + '"');
 
-        assertNotNull(value, "The value should not be null.");
+        assertNotNull(value);
         assertEquals(exp, value, "The value is not correct.");
     }
 
@@ -133,7 +133,7 @@ public class TestDurationDeserialization extends ModuleTestBase
         mapper.addMixIn(TemporalAmount.class, MockObjectConfiguration.class);
         TemporalAmount value = mapper.readValue(prefix + "13498.000008374]", TemporalAmount.class);
 
-        assertNotNull(value, "The value should not be null.");
+        assertNotNull(value);
         assertInstanceOf(Duration.class, value, "The value should be a Duration.");
         assertEquals(duration, value, "The value is not correct.");
     }
@@ -148,7 +148,7 @@ public class TestDurationDeserialization extends ModuleTestBase
         mapper.addMixIn(TemporalAmount.class, MockObjectConfiguration.class);
         TemporalAmount value = mapper.readValue(prefix + "13498]", TemporalAmount.class);
 
-        assertNotNull(value, "The value should not be null.");
+        assertNotNull(value);
         assertInstanceOf(Duration.class, value, "The value should be a Duration.");
         assertEquals(Duration.ofSeconds(13498L), value, "The value is not correct.");
     }
@@ -163,7 +163,7 @@ public class TestDurationDeserialization extends ModuleTestBase
         mapper.addMixIn(TemporalAmount.class, MockObjectConfiguration.class);
         TemporalAmount value = mapper.readValue(prefix + "13498837]", TemporalAmount.class);
 
-        assertNotNull(value, "The value should not be null.");
+        assertNotNull(value);
         assertInstanceOf(Duration.class, value, "The value should be a Duration.");
         assertEquals(Duration.ofSeconds(13498L, 837000000), value, "The value is not correct.");
     }
@@ -179,7 +179,7 @@ public class TestDurationDeserialization extends ModuleTestBase
         mapper.addMixIn(TemporalAmount.class, MockObjectConfiguration.class);
         TemporalAmount value = mapper.readValue(prefix + '"' + duration.toString() + "\"]", TemporalAmount.class);
 
-        assertNotNull(value, "The value should not be null.");
+        assertNotNull(value);
         assertInstanceOf(Duration.class, value, "The value should be a Duration.");
         assertEquals(duration, value, "The value is not correct.");
     }
