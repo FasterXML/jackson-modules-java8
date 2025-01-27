@@ -3,7 +3,6 @@ package com.fasterxml.jackson.datatype.jsr310.ser;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
-import org.junit.Test;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -15,8 +14,9 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.CoreMatchers.containsString;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class WriteNanosecondsTest extends ModuleTestBase {
     public static final ZoneId UTC = ZoneId.of("UTC");
@@ -28,8 +28,8 @@ public class WriteNanosecondsTest extends ModuleTestBase {
 
         String json = MAPPER.writeValueAsString(value);
 
-        assertThat(json, containsString("\"nanoseconds\":0.0"));
-        assertThat(json, containsString("\"notNanoseconds\":0"));
+        assertTrue(json.contains("\"nanoseconds\":0.0"));
+        assertTrue(json.contains("\"notNanoseconds\":0"));
     }
 
     @Test
@@ -38,8 +38,8 @@ public class WriteNanosecondsTest extends ModuleTestBase {
 
         String json = MAPPER.writeValueAsString(input);
 
-        assertThat(json, containsString("\"nanoseconds\":0.0"));
-        assertThat(json, containsString("\"notNanoseconds\":0"));
+        assertTrue(json.contains("\"nanoseconds\":0.0"));
+        assertTrue(json.contains("\"notNanoseconds\":0"));
     }
 
     @Test
@@ -51,8 +51,8 @@ public class WriteNanosecondsTest extends ModuleTestBase {
 
         String json = MAPPER.writeValueAsString(input);
 
-        assertThat(json, containsString("\"nanoseconds\":[1970,1,1,0,0,0,1]"));
-        assertThat(json, containsString("\"notNanoseconds\":[1970,1,1,0,0,0,0]"));
+        assertTrue(json.contains("\"nanoseconds\":[1970,1,1,0,0,0,1]"));
+        assertTrue(json.contains("\"notNanoseconds\":[1970,1,1,0,0,0,0]"));
     }
 
     @Test
@@ -64,8 +64,8 @@ public class WriteNanosecondsTest extends ModuleTestBase {
 
         String json = MAPPER.writeValueAsString(input);
 
-        assertThat(json, containsString("\"nanoseconds\":[0,0,0,1]"));
-        assertThat(json, containsString("\"notNanoseconds\":[0,0,0,0]"));
+        assertTrue(json.contains("\"nanoseconds\":[0,0,0,1]"));
+        assertTrue(json.contains("\"notNanoseconds\":[0,0,0,0]"));
     }
 
     @Test
@@ -74,8 +74,8 @@ public class WriteNanosecondsTest extends ModuleTestBase {
 
         String json = MAPPER.writeValueAsString(input);
 
-        assertThat(json, containsString("\"nanoseconds\":0.0"));
-        assertThat(json, containsString("\"notNanoseconds\":0"));
+        assertTrue(json.contains("\"nanoseconds\":0.0"));
+        assertTrue(json.contains("\"notNanoseconds\":0"));
     }
 
     @Test
@@ -87,8 +87,8 @@ public class WriteNanosecondsTest extends ModuleTestBase {
 
         String json = MAPPER.writeValueAsString(input);
 
-        assertThat(json, containsString("\"nanoseconds\":[0,0,0,1,\"Z\"]"));
-        assertThat(json, containsString("\"notNanoseconds\":[0,0,0,0,\"Z\"]"));
+        assertTrue(json.contains("\"nanoseconds\":[0,0,0,1,\"Z\"]"));
+        assertTrue(json.contains("\"notNanoseconds\":[0,0,0,0,\"Z\"]"));
     }
 
     @Test
@@ -97,8 +97,8 @@ public class WriteNanosecondsTest extends ModuleTestBase {
 
         String json = MAPPER.writeValueAsString(input);
 
-        assertThat(json, containsString("\"nanoseconds\":0.0"));
-        assertThat(json, containsString("\"notNanoseconds\":0"));
+        assertTrue(json.contains("\"nanoseconds\":0.0"));
+        assertTrue(json.contains("\"notNanoseconds\":0"));
     }
 
     private static class DummyClass<T> {

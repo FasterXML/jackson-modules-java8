@@ -1,10 +1,12 @@
 package com.fasterxml.jackson.datatype.jsr310;
 
-import org.junit.Test;
-
 import java.math.BigDecimal;
+import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestDecimalUtils extends ModuleTestBase
 {
@@ -12,35 +14,35 @@ public class TestDecimalUtils extends ModuleTestBase
     public void testToDecimal01()
     {
         String decimal = DecimalUtils.toDecimal(0, 0);
-        assertEquals("The returned decimal is not correct.", NO_NANOSECS_SER, decimal);
+        assertEquals(NO_NANOSECS_SER, decimal, "The returned decimal is not correct.");
 
         decimal = DecimalUtils.toDecimal(15, 72);
-        assertEquals("The returned decimal is not correct.", "15.000000072", decimal);
+        assertEquals("15.000000072", decimal, "The returned decimal is not correct.");
 
         decimal = DecimalUtils.toDecimal(19827342231L, 192837465);
-        assertEquals("The returned decimal is not correct.", "19827342231.192837465", decimal);
+        assertEquals("19827342231.192837465", decimal, "The returned decimal is not correct.");
 
         decimal = DecimalUtils.toDecimal(19827342231L, 0);
-        assertEquals("The returned decimal is not correct.",
-                "19827342231"+NO_NANOSECS_SUFFIX, decimal);
+        assertEquals("19827342231"+NO_NANOSECS_SUFFIX, decimal,
+                "The returned decimal is not correct.");
 
         decimal = DecimalUtils.toDecimal(19827342231L, 999888000);
-        assertEquals("The returned decimal is not correct.",
-                "19827342231.999888000", decimal);
+        assertEquals("19827342231.999888000", decimal,
+                "The returned decimal is not correct.");
 
         decimal = DecimalUtils.toDecimal(-22704862, 599000000);
-        assertEquals("The returned decimal is not correct.",
-                "-22704862.599000000", decimal);
+        assertEquals("-22704862.599000000", decimal,
+                "The returned decimal is not correct.");
     }
 
     @SuppressWarnings("deprecation")
     private void checkExtractNanos(long expectedSeconds, int expectedNanos, BigDecimal decimal)
     {
         long seconds = decimal.longValue();
-        assertEquals("The second part is not correct.", expectedSeconds, seconds);
+        assertEquals(expectedSeconds, seconds, "The second part is not correct.");
 
         int nanoseconds = DecimalUtils.extractNanosecondDecimal(decimal,  seconds);
-        assertEquals("The nanosecond part is not correct.", expectedNanos, nanoseconds);
+        assertEquals(expectedNanos, nanoseconds, "The nanosecond part is not correct.");
     }
 
     @Test
@@ -89,8 +91,8 @@ public class TestDecimalUtils extends ModuleTestBase
     private void checkExtractSecondsAndNanos(long expectedSeconds, int expectedNanos, BigDecimal decimal)
     {
         DecimalUtils.extractSecondsAndNanos(decimal, (Long s, Integer ns) -> {
-            assertEquals("The second part is not correct.", expectedSeconds, s.longValue());
-            assertEquals("The nanosecond part is not correct.", expectedNanos, ns.intValue());
+            assertEquals(expectedSeconds, s.longValue(), "The second part is not correct.");
+            assertEquals(expectedNanos, ns.intValue(), "The nanosecond part is not correct.");
             return null;
         });
     }
@@ -144,7 +146,8 @@ public class TestDecimalUtils extends ModuleTestBase
         checkExtractSecondsAndNanos(-22704862L, 599000000, value);
     }
 
-    @Test(timeout = 100)
+    @Timeout(value = 100, unit = TimeUnit.MILLISECONDS)
+    @Test
     public void testExtractSecondsAndNanos07()
     {
         BigDecimal value = new BigDecimal("1e10000000");
