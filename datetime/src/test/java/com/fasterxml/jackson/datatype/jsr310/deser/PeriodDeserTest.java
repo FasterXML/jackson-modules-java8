@@ -20,6 +20,8 @@ import java.time.Period;
 import java.time.temporal.TemporalAmount;
 import java.util.Map;
 
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,10 +30,7 @@ import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import org.junit.Test;
-
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PeriodDeserTest extends ModuleTestBase
 {
@@ -43,7 +42,7 @@ public class PeriodDeserTest extends ModuleTestBase
     {
         Period period = Period.of(1, 6, 15);
         Period value = MAPPER.readValue('"' + period.toString() + '"', Period.class);
-        assertEquals("The value is not correct.", period, value);
+        assertEquals(period, value, "The value is not correct.");
     }
 
     @Test
@@ -51,7 +50,7 @@ public class PeriodDeserTest extends ModuleTestBase
     {
         Period period = Period.of(0, 0, 21);
         Period value = MAPPER.readValue('"' + period.toString() + '"', Period.class);
-        assertEquals("The value is not correct.", period, value);
+        assertEquals(period, value, "The value is not correct.");
     }
 
     @Test
@@ -66,9 +65,9 @@ public class PeriodDeserTest extends ModuleTestBase
                 "[\"" + Period.class.getName() + "\",\"" + period.toString() + "\"]", TemporalAmount.class
                 );
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be a Period.", value instanceof Period);
-        assertEquals("The value is not correct.", period, value);
+        assertNotNull(value, "The value should not be null.");
+        assertInstanceOf(Period.class, value, "The value should be a Period.");
+        assertEquals(period, value, "The value is not correct.");
     }
 
        /*
@@ -92,10 +91,10 @@ public class PeriodDeserTest extends ModuleTestBase
         String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, ""));
         Map<String, Period> actualMapFromEmptyStr = objectReader.readValue(valueFromEmptyStr);
         Period actualDateFromEmptyStr = actualMapFromEmptyStr.get(key);
-        assertEquals("empty string failed to deserialize to null with lenient setting",null, actualDateFromEmptyStr);
+        assertEquals(null, actualDateFromEmptyStr, "empty string failed to deserialize to null with lenient setting");
     }
 
-    @Test( expected =  MismatchedInputException.class)
+    @Test
     public void testStrictDeserializeFromEmptyString() throws Exception {
 
         final String key = "period";
@@ -109,6 +108,6 @@ public class PeriodDeserTest extends ModuleTestBase
         assertNull(actualMapFromNullStr.get(key));
 
         String valueFromEmptyStr = mapper.writeValueAsString(asMap("date", ""));
-        objectReader.readValue(valueFromEmptyStr);
+        assertThrows(MismatchedInputException.class, () -> objectReader.readValue(valueFromEmptyStr));
     }
 }

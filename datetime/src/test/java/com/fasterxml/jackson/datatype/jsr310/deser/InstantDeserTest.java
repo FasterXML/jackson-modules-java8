@@ -5,9 +5,11 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
@@ -22,8 +24,8 @@ import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
 import static com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer.ISO8601_COLONLESS_OFFSET_REGEX;
-import static org.junit.Assert.*;
-import static org.junit.Assume.assumeTrue;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class InstantDeserTest extends ModuleTestBase
 {
@@ -136,12 +138,12 @@ public class InstantDeserTest extends ModuleTestBase
         assertEquals(0, value.getNano());
     }
 
-    @Test(expected = DateTimeException.class)
+    @Test
     public void testDeserializationAsFloatEdgeCase03() throws Exception
     {
         // Instant can't go this low
         String input = Instant.MIN.getEpochSecond() + ".1";
-        READER.readValue(input);
+        assertThrows(DateTimeException.class, () -> READER.readValue(input));
     }
 
     /*
@@ -149,21 +151,20 @@ public class InstantDeserTest extends ModuleTestBase
      * for numbers outside the range of Long.  Numbers less than 1e64 will result in the lower 64 bits.
      * Numbers at or above 1e64 will always result in zero.
      */
-
-    @Test(expected = DateTimeException.class)
+    @Test
     public void testDeserializationAsFloatEdgeCase04() throws Exception
     {
         // 1ns beyond the upper-bound of Instant.
         String input = (Instant.MAX.getEpochSecond() + 1) + ".0";
-        READER.readValue(input);
+        assertThrows(DateTimeException.class, () -> READER.readValue(input));
     }
 
-    @Test(expected = DateTimeException.class)
+    @Test
     public void testDeserializationAsFloatEdgeCase05() throws Exception
     {
         // 1ns beyond the lower-bound of Instant.
         String input = (Instant.MIN.getEpochSecond() - 1) + ".0";
-        READER.readValue(input);
+        assertThrows(DateTimeException.class, () -> READER.readValue(input));
     }
 
     @Test
@@ -186,14 +187,16 @@ public class InstantDeserTest extends ModuleTestBase
      * Numbers with very large exponents can take a long time, but still result in zero.
      * https://github.com/FasterXML/jackson-databind/issues/2141
      */
-    @Test(timeout = 100)
+    @Timeout(value = 100, unit = TimeUnit.MILLISECONDS)
+    @Test
     public void testDeserializationAsFloatEdgeCase08() throws Exception
     {
         Instant value = READER.readValue("1e10000000");
         assertEquals(0, value.getEpochSecond());
     }
 
-    @Test(timeout = 100)
+    @Timeout(value = 100, unit = TimeUnit.MILLISECONDS)
+    @Test
     public void testDeserializationAsFloatEdgeCase09() throws Exception
     {
         Instant value = READER.readValue("-1e10000000");
@@ -203,14 +206,16 @@ public class InstantDeserTest extends ModuleTestBase
     /**
      * Same for large negative exponents.
      */
-    @Test(timeout = 100)
+    @Timeout(value = 100, unit = TimeUnit.MILLISECONDS)
+    @Test
     public void testDeserializationAsFloatEdgeCase10() throws Exception
     {
         Instant value = READER.readValue("1e-10000000");
         assertEquals(0, value.getEpochSecond());
     }
 
-    @Test(timeout = 100)
+    @Timeout(value = 100, unit = TimeUnit.MILLISECONDS)
+    @Test
     public void testDeserializationAsFloatEdgeCase11() throws Exception
     {
         Instant value = READER.readValue("-1e-10000000");
@@ -366,7 +371,7 @@ public class InstantDeserTest extends ModuleTestBase
         Temporal value = m.readValue(
                 "[\"" + Instant.class.getName() + "\",123456789.183917322]", Temporal.class
                 );
-        assertTrue("The value should be an Instant.", value instanceof Instant);
+        assertTrue(value instanceof Instant, "The value should be an Instant.");
         assertEquals(date, value);
     }
 
@@ -380,7 +385,7 @@ public class InstantDeserTest extends ModuleTestBase
         Temporal value = m.readValue(
                 "[\"" + Instant.class.getName() + "\",123456789]", Temporal.class
                 );
-        assertTrue("The value should be an Instant.", value instanceof Instant);
+        assertTrue(value instanceof Instant, "The value should be an Instant.");
         assertEquals(date, value);
     }
 
@@ -395,7 +400,7 @@ public class InstantDeserTest extends ModuleTestBase
                 "[\"" + Instant.class.getName() + "\",123456789422]", Temporal.class
                 );
 
-        assertTrue("The value should be an Instant.", value instanceof Instant);
+        assertTrue(value instanceof Instant, "The value should be an Instant.");
         assertEquals(date, value);
     }
 
@@ -408,7 +413,7 @@ public class InstantDeserTest extends ModuleTestBase
         Temporal value = m.readValue(
                 "[\"" + Instant.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", Temporal.class
                 );
-        assertTrue("The value should be an Instant.", value instanceof Instant);
+        assertTrue(value instanceof Instant, "The value should be an Instant.");
         assertEquals(date, value);
     }
 
@@ -442,12 +447,12 @@ public class InstantDeserTest extends ModuleTestBase
         final WrapperWithCustomPattern input = new WrapperWithCustomPattern(instant);
         String json = MAPPER.writeValueAsString(input);
 
-        assertTrue("Instant in UTC timezone was not serialized as expected.",
-                json.contains(a2q("'valueInUTC':'" + valueInUTC + "'")));
+        assertTrue(json.contains(a2q("'valueInUTC':'" + valueInUTC + "'")),
+            "Instant in UTC timezone was not serialized as expected.");
 
         WrapperWithCustomPattern result = MAPPER.readValue(json, WrapperWithCustomPattern.class);
-        assertEquals("Instant in UTC timezone was not deserialized as expected.",
-                input.valueInUTC, result.valueInUTC);
+        assertEquals(input.valueInUTC, result.valueInUTC,
+            "Instant in UTC timezone was not deserialized as expected.");
     }
 
     /*
@@ -515,7 +520,7 @@ public class InstantDeserTest extends ModuleTestBase
     private static void assumeInstantCanParseOffsets() {
         // DateTimeFormatter.ISO_INSTANT didn't handle offsets until JDK 12+.
         // This was added by https://bugs.openjdk.org/browse/JDK-8166138
-        assumeTrue(System.getProperty("java.specification.version").compareTo("12") > 0);
+        assertTrue(System.getProperty("java.specification.version").compareTo("12") > 0);
     }
 
     /*
@@ -584,10 +589,10 @@ public class InstantDeserTest extends ModuleTestBase
         String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, dateValAsEmptyStr));
         Map<String, Duration> actualMapFromEmptyStr = objectReader.readValue(valueFromEmptyStr);
         Duration actualDateFromEmptyStr = actualMapFromEmptyStr.get(key);
-        assertEquals("empty string failed to deserialize to null with lenient setting", null, actualDateFromEmptyStr);
+        assertEquals(null, actualDateFromEmptyStr, "empty string failed to deserialize to null with lenient setting");
     }
 
-    @Test ( expected =  MismatchedInputException.class)
+    @Test
     public void testStrictDeserializeFromEmptyString() throws Exception {
 
         final String key = "instant";
@@ -602,7 +607,7 @@ public class InstantDeserTest extends ModuleTestBase
         assertNull(actualMapFromNullStr.get(key));
 
         String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, ""));
-        objectReader.readValue(valueFromEmptyStr);
+        assertThrows(MismatchedInputException.class, () -> objectReader.readValue(valueFromEmptyStr));
     }
     
     /*
@@ -614,30 +619,30 @@ public class InstantDeserTest extends ModuleTestBase
     public void testISO8601ColonlessRegexFindsOffset() {
         Matcher matcher = ISO8601_COLONLESS_OFFSET_REGEX.matcher("2000-01-01T12:00+0100");
 
-        assertTrue("Matcher finds +0100 as an colonless offset", matcher.find());
-        assertEquals("Matcher groups +0100 as an colonless offset", matcher.group(), "+0100");
+        assertTrue(matcher.find(), "Matcher finds +0100 as an colonless offset");
+        assertEquals(matcher.group(), "+0100", "Matcher groups +0100 as an colonless offset");
     }
 
     @Test
     public void testISO8601ColonlessRegexFindsOffsetWithTZ() {
         Matcher matcher = ISO8601_COLONLESS_OFFSET_REGEX.matcher("2000-01-01T12:00+0100[Europe/Paris]");
 
-        assertTrue("Matcher finds +0100 as an colonless offset", matcher.find());
-        assertEquals("Matcher groups +0100 as an colonless offset", matcher.group(), "+0100");
+        assertTrue(matcher.find(), "Matcher finds +0100 as an colonless offset");
+        assertEquals(matcher.group(), "+0100", "Matcher groups +0100 as an colonless offset");
     }
 
     @Test
     public void testISO8601ColonlessRegexDoesNotAffectNegativeYears() {
         Matcher matcher = ISO8601_COLONLESS_OFFSET_REGEX.matcher("-2000-01-01T12:00+01:00[Europe/Paris]");
 
-        assertFalse("Matcher does not find -2000 (years) as an offset without colon", matcher.find());
+        assertFalse(matcher.find(), "Matcher does not find -2000 (years) as an offset without colon");
     }
 
     @Test
     public void testISO8601ColonlessRegexDoesNotAffectNegativeYearsWithColonless() {
         Matcher matcher = ISO8601_COLONLESS_OFFSET_REGEX.matcher("-2000-01-01T12:00+0100[Europe/Paris]");
 
-        assertTrue("Matcher finds +0100 as an colonless offset", matcher.find());
-        assertEquals("Matcher groups +0100 as an colonless offset", matcher.group(), "+0100");
+        assertTrue(matcher.find(), "Matcher finds +0100 as an colonless offset");
+        assertEquals(matcher.group(), "+0100", "Matcher groups +0100 as an colonless offset");
     }
 }

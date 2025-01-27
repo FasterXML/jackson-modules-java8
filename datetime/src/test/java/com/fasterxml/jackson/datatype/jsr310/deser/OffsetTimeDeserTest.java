@@ -12,8 +12,6 @@ import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import org.junit.Test;
-
 import java.io.IOException;
 import java.time.OffsetTime;
 import java.time.ZoneOffset;
@@ -22,11 +20,9 @@ import java.time.temporal.Temporal;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class OffsetTimeDeserTest extends ModuleTestBase
 {
@@ -39,7 +35,7 @@ public class OffsetTimeDeserTest extends ModuleTestBase
         public List<Pojo45> objects;
     }
 
-    static class Pojo45 { 
+    static class Pojo45 {
         public java.time.LocalDate partDate;
         public java.time.OffsetTime starttime;
         public java.time.OffsetTime endtime;
@@ -76,8 +72,8 @@ public class OffsetTimeDeserTest extends ModuleTestBase
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                .readValue("[15,43,\"+0300\"]");
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value, "The value should not be null.");
+        assertEquals(time, value, "The value is not correct.");
     }
 
     @Test
@@ -86,8 +82,8 @@ public class OffsetTimeDeserTest extends ModuleTestBase
         OffsetTime time = OffsetTime.of(9, 22, 57, 0, ZoneOffset.of("-0630"));
         OffsetTime value = READER.readValue("[9,22,57,\"-06:30\"]");
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value, "The value should not be null.");
+        assertEquals(time, value, "The value is not correct.");
     }
 
     @Test
@@ -98,32 +94,30 @@ public class OffsetTimeDeserTest extends ModuleTestBase
                 .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                .readValue("[9,22,0,57,\"-06:30\"]");
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value, "The value should not be null.");
+        assertEquals(time, value, "The value is not correct.");
     }
 
     @Test
-    public void testDeserializationAsTimestamp03Milliseconds() throws Exception
-    {
+    public void testDeserializationAsTimestamp03Milliseconds() throws Exception {
         OffsetTime time = OffsetTime.of(9, 22, 0, 57000000, ZoneOffset.of("-0630"));
         OffsetTime value = READER
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                .readValue("[9,22,0,57,\"-06:30\"]");
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value, "The value should not be null.");
+        assertEquals(time, value, "The value is not correct.");
     }
 
     @Test
-    public void testDeserializationAsTimestamp04Nanoseconds() throws Exception
-    {
+    public void testDeserializationAsTimestamp04Nanoseconds() throws Exception {
         OffsetTime time = OffsetTime.of(22, 31, 5, 829837, ZoneOffset.of("+1100"));
         OffsetTime value = READER
                 .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                .readValue("[22,31,5,829837,\"+11:00\"]");
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value, "The value should not be null.");
+        assertEquals(time, value, "The value is not correct.");
     }
 
     @Test
@@ -133,7 +127,7 @@ public class OffsetTimeDeserTest extends ModuleTestBase
         OffsetTime value = READER
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                .readValue("[22,31,5,829837,\"+11:00\"]");
-        assertEquals("The value is not correct.", time, value);
+        assertEquals(time, value, "The value is not correct.");
     }
 
     @Test
@@ -143,7 +137,7 @@ public class OffsetTimeDeserTest extends ModuleTestBase
         OffsetTime value = READER
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                .readValue("[22,31,5,829,\"+11:00\"]");
-        assertEquals("The value is not correct.", time, value);
+        assertEquals(time, value, "The value is not correct.");
     }
 
     @Test
@@ -155,8 +149,8 @@ public class OffsetTimeDeserTest extends ModuleTestBase
             .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
             .readValue(a2q("{'value':[9,22,0,57,'-06:30']}"));
 
-        assertNotNull("The value should not be null.", actual);
-        assertEquals("The value is not correct.", time, actual.value);
+        assertNotNull(actual, "The value should not be null.");
+        assertEquals(time, actual.value, "The value is not correct.");
     }
 
     @Test
@@ -168,8 +162,8 @@ public class OffsetTimeDeserTest extends ModuleTestBase
             .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
             .readValue(a2q("{'value':[9,22,0,57,'-06:30']}"));
 
-        assertNotNull("The value should not be null.", actual);
-        assertEquals("The value is not correct.", time, actual.value);
+        assertNotNull(actual, "The value should not be null.");
+        assertEquals(time, actual.value, "The value is not correct.");
     }
 
     @Test
@@ -181,8 +175,8 @@ public class OffsetTimeDeserTest extends ModuleTestBase
             .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
             .readValue(a2q("{'value':[9,22,0,4257,'-06:30']}"));
 
-        assertNotNull("The value should not be null.", actual);
-        assertEquals("The value is not correct.", time, actual.value);
+        assertNotNull(actual, "The value should not be null.");
+        assertEquals(time, actual.value, "The value is not correct.");
     }
 
     @Test
@@ -190,15 +184,15 @@ public class OffsetTimeDeserTest extends ModuleTestBase
     {
         OffsetTime time = OffsetTime.of(15, 43, 0, 0, ZoneOffset.of("+0300"));
         OffsetTime value = READER.readValue('"' + time.toString() + '"');
-        assertEquals("The value is not correct.", time, value);
+        assertEquals(time, value, "The value is not correct.");
 
         time = OffsetTime.of(9, 22, 57, 0, ZoneOffset.of("-0630"));
         value = READER.readValue('"' + time.toString() + '"');
-        assertEquals("The value is not correct.", time, value);
+        assertEquals(time, value, "The value is not correct.");
 
         time = OffsetTime.of(22, 31, 5, 829837, ZoneOffset.of("+1100"));
         value = READER.readValue('"' + time.toString() + '"');
-        assertEquals("The value is not correct.", time, value);
+        assertEquals(time, value, "The value is not correct.");
 
         expectSuccess(OffsetTime.of(12, 0, 0, 0, ZoneOffset.UTC), "'12:00Z'");
     }
@@ -208,7 +202,7 @@ public class OffsetTimeDeserTest extends ModuleTestBase
     {
         expectFailure(q("notanoffsettime"));
     }
-    
+
     @Test
     public void testDeserializationWithTypeInfo01() throws Exception
     {
@@ -221,9 +215,9 @@ public class OffsetTimeDeserTest extends ModuleTestBase
                 "[\"" + OffsetTime.class.getName() + "\",[22,31,5,829837,\"+11:00\"]]", Temporal.class
                 );
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be a OffsetTime.", value instanceof OffsetTime);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value, "The value should not be null.");
+        assertInstanceOf(OffsetTime.class, value, "The value should be a OffsetTime.");
+        assertEquals(time, value, "The value is not correct.");
     }
 
     @Test
@@ -238,9 +232,9 @@ public class OffsetTimeDeserTest extends ModuleTestBase
                 "[\"" + OffsetTime.class.getName() + "\",[22,31,5,422,\"+11:00\"]]", Temporal.class
                 );
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be a OffsetTime.", value instanceof OffsetTime);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value, "The value should not be null.");
+        assertInstanceOf(OffsetTime.class, value, "The value should be a OffsetTime.");
+        assertEquals(time, value, "The value is not correct.");
     }
 
     @Test
@@ -252,9 +246,9 @@ public class OffsetTimeDeserTest extends ModuleTestBase
         mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         Temporal value = mapper.readValue(
                 "[\"" + OffsetTime.class.getName() + "\",\"" + time.toString() + "\"]", Temporal.class
-                );
-        assertTrue("The value should be a OffsetTime.", value instanceof OffsetTime);
-        assertEquals("The value is not correct.", time, value);
+        );
+        assertTrue(value instanceof OffsetTime, "The value should be a OffsetTime.");
+        assertEquals(time, value, "The value is not correct.");
     }
 
     // for [datatype-jsr310#45]
@@ -279,14 +273,14 @@ public class OffsetTimeDeserTest extends ModuleTestBase
            // OK
         }
     }
-    
+
     @Test
     public void testDeserializationAsEmptyArrayDisabled() throws Throwable
     {
         // works even without the feature enabled
         assertNull(read("[]"));
     }
-    
+
     @Test
     public void testDeserializationAsArrayEnabled() throws Throwable
     {
@@ -325,10 +319,10 @@ public class OffsetTimeDeserTest extends ModuleTestBase
         String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, ""));
         Map<String, OffsetTime> actualMapFromEmptyStr = objectReader.readValue(valueFromEmptyStr);
         OffsetTime actualDateFromEmptyStr = actualMapFromEmptyStr.get(key);
-        assertEquals("empty string failed to deserialize to null with lenient setting", null, actualDateFromEmptyStr);
+        assertEquals(null, actualDateFromEmptyStr, "empty string failed to deserialize to null with lenient setting");
     }
 
-    @Test ( expected =  MismatchedInputException.class)
+    @Test
     public void testStrictDeserializeFromEmptyString() throws Exception {
 
         final String key = "OffsetTime";
@@ -343,7 +337,7 @@ public class OffsetTimeDeserTest extends ModuleTestBase
         assertNull(actualMapFromNullStr.get(key));
 
         String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, ""));
-        objectReader.readValue(valueFromEmptyStr);
+        assertThrows(MismatchedInputException.class, () -> objectReader.readValue(valueFromEmptyStr));
     }
 
     private void expectFailure(String json) throws Throwable {
@@ -362,8 +356,8 @@ public class OffsetTimeDeserTest extends ModuleTestBase
 
     private void expectSuccess(Object exp, String json) throws IOException {
         final OffsetTime value = read(json);
-        notNull(value);
-        expect(exp, value);
+        assertNotNull(value, "The value should not be null.");
+        assertEquals(exp, value, "The value is not correct.");
     }
 
     private OffsetTime read(final String json) throws IOException {
@@ -371,10 +365,10 @@ public class OffsetTimeDeserTest extends ModuleTestBase
     }
 
     private static void notNull(Object value) {
-        assertNotNull("The value should not be null.", value);
+        assertNotNull(value, "The value should not be null.");
     }
 
     private static void expect(Object exp, Object value) {
-        assertEquals("The value is not correct.", exp,  value);
+        assertEquals(exp, value, "The value is not correct.");
     }
 }
