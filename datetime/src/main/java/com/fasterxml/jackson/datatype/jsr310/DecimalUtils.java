@@ -140,12 +140,12 @@ public final class DecimalUtils
             secondsOnly = seconds.longValue();
             nanosOnly = nanoseconds.subtract(BigDecimal.valueOf(secondsOnly).scaleByPowerOfTen(9)).intValue();
 
-            /* [modules-java8#337] 2025-Jan-27, joohyukkim, Negative durations are wrongly calculated
+//            /* [modules-java8#337] 2025-Jan-27, joohyukkim, Negative durations are wrongly calculated
             if (secondsOnly < 0 && secondsOnly > Instant.MIN.getEpochSecond()) {
                 // Issue #69 and Issue #120: avoid sending a negative adjustment to the Instant constructor, we want this as the actual nanos
                 nanosOnly = Math.abs(nanosOnly);
             }
-             */
+//             */
         }
 
         return convert.apply(secondsOnly, nanosOnly);
