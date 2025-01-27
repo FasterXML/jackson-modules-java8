@@ -141,8 +141,11 @@ public final class DecimalUtils
             nanosOnly = nanoseconds.subtract(BigDecimal.valueOf(secondsOnly).scaleByPowerOfTen(9)).intValue();
 
             if (secondsOnly < 0 && secondsOnly > Instant.MIN.getEpochSecond()) {
-                // Issue #69 and Issue #120: avoid sending a negative adjustment to the Instant constructor, we want this as the actual nanos
-                nanosOnly = Math.abs(nanosOnly);
+                // [jackson-modules-java8#337] Negative Duration does not round-trip properly after v2.12.0 with WRITE_DURATIONS_AS_TIMESTAMPS enabled
+                if (nanosOnly >= 0) {
+                    // Issue #69 and Issue #120: avoid sending a negative adjustment to the Instant constructor, we want this as the actual nanos
+                    nanosOnly = Math.abs(nanosOnly);
+                }
             }
         }
 
