@@ -4,12 +4,13 @@ import java.time.YearMonth;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestYearMonthKeySerialization extends ModuleTestBase {
 
@@ -19,7 +20,7 @@ public class TestYearMonthKeySerialization extends ModuleTestBase {
     private ObjectMapper om;
     private Map<YearMonth, String> map;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.om = newMapper();
         map = new HashMap<>();
@@ -35,7 +36,7 @@ public class TestYearMonthKeySerialization extends ModuleTestBase {
 
         String value = om.writeValueAsString(map);
 
-        Assert.assertEquals("Value is incorrect", map("3141-05", "test"), value);
+        assertEquals(map("3141-05", "test"), value);
     }
 
     @Test
@@ -43,7 +44,7 @@ public class TestYearMonthKeySerialization extends ModuleTestBase {
         Map<YearMonth, String> value = om.readValue(map("3141-05", "test"), TYPE_REF);
 
         map.put(YearMonth.of(3141, 5), "test");
-        Assert.assertEquals("Value is incorrect", map, value);
+        assertEquals(map, value);
     }
 
     private String map(String key, String value) {
