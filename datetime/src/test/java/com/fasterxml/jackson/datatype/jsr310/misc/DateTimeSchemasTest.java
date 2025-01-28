@@ -5,13 +5,14 @@ import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.*;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.*;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DateTimeSchemasTest extends ModuleTestBase
 {
@@ -144,7 +145,7 @@ public class DateTimeSchemasTest extends ModuleTestBase
         Map<String, String> properties = wrapper.getTraversedProperties();
 
         // By default, serialized as an int array, so:
-        Assert.assertEquals(1, properties.size());
+        assertEquals(1, properties.size());
         _verifyIntArrayType(properties.get(""));
 
         // but becomes date/time
@@ -163,7 +164,7 @@ public class DateTimeSchemasTest extends ModuleTestBase
         Map<String, String> properties = wrapper.getTraversedProperties();
 
         // By default, serialized as an int array, so:
-        Assert.assertEquals(1, properties.size());
+        assertEquals(1, properties.size());
         _verifyIntArrayType(properties.get(""));
 
         // but becomes date/time
@@ -184,7 +185,7 @@ public class DateTimeSchemasTest extends ModuleTestBase
         Map<String, String> properties = wrapper.getTraversedProperties();
 
         // By default, serialized as an int array, so:
-        Assert.assertEquals(1, properties.size());
+        assertEquals(1, properties.size());
         _verifyBigDecimalType(properties.get(""));
 
         // but becomes long
@@ -205,30 +206,30 @@ public class DateTimeSchemasTest extends ModuleTestBase
     }
 
     private void _verifyIntArrayType(String desc) {
-        Assert.assertEquals("ARRAY/Ljava/util/List<Ljava/lang/Integer;>;", desc);
+        assertEquals("ARRAY/Ljava/util/List<Ljava/lang/Integer;>;", desc);
     }
 
     private void _verifyTimeType(String desc) {
-        Assert.assertEquals("STRING/TIME", desc);
+        assertEquals("STRING/TIME", desc);
     }
 
     private void _verifyDateType(String desc) {
-        Assert.assertEquals("STRING/DATE", desc);
+        assertEquals("STRING/DATE", desc);
     }
 
     private void _verifyDateTimeType(String desc) {
-        Assert.assertEquals("STRING/DATE_TIME", desc);
+        assertEquals("STRING/DATE_TIME", desc);
     }
 
     private void _verifyBigDecimalType(String desc) {
-        Assert.assertEquals("NUMBER/BIG_DECIMAL", desc);
+        assertEquals("NUMBER/BIG_DECIMAL", desc);
     }
 
     private void _verifyLongType(String desc) {
-        Assert.assertEquals("INTEGER/LONG", desc);
+        assertEquals("INTEGER/LONG", desc);
     }
 
     private void _verifyLongFormat(String desc) {
-        Assert.assertEquals("INTEGER/UTC_MILLISEC", desc);
+        assertEquals("INTEGER/UTC_MILLISEC", desc);
     }
 }
