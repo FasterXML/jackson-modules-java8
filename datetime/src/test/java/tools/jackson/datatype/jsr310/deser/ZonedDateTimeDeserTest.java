@@ -2,17 +2,15 @@ package tools.jackson.datatype.jsr310.deser;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.TimeZone;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Feature;
 
-import tools.jackson.core.JacksonException;
 import tools.jackson.core.type.TypeReference;
 
 import tools.jackson.databind.DeserializationFeature;
@@ -24,9 +22,7 @@ import tools.jackson.datatype.jsr310.JavaTimeFeature;
 import tools.jackson.datatype.jsr310.JavaTimeModule;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ZonedDateTimeDeserTest extends ModuleTestBase
 {
@@ -67,9 +63,9 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
     @Test
     public void testDeserFromString() throws Exception
     {
-        assertEquals("The value is not correct.",
-                ZonedDateTime.of(2000, 1, 1, 12, 0, 0, 0, ZoneOffset.UTC),
-                READER.readValue(q("2000-01-01T12:00Z")));
+        assertEquals(ZonedDateTime.of(2000, 1, 1, 12, 0, 0, 0, ZoneOffset.UTC),
+                READER.readValue(q("2000-01-01T12:00Z")),
+                "The value is not correct.");
     }
 
     // [modules-java#281]
@@ -78,9 +74,9 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
     {
         // 11-Nov-2023, tatu: Not sure this is great test but... does show diff
         //   behavior with and without `JavaTimeFeature.NORMALIZE_DESERIALIZED_ZONE_ID`
-        assertEquals("The value is not correct.",
-                ZonedDateTime.of(2000, 1, 1, 12, 0, 0, 0, TimeZone.getTimeZone("UTC").toZoneId()),
-                READER_NON_NORMALIZED_ZONEID.readValue(q("2000-01-01T12:00Z")));
+        assertEquals(ZonedDateTime.of(2000, 1, 1, 12, 0, 0, 0, TimeZone.getTimeZone("UTC").toZoneId()),
+                READER_NON_NORMALIZED_ZONEID.readValue(q("2000-01-01T12:00Z")),
+                "The value is not correct.");
     }
 
     @Test
@@ -92,7 +88,7 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
             ZoneOffset.UTC);
         WrapperWithReadTimestampsAsNanosDisabled actual =
             reader.readValue(a2q("{'value':1001}"));
-        assertEquals("The value is not correct.", date, actual.value);
+        assertEquals(date, actual.value, "The value is not correct.");
     }
 
     @Test
@@ -104,7 +100,7 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
             ZoneOffset.UTC);
         WrapperWithReadTimestampsAsNanosEnabled actual =
             reader.readValue(a2q("{'value':1}"));
-        assertEquals("The value is not correct.", date, actual.value);
+        assertEquals(date, actual.value, "The value is not correct.");
     }
 
     @Test
@@ -112,9 +108,9 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
     {
         String inputString = "2021-02-01T19:49:04.0513486Z";
 
-        assertEquals("The value is not correct.",
-                DateTimeFormatter.ISO_ZONED_DATE_TIME.parse(inputString, ZonedDateTime::from),
-                READER.readValue(q(inputString)));
+        assertEquals(DateTimeFormatter.ISO_ZONED_DATE_TIME.parse(inputString, ZonedDateTime::from),
+                READER.readValue(q(inputString)),
+                "The value is not correct.");
     }
 
     @Test
@@ -127,9 +123,9 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
                 .build()
                 .readerFor(ZonedDateTime.class).readValue(q(inputString));
 
-        assertEquals("The value is not correct.",
-                DateTimeFormatter.ISO_ZONED_DATE_TIME.parse(inputString, ZonedDateTime::from),
-                converted);
+        assertEquals(DateTimeFormatter.ISO_ZONED_DATE_TIME.parse(inputString, ZonedDateTime::from),
+                converted,
+                "The value is not correct.");
     }
 
     @Test
@@ -181,9 +177,9 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
     			.readerFor(ZonedDateTime.class)
                .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
     			.readValue("[\"2000-01-01T12:00Z\"]");
-        assertEquals("The value is not correct.",
-                ZonedDateTime.of(2000, 1, 1, 12, 0, 0, 0, ZoneOffset.UTC),
-                value);
+        assertEquals(ZonedDateTime.of(2000, 1, 1, 12, 0, 0, 0, ZoneOffset.UTC),
+                value,
+                "The value is not correct.");
     }
     
     @Test
@@ -203,9 +199,9 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
         WrapperWithFeatures wrapper = newMapper()
                 .readerFor(WrapperWithFeatures.class)
                 .readValue("{\"value\":\"2000-01-01T12:00+01:00\"}");
-        assertEquals("Timezone should be preserved.",
-                ZonedDateTime.of(2000, 1, 1, 12, 0, 0 ,0, ZoneOffset.ofHours(1)),
-                wrapper.value);
+        assertEquals(ZonedDateTime.of(2000, 1, 1, 12, 0, 0 ,0, ZoneOffset.ofHours(1)),
+                wrapper.value,
+                "Timezone should be preserved.");
     }
 
     /*
@@ -229,10 +225,10 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
         String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, ""));
         Map<String, ZonedDateTime> actualMapFromEmptyStr = objectReader.readValue(valueFromEmptyStr);
         ZonedDateTime actualDateFromEmptyStr = actualMapFromEmptyStr.get(key);
-        assertEquals("empty string failed to deserialize to null with lenient setting", null, actualDateFromEmptyStr);
+        assertEquals(null, actualDateFromEmptyStr, "empty string failed to deserialize to null with lenient setting");
     }
 
-    @Test ( expected =  MismatchedInputException.class)
+    @Test
     public void testStrictDeserializeFromEmptyString() throws Exception {
 
         final String key = "zonedDateTime";
@@ -247,7 +243,7 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
         assertNull(actualMapFromNullStr.get(key));
 
         String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, ""));
-        objectReader.readValue(valueFromEmptyStr);
+        assertThrows(MismatchedInputException.class, () -> objectReader.readValue(valueFromEmptyStr));
     }
 
     /*
@@ -263,9 +259,9 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
                 .forType(WrapperWithFeatures.class)
                 .readValue("{\"value\":\"2000-01-01T12:00+0100\"}");
 
-        assertEquals("Value parses as if it were with colon",
-                ZonedDateTime.of(2000, 1, 1, 12, 0, 0 ,0, ZoneOffset.ofHours(1)),
-                wrapper.value);
+        assertEquals(ZonedDateTime.of(2000, 1, 1, 12, 0, 0 ,0, ZoneOffset.ofHours(1)),
+                wrapper.value,
+                "Value parses as if it were with colon");
     }
 
     @Test
@@ -274,9 +270,9 @@ public class ZonedDateTimeDeserTest extends ModuleTestBase
         WrapperWithFeatures wrapper = READER
                 .forType(WrapperWithFeatures.class)
                 .readValue("{\"value\":\"2000-01-01T12:00+0100[Europe/Paris]\"}");
-        assertEquals("Timezone should be preserved.",
-                ZonedDateTime.of(2000, 1, 1, 12, 0, 0 ,0, ZoneId.of("Europe/Paris")),
-                wrapper.value);
+        assertEquals(ZonedDateTime.of(2000, 1, 1, 12, 0, 0 ,0, ZoneId.of("Europe/Paris")),
+                wrapper.value,
+                "Timezone should be preserved.");
     }
 
     @Test

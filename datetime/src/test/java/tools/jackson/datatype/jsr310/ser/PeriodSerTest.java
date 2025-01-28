@@ -16,16 +16,16 @@
 
 package tools.jackson.datatype.jsr310.ser;
 
-import static org.junit.Assert.assertEquals;
-
 import java.time.Period;
 import java.time.temporal.TemporalAmount;
+
+import org.junit.jupiter.api.Test;
 
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.datatype.jsr310.MockObjectConfiguration;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PeriodSerTest extends ModuleTestBase
 {
@@ -51,8 +51,6 @@ public class PeriodSerTest extends ModuleTestBase
                 .addMixIn(TemporalAmount.class, MockObjectConfiguration.class)
                 .build();
         String value = mapper.writeValueAsString(period);
-        assertEquals(
-                "[" + q(Period.class.getName()) + ",\"P5Y1M12D\"]", value);
+        assertEquals("[" + q(Period.class.getName()) + ",\"P5Y1M12D\"]", value);
     }
 }
-

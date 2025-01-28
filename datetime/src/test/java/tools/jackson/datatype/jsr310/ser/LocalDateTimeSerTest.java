@@ -20,6 +20,8 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.temporal.Temporal;
 
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import tools.jackson.databind.ObjectMapper;
@@ -27,9 +29,7 @@ import tools.jackson.databind.SerializationFeature;
 import tools.jackson.datatype.jsr310.MockObjectConfiguration;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
 
-import org.junit.Test;
-
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LocalDateTimeSerTest
     extends ModuleTestBase
@@ -47,7 +47,7 @@ public class LocalDateTimeSerTest
     public void testSerializationAsTimestamp01() throws Exception
     {
         LocalDateTime time = LocalDateTime.of(1986, Month.JANUARY, 17, 15, 43);
-        assertEquals("The value is not correct.", "[1986,1,17,15,43]",
+        assertEquals("[1986,1,17,15,43]",
                 MAPPER.writeValueAsString(time));
     }
 
@@ -57,7 +57,7 @@ public class LocalDateTimeSerTest
         LocalDateTime time = LocalDateTime.of(2013, Month.AUGUST, 21, 9, 22, 57);
         String value = MAPPER.writeValueAsString(time);
 
-        assertEquals("The value is not correct.", "[2013,8,21,9,22,57]", value);
+        assertEquals("[2013,8,21,9,22,57]", value);
     }
 
     @Test
@@ -69,7 +69,7 @@ public class LocalDateTimeSerTest
                 .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .with(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .writeValueAsString(time);
-        assertEquals("The value is not correct.", "[2013,8,21,9,22,0,57]", value);
+        assertEquals("[2013,8,21,9,22,0,57]", value);
     }
 
     @Test
@@ -80,7 +80,7 @@ public class LocalDateTimeSerTest
                 .disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .build();
         String value = m.writeValueAsString(time);
-        assertEquals("The value is not correct.", "[2013,8,21,9,22,0,0]", value);
+        assertEquals("[2013,8,21,9,22,0,0]", value);
     }
 
     @Test
@@ -92,7 +92,7 @@ public class LocalDateTimeSerTest
                 .enable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .build();
         String value = m.writeValueAsString(time);
-        assertEquals("The value is not correct.", "[2005,11,5,22,31,5,829837]", value);
+        assertEquals("[2005,11,5,22,31,5,829837]", value);
     }
 
     @Test
@@ -104,7 +104,7 @@ public class LocalDateTimeSerTest
                 .disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .build();
         String value = m.writeValueAsString(time);
-        assertEquals("The value is not correct.", "[2005,11,5,22,31,5,422]", value);
+        assertEquals("[2005,11,5,22,31,5,422]", value);
     }
 
     @Test
@@ -114,8 +114,7 @@ public class LocalDateTimeSerTest
         final ObjectMapper m = newMapperBuilder()
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             .build();
-        assertEquals("The value is not correct.", "\"1986-01-17T15:43:05\"",
-                m.writeValueAsString(time));
+        assertEquals("\"1986-01-17T15:43:05\"", m.writeValueAsString(time));
     }
 
     @Test
@@ -127,7 +126,7 @@ public class LocalDateTimeSerTest
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .build();
         String value = m.writeValueAsString(time);
-        assertEquals("The value is not correct.", '"' + time.toString() + '"', value);
+        assertEquals('"' + time.toString() + '"', value);
     }
 
     @Test
@@ -138,7 +137,7 @@ public class LocalDateTimeSerTest
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .build();
         String value = m.writeValueAsString(time);
-        assertEquals("The value is not correct.", '"' + time.toString() + '"', value);
+        assertEquals('"' + time.toString() + '"', value);
     }
 
     @Test
@@ -165,8 +164,7 @@ public class LocalDateTimeSerTest
             .addMixIn(Temporal.class, MockObjectConfiguration.class)
             .build();
         String value = m.writeValueAsString(time);
-        assertEquals("The value is not correct.",
-                "[\"" + LocalDateTime.class.getName() + "\",[2005,11,5,22,31,5,829837]]", value);
+        assertEquals("[\"" + LocalDateTime.class.getName() + "\",[2005,11,5,22,31,5,829837]]", value);
     }
 
     @Test
@@ -179,8 +177,7 @@ public class LocalDateTimeSerTest
                 .build();
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 422829837);
         String value = m.writeValueAsString(time);
-        assertEquals("The value is not correct.",
-                "[\"" + LocalDateTime.class.getName() + "\",[2005,11,5,22,31,5,422]]", value);
+        assertEquals("[\"" + LocalDateTime.class.getName() + "\",[2005,11,5,22,31,5,422]]", value);
     }
 
     @Test
@@ -192,7 +189,6 @@ public class LocalDateTimeSerTest
                 .build();
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 829837);
         String value = m.writeValueAsString(time);
-        assertEquals("The value is not correct.",
-                "[\"" + LocalDateTime.class.getName() + "\",\"" + time.toString() + "\"]", value);
+        assertEquals("[\"" + LocalDateTime.class.getName() + "\",\"" + time.toString() + "\"]", value);
     }
 }

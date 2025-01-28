@@ -20,6 +20,8 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 
+import org.junit.jupiter.api.Test;
+
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.ObjectWriter;
 import tools.jackson.databind.SerializationFeature;
@@ -27,9 +29,7 @@ import tools.jackson.databind.annotation.JsonSerialize;
 import tools.jackson.datatype.jsr310.MockObjectConfiguration;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LocalTimeSerTest extends ModuleTestBase
 {
@@ -56,24 +56,24 @@ public class LocalTimeSerTest extends ModuleTestBase
     {
         String json = writer.with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .writeValueAsString(LocalTime.of(15, 43));
-        assertEquals("The value is not correct.", "[15,43]", json);
+        assertEquals("[15,43]", json, "The value is not correct.");
     }
 
     @Test
     public void testSerializationAsTimestamp02() throws Exception
     {
         String json = writer.with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .writeValueAsString( LocalTime.of(9, 22, 57));
-        assertEquals("The value is not correct.", "[9,22,57]", json);
+                .writeValueAsString(LocalTime.of(9, 22, 57));
+        assertEquals("[9,22,57]", json, "The value is not correct.");
     }
 
     @Test
     public void testSerializationAsTimestamp03Nanoseconds() throws Exception
     {
         String json = writer.with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
-                SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
-            .writeValueAsString(LocalTime.of(9, 22, 0, 57));
-        assertEquals("The value is not correct.", "[9,22,0,57]", json);
+                        SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .writeValueAsString(LocalTime.of(9, 22, 0, 57));
+        assertEquals("[9,22,0,57]", json, "The value is not correct.");
     }
 
     @Test
@@ -86,7 +86,7 @@ public class LocalTimeSerTest extends ModuleTestBase
                 .build();
         String value = mapper.writeValueAsString(time);
 
-        assertEquals("The value is not correct.", "[9,22,0,0]", value);
+        assertEquals("[9,22,0,0]", value, "The value is not correct.");
     }
 
     @Test
@@ -98,7 +98,7 @@ public class LocalTimeSerTest extends ModuleTestBase
                 .configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, true)
                 .build();
         String value = mapper.writeValueAsString(time);
-        assertEquals("The value is not correct.", "[22,31,5,829837]", value);
+        assertEquals("[22,31,5,829837]", value, "The value is not correct.");
     }
 
     @Test
@@ -110,7 +110,7 @@ public class LocalTimeSerTest extends ModuleTestBase
                 .disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .build();
         String value = mapper.writeValueAsString(time);
-        assertEquals("The value is not correct.", "[22,31,5,422]", value);
+        assertEquals("[22,31,5,422]", value, "The value is not correct.");
     }
 
     @Test
@@ -120,8 +120,7 @@ public class LocalTimeSerTest extends ModuleTestBase
         ObjectMapper mapper = newMapperBuilder()
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
                 .build();
-        assertEquals("The value is not correct.", "\"15:43:20\"",
-                mapper.writeValueAsString(time));
+        assertEquals("\"15:43:20\"", mapper.writeValueAsString(time));
     }
 
     @Test
@@ -132,7 +131,7 @@ public class LocalTimeSerTest extends ModuleTestBase
                     .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
                     .build();
         String value = mapper.writeValueAsString(time);
-        assertEquals("The value is not correct.", '"' + time.toString() + '"', value);
+        assertEquals('"' + time.toString() + '"', value, "The value is not correct.");
     }
 
     @Test
@@ -143,7 +142,7 @@ public class LocalTimeSerTest extends ModuleTestBase
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
                 .build();
         String value = m.writeValueAsString(time);
-        assertEquals("The value is not correct.", '"' + time.toString() + '"', value);
+        assertEquals('"' + time.toString() + '"', value, "The value is not correct.");
     }
 
     // [modules-java8#115]
@@ -151,9 +150,9 @@ public class LocalTimeSerTest extends ModuleTestBase
     public void testWithCustomSerializer() throws Exception
     {
         String json = MAPPER.writeValueAsString(new CustomWrapper(LocalTime.of(15, 43)));
-        assertEquals("The value is not correct.", "{\"value\":\"15/43\"}", json);
+        assertEquals("{\"value\":\"15/43\"}", json, "The value is not correct.");
     }
-    
+
     @Test
     public void testSerializationWithTypeInfo01() throws Exception
     {
@@ -165,9 +164,8 @@ public class LocalTimeSerTest extends ModuleTestBase
                 .build();
         String json = m.writeValueAsString(time);
 
-        assertEquals("The value is not correct.",
-                "[\"" + LocalTime.class.getName() + "\",[22,31,5,829837]]",
-                json);
+        assertEquals("[\"" + LocalTime.class.getName() + "\",[22,31,5,829837]]", json,
+                "The value is not correct.");
     }
 
     @Test
@@ -181,9 +179,8 @@ public class LocalTimeSerTest extends ModuleTestBase
                 .addMixIn(Temporal.class, MockObjectConfiguration.class)
                 .build();
         String json = m.writeValueAsString(time);
-        assertEquals("The value is not correct.",
-                "[\"" + LocalTime.class.getName() + "\",[22,31,5,422]]",
-                json);
+        assertEquals("[\"" + LocalTime.class.getName() + "\",[22,31,5,422]]", json,
+                "The value is not correct.");
     }
 
     @Test
@@ -196,7 +193,7 @@ public class LocalTimeSerTest extends ModuleTestBase
                 .build();
         String value = m.writeValueAsString(time);
 
-        assertEquals("The value is not correct.",
-                "[\"" + LocalTime.class.getName() + "\",\"" + time.toString() + "\"]", value);
+        assertEquals("[\"" + LocalTime.class.getName() + "\",\"" + time.toString() + "\"]", value,
+                "The value is not correct.");
     }
 }

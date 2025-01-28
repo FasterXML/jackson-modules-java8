@@ -2,13 +2,13 @@ package tools.jackson.datatype.jsr310.failing;
 
 import java.time.Duration;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import tools.jackson.databind.*;
 
 import tools.jackson.datatype.jsr310.ModuleTestBase;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DurationDeser337Test extends ModuleTestBase
 {

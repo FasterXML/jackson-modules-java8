@@ -20,13 +20,13 @@ import java.time.OffsetTime;
 import java.time.ZoneOffset;
 import java.time.temporal.Temporal;
 
+import org.junit.jupiter.api.Test;
+
 import tools.jackson.databind.*;
 import tools.jackson.datatype.jsr310.MockObjectConfiguration;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class OffsetTimeSerTest extends ModuleTestBase
 {
@@ -39,7 +39,7 @@ public class OffsetTimeSerTest extends ModuleTestBase
         String value = MAPPER.writer()
                 .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .writeValueAsString(time);
-        assertEquals("The value is not correct.", "[15,43,\"+03:00\"]", value);
+        assertEquals("[15,43,\"+03:00\"]", value);
     }
 
     @Test
@@ -49,7 +49,7 @@ public class OffsetTimeSerTest extends ModuleTestBase
         String value = MAPPER.writer()
                 .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .writeValueAsString(time);
-        assertEquals("The value is not correct.", "[9,22,57,\"-06:30\"]", value);
+        assertEquals("[9,22,57,\"-06:30\"]", value);
     }
 
     @Test
@@ -60,7 +60,7 @@ public class OffsetTimeSerTest extends ModuleTestBase
                 .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .with(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .writeValueAsString(time);
-        assertEquals("The value is not correct.", "[9,22,0,57,\"-06:30\"]", value);
+        assertEquals("[9,22,0,57,\"-06:30\"]", value);
     }
 
     @Test
@@ -71,7 +71,7 @@ public class OffsetTimeSerTest extends ModuleTestBase
                 .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .without(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .writeValueAsString(time);
-        assertEquals("The value is not correct.", "[9,22,0,0,\"-06:30\"]", value);
+        assertEquals("[9,22,0,0,\"-06:30\"]", value);
     }
 
     @Test
@@ -82,7 +82,7 @@ public class OffsetTimeSerTest extends ModuleTestBase
                 .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .with(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .writeValueAsString(time);
-        assertEquals("The value is not correct.", "[22,31,5,829837,\"+11:00\"]", value);
+        assertEquals("[22,31,5,829837,\"+11:00\"]", value);
     }
 
     @Test
@@ -93,7 +93,7 @@ public class OffsetTimeSerTest extends ModuleTestBase
                 .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .without(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .writeValueAsString(time);
-        assertEquals("The value is not correct.", "[22,31,5,422,\"+11:00\"]", value);
+        assertEquals("[22,31,5,422,\"+11:00\"]", value);
     }
 
     @Test
@@ -103,7 +103,7 @@ public class OffsetTimeSerTest extends ModuleTestBase
         String value = MAPPER.writer()
                 .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .writeValueAsString(time);
-        assertEquals("The value is not correct.", '"' + time.toString() + '"', value);
+        assertEquals('"' + time.toString() + '"', value);
     }
 
     @Test
@@ -113,7 +113,7 @@ public class OffsetTimeSerTest extends ModuleTestBase
         String value = MAPPER.writer()
                 .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .writeValueAsString(time);
-        assertEquals("The value is not correct.", '"' + time.toString() + '"', value);
+        assertEquals('"' + time.toString() + '"', value);
     }
 
     @Test
@@ -123,7 +123,7 @@ public class OffsetTimeSerTest extends ModuleTestBase
         String value = MAPPER.writer()
                 .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .writeValueAsString(time);
-        assertEquals("The value is not correct.", '"' + time.toString() + '"', value);
+        assertEquals('"' + time.toString() + '"', value);
     }
 
     @Test
@@ -136,8 +136,7 @@ public class OffsetTimeSerTest extends ModuleTestBase
                 .configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, true)
                 .addMixIn(Temporal.class, MockObjectConfiguration.class)
                 .build();
-        assertEquals("The value is not correct.",
-                "[\"" + OffsetTime.class.getName() + "\",[22,31,5,829837,\"+11:00\"]]",
+        assertEquals("[\"" + OffsetTime.class.getName() + "\",[22,31,5,829837,\"+11:00\"]]",
                 mapper.writeValueAsString(time));
     }
 
@@ -152,8 +151,7 @@ public class OffsetTimeSerTest extends ModuleTestBase
             .addMixIn(Temporal.class, MockObjectConfiguration.class)
             .build();
 
-        assertEquals("The value is not correct.",
-                "[\"" + OffsetTime.class.getName() + "\",[22,31,5,422,\"+11:00\"]]",
+        assertEquals("[\"" + OffsetTime.class.getName() + "\",[22,31,5,422,\"+11:00\"]]",
                 mapper.writeValueAsString(time));
     }
 
@@ -167,8 +165,7 @@ public class OffsetTimeSerTest extends ModuleTestBase
                 .addMixIn(Temporal.class, MockObjectConfiguration.class)
                 .build();
 
-        assertEquals("The value is not correct.",
-                "[\"" + OffsetTime.class.getName() + "\",\"" + time.toString() + "\"]",
+        assertEquals("[\"" + OffsetTime.class.getName() + "\",\"" + time.toString() + "\"]",
                 mapper.writeValueAsString(time));
     }
 }

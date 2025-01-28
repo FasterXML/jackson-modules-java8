@@ -5,6 +5,8 @@ import java.time.Month;
 import java.time.YearMonth;
 import java.util.Map;
 
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import tools.jackson.core.type.TypeReference;
@@ -17,11 +19,7 @@ import tools.jackson.databind.exc.InvalidFormatException;
 import tools.jackson.databind.exc.MismatchedInputException;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class YearMonthDeserTest extends ModuleTestBase
 {
@@ -33,7 +31,8 @@ public class YearMonthDeserTest extends ModuleTestBase
     public void testDeserializationAsString01() throws Exception
     {
         final YearMonth value = read("'2000-01'");
-        assertEquals("The value is not correct", YearMonth.of(2000, Month.JANUARY), value);
+        assertEquals(YearMonth.of(2000, Month.JANUARY), value,
+                "The value is not correct");
     }
 
     @Test
@@ -71,7 +70,8 @@ public class YearMonthDeserTest extends ModuleTestBase
     {
         YearMonth value = READER.with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
                 .readValue(a2q("['2000-01']"));
-        assertEquals("The value is not correct", YearMonth.of(2000, Month.JANUARY), value);
+        assertEquals(YearMonth.of(2000, Month.JANUARY), value,
+                "The value is not correct");
     }
 
     @Test
@@ -118,10 +118,10 @@ public class YearMonthDeserTest extends ModuleTestBase
         String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, dateValAsEmptyStr));
         Map<String, YearMonth> actualMapFromEmptyStr = objectReader.readValue(valueFromEmptyStr);
         YearMonth actualDateFromEmptyStr = actualMapFromEmptyStr.get(key);
-        assertEquals("empty string failed to deserialize to null with lenient setting",null, actualDateFromEmptyStr);
+        assertNull(actualDateFromEmptyStr, "empty string failed to deserialize to null with lenient setting");
     }
 
-    @Test( expected =  MismatchedInputException.class)
+    @Test
     public void testStrictDeserializeFromEmptyString() throws Exception {
 
         final String key = "YearMonth";
@@ -136,7 +136,7 @@ public class YearMonthDeserTest extends ModuleTestBase
         assertNull(actualMapFromNullStr.get(key));
 
         String valueFromEmptyStr = mapper.writeValueAsString(asMap("date", ""));
-        objectReader.readValue(valueFromEmptyStr);
+        assertThrows(MismatchedInputException.class, () -> objectReader.readValue(valueFromEmptyStr));
     }
 
     private YearMonth read(final String json) throws IOException {

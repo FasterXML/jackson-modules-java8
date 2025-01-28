@@ -1,23 +1,21 @@
 package tools.jackson.datatype.jsr310.ser;
 
-import static org.junit.Assert.assertEquals;
-
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 import java.util.TimeZone;
 
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.datatype.jsr310.MockObjectConfiguration;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
 import tools.jackson.datatype.jsr310.util.DecimalUtils;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OffsetDateTimeSerTest
     extends ModuleTestBase
@@ -50,7 +48,7 @@ public class OffsetDateTimeSerTest
                 .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .with(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.", "0.0", value);
+        assertEquals("0.0", value);
     }
 
     @Test
@@ -61,7 +59,7 @@ public class OffsetDateTimeSerTest
                 .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .without(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.", "0", value);
+        assertEquals("0", value);
     }
 
     @Test
@@ -72,7 +70,7 @@ public class OffsetDateTimeSerTest
                 .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .with(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.", "123456789.183917322", value);
+        assertEquals("123456789.183917322", value);
     }
 
     @Test
@@ -83,7 +81,7 @@ public class OffsetDateTimeSerTest
                 .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .without(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.", "123456789183", value);
+        assertEquals("123456789183", value);
     }
 
     @Test
@@ -94,7 +92,7 @@ public class OffsetDateTimeSerTest
                 .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .with(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.", DecimalUtils.toDecimal(date.toEpochSecond(), date.getNano()), value);
+        assertEquals(DecimalUtils.toDecimal(date.toEpochSecond(), date.getNano()), value);
     }
 
     @Test
@@ -105,7 +103,7 @@ public class OffsetDateTimeSerTest
                 .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .without(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.", Long.toString(date.toInstant().toEpochMilli()), value);
+        assertEquals(Long.toString(date.toInstant().toEpochMilli()), value);
     }
 
     @Test
@@ -115,7 +113,7 @@ public class OffsetDateTimeSerTest
         String value = MAPPER.writer()
                 .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.", '"'
+        assertEquals('"'
                 + FORMATTER.withZone(Z1).format(date) + '"', value);
     }
 
@@ -126,7 +124,7 @@ public class OffsetDateTimeSerTest
         String value = MAPPER.writer()
                 .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.", '"'
+        assertEquals('"'
                 + FORMATTER.withZone(Z2).format(date) + '"', value);
     }
 
@@ -137,7 +135,7 @@ public class OffsetDateTimeSerTest
         String value = MAPPER.writer()
                 .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.", '"'
+        assertEquals('"'
                 + FORMATTER.withZone(Z3).format(date) + '"', value);
     }
 
@@ -167,7 +165,7 @@ public class OffsetDateTimeSerTest
                 .with(TimeZone.getTimeZone(Z1))
                 .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.", '"' + FORMATTER.format(date) + '"', value);
+        assertEquals('"' + FORMATTER.format(date) + '"', value);
     }
 
     @Test
@@ -179,7 +177,7 @@ public class OffsetDateTimeSerTest
                 .with(TimeZone.getTimeZone(Z2))
                 .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.", '"' + FORMATTER.format(date) + '"', value);
+        assertEquals('"' + FORMATTER.format(date) + '"', value);
     }
 
     @Test
@@ -191,7 +189,7 @@ public class OffsetDateTimeSerTest
                 .with(TimeZone.getTimeZone(Z3))
                 .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.", '"' + FORMATTER.format(date) + '"', value);
+        assertEquals('"' + FORMATTER.format(date) + '"', value);
     }
 
     @Test
@@ -204,8 +202,7 @@ public class OffsetDateTimeSerTest
                 .addMixIn(Temporal.class, MockObjectConfiguration.class)
                 .build()
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.",
-                "[\"" + OffsetDateTime.class.getName() + "\",123456789.183917322]", value);
+        assertEquals("[\"" + OffsetDateTime.class.getName() + "\",123456789.183917322]", value);
     }
 
     @Test
@@ -218,8 +215,7 @@ public class OffsetDateTimeSerTest
                 .disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .build()
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.",
-                "[\"" + OffsetDateTime.class.getName() + "\",123456789183]", value);
+        assertEquals("[\"" + OffsetDateTime.class.getName() + "\",123456789183]", value);
     }
 
     @Test
@@ -231,8 +227,7 @@ public class OffsetDateTimeSerTest
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
                 .build();
         String value = m.writeValueAsString(date);
-        assertEquals("The value is not correct.",
-            "[\"" + OffsetDateTime.class.getName() + "\",\""
+        assertEquals("[\"" + OffsetDateTime.class.getName() + "\",\""
                     + FORMATTER.withZone(Z3).format(date) + "\"]", value);
     }
 
@@ -248,8 +243,7 @@ public class OffsetDateTimeSerTest
             .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             .writeValueAsString(date);
 
-        assertEquals("The value is not correct.",
-                "[\"" + OffsetDateTime.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", value);
+        assertEquals("[\"" + OffsetDateTime.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", value);
     }
 
     @Test
@@ -263,7 +257,7 @@ public class OffsetDateTimeSerTest
                 .writeValueAsString(date);
 
         // We expect to have the date written with the ZoneId Z2
-        assertEquals("The value is incorrect", "\"" + FORMATTER.format(date.atZoneSameInstant(Z2)) + "\"", value);
+        assertEquals("\"" + FORMATTER.format(date.atZoneSameInstant(Z2)) + "\"", value);
     }
 
     @Test
@@ -277,7 +271,7 @@ public class OffsetDateTimeSerTest
                 .writeValueAsString(date);
 
         // We expect to have the date written with the ZoneId Z3
-        assertEquals("The value is incorrect", "\"" + FORMATTER.format(date) + "\"", value);
+        assertEquals("\"" + FORMATTER.format(date) + "\"", value);
     }
 
     static class Pojo1 {

@@ -2,15 +2,15 @@ package tools.jackson.datatype.jsr310.deser;
 
 import java.time.ZoneId;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
 
 import tools.jackson.databind.DatabindContext;
 import tools.jackson.databind.JavaType;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.jsontype.PolymorphicTypeValidator;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultTypingTest extends ModuleTestBase
 {

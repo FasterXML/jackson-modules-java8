@@ -3,13 +3,14 @@ package tools.jackson.datatype.jsr310.key;
 import java.time.LocalTime;
 import java.util.Map;
 
+import org.junit.jupiter.api.Test;
+
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.ObjectReader;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LocalTimeAsKeyTest extends ModuleTestBase
 {
@@ -28,25 +29,25 @@ public class LocalTimeAsKeyTest extends ModuleTestBase
 
     @Test
     public void testSerialization0() throws Exception {
-        Assert.assertEquals("Value is incorrect", mapAsString(TIME_0_STRING, "test"),
+        assertEquals(mapAsString(TIME_0_STRING, "test"),
                 MAPPER.writeValueAsString(asMap(TIME_0, "test")));
     }
 
     @Test
     public void testSerialization1() throws Exception {
-        Assert.assertEquals("Value is incorrect", mapAsString(TIME_STRING, "test"),
+        assertEquals(mapAsString(TIME_STRING, "test"),
                 MAPPER.writeValueAsString(asMap(TIME, "test")));
     }
 
     @Test
     public void testDeserialization0() throws Exception {
-        Assert.assertEquals("Value is incorrect", asMap(TIME_0, "test"),
-                READER.readValue(mapAsString(TIME_0_STRING, "test")));
+        assertEquals(asMap(TIME_0, "test"), READER.readValue(mapAsString(TIME_0_STRING, "test")),
+                "Value is incorrect");
     }
 
     @Test
     public void testDeserialization1() throws Exception {
-        Assert.assertEquals("Value is incorrect", asMap(TIME, "test"),
-                READER.readValue(mapAsString(TIME_STRING, "test")));
+        assertEquals(asMap(TIME, "test"), READER.readValue(mapAsString(TIME_STRING, "test")),
+                "Value is incorrect");
     }
 }

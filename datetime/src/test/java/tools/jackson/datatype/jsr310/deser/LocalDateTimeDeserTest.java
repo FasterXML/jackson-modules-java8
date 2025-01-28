@@ -20,10 +20,9 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.temporal.Temporal;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
+
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Feature;
@@ -40,9 +39,7 @@ import tools.jackson.databind.exc.MismatchedInputException;
 import tools.jackson.datatype.jsr310.MockObjectConfiguration;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
 
-import org.junit.Test;
-
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LocalDateTimeDeserTest
     extends ModuleTestBase
@@ -52,8 +49,7 @@ public class LocalDateTimeDeserTest
 
     private final static ObjectMapper STRICT_MAPPER = mapperBuilder()
         .withConfigOverride(LocalDateTime.class,
-                c -> c.setFormat(JsonFormat.Value.forLeniency(false))
-        )
+                c -> c.setFormat(JsonFormat.Value.forLeniency(false)))
         .build();
 
     private final TypeReference<Map<String, LocalDateTime>> MAP_TYPE_REF = new TypeReference<Map<String, LocalDateTime>>() { };
@@ -116,7 +112,7 @@ public class LocalDateTimeDeserTest
     {
         LocalDateTime value = READER.readValue("[1986,1,17,15,43]");
         LocalDateTime time = LocalDateTime.of(1986, Month.JANUARY, 17, 15, 43);
-        assertEquals("The value is not correct.", time, value);
+        assertEquals(time, value, "The value is not correct.");
     }
 
     @Test
@@ -124,7 +120,7 @@ public class LocalDateTimeDeserTest
     {
         LocalDateTime value = READER.readValue("[2013,8,21,9,22,57]");
         LocalDateTime time = LocalDateTime.of(2013, Month.AUGUST, 21, 9, 22, 57);
-        assertEquals("The value is not correct.", time, value);
+        assertEquals(time, value, "The value is not correct.");
     }
 
     @Test
@@ -134,7 +130,7 @@ public class LocalDateTimeDeserTest
                 .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
         LocalDateTime value = r.readValue("[2013,8,21,9,22,0,57]");
         LocalDateTime time = LocalDateTime.of(2013, Month.AUGUST, 21, 9, 22, 0, 57);
-        assertEquals("The value is not correct.", time, value);
+        assertEquals(time, value, "The value is not correct.");
     }
 
     @Test
@@ -144,7 +140,7 @@ public class LocalDateTimeDeserTest
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
         LocalDateTime value = r.readValue("[2013,8,21,9,22,0,57]");
         LocalDateTime time = LocalDateTime.of(2013, Month.AUGUST, 21, 9, 22, 0, 57000000);
-        assertEquals("The value is not correct.", time, value);
+        assertEquals(time, value, "The value is not correct.");
     }
 
     @Test
@@ -154,7 +150,7 @@ public class LocalDateTimeDeserTest
                 .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
         LocalDateTime value = r.readValue("[2005,11,5,22,31,5,829837]");
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 829837);
-        assertEquals("The value is not correct.", time, value);
+        assertEquals(time, value, "The value is not correct.");
     }
 
     @Test
@@ -165,7 +161,7 @@ public class LocalDateTimeDeserTest
         LocalDateTime value = r.readValue("[2005,11,5,22,31,5,829837]");
 
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 829837);
-        assertEquals("The value is not correct.", time, value);
+        assertEquals(time, value, "The value is not correct.");
     }
 
     @Test
@@ -175,7 +171,7 @@ public class LocalDateTimeDeserTest
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
         LocalDateTime value = r.readValue("[2005,11,5,22,31,5,829]");
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 829000000);
-        assertEquals("The value is not correct.", time, value);
+        assertEquals(time, value, "The value is not correct.");
     }
 
     @Test
@@ -185,7 +181,7 @@ public class LocalDateTimeDeserTest
         WrapperWithReadTimestampsAsNanosEnabled actual =
             r.readValue(a2q("{'value':[2013,8,21,9,22,0,57]}"));
         LocalDateTime time = LocalDateTime.of(2013, Month.AUGUST, 21, 9, 22, 0, 57);
-        assertEquals("The value is not correct.", time, actual.value);
+        assertEquals(time, actual.value, "The value is not correct.");
     }
 
     @Test
@@ -195,7 +191,7 @@ public class LocalDateTimeDeserTest
         WrapperWithReadTimestampsAsNanosDisabled actual =
             r.readValue(a2q("{'value':[2013,8,21,9,22,0,57]}"));
         LocalDateTime time = LocalDateTime.of(2013, Month.AUGUST, 21, 9, 22, 0, 57000000);
-        assertEquals("The value is not correct.", time, actual.value);
+        assertEquals(time, actual.value, "The value is not correct.");
     }
 
     @Test
@@ -205,7 +201,7 @@ public class LocalDateTimeDeserTest
         WrapperWithReadTimestampsAsNanosDisabled actual =
             r.readValue(a2q("{'value':[2013,8,21,9,22,0,4257]}"));
         LocalDateTime time = LocalDateTime.of(2013, Month.AUGUST, 21, 9, 22, 0, 4257);
-        assertEquals("The value is not correct.", time, actual.value);
+        assertEquals(time, actual.value, "The value is not correct.");
     }
 
     /*
@@ -217,13 +213,13 @@ public class LocalDateTimeDeserTest
     @Test
     public void testDeserializationAsString01()
     {
-        LocalDateTime time = LocalDateTime.of(1986, Month.JANUARY, 17, 15, 43);
-        LocalDateTime value = MAPPER.readValue(q(time.toString()), LocalDateTime.class);
-        assertEquals("The value is not correct.", time, value);
+        LocalDateTime exp = LocalDateTime.of(1986, Month.JANUARY, 17, 15, 43);
+        LocalDateTime value = READER.readValue(q(exp.toString()));
+        assertEquals(exp, value, "The value is not correct.");
 
-        assertEquals("The value is not correct.",
-                LocalDateTime.of(2000, Month.JANUARY, 1, 12, 0),
-                READER.readValue(q("2000-01-01T12:00")));
+        assertEquals(LocalDateTime.of(2000, Month.JANUARY, 1, 12, 0),
+                READER.readValue(q("2000-01-01T12:00")),
+                "The value is not correct.");
     }
 
     @Test
@@ -231,7 +227,7 @@ public class LocalDateTimeDeserTest
     {
         LocalDateTime time = LocalDateTime.of(2013, Month.AUGUST, 21, 9, 22, 57);
         LocalDateTime value = MAPPER.readValue(q(time.toString()), LocalDateTime.class);
-        assertEquals("The value is not correct.", time, value);
+        assertEquals(time, value, "The value is not correct.");
     }
 
     @Test
@@ -239,7 +235,7 @@ public class LocalDateTimeDeserTest
     {
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 829837);
         LocalDateTime value = MAPPER.readValue(q(time.toString()), LocalDateTime.class);
-        assertEquals("The value is not correct.", time, value);
+        assertEquals(time, value, "The value is not correct.");
     }
 
     /*
@@ -258,16 +254,16 @@ public class LocalDateTimeDeserTest
         final ObjectReader r = MAPPER.readerFor(LocalDateTime.class);
 
         // First, defaults:
-        assertEquals("The value is not correct.", EXP, r.readValue(input));
+        assertEquals(EXP, r.readValue(input), "The value is not correct.");
 
         // but ensure that global timezone setting doesn't matter
         LocalDateTime value = r.with(TimeZone.getTimeZone(Z_CHICAGO))
                 .readValue(input);
-        assertEquals("The value is not correct.", EXP, value);
+        assertEquals(EXP, value, "The value is not correct.");
 
         value = r.with(TimeZone.getTimeZone(Z_BUDAPEST))
                 .readValue(input);
-        assertEquals("The value is not correct.", EXP, value);
+        assertEquals(EXP, value, "The value is not correct.");
     }
 
     // [modules-java#94]: "Z" offset not allowed if strict mode
@@ -319,12 +315,11 @@ public class LocalDateTimeDeserTest
         String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, dateValAsEmptyStr));
         Map<String, LocalDateTime> actualMapFromEmptyStr = objectReader.readValue(valueFromEmptyStr);
         LocalDateTime actualDateFromEmptyStr = actualMapFromEmptyStr.get(key);
-        assertEquals("empty string failed to deserialize to null with lenient setting",actualDateFromNullStr, actualDateFromEmptyStr);
+        assertEquals(actualDateFromNullStr, actualDateFromEmptyStr, "empty string failed to deserialize to null with lenient setting");
     }
 
     @Test
-    public void testStrictDeserializeFromEmptyString()
-    {
+    public void testStrictDeserializeFromEmptyString() throws Exception {
 
         final String key = "datetime";
         final ObjectReader objectReader = STRICT_MAPPER.readerFor(MAP_TYPE_REF);
@@ -376,8 +371,8 @@ public class LocalDateTimeDeserTest
         LocalDateTime value = READER
                 .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
                 .readValue("[\"2000-01-01T12:00\"]");
-        assertEquals("The value is not correct.",
-                LocalDateTime.of(2000, 1, 1, 12, 0, 0, 0), value);
+        assertEquals(LocalDateTime.of(2000, 1, 1, 12, 0, 0, 0),
+                value, "The value is not correct.");
     }
     
     @Test
@@ -407,8 +402,8 @@ public class LocalDateTimeDeserTest
                 .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue(
                 "[\"" + LocalDateTime.class.getName() + "\",[2005,11,5,22,31,5,829837]]");
-        assertTrue("The value should be a LocalDateTime.", value instanceof LocalDateTime);
-        assertEquals("The value is not correct.", time, value);
+        assertTrue(value instanceof LocalDateTime, "The value should be a LocalDateTime.");
+        assertEquals(time, value, "The value is not correct.");
     }
 
     @Test
@@ -423,8 +418,8 @@ public class LocalDateTimeDeserTest
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue(
                 "[\"" + LocalDateTime.class.getName() + "\",[2005,11,5,22,31,5,422]]");
-        assertTrue("The value should be a LocalDateTime.", value instanceof LocalDateTime);
-        assertEquals("The value is not correct.", time, value);
+        assertTrue(value instanceof LocalDateTime, "The value should be a LocalDateTime.");
+        assertEquals(time, value, "The value is not correct.");
     }
 
     @Test
@@ -437,8 +432,8 @@ public class LocalDateTimeDeserTest
         Temporal value = m.readValue(
                 "[\"" + LocalDateTime.class.getName() + "\",\"" + time.toString() + "\"]", Temporal.class
         );
-        assertTrue("The value should be a LocalDateTime.", value instanceof LocalDateTime);
-        assertEquals("The value is not correct.", time, value);
+        assertTrue(value instanceof LocalDateTime, "The value should be a LocalDateTime.");
+        assertEquals(time, value, "The value is not correct.");
     }
 
     /*
@@ -604,34 +599,40 @@ public class LocalDateTimeDeserTest
      */
 
     // [modules-java8#148]: handle strict deserializaiton for date/time
-    @Test(expected = InvalidFormatException.class)
+    @Test
     public void testStrictCustomFormatForInvalidFormat() throws Exception
     {
-        /*StrictWrapper w =*/ MAPPER.readValue("{\"value\":\"2019-11-30 15:45\"}", StrictWrapper.class);
+        assertThrows(InvalidFormatException.class,
+            () -> /*StrictWrapper w =*/ MAPPER.readValue("{\"value\":\"2019-11-30 15:45\"}", StrictWrapper.class));
     }
 
-    @Test(expected = InvalidFormatException.class)
+    @Test
     public void testStrictCustomFormatForInvalidFormatWithEra() throws Exception
     {
-        /*StrictWrapperWithYearOfEra w =*/ MAPPER.readValue("{\"value\":\"2019-11-30 15:45\"}", StrictWrapperWithYearOfEra.class);
+        assertThrows(InvalidFormatException.class,
+            () -> /*StrictWrapperWithYearOfEra w =*/ MAPPER.readValue("{\"value\":\"2019-11-30 15:45\"}", StrictWrapperWithYearOfEra.class));
     }
 
-    @Test(expected = InvalidFormatException.class)
+    @Test
     public void testStrictCustomFormatForInvalidDateWithEra() throws Exception
     {
-        /*StrictWrapperWithYearOfEra w =*/ MAPPER.readValue("{\"value\":\"2019-11-31 15:45 AD\"}", StrictWrapperWithYearOfEra.class);
+        assertThrows(InvalidFormatException.class,
+            () -> /*StrictWrapperWithYearOfEra w =*/ MAPPER.readValue("{\"value\":\"2019-11-31 15:45 AD\"}", StrictWrapperWithYearOfEra.class));
     }
 
-    @Test(expected = InvalidFormatException.class)
+    @Test
     public void testStrictCustomFormatForInvalidTimeWithEra() throws Exception
     {
-        /*StrictWrapperWithYearOfEra w =*/ MAPPER.readValue("{\"value\":\"2019-11-30 25:45 AD\"}", StrictWrapperWithYearOfEra.class);
+        assertThrows(InvalidFormatException.class,
+            () -> /*StrictWrapperWithYearOfEra w =*/ MAPPER.readValue("{\"value\":\"2019-11-30 25:45 AD\"}", StrictWrapperWithYearOfEra.class));
     }
 
-    @Test(expected = InvalidFormatException.class)
+    @Test
     public void testStrictCustomFormatForInvalidDateAndTimeWithEra() throws Exception
     {
-        /*StrictWrapperWithYearOfEra w =*/ MAPPER.readValue("{\"value\":\"2019-11-31 25:45 AD\"}", StrictWrapperWithYearOfEra.class);
+        assertThrows(InvalidFormatException.class,
+            () -> /*StrictWrapperWithYearOfEra w =*/ MAPPER.readValue("{\"value\":\"2019-11-31 25:45 AD\"}", StrictWrapperWithYearOfEra.class));
+
     }
 
     @Test
@@ -642,28 +643,32 @@ public class LocalDateTimeDeserTest
         assertEquals(w.value, LocalDateTime.of(2019, 11, 30, 20, 45));
     }
 
-    @Test(expected = InvalidFormatException.class)
+    @Test
     public void testStrictCustomFormatForInvalidFormatWithoutEra() throws Exception
     {
-        /*StrictWrapperWithYearWithoutEra w =*/ MAPPER.readValue("{\"value\":\"2019-11-30 15:45 AD\"}", StrictWrapperWithYearWithoutEra.class);
+        assertThrows(InvalidFormatException.class,
+            () -> /*StrictWrapperWithYearWithoutEra w =*/ MAPPER.readValue("{\"value\":\"2019-11-30 15:45 AD\"}", StrictWrapperWithYearWithoutEra.class));
     }
 
-    @Test(expected = InvalidFormatException.class)
+    @Test
     public void testStrictCustomFormatForInvalidTimeWithoutEra() throws Exception
     {
-        /*StrictWrapperWithYearWithoutEra w =*/ MAPPER.readValue("{\"value\":\"2019-11-30 25:45\"}", StrictWrapperWithYearWithoutEra.class);
+        assertThrows(InvalidFormatException.class,
+            () -> /*StrictWrapperWithYearWithoutEra w =*/ MAPPER.readValue("{\"value\":\"2019-11-30 25:45\"}", StrictWrapperWithYearWithoutEra.class));
     }
 
-    @Test(expected = InvalidFormatException.class)
+    @Test
     public void testStrictCustomFormatForInvalidDateWithoutEra() throws Exception
     {
-        /*StrictWrapperWithYearWithoutEra w =*/ MAPPER.readValue("{\"value\":\"2019-11-31 15:45\"}", StrictWrapperWithYearWithoutEra.class);
+        assertThrows(InvalidFormatException.class,
+            () -> /*StrictWrapperWithYearWithoutEra w =*/ MAPPER.readValue("{\"value\":\"2019-11-31 15:45\"}", StrictWrapperWithYearWithoutEra.class));
     }
 
-    @Test(expected = InvalidFormatException.class)
+    @Test
     public void testStrictCustomFormatForInvalidDateAndTimeWithoutEra() throws Exception
     {
-        /*StrictWrapperWithYearWithoutEra w =*/ MAPPER.readValue("{\"value\":\"2019-11-31 25:45\"}", StrictWrapperWithYearWithoutEra.class);
+        assertThrows(InvalidFormatException.class,
+            () -> /*StrictWrapperWithYearWithoutEra w =*/ MAPPER.readValue("{\"value\":\"2019-11-31 25:45\"}", StrictWrapperWithYearWithoutEra.class));
     }
 
     @Test
@@ -700,7 +705,7 @@ public class LocalDateTimeDeserTest
 
     private void expectSuccess(ObjectReader reader, Object exp, String json) throws IOException {
         final LocalDateTime value = reader.readValue(a2q(json));
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", exp,  value);
+        assertNotNull(value, "The value should not be null.");
+        assertEquals(exp,  value, "The value is not correct.");
     }
 }

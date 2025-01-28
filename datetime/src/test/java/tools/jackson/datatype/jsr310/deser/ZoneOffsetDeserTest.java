@@ -20,10 +20,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.jupiter.api.Test;
 
 import tools.jackson.core.type.TypeReference;
 
@@ -37,7 +34,7 @@ import tools.jackson.databind.type.LogicalType;
 import tools.jackson.datatype.jsr310.MockObjectConfiguration;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ZoneOffsetDeserTest extends ModuleTestBase
 {
@@ -48,12 +45,12 @@ public class ZoneOffsetDeserTest extends ModuleTestBase
     @Test
     public void testSimpleZoneOffsetDeser() throws Exception
     {
-        assertEquals("The value is not correct.", ZoneOffset.of("Z"),
-                READER.readValue("\"Z\""));
-        assertEquals("The value is not correct.", ZoneOffset.of("+0300"),
-                READER.readValue(q("+0300")));
-        assertEquals("The value is not correct.", ZoneOffset.of("-0630"),
-                READER.readValue("\"-06:30\""));
+        assertEquals(ZoneOffset.of("Z"), READER.readValue("\"Z\""),
+                "The value is not correct.");
+        assertEquals(ZoneOffset.of("+0300"), READER.readValue(q("+0300")),
+                "The value is not correct.");
+        assertEquals(ZoneOffset.of("-0630"), READER.readValue("\"-06:30\""),
+                "The value is not correct.");
     }
 
     @Test
@@ -63,8 +60,8 @@ public class ZoneOffsetDeserTest extends ModuleTestBase
             .addMixIn(ZoneId.class, MockObjectConfiguration.class)
             .build();
         ZoneId value = mapper.readValue("[\"" + ZoneOffset.class.getName() + "\",\"+0415\"]", ZoneId.class);
-        assertTrue("The value should be a ZoneOffset.", value instanceof ZoneOffset);
-        assertEquals("The value is not correct.", ZoneOffset.of("+0415"), value);
+        assertTrue(value instanceof ZoneOffset);
+        assertEquals(ZoneOffset.of("+0415"), value);
     }
 
     @Test
@@ -74,8 +71,8 @@ public class ZoneOffsetDeserTest extends ModuleTestBase
             .addMixIn(ZoneId.class, MockObjectConfiguration.class)
             .build();
         ZoneId value = mapper.readValue("[\"" + ZoneOffset.class.getName() + "\",\"+0415\"]", ZoneId.class);
-        assertTrue("The value should be a ZoneOffset.", value instanceof ZoneOffset);
-        assertEquals("The value is not correct.", ZoneOffset.of("+0415"), value);
+        assertTrue(value instanceof ZoneOffset, "The value should be a ZoneOffset.");
+        assertEquals(ZoneOffset.of("+0415"), value, "The value is not correct.");
     }
 
     @Test
@@ -125,7 +122,7 @@ public class ZoneOffsetDeserTest extends ModuleTestBase
         ZoneOffset value = READER
                .with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
                .readValue("[\"+0300\"]");
-        assertEquals("The value is not correct.", ZoneOffset.of("+0300"), value);
+        assertEquals(ZoneOffset.of("+0300"), value, "The value is not correct.");
     }
 
     @Test
@@ -159,7 +156,7 @@ public class ZoneOffsetDeserTest extends ModuleTestBase
         String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, ""));
         Map<String, ZoneOffset> actualMapFromEmptyStr = objectReader.readValue(valueFromEmptyStr);
         ZoneId actualDateFromEmptyStr = actualMapFromEmptyStr.get(key);
-        assertEquals("empty string failed to deserialize to null with lenient setting", null, actualDateFromEmptyStr);
+        assertEquals(null, actualDateFromEmptyStr, "empty string failed to deserialize to null with lenient setting");
     }
 
     @Test

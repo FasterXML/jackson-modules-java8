@@ -3,12 +3,13 @@ package tools.jackson.datatype.jsr310.key;
 import java.time.ZoneOffset;
 import java.util.Map;
 
+import org.junit.jupiter.api.Test;
+
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ZoneOffsetAsKeyTest extends ModuleTestBase
 {
@@ -24,24 +25,24 @@ public class ZoneOffsetAsKeyTest extends ModuleTestBase
     @Test
     public void testSerialization0() throws Exception {
         String value = MAPPER.writeValueAsString(asMap(OFFSET_0, "test"));
-        Assert.assertEquals("Value is incorrect", mapAsString(OFFSET_0_STRING, "test"), value);
+        assertEquals(mapAsString(OFFSET_0_STRING, "test"), value);
     }
 
     @Test
     public void testSerialization1() throws Exception {
         String value = MAPPER.writeValueAsString(asMap(OFFSET_1, "test"));
-        Assert.assertEquals("Value is incorrect", mapAsString(OFFSET_1_STRING, "test"), value);
+        assertEquals(mapAsString(OFFSET_1_STRING, "test"), value);
     }
 
     @Test
     public void testDeserialization0() throws Exception {
         Map<ZoneOffset, String> value = MAPPER.readValue(mapAsString(OFFSET_0_STRING, "test"), TYPE_REF);
-        Assert.assertEquals("Value is incorrect", asMap(OFFSET_0, "test"), value);
+        assertEquals(asMap(OFFSET_0, "test"), value);
     }
 
     @Test
     public void testDeserialization1() throws Exception {
         Map<ZoneOffset, String> value = MAPPER.readValue(mapAsString(OFFSET_1_STRING, "test"), TYPE_REF);
-        Assert.assertEquals("Value is incorrect", asMap(OFFSET_1, "test"), value);
+        assertEquals(asMap(OFFSET_1, "test"), value);
     }
 }

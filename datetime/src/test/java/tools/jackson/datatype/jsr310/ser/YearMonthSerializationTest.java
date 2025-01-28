@@ -16,13 +16,11 @@
 
 package tools.jackson.datatype.jsr310.ser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.time.Month;
 import java.time.YearMonth;
 import java.time.temporal.Temporal;
+
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -32,7 +30,7 @@ import tools.jackson.databind.SerializationFeature;
 import tools.jackson.datatype.jsr310.MockObjectConfiguration;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class YearMonthSerializationTest
 	extends ModuleTestBase
@@ -60,8 +58,8 @@ public class YearMonthSerializationTest
         		.with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
         		.writeValueAsString(yearMonth);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[1986,1]", value);
+        assertNotNull(value);
+        assertEquals("[1986,1]", value);
     }
 
     @Test
@@ -72,8 +70,8 @@ public class YearMonthSerializationTest
         		.with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
         		.writeValueAsString(yearMonth);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[2013,8]", value);
+        assertNotNull(value);
+        assertEquals("[2013,8]", value);
     }
 
     @Test
@@ -84,8 +82,8 @@ public class YearMonthSerializationTest
         		.without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
         		.writeValueAsString(yearMonth);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", '"' + yearMonth.toString() + '"', value);
+        assertNotNull(value);
+        assertEquals('"' + yearMonth.toString() + '"', value);
     }
 
     @Test
@@ -95,7 +93,7 @@ public class YearMonthSerializationTest
         String value = MAPPER.writer()
         		.without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
         		.writeValueAsString(yearMonth);
-        assertEquals("The value is not correct.", '"' + yearMonth.toString() + '"', value);
+        assertEquals('"' + yearMonth.toString() + '"', value);
     }
 
     @Test
@@ -107,8 +105,7 @@ public class YearMonthSerializationTest
                .addMixIn(Temporal.class, MockObjectConfiguration.class)
         		.build();
         String value = mapper.writeValueAsString(yearMonth);
-        assertEquals("The value is not correct.",
-                "[\"" + YearMonth.class.getName() + "\",\"" + yearMonth.toString() + "\"]", value);
+        assertEquals("[\"" + YearMonth.class.getName() + "\",\"" + yearMonth.toString() + "\"]", value);
     }
 
     @Test
@@ -116,7 +113,7 @@ public class YearMonthSerializationTest
     {
         YearMonth yearMonth = YearMonth.of(1986, Month.JANUARY);
         YearMonth value = MAPPER.readValue("[1986,1]", YearMonth.class);
-        assertEquals("The value is not correct.", yearMonth, value);
+        assertEquals(yearMonth, value);
     }
 
     @Test
@@ -124,7 +121,7 @@ public class YearMonthSerializationTest
     {
         YearMonth yearMonth = YearMonth.of(2013, Month.AUGUST);
         YearMonth value = MAPPER.readValue("[2013,8]", YearMonth.class);
-        assertEquals("The value is not correct.", yearMonth, value);
+        assertEquals(yearMonth, value);
     }
 
     @Test
@@ -133,8 +130,8 @@ public class YearMonthSerializationTest
         YearMonth yearMonth = YearMonth.of(1986, Month.JANUARY);
         YearMonth value = MAPPER.readValue('"' + yearMonth.toString() + '"', YearMonth.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", yearMonth, value);
+        assertNotNull(value);
+        assertEquals(yearMonth, value);
     }
 
     @Test
@@ -142,7 +139,7 @@ public class YearMonthSerializationTest
     {
         YearMonth yearMonth = YearMonth.of(2013, Month.AUGUST);
         YearMonth value = this.MAPPER.readValue('"' + yearMonth.toString() + '"', YearMonth.class);
-        assertEquals("The value is not correct.", yearMonth, value);
+        assertEquals(yearMonth, value);
     }
 
     @Test
@@ -154,8 +151,8 @@ public class YearMonthSerializationTest
         		.addMixIn(Temporal.class, MockObjectConfiguration.class)
         		.build();
         Temporal value = mapper.readValue("[\"" + YearMonth.class.getName() + "\",\"" + yearMonth.toString() + "\"]", Temporal.class);
-        assertTrue("The value should be a YearMonth.", value instanceof YearMonth);
-        assertEquals("The value is not correct.", yearMonth, value);
+        assertInstanceOf(YearMonth.class, value, "The value should be a YearMonth.");
+        assertEquals(yearMonth, value);
     }
 
     @Test
@@ -164,7 +161,7 @@ public class YearMonthSerializationTest
         YearMonth yearMonth = YearMonth.of(2013, Month.AUGUST);
         SimpleAggregate simpleAggregate = new SimpleAggregate(yearMonth);
         String value = MAPPER.writeValueAsString(simpleAggregate);
-        assertEquals("The value is not correct.", "{\"yearMonth\":\"1308\"}", value);
+        assertEquals("{\"yearMonth\":\"1308\"}", value);
     }
 
     @Test
@@ -174,6 +171,6 @@ public class YearMonthSerializationTest
         SimpleAggregate simpleAggregate = new SimpleAggregate(yearMonth);
 
         SimpleAggregate value = MAPPER.readValue("{\"yearMonth\":\"1308\"}", SimpleAggregate.class);
-        assertEquals("The value is not correct.", simpleAggregate.yearMonth, value.yearMonth);
+        assertEquals(simpleAggregate.yearMonth, value.yearMonth);
     }
 }

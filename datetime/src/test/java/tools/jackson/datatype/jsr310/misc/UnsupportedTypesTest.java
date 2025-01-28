@@ -3,11 +3,12 @@ package tools.jackson.datatype.jsr310.misc;
 import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAdjusters;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UnsupportedTypesTest extends ModuleTestBase
 {
@@ -27,7 +28,7 @@ public class UnsupportedTypesTest extends ModuleTestBase
         ObjectMapper mapper = newMapper();
 
         // Not 100% sure how this happens, actually; should fail on empty "POJO"?
-        Assert.assertEquals(a2q("{'a':{}}"),
+        assertEquals(a2q("{'a':{}}"),
                 mapper.writeValueAsString(new TAWrapper(TemporalAdjusters.firstDayOfMonth())));
     }
 }

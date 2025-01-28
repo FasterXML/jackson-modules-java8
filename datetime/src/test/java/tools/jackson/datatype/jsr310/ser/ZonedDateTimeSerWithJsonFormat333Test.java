@@ -2,7 +2,7 @@ package tools.jackson.datatype.jsr310.ser;
 
 import java.time.ZonedDateTime;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -10,7 +10,7 @@ import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 // [module-java8#333]: ZonedDateTime serialization with @JsonFormat pattern never uses
 //  while WRITE_DATES_WITH_ZONE_ID enabled #333

@@ -20,6 +20,8 @@ import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
@@ -27,10 +29,7 @@ import tools.jackson.datatype.jsr310.MockObjectConfiguration;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
 import tools.jackson.datatype.jsr310.util.DecimalUtils;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class InstantSerTest extends ModuleTestBase
 {
@@ -47,8 +46,8 @@ public class InstantSerTest extends ModuleTestBase
                 .with(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .writeValueAsString(date);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", NO_NANOSECS_SER, value);
+        assertNotNull(value);
+        assertEquals(NO_NANOSECS_SER, value);
     }
 
     @Test
@@ -59,7 +58,7 @@ public class InstantSerTest extends ModuleTestBase
                 .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .without(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.", "0", value);
+        assertEquals("0", value);
     }
 
     @Test
@@ -70,7 +69,7 @@ public class InstantSerTest extends ModuleTestBase
                 .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .with(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.", "123456789.183917322", value);
+        assertEquals("123456789.183917322", value);
     }
 
     @Test
@@ -81,7 +80,7 @@ public class InstantSerTest extends ModuleTestBase
                 .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .without(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.", "123456789183", value);
+        assertEquals("123456789183", value);
     }
 
     @Test
@@ -92,7 +91,7 @@ public class InstantSerTest extends ModuleTestBase
                 .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .with(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.", DecimalUtils.toDecimal(date.getEpochSecond(), date.getNano()), value);
+        assertEquals(DecimalUtils.toDecimal(date.getEpochSecond(), date.getNano()), value);
     }
 
     @Test
@@ -103,7 +102,7 @@ public class InstantSerTest extends ModuleTestBase
                 .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .without(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.", Long.toString(date.toEpochMilli()), value);
+        assertEquals(Long.toString(date.toEpochMilli()), value);
     }
 
     @Test
@@ -113,7 +112,7 @@ public class InstantSerTest extends ModuleTestBase
         String value = MAPPER.writer()
                 .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.", '"' + FORMATTER.format(date) + '"', value);
+        assertEquals('"' + FORMATTER.format(date) + '"', value);
     }
 
     @Test
@@ -123,7 +122,7 @@ public class InstantSerTest extends ModuleTestBase
         String value = MAPPER.writer()
                 .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.", '"' + FORMATTER.format(date) + '"', value);
+        assertEquals('"' + FORMATTER.format(date) + '"', value);
     }
 
     @Test
@@ -133,7 +132,7 @@ public class InstantSerTest extends ModuleTestBase
         String value = MAPPER.writer()
                 .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .writeValueAsString(date);
-        assertEquals("The value is not correct.", '"' + FORMATTER.format(date) + '"', value);
+        assertEquals('"' + FORMATTER.format(date) + '"', value);
     }
 
     @Test
@@ -146,7 +145,7 @@ public class InstantSerTest extends ModuleTestBase
             .addMixIn(Temporal.class, MockObjectConfiguration.class)
             .build();
         String value = m.writeValueAsString(date);
-        assertEquals("The value is not correct.", "[\"" + Instant.class.getName() + "\",123456789.183917322]", value);
+        assertEquals("[\"" + Instant.class.getName() + "\",123456789.183917322]", value);
     }
 
     @Test
@@ -159,7 +158,7 @@ public class InstantSerTest extends ModuleTestBase
                 .addMixIn(Temporal.class, MockObjectConfiguration.class)
                 .build();
         String value = m.writeValueAsString(date);
-        assertEquals("The value is not correct.", "[\"" + Instant.class.getName() + "\",123456789183]", value);
+        assertEquals("[\"" + Instant.class.getName() + "\",123456789183]", value);
     }
 
     @Test
@@ -171,8 +170,7 @@ public class InstantSerTest extends ModuleTestBase
                 .addMixIn(Temporal.class, MockObjectConfiguration.class)
                 .build();
         String value = m.writeValueAsString(date);
-        assertEquals("The value is not correct.",
-                "[\"" + Instant.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", value);
+        assertEquals("[\"" + Instant.class.getName() + "\",\"" + FORMATTER.format(date) + "\"]", value);
     }
 
     static class Pojo1 {

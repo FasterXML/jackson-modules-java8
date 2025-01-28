@@ -2,12 +2,12 @@ package tools.jackson.datatype.jsr310.misc;
 
 import java.time.DateTimeException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DateTimeExceptionTest extends ModuleTestBase
 {

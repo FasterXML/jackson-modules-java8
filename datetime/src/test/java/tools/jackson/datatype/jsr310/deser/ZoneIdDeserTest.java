@@ -3,7 +3,7 @@ package tools.jackson.datatype.jsr310.deser;
 import java.time.ZoneId;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import tools.jackson.core.type.TypeReference;
 
@@ -18,9 +18,7 @@ import tools.jackson.datatype.jsr310.JavaTimeModule;
 import tools.jackson.datatype.jsr310.MockObjectConfiguration;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ZoneIdDeserTest extends ModuleTestBase
 {
@@ -34,9 +32,9 @@ public class ZoneIdDeserTest extends ModuleTestBase
     @Test
     public void testSimpleZoneIdDeser()
     {
-        assertEquals("The value is not correct.", ZoneId.of("America/Chicago"),
+        assertEquals(ZoneId.of("America/Chicago"),
                 MAPPER.readValue("\"America/Chicago\"", ZoneId.class));
-        assertEquals("The value is not correct.", ZoneId.of("America/Anchorage"),
+        assertEquals(ZoneId.of("America/Anchorage"),
                 MAPPER.readValue("\"America/Anchorage\"", ZoneId.class));
     }
 
@@ -48,20 +46,20 @@ public class ZoneIdDeserTest extends ModuleTestBase
                 .addModule(new JavaTimeModule())
                 .build();
         ZoneId value = mapper.readValue("[\"" + ZoneId.class.getName() + "\",\"America/Denver\"]", ZoneId.class);
-        assertEquals("The value is not correct.", ZoneId.of("America/Denver"), value);
+        assertEquals(ZoneId.of("America/Denver"), value);
     }
 
     @Test
     public void testDeserialization01()
     {
-        assertEquals("The value is not correct.", ZoneId.of("America/Chicago"),
+        assertEquals(ZoneId.of("America/Chicago"),
                 MAPPER.readValue("\"America/Chicago\"", ZoneId.class));
     }
 
     @Test
     public void testDeserialization02()
     {
-        assertEquals("The value is not correct.", ZoneId.of("America/Anchorage"),
+        assertEquals(ZoneId.of("America/Anchorage"),
                 MAPPER.readValue("\"America/Anchorage\"", ZoneId.class));
     }
 
@@ -69,7 +67,7 @@ public class ZoneIdDeserTest extends ModuleTestBase
     public void testDeserializationWithTypeInfo02()
     {
         ZoneId value = MOCK_OBJECT_MIXIN_MAPPER.readValue("[\"" + ZoneId.class.getName() + "\",\"America/Denver\"]", ZoneId.class);
-        assertEquals("The value is not correct.", ZoneId.of("America/Denver"), value);
+        assertEquals(ZoneId.of("America/Denver"), value);
     }
 
     /*
@@ -94,7 +92,8 @@ public class ZoneIdDeserTest extends ModuleTestBase
         String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, ""));
         Map<String, ZoneId> actualMapFromEmptyStr = objectReader.readValue(valueFromEmptyStr);
         ZoneId actualDateFromEmptyStr = actualMapFromEmptyStr.get(key);
-        assertEquals("empty string failed to deserialize to null with lenient setting", null, actualDateFromEmptyStr);
+        assertEquals(null, actualDateFromEmptyStr,
+                "empty string failed to deserialize to null with lenient setting");
     }
 
     public void testStrictDeserializeFromEmptyString()

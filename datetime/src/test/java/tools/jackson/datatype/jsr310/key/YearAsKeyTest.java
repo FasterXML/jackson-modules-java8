@@ -1,18 +1,18 @@
 package tools.jackson.datatype.jsr310.key;
 
+import java.time.Year;
+import java.util.Collections;
+import java.util.Map;
+
+import org.junit.jupiter.api.Test;
+
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.ObjectReader;
 import tools.jackson.databind.exc.InvalidFormatException;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
 
-import org.junit.Test;
-
-import java.time.Year;
-import java.util.Collections;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class YearAsKeyTest extends ModuleTestBase
 {
@@ -23,19 +23,34 @@ public class YearAsKeyTest extends ModuleTestBase
 
     @Test
     public void testKeySerialization() throws Exception {
-        assertEquals("Value is incorrect", mapAsString("3141", "test"),
-                MAPPER.writeValueAsString(asMap(Year.of(3141), "test")));
+        assertEquals(mapAsString("3141", "test"),
+                MAPPER.writeValueAsString(asMap(Year.of(3141), "test")),
+                "Value is incorrect");
     }
 
     @Test
     public void testKeyDeserialization() throws Exception {
-        assertEquals("Value is incorrect", asMap(Year.of(3141), "test"),
-                READER.readValue(mapAsString("3141", "test")));
+        assertEquals(asMap(Year.of(3141), "test"), READER.readValue(mapAsString("3141", "test")),
+                "Value is incorrect");
         // Test both padded, unpadded
-        assertEquals("Value is incorrect", asMap(Year.of(476), "test"),
-                READER.readValue(mapAsString("0476", "test")));
-        assertEquals("Value is incorrect", asMap(Year.of(476), "test"),
-                READER.readValue(mapAsString("476", "test")));
+        assertEquals(asMap(Year.of(476), "test"), READER.readValue(mapAsString("0476", "test")),
+                "Value is incorrect");
+        assertEquals(asMap(Year.of(476), "test"), READER.readValue(mapAsString("476", "test")),
+                "Value is incorrect");
+    }
+
+    @Test
+    public void deserializeYearKey_notANumber() throws Exception {
+        assertThrows(InvalidFormatException.class, () -> {
+            READER.readValue(mapAsString("10000BC", "test"));
+        });
+    }
+
+    @Test
+    public void deserializeYearKey_notAYear() throws Exception {
+        assertThrows(InvalidFormatException.class, () -> {
+            READER.readValue(mapAsString(Integer.toString(Year.MAX_VALUE+1), "test"));
+        });
     }
 
     @Test
@@ -51,15 +66,5 @@ public class YearAsKeyTest extends ModuleTestBase
         Map<Year, Float> deserialized2 = MAPPER.readValue(a2q("{'0001':1.0}"),
                 yearFloatTypeReference);
         assertEquals(testMap, deserialized2);
-    }
-
-    @Test(expected = InvalidFormatException.class)
-    public void deserializeYearKey_notANumber() throws Exception {
-        READER.readValue(mapAsString("10000BC", "test"));
-    }
-
-    @Test(expected = InvalidFormatException.class)
-    public void deserializeYearKey_notAYear() throws Exception {
-        READER.readValue(mapAsString(Integer.toString(Year.MAX_VALUE+1), "test"));
     }
 }

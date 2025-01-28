@@ -19,13 +19,13 @@ package tools.jackson.datatype.jsr310.ser;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
 
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.datatype.jsr310.MockObjectConfiguration;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ZoneOffsetSerTest extends ModuleTestBase
 {
@@ -36,7 +36,7 @@ public class ZoneOffsetSerTest extends ModuleTestBase
     {
         ZoneOffset offset = ZoneOffset.of("Z");
         String value = MAPPER.writeValueAsString(offset);
-        assertEquals("The value is not correct.", "\"Z\"", value);
+        assertEquals("\"Z\"", value);
     }
 
     @Test
@@ -44,7 +44,7 @@ public class ZoneOffsetSerTest extends ModuleTestBase
     {
         ZoneOffset offset = ZoneOffset.of("+0300");
         String value = MAPPER.writeValueAsString(offset);
-        assertEquals("The value is not correct.", "\"+03:00\"", value);
+        assertEquals("\"+03:00\"", value);
     }
 
     @Test
@@ -52,7 +52,7 @@ public class ZoneOffsetSerTest extends ModuleTestBase
     {
         ZoneOffset offset = ZoneOffset.of("-0630");
         String value = MAPPER.writeValueAsString(offset);
-        assertEquals("The value is not correct.", "\"-06:30\"", value);
+        assertEquals("\"-06:30\"", value);
     }
 
     @Test
@@ -63,6 +63,6 @@ public class ZoneOffsetSerTest extends ModuleTestBase
                 .build();
         ZoneOffset offset = ZoneOffset.of("+0415");
         String value = mapper.writeValueAsString(offset);
-        assertEquals("The value is not correct.", "[\"" + ZoneOffset.class.getName() + "\",\"+04:15\"]", value);
+        assertEquals("[\"" + ZoneOffset.class.getName() + "\",\"+04:15\"]", value);
     }
 }

@@ -1,10 +1,8 @@
 package tools.jackson.datatype.jsr310.ser;
 
-import static org.junit.Assert.assertEquals;
-
 import java.time.Month;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import tools.jackson.databind.ObjectWriter;
 import tools.jackson.databind.SerializationFeature;
@@ -13,6 +11,8 @@ import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.datatype.jsr310.JavaTimeFeature;
 import tools.jackson.datatype.jsr310.JavaTimeModule;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OneBasedMonthSerTest extends ModuleTestBase
 {

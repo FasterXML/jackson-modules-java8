@@ -3,12 +3,12 @@ package tools.jackson.datatype.jsr310.misc;
 import java.io.*;
 import java.time.Year;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import tools.jackson.databind.*;
 import tools.jackson.datatype.jsr310.*;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class JDKSerializabilityTest extends ModuleTestBase
 {

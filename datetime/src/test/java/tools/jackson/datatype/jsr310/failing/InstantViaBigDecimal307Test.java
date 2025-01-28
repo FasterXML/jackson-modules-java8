@@ -2,14 +2,14 @@ package tools.jackson.datatype.jsr310.failing;
 
 import java.time.Instant;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
 import tools.jackson.datatype.jsr310.ModuleTestBase;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 // [modules-java8#307]: Loss of precision via JsonNode for BigDecimal-valued
 // things (like Instant)

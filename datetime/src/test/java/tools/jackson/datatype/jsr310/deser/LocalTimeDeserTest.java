@@ -16,16 +16,11 @@
 
 package tools.jackson.datatype.jsr310.deser;
 
-import java.io.IOException;
 import java.time.LocalTime;
 import java.time.temporal.Temporal;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Feature;
@@ -41,7 +36,7 @@ import tools.jackson.databind.exc.MismatchedInputException;
 import tools.jackson.datatype.jsr310.MockObjectConfiguration;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LocalTimeDeserTest extends ModuleTestBase
 {
@@ -83,7 +78,7 @@ public class LocalTimeDeserTest extends ModuleTestBase
     {
         LocalTime time = LocalTime.of(15, 43);
         LocalTime value = READER.readValue("[15,43]");
-        assertEquals("The value is not correct.", time, value);
+        assertEquals(time, value, "The value is not correct.");
     }
 
     @Test
@@ -91,7 +86,7 @@ public class LocalTimeDeserTest extends ModuleTestBase
     {
         LocalTime time = LocalTime.of(9, 22, 57);
         LocalTime value = READER.readValue("[9,22,57]");
-        assertEquals("The value is not correct.", time, value);
+        assertEquals(time, value, "The value is not correct.");
     }
 
     @Test
@@ -100,7 +95,7 @@ public class LocalTimeDeserTest extends ModuleTestBase
         LocalTime value = READER
                 .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("[9,22,0,57]");
-        assertEquals("The value is not correct.", LocalTime.of(9, 22, 0, 57), value);
+        assertEquals(LocalTime.of(9, 22, 0, 57), value, "The value is not correct.");
     }
 
     @Test
@@ -109,7 +104,7 @@ public class LocalTimeDeserTest extends ModuleTestBase
         LocalTime value = READER
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("[9,22,0,57]");
-        assertEquals("The value is not correct.", LocalTime.of(9, 22, 0, 57000000), value);
+        assertEquals(LocalTime.of(9, 22, 0, 57000000), value, "The value is not correct.");
     }
 
     @Test
@@ -118,7 +113,7 @@ public class LocalTimeDeserTest extends ModuleTestBase
         LocalTime value = READER
                 .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("[22,31,5,829837]");
-        assertEquals("The value is not correct.", LocalTime.of(22, 31, 5, 829837), value);
+        assertEquals(LocalTime.of(22, 31, 5, 829837), value, "The value is not correct.");
     }
 
     @Test
@@ -127,7 +122,7 @@ public class LocalTimeDeserTest extends ModuleTestBase
         LocalTime value = READER
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("[22,31,5,829837]");
-        assertEquals("The value is not correct.", LocalTime.of(22, 31, 5, 829837), value);
+        assertEquals(LocalTime.of(22, 31, 5, 829837), value, "The value is not correct.");
     }
 
     @Test
@@ -136,7 +131,7 @@ public class LocalTimeDeserTest extends ModuleTestBase
         LocalTime value = READER
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("[22,31,5,829]");
-        assertEquals("The value is not correct.", LocalTime.of(22, 31, 5, 829000000), value);
+        assertEquals(LocalTime.of(22, 31, 5, 829000000), value, "The value is not correct.");
     }
 
     @Test
@@ -146,7 +141,7 @@ public class LocalTimeDeserTest extends ModuleTestBase
             newMapper().readerFor(WrapperWithReadTimestampsAsNanosEnabled.class);
         WrapperWithReadTimestampsAsNanosEnabled actual = wrapperReader
             .readValue(a2q("{'value':[9,22,0,57]}"));
-        assertEquals("The value is not correct.", LocalTime.of(9, 22, 0, 57), actual.value);
+        assertEquals(LocalTime.of(9, 22, 0, 57), actual.value, "The value is not correct.");
     }
 
     @Test
@@ -156,7 +151,7 @@ public class LocalTimeDeserTest extends ModuleTestBase
             newMapper().readerFor(WrapperWithReadTimestampsAsNanosDisabled.class);
         WrapperWithReadTimestampsAsNanosDisabled actual = wrapperReader
             .readValue(a2q("{'value':[9,22,0,57]}"));
-        assertEquals("The value is not correct.", LocalTime.of(9, 22, 0, 57000000), actual.value);
+        assertEquals(LocalTime.of(9, 22, 0, 57000000), actual.value, "The value is not correct.");
     }
 
     @Test
@@ -166,7 +161,7 @@ public class LocalTimeDeserTest extends ModuleTestBase
             newMapper().readerFor(WrapperWithReadTimestampsAsNanosDisabled.class);
         WrapperWithReadTimestampsAsNanosDisabled actual = wrapperReader
             .readValue(a2q("{'value':[9,22,0,4257]}"));
-        assertEquals("The value is not correct.", LocalTime.of(9, 22, 0, 4257), actual.value);
+        assertEquals(LocalTime.of(9, 22, 0, 4257), actual.value, "The value is not correct.");
     }
 
     @Test
@@ -174,17 +169,17 @@ public class LocalTimeDeserTest extends ModuleTestBase
     {
         LocalTime time = LocalTime.of(15, 43);
         LocalTime value = READER.readValue('"' + time.toString() + '"');
-        assertEquals("The value is not correct.", time, value);
+        assertEquals(time, value, "The value is not correct.");
 
         expectSuccess(LocalTime.of(12, 0), "'12:00'");
 
         time = LocalTime.of(9, 22, 57);
         value = READER.readValue('"' + time.toString() + '"');
-        assertEquals("The value is not correct.", time, value);
+        assertEquals(time, value, "The value is not correct.");
 
         time = LocalTime.of(22, 31, 5, 829837);
         value = READER.readValue('"' + time.toString() + '"');
-        assertEquals("The value is not correct.", time, value);
+        assertEquals(time, value, "The value is not correct.");
     }
 
     @Test
@@ -243,9 +238,9 @@ public class LocalTimeDeserTest extends ModuleTestBase
                 .with(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("[\"" + LocalTime.class.getName() + "\",[22,31,5,829837]]");
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be a LocalTime.", value instanceof LocalTime);
-        assertEquals("The value is not correct.", time, value);
+        assertNotNull(value, "The value should not be null.");
+        assertTrue(value instanceof LocalTime, "The value should be a LocalTime.");
+        assertEquals(time, value, "The value is not correct.");
     }
 
     @Test
@@ -259,8 +254,8 @@ public class LocalTimeDeserTest extends ModuleTestBase
         Temporal value = mapper.readerFor(Temporal.class)
                 .without(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
                 .readValue("[\"" + LocalTime.class.getName() + "\",[22,31,5,422]]");
-        assertTrue("The value should be a LocalTime.", value instanceof LocalTime);
-        assertEquals("The value is not correct.", time, value);
+        assertTrue(value instanceof LocalTime, "The value should be a LocalTime.");
+        assertEquals(time, value, "The value is not correct.");
     }
 
     @Test
@@ -273,8 +268,8 @@ public class LocalTimeDeserTest extends ModuleTestBase
         Temporal value = mapper.readValue(
                 "[\"" + LocalTime.class.getName() + "\",\"" + time.toString() + "\"]", Temporal.class
                 );
-        assertTrue("The value should be a LocalTime.", value instanceof LocalTime);
-        assertEquals("The value is not correct.", time, value);
+        assertTrue(value instanceof LocalTime, "The value should be a LocalTime.");
+        assertEquals(time, value, "The value is not correct.");
     }
 
     /*
@@ -300,10 +295,10 @@ public class LocalTimeDeserTest extends ModuleTestBase
         String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, dateValAsEmptyStr));
         Map<String, LocalTime> actualMapFromEmptyStr = objectReader.readValue(valueFromEmptyStr);
         LocalTime actualDateFromEmptyStr = actualMapFromEmptyStr.get(key);
-        assertEquals("empty string failed to deserialize to null with lenient setting",null, actualDateFromEmptyStr);
+        assertEquals(null, actualDateFromEmptyStr, "empty string failed to deserialize to null with lenient setting");
     }
 
-    @Test( expected =  MismatchedInputException.class)
+    @Test
     public void testStrictDeserializeFromEmptyString() throws Exception {
 
         final String key = "localTime";
@@ -318,7 +313,8 @@ public class LocalTimeDeserTest extends ModuleTestBase
         assertNull(actualMapFromNullStr.get(key));
 
         String valueFromEmptyStr = mapper.writeValueAsString(asMap("date", ""));
-        objectReader.readValue(valueFromEmptyStr);
+        assertThrows(MismatchedInputException.class,
+                () -> objectReader.readValue(valueFromEmptyStr));
     }
 
     /*
@@ -329,18 +325,19 @@ public class LocalTimeDeserTest extends ModuleTestBase
 
     // [modules-java8#148]: handle strict deserializaiton for date/time
 
-    @Test(expected = InvalidFormatException.class)
+    @Test
     public void testStrictCustomFormatInvalidTime() throws Exception
     {
-        /*StrictWrapper w =*/ MAPPER.readValue("{\"value\":\"25:45\"}", StrictWrapper.class);
+        assertThrows(InvalidFormatException.class,
+                () -> /*StrictWrapper w =*/ MAPPER.readValue("{\"value\":\"25:45\"}", StrictWrapper.class));
     }
 
-    private void expectSuccess(Object exp, String aposJson) throws IOException {
+    private void expectSuccess(Object exp, String aposJson) throws Exception {
         final LocalTime value = READER.readValue(a2q(aposJson));
         expect(exp, value);
     }
 
     private static void expect(Object exp, Object value) {
-        assertEquals("The value is not correct.", exp,  value);
+        assertEquals(exp, value, "The value is not correct.");
     }
 }
