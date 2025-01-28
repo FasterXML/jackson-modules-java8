@@ -153,7 +153,7 @@ public final class DecimalUtils
             nanosOnly = nanoseconds.subtract(BigDecimal.valueOf(secondsOnly).scaleByPowerOfTen(9)).intValue();
 
             if (secondsOnly < 0 && secondsOnly > Instant.MIN.getEpochSecond()) {
-                // [modules-java8#337] 2025-Jan-27, joohyukkim, Negative durations are wrongly calculated
+                // [modules-java8#337] 2025-Jan-27, since 2.19,  joohyukkim, Negative durations are wrongly calculated
                 if (negativeAdjustment) {
                     // Issue #69 and Issue #120: avoid sending a negative adjustment to the Instant constructor, we want this as the actual nanos
                     nanosOnly = Math.abs(nanosOnly);
