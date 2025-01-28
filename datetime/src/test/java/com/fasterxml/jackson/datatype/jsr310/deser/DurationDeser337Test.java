@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.datatype.jsr310.failing;
+package com.fasterxml.jackson.datatype.jsr310.deser;
 
 import java.time.Duration;
 
