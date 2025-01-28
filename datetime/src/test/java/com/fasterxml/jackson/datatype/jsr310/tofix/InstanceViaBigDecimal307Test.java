@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.datatype.jsr310.failing;
+package com.fasterxml.jackson.datatype.jsr310.tofix;
 
 import java.time.Instant;
 

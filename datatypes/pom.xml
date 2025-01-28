@@ -35,11 +35,6 @@ JDK 8 data types.
         <groupId>org.apache.maven.plugins</groupId>
         <version>${version.plugin.surefire}</version>
         <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <exclude>com/fasterxml/jackson/failing/*.java</exclude>
-          </excludes>
-        </configuration>
       </plugin>
       <plugin>
         <!-- Inherited from oss-base. Generate PackageVersion.java.-->
