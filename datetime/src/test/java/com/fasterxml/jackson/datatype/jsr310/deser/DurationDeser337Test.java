@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class DurationDeser337Test extends ModuleTestBase
 {
     @Test
-    public void testDefault() throws Exception {
+    public void test_default() throws Exception {
         ObjectMapper mapper = newMapper();
 
         Duration duration = Duration.parse("PT-43.636S");
@@ -30,7 +30,7 @@ public class DurationDeser337Test extends ModuleTestBase
 
     // Handling with WRITE_DURATIONS_AS_TIMESTAMPS enabled can't round-trip a value
     @Test
-    public void testWith() throws Exception {
+    public void test_with() throws Exception {
         ObjectMapper mapper = mapperBuilder()
                 .configure(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS, true)
                 .build();
@@ -49,7 +49,7 @@ public class DurationDeser337Test extends ModuleTestBase
 
     // Handling with WRITE_DURATIONS_AS_TIMESTAMPS disabled works
     @Test
-    public void testWithout() throws Exception {
+    public void test_without() throws Exception {
         ObjectMapper mapper = mapperBuilder()
                 .configure(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS, false)
                 .build();
