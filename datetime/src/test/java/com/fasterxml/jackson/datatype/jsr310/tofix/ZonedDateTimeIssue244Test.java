@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.datatype.jsr310.failing;
+package com.fasterxml.jackson.datatype.jsr310.tofix;
 
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
+import com.fasterxml.jackson.datatype.jsr310.testutil.failure.JacksonTestFailureExpected;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,6 +22,7 @@ public class ZonedDateTimeIssue244Test extends ModuleTestBase
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             .build();
 
+    @JacksonTestFailureExpected
     @Test
     public void zoneIdUTC() throws Exception
     {
@@ -33,6 +35,7 @@ public class ZonedDateTimeIssue244Test extends ModuleTestBase
         assertSerializeAndDeserialize(ZonedDateTime.now(ZoneOffset.UTC)); // fails!
     }
 
+    @JacksonTestFailureExpected
     @Test
     public void zoneOffsetNonUTC() throws Exception
     {
