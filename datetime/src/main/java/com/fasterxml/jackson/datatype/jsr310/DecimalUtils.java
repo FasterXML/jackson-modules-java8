@@ -115,12 +115,24 @@ public final class DecimalUtils
      * on some JRE releases.
      *
      * @since 2.9.8
+     * @deprecated Use {@link #extractSecondsAndNanos(BigDecimal, BiFunction, boolean)} instead.
      */
+    @Deprecated
     public static <T> T extractSecondsAndNanos(BigDecimal seconds, BiFunction<Long, Integer, T> convert)
     {
+        return extractSecondsAndNanos(seconds, convert, true);
+    }
+
+    /**
+     * Extracts the seconds and nanoseconds component of {@code seconds} as {@code long} and {@code int}
+     * values, passing them to the given converter.   The implementation avoids latency issues present
+     * on some JRE releases.
+     *
+     * @since 2.19
+     */
+    public static <T> T extractSecondsAndNanos(BigDecimal seconds, BiFunction<Long, Integer, T> convert, boolean negativeAdjustment) {
         // Complexity is here to workaround unbounded latency in some BigDecimal operations.
         //   https://github.com/FasterXML/jackson-databind/issues/2141
-
         long secondsOnly;
         int nanosOnly;
 
@@ -140,14 +152,18 @@ public final class DecimalUtils
             secondsOnly = seconds.longValue();
             nanosOnly = nanoseconds.subtract(BigDecimal.valueOf(secondsOnly).scaleByPowerOfTen(9)).intValue();
 
-//            /* [modules-java8#337] 2025-Jan-27, joohyukkim, Negative durations are wrongly calculated
             if (secondsOnly < 0 && secondsOnly > Instant.MIN.getEpochSecond()) {
-                // Issue #69 and Issue #120: avoid sending a negative adjustment to the Instant constructor, we want this as the actual nanos
-                nanosOnly = Math.abs(nanosOnly);
+                // [modules-java8#337] 2025-Jan-27, joohyukkim, Negative durations are wrongly calculated
+                if (negativeAdjustment) {
+                    // Issue #69 and Issue #120: avoid sending a negative adjustment to the Instant constructor, we want this as the actual nanos
+                    nanosOnly = Math.abs(nanosOnly);
+                } else {
+                    // do nothing
+                }
             }
-//             */
         }
 
         return convert.apply(secondsOnly, nanosOnly);
     }
+
 }

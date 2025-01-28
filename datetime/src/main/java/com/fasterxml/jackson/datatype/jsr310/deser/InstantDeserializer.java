@@ -468,7 +468,8 @@ public class InstantDeserializer<T extends Temporal>
     protected T _fromDecimal(DeserializationContext context, BigDecimal value)
     {
         FromDecimalArguments args =
-            DecimalUtils.extractSecondsAndNanos(value, (s, ns) -> new FromDecimalArguments(s, ns, getZone(context)));
+            DecimalUtils.extractSecondsAndNanos(value, (s, ns) -> new FromDecimalArguments(s, ns, getZone(context)),
+                    true);
         return fromNanoseconds.apply(args);
     }
 
