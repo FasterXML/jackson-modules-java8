@@ -26,6 +26,7 @@ import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 import static com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer.ISO8601_COLONLESS_OFFSET_REGEX;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class InstantDeserTest extends ModuleTestBase
 {
@@ -520,7 +521,7 @@ public class InstantDeserTest extends ModuleTestBase
     private static void assumeInstantCanParseOffsets() {
         // DateTimeFormatter.ISO_INSTANT didn't handle offsets until JDK 12+.
         // This was added by https://bugs.openjdk.org/browse/JDK-8166138
-        assertTrue(System.getProperty("java.specification.version").compareTo("12") > 0);
+        assumeTrue(System.getProperty("java.specification.version").compareTo("12") > 0);
     }
 
     /*
