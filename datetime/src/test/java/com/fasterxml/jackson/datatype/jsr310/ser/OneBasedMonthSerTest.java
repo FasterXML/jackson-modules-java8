@@ -47,7 +47,6 @@ public class OneBasedMonthSerTest extends ModuleTestBase
         assertEquals( "{\"month\":0}" , mapper.writeValueAsString(new Wrapper(Month.JANUARY)));
     }
 
-
     private JsonMapper mapperForZeroBased() {
         return JsonMapper.builder()
                 .addModule(new JavaTimeModule().disable(JavaTimeFeature.ONE_BASED_MONTHS))
@@ -59,5 +58,4 @@ public class OneBasedMonthSerTest extends ModuleTestBase
                 .addModule(new JavaTimeModule().enable(JavaTimeFeature.ONE_BASED_MONTHS))
                 .build();
     }
-
 }
