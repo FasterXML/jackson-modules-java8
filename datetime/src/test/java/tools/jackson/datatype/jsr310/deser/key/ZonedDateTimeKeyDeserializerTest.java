@@ -11,6 +11,8 @@ import tools.jackson.databind.ObjectMapper;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 // for [modules-java8#306]
 public class ZonedDateTimeKeyDeserializerTest
@@ -37,10 +39,11 @@ public class ZonedDateTimeKeyDeserializerTest
     }
 
     // 29-Oct-2024, tatu: Following two tests are for Java 8+ only vs Java 9 or later
-    
+
+    // Java 9+ test
     @Test
     public void ZonedDateTime_with_place_name_can_be_deserialized() throws Exception {
-        assertFalse(System.getProperty("java.version").startsWith("1.8"));
+        assumeFalse(System.getProperty("java.version").startsWith("1.8"));
 
         Map<ZonedDateTime, String> map = MAPPER.readValue(getMap("2015-07-24T12:23:34.184Z[Europe/London]"),
                 MAP_TYPE_REF);
@@ -48,10 +51,11 @@ public class ZonedDateTimeKeyDeserializerTest
         assertEquals("2015-07-24T13:23:34.184+01:00[Europe/London]", entry.getKey().toString());
     }
 
+    // Java 8 test
     @Test
     public void ZonedDateTime_with_place_name_can_be_deserialized_Java_8() throws Exception {
         // Java 8 parses this format incorrectly due to https://bugs.openjdk.org/browse/JDK-8066982
-        assertTrue(System.getProperty("java.version").startsWith("1.8"));
+        assumeTrue(System.getProperty("java.version").startsWith("1.8"));
 
         Map<ZonedDateTime, String> map = MAPPER.readValue(getMap("2015-07-24T12:23:34.184Z[Europe/London]"),
                 MAP_TYPE_REF);
