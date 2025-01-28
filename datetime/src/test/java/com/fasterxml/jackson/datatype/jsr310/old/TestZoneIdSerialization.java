@@ -16,21 +16,20 @@
 
 package com.fasterxml.jackson.datatype.jsr310.old;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.time.ZoneId;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestZoneIdSerialization extends ModuleTestBase
 {
     private ObjectMapper mapper;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         this.mapper = newMapper();
@@ -43,8 +42,8 @@ public class TestZoneIdSerialization extends ModuleTestBase
 
         String value = this.mapper.writeValueAsString(id);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "\"America/Chicago\"", value);
+        assertNotNull(value);
+        assertEquals("\"America/Chicago\"", value);
     }
 
     @Test
@@ -54,8 +53,8 @@ public class TestZoneIdSerialization extends ModuleTestBase
 
         String value = this.mapper.writeValueAsString(id);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "\"America/Anchorage\"", value);
+        assertNotNull(value);
+        assertEquals("\"America/Anchorage\"", value);
     }
 
     @Test
@@ -66,8 +65,8 @@ public class TestZoneIdSerialization extends ModuleTestBase
         this.mapper.addMixIn(ZoneId.class, MockObjectConfiguration.class);
         String value = this.mapper.writeValueAsString(id);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[\"java.time.ZoneId\",\"America/Denver\"]", value);
+        assertNotNull(value);
+        assertEquals("[\"java.time.ZoneId\",\"America/Denver\"]", value);
     }
 
     @Test
@@ -75,8 +74,8 @@ public class TestZoneIdSerialization extends ModuleTestBase
     {
         ZoneId value = this.mapper.readValue("\"America/Chicago\"", ZoneId.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", ZoneId.of("America/Chicago"), value);
+        assertNotNull(value);
+        assertEquals(ZoneId.of("America/Chicago"), value);
     }
 
     @Test
@@ -84,8 +83,8 @@ public class TestZoneIdSerialization extends ModuleTestBase
     {
         ZoneId value = this.mapper.readValue("\"America/Anchorage\"", ZoneId.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", ZoneId.of("America/Anchorage"), value);
+        assertNotNull(value);
+        assertEquals(ZoneId.of("America/Anchorage"), value);
     }
 
     @Test
@@ -94,7 +93,7 @@ public class TestZoneIdSerialization extends ModuleTestBase
         this.mapper.addMixIn(ZoneId.class, MockObjectConfiguration.class);
         ZoneId value = this.mapper.readValue("[\"" + ZoneId.class.getName() + "\",\"America/Denver\"]", ZoneId.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", ZoneId.of("America/Denver"), value);
+        assertNotNull(value);
+        assertEquals(ZoneId.of("America/Denver"), value);
     }
 }

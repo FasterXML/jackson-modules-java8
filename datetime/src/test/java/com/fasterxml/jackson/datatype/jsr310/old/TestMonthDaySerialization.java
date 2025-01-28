@@ -16,32 +16,26 @@
 
 package com.fasterxml.jackson.datatype.jsr310.old;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.time.Month;
 import java.time.MonthDay;
 import java.time.temporal.TemporalAccessor;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestMonthDaySerialization extends ModuleTestBase
 {
     private ObjectMapper mapper;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         this.mapper = newMapper();
     }
-
-    @After
-    public void tearDown() { }
 
     @Test
     public void testSerialization01() throws Exception
@@ -50,8 +44,8 @@ public class TestMonthDaySerialization extends ModuleTestBase
 
         String value = this.mapper.writeValueAsString(monthDay);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "\"--01-17\"", value);
+        assertNotNull(value);
+        assertEquals("\"--01-17\"", value);
     }
 
     @Test
@@ -61,8 +55,8 @@ public class TestMonthDaySerialization extends ModuleTestBase
 
         String value = this.mapper.writeValueAsString(monthDay);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "\"--08-21\"", value);
+        assertNotNull(value);
+        assertEquals("\"--08-21\"", value);
     }
 
     @Test
@@ -73,8 +67,8 @@ public class TestMonthDaySerialization extends ModuleTestBase
         this.mapper.addMixIn(TemporalAccessor.class, MockObjectConfiguration.class);
         String value = this.mapper.writeValueAsString(monthDay);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[\"" + MonthDay.class.getName() + "\",\"--11-05\"]", value);
+        assertNotNull(value);
+        assertEquals("[\"" + MonthDay.class.getName() + "\",\"--11-05\"]", value);
     }
 
     @Test
@@ -84,8 +78,8 @@ public class TestMonthDaySerialization extends ModuleTestBase
 
         MonthDay value = this.mapper.readValue("\"--01-17\"", MonthDay.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", monthDay, value);
+        assertNotNull(value);
+        assertEquals(monthDay, value);
     }
 
     @Test
@@ -95,8 +89,8 @@ public class TestMonthDaySerialization extends ModuleTestBase
 
         MonthDay value = this.mapper.readValue("\"--08-21\"", MonthDay.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", monthDay, value);
+        assertNotNull(value);
+        assertEquals(monthDay, value);
     }
 
     @Test
@@ -107,8 +101,8 @@ public class TestMonthDaySerialization extends ModuleTestBase
         this.mapper.addMixIn(TemporalAccessor.class, MockObjectConfiguration.class);
         TemporalAccessor value = this.mapper.readValue("[\"" + MonthDay.class.getName() + "\",\"--11-05\"]", TemporalAccessor.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be a MonthDay.", value instanceof MonthDay);
-        assertEquals("The value is not correct.", monthDay, value);
+        assertNotNull(value);
+        assertInstanceOf(MonthDay.class, value);
+        assertEquals(monthDay, value);
     }
 }

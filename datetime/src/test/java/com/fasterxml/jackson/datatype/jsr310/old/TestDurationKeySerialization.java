@@ -1,15 +1,16 @@
 package com.fasterxml.jackson.datatype.jsr310.old;
 
-import static org.junit.Assert.assertEquals;
-
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Before;
-import org.junit.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestDurationKeySerialization extends ModuleTestBase {
 
@@ -21,7 +22,7 @@ public class TestDurationKeySerialization extends ModuleTestBase {
     private ObjectMapper om;
     private Map<Duration, String> map;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.om = newMapper();
         map = new HashMap<>();
@@ -37,7 +38,7 @@ public class TestDurationKeySerialization extends ModuleTestBase {
 
         String value = om.writeValueAsString(map);
 
-        assertEquals("Value is not correct", map(DURATION_STRING, "test"), value);
+        assertEquals(map(DURATION_STRING, "test"), value);
     }
 
     @Test
@@ -47,7 +48,7 @@ public class TestDurationKeySerialization extends ModuleTestBase {
                 TYPE_REF);
 
         map.put(DURATION, "test");
-        assertEquals("Value is not correct", map, value);
+        assertEquals(map, value, "Value is not correct");
     }
 
     private String map(String key, String value) {

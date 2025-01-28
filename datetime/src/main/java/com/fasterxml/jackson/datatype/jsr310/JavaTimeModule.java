@@ -17,6 +17,7 @@
 package com.fasterxml.jackson.datatype.jsr310;
 
 import java.time.*;
+import java.time.temporal.TemporalAdjuster;
 
 import com.fasterxml.jackson.core.util.JacksonFeatureSet;
 
@@ -31,6 +32,7 @@ import com.fasterxml.jackson.databind.module.SimpleDeserializers;
 import com.fasterxml.jackson.databind.module.SimpleKeyDeserializers;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.module.SimpleSerializers;
+import com.fasterxml.jackson.databind.ser.std.ToEmptyObjectSerializer;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.*;
 import com.fasterxml.jackson.datatype.jsr310.deser.key.*;
@@ -152,7 +154,7 @@ public final class JavaTimeModule
             context.addDeserializers(_deserializers);
         }
 
-        SimpleSerializers sers = new SimpleSerializers();
+        JavaTimeSerializers sers = new JavaTimeSerializers();
 
         sers.addSerializer(Duration.class, DurationSerializer.INSTANCE);
         sers.addSerializer(Instant.class, InstantSerializer.INSTANCE);
@@ -277,5 +279,31 @@ public final class JavaTimeModule
             return method;
         }
         return null;
+    }
+
+    /**
+     * Container for serializers, with one tweak; specific lookup we need to deal
+     * with specific {@code TemporalAdjuster} closure subtypes.
+     *
+     * @since 2.19
+     */
+    @SuppressWarnings("serial")
+    class JavaTimeSerializers extends SimpleSerializers {
+        @Override
+        public JsonSerializer<?> findSerializer(SerializationConfig config,
+                JavaType type, BeanDescription beanDesc)
+        {
+            JsonSerializer<?> ser = super.findSerializer(config, type, beanDesc);
+            if (ser == null) {
+                // 27-Jan-2025, tatu: [modules-java8#207] Need actual "ToEmptySerializer"
+                //   with Jackson 2.x, to avoid "No Bean Properties found" error
+                //  But! Must be careful to only apply to lambdas
+                if (type.isTypeOrSubTypeOf(TemporalAdjuster.class)
+                        && type.getRawClass().isSynthetic()) {
+                    return new ToEmptyObjectSerializer(type);
+                }
+            }
+            return ser;
+        }
     }
 }

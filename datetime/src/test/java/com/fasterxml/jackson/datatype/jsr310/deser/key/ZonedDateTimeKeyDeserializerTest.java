@@ -2,7 +2,7 @@ package com.fasterxml.jackson.datatype.jsr310.deser.key;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
@@ -10,8 +10,9 @@ import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 import java.time.ZonedDateTime;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assume.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 // for [modules-java8#306]
 public class ZonedDateTimeKeyDeserializerTest
@@ -38,7 +39,8 @@ public class ZonedDateTimeKeyDeserializerTest
     }
 
     // 29-Oct-2024, tatu: Following two tests are for Java 8+ only vs Java 9 or later
-    
+
+    // Java 9+ test
     @Test
     public void ZonedDateTime_with_place_name_can_be_deserialized() throws Exception {
         assumeFalse(System.getProperty("java.version").startsWith("1.8"));
@@ -49,6 +51,7 @@ public class ZonedDateTimeKeyDeserializerTest
         assertEquals("2015-07-24T13:23:34.184+01:00[Europe/London]", entry.getKey().toString());
     }
 
+    // Java 8 test
     @Test
     public void ZonedDateTime_with_place_name_can_be_deserialized_Java_8() throws Exception {
         // Java 8 parses this format incorrectly due to https://bugs.openjdk.org/browse/JDK-8066982

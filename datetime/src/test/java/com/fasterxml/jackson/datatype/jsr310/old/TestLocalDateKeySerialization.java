@@ -1,16 +1,16 @@
 package com.fasterxml.jackson.datatype.jsr310.old;
 
-import static org.junit.Assert.assertEquals;
-
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestLocalDateKeySerialization extends ModuleTestBase {
 
@@ -22,7 +22,7 @@ public class TestLocalDateKeySerialization extends ModuleTestBase {
     private ObjectMapper om;
     private Map<LocalDate, String> map;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.om = newMapper();
         map = new HashMap<>();
@@ -38,7 +38,7 @@ public class TestLocalDateKeySerialization extends ModuleTestBase {
 
         String value = om.writeValueAsString(map);
 
-        assertEquals("Incorrect value", map(DATE_STRING, "test"), value);
+        assertEquals(map(DATE_STRING, "test"), value);
     }
 
     @Test
@@ -48,7 +48,7 @@ public class TestLocalDateKeySerialization extends ModuleTestBase {
                 TYPE_REF);
 
         map.put(DATE, "test");
-        assertEquals("Incorrect value", map, value);
+        assertEquals(map, value);
     }
 
     private String map(String key, String value) {

@@ -3,13 +3,13 @@ package com.fasterxml.jackson.datatype.jsr310.failing;
 import java.io.*;
 import java.time.Year;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.datatype.jsr310.*;
 
 import com.fasterxml.jackson.databind.*;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class JDKSerializabilityTest extends ModuleTestBase
 {

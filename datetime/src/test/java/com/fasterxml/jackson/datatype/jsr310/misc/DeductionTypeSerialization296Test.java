@@ -2,13 +2,14 @@ package com.fasterxml.jackson.datatype.jsr310.misc;
 
 import java.time.*;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 // for [modules-java8#296]: problem with `JsonTypeInfo.Id.DEDUCTION`
 public class DeductionTypeSerialization296Test extends ModuleTestBase
@@ -30,7 +31,7 @@ public class DeductionTypeSerialization296Test extends ModuleTestBase
     public void testLocalDate() throws Exception
     {
         LocalDate date = LocalDate.of(1986, Month.JANUARY, 17);
-        Assert.assertEquals(a2q("{'value':'1986-01-17'}"),
+        assertEquals(a2q("{'value':'1986-01-17'}"),
                 MAPPER.writeValueAsString(new Wrapper(date)));
     }
 
@@ -38,7 +39,7 @@ public class DeductionTypeSerialization296Test extends ModuleTestBase
     public void testLocalDateTime() throws Exception
     {
         LocalDateTime datetime = LocalDateTime.of(2013, Month.AUGUST, 21, 9, 22, 0, 57);
-        Assert.assertEquals(a2q("{'value':'2013-08-21T09:22:00.000000057'}"),
+        assertEquals(a2q("{'value':'2013-08-21T09:22:00.000000057'}"),
                 MAPPER.writeValueAsString(new Wrapper(datetime)));
     }
 
@@ -46,7 +47,7 @@ public class DeductionTypeSerialization296Test extends ModuleTestBase
     public void testLocalTime() throws Exception
     {
         LocalTime time = LocalTime.of(9, 22, 57);
-        Assert.assertEquals(a2q("{'value':'09:22:57'}"),
+        assertEquals(a2q("{'value':'09:22:57'}"),
                 MAPPER.writeValueAsString(new Wrapper(time)));
     }
 
@@ -54,7 +55,7 @@ public class DeductionTypeSerialization296Test extends ModuleTestBase
     public void testMonthDate() throws Exception
     {
         MonthDay date = MonthDay.of(Month.JANUARY, 17);
-        Assert.assertEquals(a2q("{'value':'--01-17'}"),
+        assertEquals(a2q("{'value':'--01-17'}"),
                 MAPPER.writeValueAsString(new Wrapper(date)));
     }
 
@@ -62,7 +63,7 @@ public class DeductionTypeSerialization296Test extends ModuleTestBase
     public void testOffsetTime() throws Exception
     {
         OffsetTime time = OffsetTime.of(15, 43, 0, 0, ZoneOffset.of("+0300"));
-        Assert.assertEquals(a2q("{'value':'15:43+03:00'}"),
+        assertEquals(a2q("{'value':'15:43+03:00'}"),
                 MAPPER.writeValueAsString(new Wrapper(time)));
     }
 
@@ -70,7 +71,7 @@ public class DeductionTypeSerialization296Test extends ModuleTestBase
     public void testYearMonth() throws Exception
     {
         YearMonth date = YearMonth.of(1986, Month.JANUARY);
-        Assert.assertEquals(a2q("{'value':'1986-01'}"),
+        assertEquals(a2q("{'value':'1986-01'}"),
                 MAPPER.writeValueAsString(new Wrapper(date)));
     }
 
@@ -78,7 +79,7 @@ public class DeductionTypeSerialization296Test extends ModuleTestBase
     public void testZoneId() throws Exception
     {
         ZoneId zone = ZoneId.of("America/Denver");
-        Assert.assertEquals(a2q("{'value':'America/Denver'}"),
+        assertEquals(a2q("{'value':'America/Denver'}"),
                 MAPPER.writeValueAsString(new Wrapper(zone)));
     }
 }

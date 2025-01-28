@@ -19,13 +19,13 @@ package com.fasterxml.jackson.datatype.jsr310.ser;
 import java.time.Year;
 import java.time.temporal.Temporal;
 
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class YearSerTest extends ModuleTestBase
 {
@@ -34,9 +34,9 @@ public class YearSerTest extends ModuleTestBase
     @Test
     public void testDefaultSerialization() throws Exception
     {
-        assertEquals("The value is not correct.", "1986",
+        assertEquals("1986",
                 MAPPER.writeValueAsString(Year.of(1986)));
-        assertEquals("The value is not correct.", "2013",
+        assertEquals("2013",
                 MAPPER.writeValueAsString(Year.of(2013)));
     }
 
@@ -46,6 +46,6 @@ public class YearSerTest extends ModuleTestBase
         ObjectMapper mapper = newMapper()
                 .addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = mapper.writeValueAsString(Year.of(2005));
-        assertEquals("The value is not correct.", "[\"" + Year.class.getName() + "\",2005]", value);
+        assertEquals("[\"" + Year.class.getName() + "\",2005]", value);
     }
 }

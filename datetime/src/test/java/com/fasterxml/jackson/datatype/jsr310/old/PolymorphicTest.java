@@ -2,12 +2,12 @@ package com.fasterxml.jackson.datatype.jsr310.old;
 
 import java.time.ZoneId;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase.NoCheckSubTypeValidator;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PolymorphicTest extends ModuleTestBase
 {

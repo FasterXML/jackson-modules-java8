@@ -16,23 +16,21 @@
 
 package com.fasterxml.jackson.datatype.jsr310.old;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.time.Year;
 import java.time.temporal.Temporal;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestYearSerialization extends ModuleTestBase
 {
     private ObjectMapper mapper;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         this.mapper = newMapper();
@@ -45,8 +43,8 @@ public class TestYearSerialization extends ModuleTestBase
 
         String value = this.mapper.writeValueAsString(year);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "1986", value);
+        assertNotNull(value);
+        assertEquals("1986", value);
     }
 
     @Test
@@ -56,8 +54,8 @@ public class TestYearSerialization extends ModuleTestBase
 
         String value = this.mapper.writeValueAsString(year);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "2013", value);
+        assertNotNull(value);
+        assertEquals("2013", value);
     }
 
     @Test
@@ -68,8 +66,8 @@ public class TestYearSerialization extends ModuleTestBase
         this.mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         String value = this.mapper.writeValueAsString(year);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", "[\"" + Year.class.getName() + "\",2005]", value);
+        assertNotNull(value);
+        assertEquals("[\"" + Year.class.getName() + "\",2005]", value);
     }
 
     @Test
@@ -77,8 +75,8 @@ public class TestYearSerialization extends ModuleTestBase
     {
         Year value = this.mapper.readValue("1986", Year.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", Year.of(1986), value);
+        assertNotNull(value);
+        assertEquals(Year.of(1986), value);
     }
 
     @Test
@@ -86,8 +84,8 @@ public class TestYearSerialization extends ModuleTestBase
     {
         Year value = this.mapper.readValue("2013", Year.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", Year.of(2013), value);
+        assertNotNull(value);
+        assertEquals(Year.of(2013), value);
     }
 
     @Test
@@ -96,8 +94,8 @@ public class TestYearSerialization extends ModuleTestBase
         this.mapper.addMixIn(Temporal.class, MockObjectConfiguration.class);
         Temporal value = this.mapper.readValue("[\"" + Year.class.getName() + "\",2005]", Temporal.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be a Year.", value instanceof Year);
-        assertEquals("The value is not correct.", Year.of(2005), value);
+        assertNotNull(value);
+        assertInstanceOf(Year.class, value, "The value should be a Year.");
+        assertEquals(Year.of(2005), value);
     }
 }

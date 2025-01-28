@@ -7,12 +7,13 @@ import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestZonedDateTimeKeySerialization extends ModuleTestBase {
 
@@ -37,7 +38,7 @@ public class TestZonedDateTimeKeySerialization extends ModuleTestBase {
     private ObjectMapper om;
     private Map<ZonedDateTime, String> map;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.om = newMapper();
         map = new HashMap<>();
@@ -53,7 +54,7 @@ public class TestZonedDateTimeKeySerialization extends ModuleTestBase {
 
         String value = om.writerFor(TYPE_REF).writeValueAsString(map);
 
-        Assert.assertEquals("Value is incorrect", map(DATE_TIME_0_STRING, "test"), value);
+        assertEquals(map(DATE_TIME_0_STRING, "test"), value);
     }
 
     @Test
@@ -62,7 +63,7 @@ public class TestZonedDateTimeKeySerialization extends ModuleTestBase {
 
         String value = om.writerFor(TYPE_REF).writeValueAsString(map);
 
-        Assert.assertEquals("Value is incorrect", map(DATE_TIME_1_STRING, "test"), value);
+        assertEquals(map(DATE_TIME_1_STRING, "test"), value);
     }
 
     @Test
@@ -71,7 +72,7 @@ public class TestZonedDateTimeKeySerialization extends ModuleTestBase {
 
         String value = om.writerFor(TYPE_REF).writeValueAsString(map);
 
-        Assert.assertEquals("Value is incorrect", map(DATE_TIME_2_STRING, "test"), value);
+        assertEquals(map(DATE_TIME_2_STRING, "test"), value);
     }
 
     @Test
@@ -79,7 +80,7 @@ public class TestZonedDateTimeKeySerialization extends ModuleTestBase {
         Map<ZonedDateTime, String> value = om.readValue(map(DATE_TIME_0_STRING, "test"), TYPE_REF);
 
         map.put(DATE_TIME_0, "test");
-        Assert.assertEquals("Value is incorrect", map, value);
+        assertEquals(map, value);
     }
 
     @Test
@@ -87,7 +88,7 @@ public class TestZonedDateTimeKeySerialization extends ModuleTestBase {
         Map<ZonedDateTime, String> value = om.readValue(map(DATE_TIME_1_STRING, "test"), TYPE_REF);
 
         map.put(DATE_TIME_1, "test");
-        Assert.assertEquals("Value is incorrect", map, value);
+        assertEquals(map, value);
     }
 
     @Test
@@ -95,7 +96,7 @@ public class TestZonedDateTimeKeySerialization extends ModuleTestBase {
         Map<ZonedDateTime, String> value = om.readValue(map(DATE_TIME_2_STRING, "test"), TYPE_REF);
 
         map.put(DATE_TIME_2_OFFSET, "test");
-        Assert.assertEquals("Value is incorrect", map, value);
+        assertEquals(map, value);
     }
 
     private String map(String key, String value) {
