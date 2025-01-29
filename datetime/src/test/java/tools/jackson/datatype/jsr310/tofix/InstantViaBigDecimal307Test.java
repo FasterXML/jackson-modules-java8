@@ -1,4 +1,4 @@
-package tools.jackson.datatype.jsr310.failing;
+package tools.jackson.datatype.jsr310.tofix;
 
 import java.time.Instant;
 
@@ -8,6 +8,7 @@ import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
 import tools.jackson.datatype.jsr310.ModuleTestBase;
+import tools.jackson.datatype.jsr310.testutil.failure.JacksonTestFailureExpected;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,6 +34,7 @@ public class InstantViaBigDecimal307Test extends ModuleTestBase
          assertEquals(ISSUED_AT, deserialized.value);
     }
 
+    @JacksonTestFailureExpected
     @Test
     public void instantViaReadTree() throws Exception {
         String serialized = MAPPER.writeValueAsString(new Wrapper307(ISSUED_AT));

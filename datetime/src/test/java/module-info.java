@@ -16,9 +16,10 @@ module tools.jackson.datatype.jsr310
     opens tools.jackson.datatype.jsr310;
     opens tools.jackson.datatype.jsr310.deser;
     opens tools.jackson.datatype.jsr310.deser.key;
-    opens tools.jackson.datatype.jsr310.failing;
     opens tools.jackson.datatype.jsr310.key;
     opens tools.jackson.datatype.jsr310.misc;
     opens tools.jackson.datatype.jsr310.ser;
+    opens tools.jackson.datatype.jsr310.testutil.failure;
+    opens tools.jackson.datatype.jsr310.tofix;
     opens tools.jackson.datatype.jsr310.util;
 }
