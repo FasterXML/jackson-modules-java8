@@ -74,7 +74,6 @@ introspection of method/constructor parameter names, without having to add expli
           <target>${javac.target.version}</target>
           <showDeprecation>true</showDeprecation>
           <showWarnings>true</showWarnings>
-          <optimize>true</optimize>
           <compilerArgs>
             <arg>-Xlint</arg>
             <arg>-parameters</arg>
