@@ -12,6 +12,10 @@ Modules:
 
 #336: Optimize `InstantDeserializer` `addInColonToOffsetIfMissing()`
  (contributed by David S)
+#337: Negative `Duration` does not round-trip properly with
+  `WRITE_DURATIONS_AS_TIMESTAMPS` enabled
+ (reported by Joey M)
+ (fix by Joo-Hyuk K)
 
 2.18.3 (not yet released)
 

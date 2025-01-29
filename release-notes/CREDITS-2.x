@@ -7,17 +7,13 @@ Tatu Saloranta (cowtowncoder@github): author (other modules)
 Michael O'Keeffe (kupci@github): co-author (since 2.10)
 
 Louis-Rémi Paquet (lrpg@github)
-  #15: Optional<Long> and OptionalLong deserialization not consistent when
-     deserializing from String
-   (2.8.8)
-
-* Reported #15: Optional<Long> and OptionalLong deserialization
-  not consistent when deserializing from String
+ * Reported #15: Optional<Long> and OptionalLong deserialization
+   not consistent when deserializing from String
    (2.8.8)
 
 Mikko Tiihonen (gmokki@github)
-* Reported #33: `Jdk8Serializer.findReferenceSerializer()` leads to `StackOverflowError`
-  in 2.8.9
+ * Reported #33: `Jdk8Serializer.findReferenceSerializer()` leads to `StackOverflowError`
+   in 2.8.9
    (2.8.10)
 
 João Cabrita (kewne@github)
@@ -209,3 +205,11 @@ Emanuel Trandafir (@etrandafir93)
 Joo Hyuk Kim (@JooHyukKim)
  * Fixed #308: Can't deserialize `OffsetDateTime.MIN`: Invalid value for EpochDay
   (2.18.2)
+ * Fixed #337: Negative `Duration` does not round-trip properly with
+  `WRITE_DURATIONS_AS_TIMESTAMPS` enabled
+  (2.19.0)
+
+Joey Muia (@jmuia)
+ * Reported #337: Negative `Duration` does not round-trip properly with
+  `WRITE_DURATIONS_AS_TIMESTAMPS` enabled
+  (2.19.0)

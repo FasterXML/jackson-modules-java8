@@ -35,66 +35,13 @@ public class TestDecimalUtils extends ModuleTestBase
                 "The returned decimal is not correct.");
     }
 
-    @SuppressWarnings("deprecation")
-    private void checkExtractNanos(long expectedSeconds, int expectedNanos, BigDecimal decimal)
-    {
-        long seconds = decimal.longValue();
-        assertEquals(expectedSeconds, seconds, "The second part is not correct.");
-
-        int nanoseconds = DecimalUtils.extractNanosecondDecimal(decimal,  seconds);
-        assertEquals(expectedNanos, nanoseconds, "The nanosecond part is not correct.");
-    }
-
-    @Test
-    public void testExtractNanosecondDecimal01()
-    {
-        BigDecimal value = new BigDecimal("0");
-        checkExtractNanos(0L, 0, value);
-    }
-
-    @Test
-    public void testExtractNanosecondDecimal02()
-    {
-        BigDecimal value = new BigDecimal("15.000000072");
-        checkExtractNanos(15L, 72, value);
-    }
-
-    @Test
-    public void testExtractNanosecondDecimal03()
-    {
-        BigDecimal value = new BigDecimal("15.72");
-        checkExtractNanos(15L, 720000000, value);
-    }
-
-    @Test
-    public void testExtractNanosecondDecimal04()
-    {
-        BigDecimal value = new BigDecimal("19827342231.192837465");
-        checkExtractNanos(19827342231L, 192837465, value);
-    }
-
-    @Test
-    public void testExtractNanosecondDecimal05()
-    {
-        BigDecimal value = new BigDecimal("19827342231");
-        checkExtractNanos(19827342231L, 0, value);
-    }
-
-    @Test
-    public void testExtractNanosecondDecimal06()
-    {
-        BigDecimal value = new BigDecimal("19827342231.999999999");
-        checkExtractNanos(19827342231L, 999999999, value);
-    }
-
-
     private void checkExtractSecondsAndNanos(long expectedSeconds, int expectedNanos, BigDecimal decimal)
     {
         DecimalUtils.extractSecondsAndNanos(decimal, (Long s, Integer ns) -> {
             assertEquals(expectedSeconds, s.longValue(), "The second part is not correct.");
             assertEquals(expectedNanos, ns.intValue(), "The nanosecond part is not correct.");
             return null;
-        });
+        }, true);
     }
 
     @Test
