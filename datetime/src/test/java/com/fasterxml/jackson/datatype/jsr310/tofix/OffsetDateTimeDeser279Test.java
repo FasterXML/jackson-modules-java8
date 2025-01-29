@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.datatype.jsr310.failing;
+package com.fasterxml.jackson.datatype.jsr310.tofix;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
+import com.fasterxml.jackson.datatype.jsr310.testutil.failure.JacksonTestFailureExpected;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,6 +34,7 @@ public class OffsetDateTimeDeser279Test extends ModuleTestBase
     private ObjectMapper MAPPER = newMapper();
 
     // For [modules-java8#279]
+    @JacksonTestFailureExpected
     @Test
     public void testWrapperWithPattern279() throws Exception
     {

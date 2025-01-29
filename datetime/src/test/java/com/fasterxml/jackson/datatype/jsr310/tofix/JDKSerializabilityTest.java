@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.datatype.jsr310.failing;
+package com.fasterxml.jackson.datatype.jsr310.tofix;
 
 import java.io.*;
 import java.time.Year;
@@ -8,11 +8,13 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.datatype.jsr310.*;
 
 import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.datatype.jsr310.testutil.failure.JacksonTestFailureExpected;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class JDKSerializabilityTest extends ModuleTestBase
 {
+    @JacksonTestFailureExpected
     @Test
     public void testJDKSerializability() throws Exception {
         final Year input = Year.of(1986);

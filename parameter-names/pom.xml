@@ -74,7 +74,6 @@ introspection of method/constructor parameter names, without having to add expli
           <target>${javac.target.version}</target>
           <showDeprecation>true</showDeprecation>
           <showWarnings>true</showWarnings>
-          <optimize>true</optimize>
           <compilerArgs>
             <arg>-Xlint</arg>
             <arg>-parameters</arg>
@@ -96,11 +95,6 @@ introspection of method/constructor parameter names, without having to add expli
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${version.plugin.surefire}</version>
-        <configuration>
-          <excludes>
-            <exclude>${packageVersion.dir}/failing/*.java</exclude>
-          </excludes>
-        </configuration>
       </plugin>
       <!--  28-Mar-2019, tatu: Add rudimentary JDK9+ module info. To build with JDK 8
              will have to use `moduleInfoFile` as anything else requires JDK 9+
