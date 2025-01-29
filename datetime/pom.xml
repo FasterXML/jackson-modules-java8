@@ -115,12 +115,6 @@
           <target>${javac.target.version}</target>
           <showDeprecation>true</showDeprecation>
           <showWarnings>true</showWarnings>
-          <optimize>true</optimize>
-          <compilerArguments>
-            <Xmaxerrs>10000</Xmaxerrs>
-            <Xmaxwarns>10000</Xmaxwarns>
-            <Xlint />
-          </compilerArguments>
         </configuration>
       </plugin>
       <!--  28-Mar-2019, tatu: Add rudimentary JDK9+ module info. To build with JDK 8
