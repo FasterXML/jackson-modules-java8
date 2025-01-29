@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.datatype.jsr310.failing;
+package com.fasterxml.jackson.datatype.jsr310.tofix;
 
 import java.time.Duration;
 
@@ -7,11 +7,13 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.databind.*;
 
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
+import com.fasterxml.jackson.datatype.jsr310.testutil.failure.JacksonTestFailureExpected;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DurationDeser337Test extends ModuleTestBase
 {
+    @JacksonTestFailureExpected
     @Test
     public void test_default() throws Exception {
         ObjectMapper mapper = newMapper();
@@ -29,6 +31,7 @@ public class DurationDeser337Test extends ModuleTestBase
     }    
 
     // Handling with WRITE_DURATIONS_AS_TIMESTAMPS enabled can't round-trip a value
+    @JacksonTestFailureExpected
     @Test
     public void test_with() throws Exception {
         ObjectMapper mapper = mapperBuilder()
