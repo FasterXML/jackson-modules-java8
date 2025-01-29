@@ -91,7 +91,7 @@ public class TestDecimalUtils extends ModuleTestBase
             assertEquals(expectedSeconds, s.longValue(), "The second part is not correct.");
             assertEquals(expectedNanos, ns.intValue(), "The nanosecond part is not correct.");
             return null;
-        });
+        }, true);
     }
 
     @Test

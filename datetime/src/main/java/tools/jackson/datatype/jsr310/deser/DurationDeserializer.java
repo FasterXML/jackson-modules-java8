@@ -146,7 +146,8 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
         {
             case JsonTokenId.ID_NUMBER_FLOAT:
                 BigDecimal value = parser.getDecimalValue();
-                return DecimalUtils.extractSecondsAndNanos(value, Duration::ofSeconds);
+                // [modules-java8#337] since 2.19, Duration does not need negative adjustment
+                return DecimalUtils.extractSecondsAndNanos(value, Duration::ofSeconds, false);
             case JsonTokenId.ID_NUMBER_INT:
                 return _fromTimestamp(context, parser.getLongValue());
             case JsonTokenId.ID_STRING:

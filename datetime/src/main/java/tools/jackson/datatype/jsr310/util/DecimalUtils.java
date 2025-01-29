@@ -96,12 +96,13 @@ public final class DecimalUtils
      * Extracts the seconds and nanoseconds component of {@code seconds} as {@code long} and {@code int}
      * values, passing them to the given converter.   The implementation avoids latency issues present
      * on some JRE releases.
+     *
+     * @since 2.19
      */
-    public static <T> T extractSecondsAndNanos(BigDecimal seconds, BiFunction<Long, Integer, T> convert)
-    {
+    public static <T> T extractSecondsAndNanos(BigDecimal seconds,
+            BiFunction<Long, Integer, T> convert, boolean negativeAdjustment) {
         // Complexity is here to workaround unbounded latency in some BigDecimal operations.
         //   https://github.com/FasterXML/jackson-databind/issues/2141
-
         long secondsOnly;
         int nanosOnly;
 
@@ -122,8 +123,11 @@ public final class DecimalUtils
             nanosOnly = nanoseconds.subtract(BigDecimal.valueOf(secondsOnly).scaleByPowerOfTen(9)).intValue();
 
             if (secondsOnly < 0 && secondsOnly > Instant.MIN.getEpochSecond()) {
-                // Issue #69 and Issue #120: avoid sending a negative adjustment to the Instant constructor, we want this as the actual nanos
-                nanosOnly = Math.abs(nanosOnly);
+                // [modules-java8#337] since 2.19, not always we need to adjust nanos
+                if (negativeAdjustment) {
+                    // Issue #69 and Issue #120: avoid sending a negative adjustment to the Instant constructor, we want this as the actual nanos
+                    nanosOnly = Math.abs(nanosOnly);
+                }
             }
         }
 
