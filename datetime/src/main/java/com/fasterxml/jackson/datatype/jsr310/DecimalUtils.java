@@ -30,8 +30,6 @@ import java.util.function.BiFunction;
  */
 public final class DecimalUtils
 {
-    private static final BigDecimal ONE_BILLION = new BigDecimal(1_000_000_000L);
-
     private DecimalUtils() { }
 
     public static String toDecimal(long seconds, int nanoseconds)
@@ -98,26 +96,14 @@ public final class DecimalUtils
     }
 
     /**
-     * @deprecated due to potential unbounded latency on some JRE releases.
-     */
-    @Deprecated // since 2.9.8
-    public static int extractNanosecondDecimal(BigDecimal value, long integer)
-    {
-        // !!! 14-Mar-2016, tatu: Somewhat inefficient; should replace with functionally
-        //   equivalent code that just subtracts integral part? (or, measure and show
-        //   there's no difference and do nothing... )
-        return value.subtract(BigDecimal.valueOf(integer)).multiply(ONE_BILLION).intValue();
-    }
-
-    /**
      * Extracts the seconds and nanoseconds component of {@code seconds} as {@code long} and {@code int}
      * values, passing them to the given converter.   The implementation avoids latency issues present
      * on some JRE releases.
      *
      * @since 2.9.8
-     * @deprecated Use {@link #extractSecondsAndNanos(BigDecimal, BiFunction, boolean)} instead.
+     * @deprecated Since 2.19: use {@link #extractSecondsAndNanos(BigDecimal, BiFunction, boolean)} instead.
      */
-    @Deprecated
+    @Deprecated // since 2.19
     public static <T> T extractSecondsAndNanos(BigDecimal seconds, BiFunction<Long, Integer, T> convert)
     {
         return extractSecondsAndNanos(seconds, convert, true);
@@ -130,7 +116,8 @@ public final class DecimalUtils
      *
      * @since 2.19
      */
-    public static <T> T extractSecondsAndNanos(BigDecimal seconds, BiFunction<Long, Integer, T> convert, boolean negativeAdjustment) {
+    public static <T> T extractSecondsAndNanos(BigDecimal seconds,
+            BiFunction<Long, Integer, T> convert, boolean negativeAdjustment) {
         // Complexity is here to workaround unbounded latency in some BigDecimal operations.
         //   https://github.com/FasterXML/jackson-databind/issues/2141
         long secondsOnly;
