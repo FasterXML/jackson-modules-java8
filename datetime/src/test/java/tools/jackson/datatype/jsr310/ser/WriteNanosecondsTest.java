@@ -7,22 +7,40 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class WriteNanosecondsTest extends ModuleTestBase {
+public class WriteNanosecondsTest extends ModuleTestBase
+{
     public static final ZoneId UTC = ZoneId.of("UTC");
     private static ObjectMapper MAPPER = newMapper();
+
+    static class DummyClass<T> {
+        @JsonFormat(with = JsonFormat.Feature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
+        private final T nanoseconds;
+
+        @JsonFormat(without = JsonFormat.Feature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
+        private final T notNanoseconds;
+
+        DummyClass(T t) {
+            this.nanoseconds = t;
+            this.notNanoseconds = t;
+        }
+    }
 
     @Test
     public void testSerializeDurationWithAndWithoutNanoseconds() throws Exception {
         DummyClass<Duration> value = new DummyClass<>(Duration.ZERO);
 
-        String json = MAPPER.writeValueAsString(value);
+        String json = MAPPER.writer()
+                .with(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
+                .writeValueAsString(value);
 
-        assertTrue(json.contains("\"nanoseconds\":0.0"));
-        assertTrue(json.contains("\"notNanoseconds\":0"));
+        assertThat(json).contains("\"nanoseconds\":0.0");
+        assertThat(json).contains("\"notNanoseconds\":0");
     }
 
     @Test
@@ -92,18 +110,5 @@ public class WriteNanosecondsTest extends ModuleTestBase {
 
         assertTrue(json.contains("\"nanoseconds\":0.0"));
         assertTrue(json.contains("\"notNanoseconds\":0"));
-    }
-
-    private static class DummyClass<T> {
-        @JsonFormat(with = JsonFormat.Feature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
-        private final T nanoseconds;
-
-        @JsonFormat(without = JsonFormat.Feature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
-        private final T notNanoseconds;
-
-        DummyClass(T t) {
-            this.nanoseconds = t;
-            this.notNanoseconds = t;
-        }
     }
 }

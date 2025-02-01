@@ -9,6 +9,7 @@ module tools.jackson.datatype.jsr310
     requires tools.jackson.databind;
 
     // Additional test lib/framework dependencies
+    requires org.assertj.core;
     requires org.junit.jupiter.api;
     requires org.junit.jupiter.params;
 
