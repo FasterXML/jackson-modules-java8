@@ -13,45 +13,29 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class DurationDeser337Test extends ModuleTestBase
 {
     @Test
-    public void test_default() throws Exception {
-        ObjectMapper mapper = newMapper();
-
-        Duration duration = Duration.parse("PT-43.636S");
-
-        String ser = mapper.writeValueAsString(duration);
-
-        assertEquals("-43.636000000", ser);
-
-        Duration deser = mapper.readValue(ser, Duration.class);
-
-        assertEquals(duration, deser);
-        assertEquals(deser.toString(), "PT-43.636S");
-    }    
-
-    // Handling with WRITE_DURATIONS_AS_TIMESTAMPS enabled can't round-trip a value
-    @Test
-    public void test_with() throws Exception {
-        ObjectMapper mapper = mapperBuilder()
-                .configure(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS, true)
+    public void testWithDurationsAsTimestamps() throws Exception
+    {
+        final ObjectMapper MAPPER_DURATION_TIMESTAMPS = mapperBuilder()
+                .enable(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
                 .build();
 
         Duration duration = Duration.parse("PT-43.636S");
 
-        String ser = mapper.writeValueAsString(duration);
+        String ser = MAPPER_DURATION_TIMESTAMPS.writeValueAsString(duration);
 
         assertEquals("-43.636000000", ser);
 
-        Duration deser = mapper.readValue(ser, Duration.class);
+        Duration deser = MAPPER_DURATION_TIMESTAMPS.readValue(ser, Duration.class);
 
         assertEquals(duration, deser);
         assertEquals(deser.toString(), "PT-43.636S");
     }
 
-    // Handling with WRITE_DURATIONS_AS_TIMESTAMPS disabled works
     @Test
-    public void test_without() throws Exception {
+    public void testWithoutDurationsAsTimestamps() throws Exception
+    {
         ObjectMapper mapper = mapperBuilder()
-                .configure(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS, false)
+                .disable(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
                 .build();
 
         Duration duration = Duration.parse("PT-43.636S");

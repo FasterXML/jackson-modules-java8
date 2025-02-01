@@ -25,7 +25,6 @@ import tools.jackson.databind.ObjectReader;
 import tools.jackson.databind.SerializationFeature;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static tools.jackson.datatype.jsr310.deser.InstantDeserializer.ISO8601_COLONLESS_OFFSET_REGEX;
 
 public class InstantDeserTest extends ModuleTestBase
