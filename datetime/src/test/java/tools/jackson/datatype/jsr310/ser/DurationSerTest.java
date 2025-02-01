@@ -303,7 +303,9 @@ public class DurationSerTest extends ModuleTestBase
     public void testDurationFormatOverrideMinutes() throws Exception
     {
         assertEquals(a2q("{'mins':120}"),
-                WRITER.writeValueAsString(new MyDto224(Duration.ofHours(2))));
+                WRITER
+                    .with(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
+                    .writeValueAsString(new MyDto224(Duration.ofHours(2))));
     }
 
     // [datetime#282]
@@ -312,7 +314,9 @@ public class DurationSerTest extends ModuleTestBase
     {
         final Duration maxDuration = Duration.ofSeconds(Long.MIN_VALUE);
         assertEquals(a2q("{'duration':"+Long.MIN_VALUE+"}"),
-                WRITER.writeValueAsString(new Bean282(maxDuration)));
+                WRITER
+                    .with(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
+                    .writeValueAsString(new Bean282(maxDuration)));
     }
 
 }
