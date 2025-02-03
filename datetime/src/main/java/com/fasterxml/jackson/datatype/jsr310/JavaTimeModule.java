@@ -131,8 +131,8 @@ public final class JavaTimeModule
 
         // // Other deserializers
         desers.addDeserializer(Duration.class, DurationDeserializer.INSTANCE);
-        desers.addDeserializer(LocalDateTime.class, LocalDateTimeDeserializer.INSTANCE);
-        desers.addDeserializer(LocalDate.class, LocalDateDeserializer.INSTANCE);
+        desers.addDeserializer(LocalDateTime.class, LocalDateTimeDeserializer.INSTANCE.withFeatures(_features));
+        desers.addDeserializer(LocalDate.class, LocalDateDeserializer.INSTANCE.withFeatures(_features));
         desers.addDeserializer(LocalTime.class, LocalTimeDeserializer.INSTANCE);
         desers.addDeserializer(MonthDay.class, MonthDayDeserializer.INSTANCE);
         desers.addDeserializer(OffsetTime.class, OffsetTimeDeserializer.INSTANCE);

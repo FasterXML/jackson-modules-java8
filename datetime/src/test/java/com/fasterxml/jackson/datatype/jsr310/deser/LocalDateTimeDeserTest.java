@@ -27,6 +27,8 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Feature;
@@ -40,6 +42,9 @@ import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.deser.DeserializationProblemHandler;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
@@ -50,6 +55,11 @@ public class LocalDateTimeDeserTest
 {
     private final static ObjectMapper MAPPER = newMapper();
     private final static ObjectReader READER = MAPPER.readerFor(LocalDateTime.class);
+
+    private final ObjectReader READER_USING_TIME_ZONE = JsonMapper.builder()
+        .addModule(new JavaTimeModule().enable(JavaTimeFeature.USE_TIME_ZONE_FOR_LENIENT_DATE_PARSING))
+        .build()
+        .readerFor(LocalDateTime.class);
 
     private final static ObjectMapper STRICT_MAPPER;
     static {
@@ -270,6 +280,23 @@ public class LocalDateTimeDeserTest
         value = r.with(TimeZone.getTimeZone(Z_BUDAPEST))
                 .readValue(input);
         assertEquals(EXP, value, "The value is not correct.");
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "UTC,             2020-10-22T04:16:20.504Z, 2020-10-22T04:16:20.504",
+        "Europe/Budapest, 2020-10-22T04:16:20.504Z, 2020-10-22T06:16:20.504",
+        "Europe/Budapest, 2020-10-25T00:16:20.504Z, 2020-10-25T02:16:20.504",
+        "Europe/Budapest, 2020-10-25T01:16:20.504Z, 2020-10-25T02:16:20.504",
+        "America/Chicago, 2020-10-22T04:16:20.504Z, 2020-10-21T23:16:20.504",
+        "America/Chicago, 2020-11-01T06:16:20.504Z, 2020-11-01T01:16:20.504",
+        "America/Chicago, 2020-11-01T07:16:20.504Z, 2020-11-01T01:16:20.504"
+    })
+    public void testUseTimeZoneForZuluIfEnabled(TimeZone zone, String string, LocalDateTime expected) throws Exception
+    {
+        ObjectReader reader = READER_USING_TIME_ZONE.with(zone);
+        LocalDateTime value = reader.readValue(q(string));
+        assertEquals(expected, value);
     }
 
     // [modules-java#94]: "Z" offset not allowed if strict mode
