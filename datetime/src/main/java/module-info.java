@@ -1,5 +1,5 @@
 // Java-Time Main artifact Module descriptor
-module tools.jackson.datatype.jsr310
+module tools.jackson.datatype.javatime
 {
     requires com.fasterxml.jackson.annotation;
 
