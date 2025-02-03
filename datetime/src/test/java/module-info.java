@@ -1,5 +1,5 @@
 // Java-Time (unit) Test Module descriptor
-module tools.jackson.datatype.jsr310
+module tools.jackson.datatype.javatime
 {
     // Since we are not split from Main artifact, will not
     // need to depend on Main artifact -- but need its dependencies
