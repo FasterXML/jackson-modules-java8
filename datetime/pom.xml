@@ -14,7 +14,7 @@
   <groupId>tools.jackson.datatype</groupId>
   <artifactId>jackson-datatype-jsr310</artifactId>
   <name>Jackson datatype: JSR310</name>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <description>Add-on module to support JSR-310 (Java 8 Date &amp; Time API) data types.</description>
   <developers>
     <developer>
