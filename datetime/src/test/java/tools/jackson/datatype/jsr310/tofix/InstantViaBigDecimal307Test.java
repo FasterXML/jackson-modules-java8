@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
-
+import tools.jackson.databind.SerializationFeature;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
 import tools.jackson.datatype.jsr310.testutil.failure.JacksonTestFailureExpected;
 
@@ -16,16 +16,18 @@ import static org.junit.jupiter.api.Assertions.*;
 // things (like Instant)
 public class InstantViaBigDecimal307Test extends ModuleTestBase
 {
-    static class Wrapper307 {
+    public static class Wrapper307 {
         public Instant value;
 
         public Wrapper307(Instant v) { value = v; }
-        protected Wrapper307() { }
+        public Wrapper307() { }
     }
 
     private final Instant ISSUED_AT = Instant.ofEpochSecond(1234567890).plusNanos(123456789);
 
-    private ObjectMapper MAPPER = newMapper();
+    private ObjectMapper MAPPER = mapperBuilder()
+            .enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .build();
 
     @Test
     public void instantViaReadValue() throws Exception {

@@ -944,15 +944,19 @@ public class ZonedDateTimeSerTest
         assertEquals(original, deserialized);
     }
 
-    static class Pojo1 {
+    public static class Pojo1 {
         @JsonFormat(shape = JsonFormat.Shape.NUMBER_INT)
         public ZonedDateTime t1 = ZonedDateTime.parse("2022-04-27T12:00:00+02:00[Europe/Paris]");
+
         public ZonedDateTime t2 = t1;
     }
 
     @Test
     public void testShapeInt() throws Exception {
-        String json1 = newMapper().writeValueAsString(new Pojo1());
+        String json1 = mapperBuilder()
+                .enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .build()
+                .writeValueAsString(new Pojo1());
         assertEquals("{\"t1\":1651053600000,\"t2\":1651053600.000000000}", json1);
     }
 
