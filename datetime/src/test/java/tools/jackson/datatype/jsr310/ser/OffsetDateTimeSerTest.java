@@ -282,7 +282,9 @@ public class OffsetDateTimeSerTest
 
     @Test
     public void testShapeInt() throws Exception {
-        String json1 = newMapper().writeValueAsString(new Pojo1());
+        String json1 = MAPPER.writer()
+                .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .writeValueAsString(new Pojo1());
         assertEquals("{\"t1\":1651053600000,\"t2\":1651053600.000000000}", json1);
     }
 }

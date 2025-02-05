@@ -181,7 +181,9 @@ public class InstantSerTest extends ModuleTestBase
 
     @Test
     public void testShapeInt() throws Exception {
-        String json1 = newMapper().writeValueAsString(new Pojo1());
+        String json1 = MAPPER.writer()
+                .with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .writeValueAsString(new Pojo1());
         assertEquals("{\"t1\":1651060800000,\"t2\":1651060800.000000000}", json1);
     }
 }

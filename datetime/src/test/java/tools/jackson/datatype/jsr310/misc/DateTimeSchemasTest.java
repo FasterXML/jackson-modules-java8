@@ -132,7 +132,11 @@ public class DateTimeSchemasTest extends ModuleTestBase
         }
     }
 
-    private final ObjectMapper MAPPER = newMapper();
+    // 05-Feb-2025, tatu: Change defaults to Jackson 2.x wrt serialization
+    //    shape (as Timestamps vs Strings)
+    private final ObjectMapper MAPPER = mapperBuilder()
+            .enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .build();
 
     // // // Local date/time types
 
