@@ -41,7 +41,11 @@ public class LocalDateTimeSerTest
         public LDTWrapper(LocalDateTime v) { value = v; }
     }
 
-    private final static ObjectMapper MAPPER = newMapper();
+    // 05-Feb-2025, tatu: Use Jackson 2.x defaults wrt as-timestamps
+    //   serialization
+    private final static ObjectMapper MAPPER = mapperBuilder()
+            .enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .build();
 
     @Test
     public void testSerializationAsTimestamp01() throws Exception
@@ -76,10 +80,9 @@ public class LocalDateTimeSerTest
     public void testSerializationAsTimestamp03Millisecond() throws Exception
     {
         LocalDateTime time = LocalDateTime.of(2013, Month.AUGUST, 21, 9, 22, 0, 57);
-        ObjectMapper m = newMapperBuilder()
-                .disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
-                .build();
-        String value = m.writeValueAsString(time);
+        String value = MAPPER.writer()
+                .without(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .writeValueAsString(time);
         assertEquals("[2013,8,21,9,22,0,0]", value);
     }
 
@@ -88,10 +91,9 @@ public class LocalDateTimeSerTest
     {
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 829837);
 
-        final ObjectMapper m = newMapperBuilder()
-                .enable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
-                .build();
-        String value = m.writeValueAsString(time);
+        String value = MAPPER.writer()
+                .with(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .writeValueAsString(time);
         assertEquals("[2005,11,5,22,31,5,829837]", value);
     }
 
@@ -99,11 +101,9 @@ public class LocalDateTimeSerTest
     public void testSerializationAsTimestamp04Millisecond() throws Exception
     {
         LocalDateTime time = LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 422829837);
-
-        final ObjectMapper m = newMapperBuilder()
-                .disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
-                .build();
-        String value = m.writeValueAsString(time);
+        String value = MAPPER.writer()
+                .without(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .writeValueAsString(time);
         assertEquals("[2005,11,5,22,31,5,422]", value);
     }
 

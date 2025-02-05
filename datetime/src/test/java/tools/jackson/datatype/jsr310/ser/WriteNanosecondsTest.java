@@ -16,9 +16,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class WriteNanosecondsTest extends ModuleTestBase
 {
     public static final ZoneId UTC = ZoneId.of("UTC");
-    private static ObjectMapper MAPPER = newMapper();
 
-    static class DummyClass<T> {
+    // 05-Feb-2025, tatu: Use Jackson 2.x defaults wrt as-timestamps
+    //   serialization
+    private final static ObjectMapper MAPPER = mapperBuilder()
+            .enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .build();
+
+    public static class DummyClass<T> {
         @JsonFormat(with = JsonFormat.Feature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
         private final T nanoseconds;
 
