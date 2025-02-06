@@ -21,6 +21,8 @@ import java.time.temporal.Temporal;
 
 import org.junit.jupiter.api.Test;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.datatype.jsr310.MockObjectConfiguration;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
@@ -29,6 +31,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class YearSerTest extends ModuleTestBase
 {
+    final static class YearAsStringWrapper {
+        @JsonFormat(shape = JsonFormat.Shape.STRING)
+        public Year value;
+
+        public YearAsStringWrapper(Year value) {
+            this.value = value;
+        }
+    }
+
+    // Defaults fine: year only serialized as String with explicit
+    // overrides
     private final ObjectMapper MAPPER = newMapper();
 
     @Test
@@ -38,6 +51,25 @@ public class YearSerTest extends ModuleTestBase
                 MAPPER.writeValueAsString(Year.of(1986)));
         assertEquals("2013",
                 MAPPER.writeValueAsString(Year.of(2013)));
+    }
+
+    @Test
+    public void testAsStringSerializationViaAnnotation() throws Exception
+    {
+        assertEquals(a2q("{'value':'1972'}"),
+                MAPPER.writeValueAsString(new YearAsStringWrapper(Year.of(1972))));
+    }
+
+    @Test
+    public void testAsStringSerializationViaFormatConfig() throws Exception
+    {
+        final ObjectMapper asStringMapper = mapperBuilder()
+                .withConfigOverride(Year.class, o -> o.setFormat(
+                        JsonFormat.Value.forShape(JsonFormat.Shape.STRING)))
+                .build();
+
+        assertEquals(q("2025"),
+                asStringMapper.writeValueAsString(Year.of(2025)));
     }
 
     @Test

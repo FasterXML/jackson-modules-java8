@@ -58,6 +58,13 @@ public class YearSerializer extends JSR310FormattedSerializerBase<Year>
         return new YearSerializer(this, dtf, useTimestamp);
     }
 
+    // Need to ensure Year still defaults to numeric ("timestamp") regardless
+    // of general global setting (since that defaults to textual in Jackson 3.x)
+    @Override
+    protected boolean useTimestampFromGlobalDefaults(SerializationContext ctxt) {
+        return true;
+    }
+
     @Override
     public void serialize(Year year, JsonGenerator generator, SerializationContext ctxt)
         throws JacksonException
