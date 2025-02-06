@@ -207,7 +207,13 @@ abstract class JSR310FormattedSerializerBase<T>
             }
         }
         // assume that explicit formatter definition implies use of textual format
-        return (_formatter == null) && (ctxt != null) && ctxt.isEnabled(getTimestampsFeature());
+        return (_formatter == null) && useTimestampFromGlobalDefaults(ctxt);
+    }
+
+    // @since 2.19
+    protected boolean useTimestampFromGlobalDefaults(SerializationContext ctxt) {
+        return (ctxt != null)
+                && ctxt.isEnabled(getTimestampsFeature());
     }
 
     protected boolean _useTimestampExplicitOnly(SerializationContext ctxt) {
