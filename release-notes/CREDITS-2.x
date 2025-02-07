@@ -213,3 +213,7 @@ Joey Muia (@jmuia)
  * Reported #337: Negative `Duration` does not round-trip properly with
   `WRITE_DURATIONS_AS_TIMESTAMPS` enabled
   (2.19.0)
+
+Henning Pöttker (@ hpoettker)
+ * Contributed #342: Lenient deserialization of `LocalDate` is not time-zone aware
+  (2.19.0)

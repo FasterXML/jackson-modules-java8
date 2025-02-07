@@ -3,8 +3,11 @@ package tools.jackson.datatype.jsr310.deser;
 import java.time.*;
 import java.time.temporal.Temporal;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import com.fasterxml.jackson.annotation.OptBoolean;
 
@@ -18,7 +21,9 @@ import tools.jackson.core.type.TypeReference;
 
 import tools.jackson.databind.*;
 import tools.jackson.databind.exc.MismatchedInputException;
-
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.datatype.jsr310.JavaTimeFeature;
+import tools.jackson.datatype.jsr310.JavaTimeModule;
 import tools.jackson.datatype.jsr310.MockObjectConfiguration;
 import tools.jackson.datatype.jsr310.ModuleTestBase;
 
@@ -28,6 +33,11 @@ public class LocalDateDeserTest extends ModuleTestBase
 {
     private final ObjectMapper MAPPER = newMapper();
     private final ObjectReader READER = MAPPER.readerFor(LocalDate.class);
+    private final ObjectReader READER_USING_TIME_ZONE = JsonMapper.builder()
+        .addModule(new JavaTimeModule().enable(JavaTimeFeature.USE_TIME_ZONE_FOR_LENIENT_DATE_PARSING))
+        .build()
+        .readerFor(LocalDate.class);
+
     private final TypeReference<Map<String, LocalDate>> MAP_TYPE_REF = new TypeReference<Map<String, LocalDate>>() { };
 
     final static class Wrapper {
@@ -120,12 +130,42 @@ public class LocalDateDeserTest extends ModuleTestBase
     }
 
     @Test
-    public void testDeserializationAsString03()
+    public void testLenientDeserializationAsString01() throws Exception
     {
         Instant instant = Instant.now();
-        LocalDate value = READER.readValue('"' + instant.toString() + '"');
-        assertEquals(LocalDateTime.ofInstant(instant, ZoneOffset.UTC).toLocalDate(),
-                value);
+        LocalDate value = READER.readValue(q(instant.toString()));
+        assertEquals(LocalDateTime.ofInstant(instant, ZoneOffset.UTC).toLocalDate(), value);
+    }
+
+    @Test
+    public void testLenientDeserializationAsString02() throws Exception
+    {
+        ObjectReader reader = READER.with(TimeZone.getTimeZone(Z_BUDAPEST));
+        Instant instant = Instant.now();
+        LocalDate value = reader.readValue(q(instant.toString()));
+        assertEquals(LocalDateTime.ofInstant(instant, ZoneOffset.UTC).toLocalDate(), value);
+    }
+
+    @Test
+    public void testLenientDeserializationAsString03() throws Exception
+    {
+        Instant instant = Instant.now();
+        LocalDate value = READER_USING_TIME_ZONE.readValue(q(instant.toString()));
+        assertEquals(LocalDateTime.ofInstant(instant, ZoneOffset.UTC).toLocalDate(), value);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "Europe/Budapest, 2024-07-21T21:59:59Z, 2024-07-21",
+        "Europe/Budapest, 2024-07-21T22:00:00Z, 2024-07-22",
+        "America/Chicago, 2024-07-22T04:59:59Z, 2024-07-21",
+        "America/Chicago, 2024-07-22T05:00:00Z, 2024-07-22"
+    })
+    public void testLenientDeserializationAsString04(TimeZone zone, String string, LocalDate expected) throws Exception
+    {
+        ObjectReader reader = READER_USING_TIME_ZONE.with(zone);
+        LocalDate value = reader.readValue(q(string));
+        assertEquals(expected, value);
     }
 
     @Test

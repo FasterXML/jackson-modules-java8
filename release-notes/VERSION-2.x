@@ -16,6 +16,9 @@ Modules:
   `WRITE_DURATIONS_AS_TIMESTAMPS` enabled
  (reported by Joey M)
  (fix by Joo-Hyuk K)
+#342: Lenient deserialization of `LocalDate`, `LocalDateTime`
+  is not time-zone aware
+ (contributed by Henning P)
 
 2.18.3 (not yet released)
 

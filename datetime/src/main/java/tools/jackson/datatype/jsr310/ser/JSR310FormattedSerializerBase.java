@@ -210,7 +210,6 @@ abstract class JSR310FormattedSerializerBase<T>
         return (_formatter == null) && useTimestampFromGlobalDefaults(ctxt);
     }
 
-    // @since 2.19
     protected boolean useTimestampFromGlobalDefaults(SerializationContext ctxt) {
         return (ctxt != null)
                 && ctxt.isEnabled(getTimestampsFeature());

@@ -124,8 +124,10 @@ public final class JavaTimeModule
     
             // // Other deserializers
             .addDeserializer(Duration.class, DurationDeserializer.INSTANCE)
-            .addDeserializer(LocalDateTime.class, LocalDateTimeDeserializer.INSTANCE)
-            .addDeserializer(LocalDate.class, LocalDateDeserializer.INSTANCE)
+            .addDeserializer(LocalDateTime.class,
+                    LocalDateTimeDeserializer.INSTANCE.withFeatures(_features))
+            .addDeserializer(LocalDate.class,
+                    LocalDateDeserializer.INSTANCE.withFeatures(_features))
             .addDeserializer(LocalTime.class, LocalTimeDeserializer.INSTANCE)
             .addDeserializer(MonthDay.class, MonthDayDeserializer.INSTANCE)
             .addDeserializer(OffsetTime.class, OffsetTimeDeserializer.INSTANCE)

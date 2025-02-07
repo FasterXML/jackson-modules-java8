@@ -17,20 +17,17 @@
 package tools.jackson.datatype.jsr310.deser;
 
 import java.time.DateTimeException;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import tools.jackson.core.JacksonException;
-import tools.jackson.core.JsonParser;
-import tools.jackson.core.JsonToken;
-import tools.jackson.core.JsonTokenId;
-import tools.jackson.databind.BeanProperty;
-import tools.jackson.databind.DeserializationContext;
-import tools.jackson.databind.DeserializationFeature;
-import tools.jackson.databind.JavaType;
+import tools.jackson.core.*;
+import tools.jackson.core.util.JacksonFeatureSet;
+import tools.jackson.databind.*;
+import tools.jackson.datatype.jsr310.JavaTimeFeature;
 
 /**
  * Deserializer for Java 8 temporal {@link LocalDateTime}s.
@@ -40,6 +37,9 @@ import tools.jackson.databind.JavaType;
 public class LocalDateTimeDeserializer
     extends JSR310DateTimeDeserializerBase<LocalDateTime>
 {
+    private final static boolean DEFAULT_USE_TIME_ZONE_FOR_LENIENT_DATE_PARSING
+        = JavaTimeFeature.USE_TIME_ZONE_FOR_LENIENT_DATE_PARSING.enabledByDefault();
+
     private static final DateTimeFormatter DEFAULT_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
     public static final LocalDateTimeDeserializer INSTANCE = new LocalDateTimeDeserializer();
@@ -51,6 +51,17 @@ public class LocalDateTimeDeserializer
      */
     protected final Boolean _readTimestampsAsNanosOverride;
 
+    /**
+     * Flag set from
+     * {@link tools.jackson.datatype.jsr310.JavaTimeFeature#USE_TIME_ZONE_FOR_LENIENT_DATE_PARSING}
+     * to determine whether the {@link java.util.TimeZone} of the
+     * {@link tools.jackson.databind.DeserializationContext} is used
+     * when leniently deserializing from the UTC/ISO instant format.
+     *
+     * @since 2.19
+     */
+    protected final boolean _useTimeZoneForLenientDateParsing;
+
     protected LocalDateTimeDeserializer() { // was private before 2.12
         this(DEFAULT_FORMATTER);
     }
@@ -58,6 +69,7 @@ public class LocalDateTimeDeserializer
     public LocalDateTimeDeserializer(DateTimeFormatter formatter) {
         super(LocalDateTime.class, formatter);
         _readTimestampsAsNanosOverride = null;
+        _useTimeZoneForLenientDateParsing = DEFAULT_USE_TIME_ZONE_FOR_LENIENT_DATE_PARSING;
     }
 
     /**
@@ -66,6 +78,7 @@ public class LocalDateTimeDeserializer
     protected LocalDateTimeDeserializer(LocalDateTimeDeserializer base, Boolean leniency) {
         super(base, leniency);
         _readTimestampsAsNanosOverride = base._readTimestampsAsNanosOverride;
+        _useTimeZoneForLenientDateParsing = base._useTimeZoneForLenientDateParsing;
     }
 
     /**
@@ -78,6 +91,16 @@ public class LocalDateTimeDeserializer
         Boolean readTimestampsAsNanosOverride) {
         super(base, leniency, formatter, shape);
         _readTimestampsAsNanosOverride = readTimestampsAsNanosOverride;
+        _useTimeZoneForLenientDateParsing = base._useTimeZoneForLenientDateParsing;
+    }
+
+    /**
+     * Since 2.19
+     */
+    protected LocalDateTimeDeserializer(LocalDateTimeDeserializer base, JacksonFeatureSet<JavaTimeFeature> features) {
+        super(LocalDateTime.class, base._formatter);
+        _readTimestampsAsNanosOverride = base._readTimestampsAsNanosOverride;
+        _useTimeZoneForLenientDateParsing = features.isEnabled(JavaTimeFeature.USE_TIME_ZONE_FOR_LENIENT_DATE_PARSING);
     }
 
     @Override
@@ -103,6 +126,17 @@ public class LocalDateTimeDeserializer
                 deser._shape, readTimestampsAsNanosOverride);
         }
         return deser;
+    }
+
+    /**
+     * Since 2.19
+     */
+    public LocalDateTimeDeserializer withFeatures(JacksonFeatureSet<JavaTimeFeature> features) {
+        if (_useTimeZoneForLenientDateParsing ==
+                features.isEnabled(JavaTimeFeature.USE_TIME_ZONE_FOR_LENIENT_DATE_PARSING)) {
+            return this;
+        }
+        return new LocalDateTimeDeserializer(this, features);
     }
 
     @Override
@@ -195,11 +229,12 @@ public class LocalDateTimeDeserializer
             if (_formatter == DEFAULT_FORMATTER) {
                 // ... only allow iff lenient mode enabled since
                 // JavaScript by default includes time and zone in JSON serialized Dates (UTC/ISO instant format).
-                // And if so, do NOT use zoned date parsing as that can easily produce
-                // incorrect answer.
                 if (string.length() > 10 && string.charAt(10) == 'T') {
                    if (string.endsWith("Z")) {
                        if (isLenient()) {
+                           if (_useTimeZoneForLenientDateParsing) {
+                               return Instant.parse(string).atZone(ctxt.getTimeZone().toZoneId()).toLocalDateTime();
+                           }
                            return LocalDateTime.parse(string.substring(0, string.length()-1),
                                    _formatter);
                        }
