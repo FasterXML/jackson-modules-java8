@@ -3,12 +3,12 @@
   <parent>
     <groupId>tools.jackson</groupId>
     <artifactId>jackson-base</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>3.0.0-rc1-SNAPSHOT</version>
   </parent>
   <groupId>tools.jackson.module</groupId>
   <artifactId>jackson-modules-java8</artifactId>
   <name>Jackson modules: Java 8</name>
-  <version>3.0.0-SNAPSHOT</version>
+  <version>3.0.0-rc1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <description>Parent pom for Jackson modules needed to support Java 8 features and types
   </description>
@@ -32,12 +32,6 @@
   <issueManagement>
     <url>https://github.com/FasterXML/jackson-modules-java8/issues</url>
   </issueManagement>
-
-  <properties>
-    <!-- [databind#4820]: Java 17 baseline -->
-    <javac.src.version>17</javac.src.version>
-    <javac.target.version>17</javac.target.version>
-  </properties>
 
   <!-- NOTE: `dependencyManagement` comes from jackson-bom -->
 
@@ -96,16 +90,6 @@
 	<plugin> <!-- default settings are fine, just need to enable here -->
           <groupId>com.google.code.maven-replacer-plugin</groupId>
           <artifactId>replacer</artifactId>
-	</plugin>
-
-	<plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <configuration>
-            <excludes>
-              <exclude>tools/jackson/**/failing/*.java</exclude>
-            </excludes>
-          </configuration>
 	</plugin>
       </plugins>
     </pluginManagement>
