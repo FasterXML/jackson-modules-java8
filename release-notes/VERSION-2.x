@@ -20,7 +20,7 @@ Modules:
   is not time-zone aware
  (contributed by Henning P)
 
-2.18.3 (not yet released)
+2.18.3 (28-Feb-2025)
 
 #333: `ZonedDateTime` serialization with `@JsonFormat.pattern` never uses it
   while `WRITE_DATES_WITH_ZONE_ID` enabled
