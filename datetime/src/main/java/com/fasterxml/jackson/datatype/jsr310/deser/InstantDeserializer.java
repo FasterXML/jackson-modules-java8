@@ -44,6 +44,8 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.fasterxml.jackson.core.json.JsonReadFeature.ALLOW_LEADING_PLUS_SIGN_FOR_NUMBERS;
+
 /**
  * Deserializer for Java 8 temporal {@link Instant}s, {@link OffsetDateTime},
  * and {@link ZonedDateTime}s.
@@ -380,11 +382,16 @@ public class InstantDeserializer<T extends Temporal>
     }
 
     // Helper method to find Strings of form "all digits" and "digits-comma-digits"
-    protected int _countPeriods(String str)
+    protected int _countPeriods(JsonParser p, String str)
     {
         int commas = 0;
-        for (int i = 0, end = str.length(); i < end; ++i) {
-            int ch = str.charAt(i);
+        int i = 0;
+        int ch = str.charAt(i);
+        if (ch == '-' || (ch == '+' && p.isEnabled(ALLOW_LEADING_PLUS_SIGN_FOR_NUMBERS.mappedFeature()))) {
+            ++i;
+        }
+        for (int end = str.length(); i < end; ++i) {
+            ch = str.charAt(i);
             if (ch < '0' || ch > '9') {
                 if (ch == '.') {
                     ++commas;
@@ -413,7 +420,7 @@ public class InstantDeserializer<T extends Temporal>
                 _formatter == DateTimeFormatter.ISO_ZONED_DATE_TIME
             ) {
             // 22-Jan-2016, [datatype-jsr310#16]: Allow quoted numbers too
-            int dots = _countPeriods(string);
+            int dots = _countPeriods(p, string);
             if (dots >= 0) { // negative if not simple number
                 try {
                     if (dots == 0) {
