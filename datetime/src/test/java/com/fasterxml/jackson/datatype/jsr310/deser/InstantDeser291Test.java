@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.datatype.jsr310.failing;
+package com.fasterxml.jackson.datatype.jsr310.deser;
 
 import java.time.Instant;
 import java.util.Locale;
@@ -18,7 +18,7 @@ import static org.junit.Assert.assertThrows;
 
 // [modules-java8#291] InstantDeserializer fails to parse negative numeric timestamp strings for
 //   pre-1970 values.
-public class InstantDeserializerNegativeNumericTimestampString291Testest 
+public class InstantDeser291Test 
     extends ModuleTestBase
 {
     private final JsonMapper MAPPER = JsonMapper.builder()
