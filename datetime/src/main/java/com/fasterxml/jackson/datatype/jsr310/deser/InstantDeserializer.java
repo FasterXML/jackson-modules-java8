@@ -382,12 +382,12 @@ public class InstantDeserializer<T extends Temporal>
     }
 
     // Helper method to find Strings of form "all digits" and "digits-comma-digits"
-    protected int _countPeriods(JsonParser p, String str)
+    protected int _countPeriods(String str, boolean allowLeadingPlusSign)
     {
         int commas = 0;
         int i = 0;
         int ch = str.charAt(i);
-        if (ch == '-' || (ch == '+' && p.isEnabled(ALLOW_LEADING_PLUS_SIGN_FOR_NUMBERS.mappedFeature()))) {
+        if (ch == '-' || (ch == '+' && allowLeadingPlusSign)) {
             ++i;
         }
         for (int end = str.length(); i < end; ++i) {
@@ -420,7 +420,7 @@ public class InstantDeserializer<T extends Temporal>
                 _formatter == DateTimeFormatter.ISO_ZONED_DATE_TIME
             ) {
             // 22-Jan-2016, [datatype-jsr310#16]: Allow quoted numbers too
-            int dots = _countPeriods(p, string);
+            int dots = _countPeriods(string, p.isEnabled(ALLOW_LEADING_PLUS_SIGN_FOR_NUMBERS.mappedFeature()));
             if (dots >= 0) { // negative if not simple number
                 try {
                     if (dots == 0) {
