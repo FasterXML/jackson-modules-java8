@@ -20,6 +20,13 @@ Modules:
   is not time-zone aware
  (contributed by Henning P)
 
+2.18.4 (not yet released)
+
+#291: `InstantDeserializer` fails to parse negative numeric timestamp strings
+  for pre-1970 values
+ (reported by @advorako)
+ (fixed by Kevin M)
+
 2.18.3 (28-Feb-2025)
 
 #333: `ZonedDateTime` serialization with `@JsonFormat.pattern` never uses it
