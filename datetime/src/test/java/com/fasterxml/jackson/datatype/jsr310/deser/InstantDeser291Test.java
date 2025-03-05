@@ -3,7 +3,7 @@ package com.fasterxml.jackson.datatype.jsr310.deser;
 import java.time.Instant;
 import java.util.Locale;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -13,8 +13,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 // [modules-java8#291] InstantDeserializer fails to parse negative numeric timestamp strings for
 //   pre-1970 values.

@@ -194,7 +194,8 @@ public class OffsetTimeDeserTest extends ModuleTestBase
         value = READER.readValue('"' + time.toString() + '"');
         assertEquals(time, value, "The value is not correct.");
 
-        expectSuccess(OffsetTime.of(12, 0, 0, 0, ZoneOffset.UTC), "'12:00Z'");
+        assertEquals(OffsetTime.of(12, 0, 0, 0, ZoneOffset.UTC),
+                read("'12:00Z'"));
     }
 
     @Test
@@ -286,7 +287,7 @@ public class OffsetTimeDeserTest extends ModuleTestBase
     {
         OffsetTime value = READER.with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
     			.readValue(a2q("['12:00Z']"));
-        expect(OffsetTime.of(12, 0, 0, 0, ZoneOffset.UTC), value);
+        assertEquals(OffsetTime.of(12, 0, 0, 0, ZoneOffset.UTC), value);
     }
 
     @Test
@@ -354,21 +355,7 @@ public class OffsetTimeDeserTest extends ModuleTestBase
         }
     }
 
-    private void expectSuccess(Object exp, String json) throws IOException {
-        final OffsetTime value = read(json);
-        assertNotNull(value, "The value should not be null.");
-        assertEquals(exp, value, "The value is not correct.");
-    }
-
     private OffsetTime read(final String json) throws IOException {
         return READER.readValue(a2q(json));
-    }
-
-    private static void notNull(Object value) {
-        assertNotNull(value, "The value should not be null.");
-    }
-
-    private static void expect(Object exp, Object value) {
-        assertEquals(exp, value, "The value is not correct.");
     }
 }
