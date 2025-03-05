@@ -207,3 +207,8 @@ Emanuel Trandafir (@etrandafir93)
 Joo Hyuk Kim (@JooHyukKim)
  * Fixed #308: Can't deserialize `OffsetDateTime.MIN`: Invalid value for EpochDay
   (2.18.2)
+
+Kevin Mahon (@Strongbeard)
+ * Fixed #291: `InstantDeserializer` fails to parse negative numeric timestamp strings
+   for pre-1970 values
+  (2.18.4)
