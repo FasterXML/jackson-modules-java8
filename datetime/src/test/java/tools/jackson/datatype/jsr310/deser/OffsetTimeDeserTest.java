@@ -194,7 +194,8 @@ public class OffsetTimeDeserTest extends ModuleTestBase
         value = READER.readValue('"' + time.toString() + '"');
         assertEquals(time, value, "The value is not correct.");
 
-        expectSuccess(OffsetTime.of(12, 0, 0, 0, ZoneOffset.UTC), "'12:00Z'");
+        assertEquals(OffsetTime.of(12, 0, 0, 0, ZoneOffset.UTC),
+                READER.readValue(a2q("'12:00Z'")));
     }
 
     @Test
@@ -272,7 +273,7 @@ public class OffsetTimeDeserTest extends ModuleTestBase
     public void testDeserializationAsArrayDisabled() throws Throwable
     {
         try {
-            read("['12:00Z']");
+            READER.readValue(a2q("['12:00Z']"));
     	        fail("expected MismatchedInputException");
         } catch (MismatchedInputException e) {
             // not the greatest error message...
@@ -284,7 +285,7 @@ public class OffsetTimeDeserTest extends ModuleTestBase
     public void testDeserializationAsEmptyArrayDisabled() throws Throwable
     {
         // works even without the feature enabled
-        assertNull(read("[]"));
+        assertNull(READER.readValue(a2q("[]")));
     }
 
     @Test
@@ -292,7 +293,7 @@ public class OffsetTimeDeserTest extends ModuleTestBase
     {
         OffsetTime value = READER.with(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
     			.readValue(a2q("['12:00Z']"));
-        expect(OffsetTime.of(12, 0, 0, 0, ZoneOffset.UTC), value);
+        assertEquals(OffsetTime.of(12, 0, 0, 0, ZoneOffset.UTC), value);
     }
 
     @Test
@@ -345,19 +346,5 @@ public class OffsetTimeDeserTest extends ModuleTestBase
 
         String valueFromEmptyStr = mapper.writeValueAsString(asMap(key, ""));
         assertThrows(MismatchedInputException.class, () -> objectReader.readValue(valueFromEmptyStr));
-    }
-
-    private void expectSuccess(Object exp, String json) throws IOException {
-        final OffsetTime value = read(json);
-        assertNotNull(value, "The value should not be null.");
-        assertEquals(exp, value, "The value is not correct.");
-    }
-
-    private OffsetTime read(final String json) throws IOException {
-        return READER.readValue(a2q(json));
-    }
-
-    private static void expect(Object exp, Object value) {
-        assertEquals(exp, value, "The value is not correct.");
     }
 }
