@@ -29,10 +29,7 @@ import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import tools.jackson.core.JacksonException;
-import tools.jackson.core.JsonParser;
-import tools.jackson.core.JsonToken;
-import tools.jackson.core.JsonTokenId;
+import tools.jackson.core.*;
 import tools.jackson.core.io.NumberInput;
 import tools.jackson.core.util.JacksonFeatureSet;
 import tools.jackson.databind.BeanProperty;
@@ -356,8 +353,13 @@ public class InstantDeserializer<T extends Temporal>
     protected int _countPeriods(String str)
     {
         int commas = 0;
-        for (int i = 0, end = str.length(); i < end; ++i) {
-            int ch = str.charAt(i);
+        int i = 0;
+        int ch = str.charAt(i);
+        if (ch == '-' || ch == '+') {
+            ++i;
+        }
+        for (int end = str.length(); i < end; ++i) {
+            ch = str.charAt(i);
             if (ch < '0' || ch > '9') {
                 if (ch == '.') {
                     ++commas;

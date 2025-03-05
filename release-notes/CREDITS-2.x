@@ -209,6 +209,11 @@ Joo Hyuk Kim (@JooHyukKim)
   `WRITE_DURATIONS_AS_TIMESTAMPS` enabled
   (2.19.0)
 
+Kevin Mahon (@Strongbeard)
+ * Fixed #291: `InstantDeserializer` fails to parse negative numeric timestamp strings
+   for pre-1970 values
+  (2.18.4)
+
 Joey Muia (@jmuia)
  * Reported #337: Negative `Duration` does not round-trip properly with
   `WRITE_DURATIONS_AS_TIMESTAMPS` enabled
