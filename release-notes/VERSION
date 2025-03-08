@@ -13,7 +13,7 @@ due to number of types.
 === Releases ===
 ------------------------------------------------------------------------
 
-3.0.0 (not yet released)
+3.0.0-rc1 (07-Mar-2025)
 
 #68: Parsing of `ZoneId` should respect `ALLOW_COERCION_OF_SCALARS`
   wrt empty String
