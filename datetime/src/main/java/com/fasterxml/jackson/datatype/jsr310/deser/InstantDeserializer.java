@@ -95,7 +95,7 @@ public class InstantDeserializer<T extends Temporal>
 
     public static final InstantDeserializer<OffsetDateTime> OFFSET_DATE_TIME = new InstantDeserializer<>(
             OffsetDateTime.class, DateTimeFormatter.ISO_OFFSET_DATE_TIME,
-            OffsetDateTime::from,
+            a -> ZonedDateTime.from(a).toOffsetDateTime(),
             a -> OffsetDateTime.ofInstant(Instant.ofEpochMilli(a.value), a.zoneId),
             InstantDeserializer::decimalToOffsetDateTime,
             (d, z) -> (d.isEqual(OffsetDateTime.MIN) || d.isEqual(OffsetDateTime.MAX) ? d : d.withOffsetSameInstant(z.getRules().getOffset(d.toLocalDateTime()))),
