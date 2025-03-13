@@ -22,7 +22,7 @@ public class OffsetDateTimeDeser279Test
         public Wrapper279(OffsetDateTime d) { date = d; }
         protected Wrapper279() { }
 
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'") //
         public OffsetDateTime getDate() {
             return date;
         }
