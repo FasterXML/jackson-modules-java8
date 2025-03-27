@@ -23,20 +23,19 @@ public class OneBasedMonthDeserializer extends DelegatingDeserializer {
     @Override
     public Object deserialize(JsonParser parser, DeserializationContext context) throws IOException {
         JsonToken token = parser.currentToken();
-        if (_isPossibleNumericValue(token)) {
-            String monthSpec = parser.getText();
-            int oneBasedMonthNumber = _decodeNumber(monthSpec);
-            if (1 <= oneBasedMonthNumber && oneBasedMonthNumber <= 12) {
-                return Month.of(oneBasedMonthNumber);
-            } else if (oneBasedMonthNumber >= 0) {
-                throw new InvalidFormatException(parser, "Month number " + oneBasedMonthNumber + " not allowed for 1-based Month.", oneBasedMonthNumber, Integer.class);
-            }
+        switch (token) {
+            case VALUE_NUMBER_INT:
+                return _decodeMonth(parser.getIntValue(), parser);
+            case VALUE_STRING:
+                String monthSpec = parser.getText();
+                int oneBasedMonthNumber = _decodeNumber(monthSpec);
+                if (oneBasedMonthNumber >= 0) {
+                    return _decodeMonth(oneBasedMonthNumber, parser);
+                }
+                // Otherwise fall through to default handling
+                break;
         }
         return getDelegatee().deserialize(parser, context);
-    }
-
-    private boolean _isPossibleNumericValue(JsonToken token) {
-        return token == JsonToken.VALUE_NUMBER_INT || token == JsonToken.VALUE_STRING;
     }
 
     /**
@@ -61,6 +60,13 @@ public class OneBasedMonthDeserializer extends DelegatingDeserializer {
                 numValue = -1;
         }
         return numValue;
+    }
+
+    private Month _decodeMonth(int oneBasedMonthNumber, JsonParser parser) throws InvalidFormatException {
+        if (Month.JANUARY.getValue() <= oneBasedMonthNumber && oneBasedMonthNumber <= Month.DECEMBER.getValue()) {
+            return Month.of(oneBasedMonthNumber);
+        }
+        throw new InvalidFormatException(parser, "Month number " + oneBasedMonthNumber + " not allowed for 1-based Month.", oneBasedMonthNumber, Integer.class);
     }
 
     @Override
