@@ -222,3 +222,8 @@ Joey Muia (@jmuia)
 Henning Pöttker (@ hpoettker)
  * Contributed #342: Lenient deserialization of `LocalDate` is not time-zone aware
   (2.19.0)
+
+Boleslav Bobcik (@bbobcik)
+ * Reported, contributed fix for #364: Deserialization of Month in ONE_BASED_MONTHS
+   mode fails for value "12"
+  (2.19.0)

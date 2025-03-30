@@ -19,6 +19,8 @@ Modules:
 #342: Lenient deserialization of `LocalDate`, `LocalDateTime`
   is not time-zone aware
  (contributed by Henning P)
+#364: Deserialization of Month in ONE_BASED_MONTHS mode fails for value "12"
+ (reported, fix contributed by Boleslav B)
 
 2.18.4 (not yet released)
 
