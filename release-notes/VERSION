@@ -1,7 +1,7 @@
 Project: jackson-modules-java8
 Versions: 3.x (for earlier, see VERSION-2.x)
 Modules:
-  jackson-datatype-jsr310
+  jackson-datatype-jsr310 (deprecated, no functionality as of 3.0)
   jackson-datatype-jdk8 (deprecated, no functionality as of 3.0)
   jackson-module-parameter-names (deprecated, no functionality as of 3.0)
 
@@ -12,6 +12,11 @@ due to number of types.
 ------------------------------------------------------------------------
 === Releases ===
 ------------------------------------------------------------------------
+
+3.0.0-rc3 (never)
+
+The last module -- `jackson-datatype-jsr310` -- merged into `jackson-databind`.
+This repo no longer needed.
 
 3.0.0-rc2 (28-Mar-2025)
 

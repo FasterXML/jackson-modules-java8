@@ -1,12 +1,14 @@
+**NOTE**: only available for Jackson 2.x; functionality included directly in `jackson-databind`
+for Jackson 3.x.
+
+-----
+
 Jackson module
 that adds supports for JDK datatypes included in version 8 which can not be directly
 supported by core databind due to baseline being JDK 6, excluding following:
 
 * New Date/Time datatypes (supported by `jackson-datatype-jsr310` module)
 * Support for parameter names (supported by `jackson-module-parameter-names`)
-
-NOTE: only available for Jackson 2.x; functionality included in `jackson-databind` itself
-for Jackson 3.x.
 
 ## Usage
 

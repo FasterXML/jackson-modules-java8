@@ -1,3 +1,8 @@
+**NOTE**: only available for Jackson 2.x; functionality included directly in `jackson-databind`
+for Jackson 3.x.
+
+-----
+
 Datatype module to make Jackson recognize Java 8 Date & Time API data types (JSR-310).
 
 ## Summary

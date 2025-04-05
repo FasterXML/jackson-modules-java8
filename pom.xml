@@ -14,9 +14,8 @@
   </description>
 
   <modules>
-    <module>datetime</module>
-
 <!-- 03-Mar-2021, tatu: Stop actually publishing these modules for 3.0 
+    <module>datetime</module>
     <module>parameter-names</module>
     <module>datatypes</module>
 -->
