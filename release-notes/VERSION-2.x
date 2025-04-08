@@ -8,7 +8,7 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
-2.19.0 (not yet released)
+2.19.0-rc2 (07-Apr-2025)
 
 #336: Optimize `InstantDeserializer` `addInColonToOffsetIfMissing()`
  (contributed by David S)
