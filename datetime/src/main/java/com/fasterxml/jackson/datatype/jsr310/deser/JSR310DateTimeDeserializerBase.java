@@ -1,6 +1,7 @@
 package com.fasterxml.jackson.datatype.jsr310.deser;
 
 import java.io.IOException;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.ResolverStyle;
@@ -168,6 +169,11 @@ public abstract class JSR310DateTimeDeserializerBase<T>
             //a time zone picked up from JsonFormat annotation, otherwise serialization might not work
             if (formatOverrides.hasTimeZone()) {
                 df = df.withZone(formatOverrides.getTimeZone().toZoneId());
+            } else {
+                // [#279] OffsetDateTimedeserialization fails when using (specific?) date-time pattern #279
+                if (pattern.endsWith("'Z'")) {
+                    df = df.withZone(ZoneOffset.UTC);
+                }
             }
             deser = deser.withDateFormat(df);
         }
