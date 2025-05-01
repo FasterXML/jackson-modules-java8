@@ -68,22 +68,21 @@
   <build>
     <pluginManagement>
       <plugins>
-	<plugin>
-	  <!-- Inherited from oss-base. Generate PackageVersion.java.-->
-          <groupId>com.google.code.maven-replacer-plugin</groupId>
-          <artifactId>replacer</artifactId>
-	  <executions>
+	  <plugin>
+	    <!-- Inherited from oss-base. Generate PackageVersion.java.-->
+         <groupId>com.google.code.maven-replacer-plugin</groupId>
+         <artifactId>replacer</artifactId>
+	    <executions>
             <execution>
               <id>process-packageVersion</id>
               <phase>generate-sources</phase>
             </execution>
-          </executions>
-	</plugin>
-
-	<plugin>
+         </executions>
+       </plugin>
+	  <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-	</plugin>
+	  </plugin>
       </plugins>
     </pluginManagement>
   </build>
