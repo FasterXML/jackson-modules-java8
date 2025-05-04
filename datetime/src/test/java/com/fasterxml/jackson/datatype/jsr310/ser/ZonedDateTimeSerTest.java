@@ -17,10 +17,8 @@
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
@@ -30,14 +28,12 @@ import java.util.TimeZone;
 
 import org.junit.jupiter.api.Test;
 
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
@@ -973,6 +969,20 @@ public class ZonedDateTimeSerTest
     public void testShapeInt() throws JsonProcessingException {
         String json1 = newMapper().writeValueAsString(new Pojo1());
         assertEquals("{\"t1\":1651053600000,\"t2\":1651053600.000000000}", json1);
+    }
+
+    // [dataformat-joda#92] DateTime serialization result is not same as Java 8 ZonedDateTime
+    @Test
+    public void testSerializationWithZone() throws Exception
+    {
+        ZonedDateTime java8ZonedDateTime = ZonedDateTime.of(2023, 10, 1, 12, 0, 0, 0,
+                ZoneId.of("Asia/Shanghai"));
+
+        String actual = MAPPER.writer()
+                .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .writeValueAsString(java8ZonedDateTime);
+
+        assertEquals("\"2023-10-01T12:00:00+08:00\"", actual);
     }
 
     private static void assertIsEqual(ZonedDateTime expected, ZonedDateTime actual)
