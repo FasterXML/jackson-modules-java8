@@ -993,13 +993,21 @@ public class ZonedDateTimeSerTest
         ZonedDateTime java8ZonedDateTime = ZonedDateTime.of(2023, 10, 1, 12, 0, 0, 0,
                 ZoneId.of("Asia/Shanghai"));
 
-        String actual = MAPPER.writer()
+        // Without WRITE_DATES_WITH_CONTEXT_TIME_ZONE
+        assertEquals("\"2023-10-01T12:00:00+08:00\"",
+                MAPPER.writer()
                 .with(TimeZone.getTimeZone("UTC"))
+                .without(SerializationFeature.WRITE_DATES_WITH_CONTEXT_TIME_ZONE)
                 .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .writeValueAsString(java8ZonedDateTime);
+                .writeValueAsString(java8ZonedDateTime));
 
-        // Actual   :"2023-10-01T04:00:00Z"
-        assertEquals("\"2023-10-01T12:00:00+08:00\"", actual);
+        // With WRITE_DATES_WITH_CONTEXT_TIME_ZONE
+        assertEquals("\"2023-10-01T04:00:00Z\"",
+                MAPPER.writer()
+                .with(TimeZone.getTimeZone("UTC"))
+                .with(SerializationFeature.WRITE_DATES_WITH_CONTEXT_TIME_ZONE)
+                .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .writeValueAsString(java8ZonedDateTime));
     }
 
     private static void assertIsEqual(ZonedDateTime expected, ZonedDateTime actual)
