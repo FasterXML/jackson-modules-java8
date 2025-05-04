@@ -38,6 +38,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
+import com.fasterxml.jackson.datatype.jsr310.testutil.failure.JacksonTestFailureExpected;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -982,6 +983,22 @@ public class ZonedDateTimeSerTest
                 .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .writeValueAsString(java8ZonedDateTime);
 
+        assertEquals("\"2023-10-01T12:00:00+08:00\"", actual);
+    }
+
+    // [dataformat-joda#92] DateTime serialization result is not same as Java 8 ZonedDateTime
+    @Test
+    public void testSerializationWithZoneWithDefaultTimeZone() throws Exception
+    {
+        ZonedDateTime java8ZonedDateTime = ZonedDateTime.of(2023, 10, 1, 12, 0, 0, 0,
+                ZoneId.of("Asia/Shanghai"));
+
+        String actual = MAPPER.writer()
+                .with(TimeZone.getTimeZone("UTC"))
+                .without(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .writeValueAsString(java8ZonedDateTime);
+
+        // Actual   :"2023-10-01T04:00:00Z"
         assertEquals("\"2023-10-01T12:00:00+08:00\"", actual);
     }
 
