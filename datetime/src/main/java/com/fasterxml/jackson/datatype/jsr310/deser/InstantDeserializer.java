@@ -355,10 +355,6 @@ public class InstantDeserializer<T extends Temporal>
                 return _fromLong(context, parser.getLongValue());
             case JsonTokenId.ID_STRING:
                 return _fromString(parser, context, parser.getText());
-            // 30-Sep-2020, tatu: New! "Scalar from Object" (mostly for XML)
-            case JsonTokenId.ID_START_OBJECT:
-                return _fromString(parser, context,
-                        context.extractScalarFromObject(parser, this, handledType()));
             case JsonTokenId.ID_EMBEDDED_OBJECT:
                 // 20-Apr-2016, tatu: Related to [databind#1208], can try supporting embedded
                 //    values quite easily
@@ -366,6 +362,14 @@ public class InstantDeserializer<T extends Temporal>
 
             case JsonTokenId.ID_START_ARRAY:
                 return _deserializeFromArray(parser, context);
+            // 30-Sep-2020, tatu: New! "Scalar from Object" (mostly for XML)
+            case JsonTokenId.ID_START_OBJECT:
+                // 17-May-2025, tatu: [databind#4656] need to check for `null`
+                String str = context.extractScalarFromObject(parser, this, handledType());
+                if (str != null) {
+                    return _fromString(parser, context, str);
+                }
+                // fall through
         }
         return _handleUnexpectedToken(context, parser, JsonToken.VALUE_STRING,
                 JsonToken.VALUE_NUMBER_INT, JsonToken.VALUE_NUMBER_FLOAT);

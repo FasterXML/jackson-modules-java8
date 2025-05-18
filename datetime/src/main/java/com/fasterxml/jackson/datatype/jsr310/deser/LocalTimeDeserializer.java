@@ -103,51 +103,55 @@ public class LocalTimeDeserializer extends JSR310DateTimeDeserializerBase<LocalT
     }
 
     @Override
-    public LocalTime deserialize(JsonParser parser, DeserializationContext context) throws IOException
+    public LocalTime deserialize(JsonParser p, DeserializationContext ctxt) throws IOException
     {
-        if (parser.hasToken(JsonToken.VALUE_STRING)) {
-            return _fromString(parser, context, parser.getText());
+        if (p.hasToken(JsonToken.VALUE_STRING)) {
+            return _fromString(p, ctxt, p.getText());
         }
         // 30-Sep-2020, tatu: New! "Scalar from Object" (mostly for XML)
-        if (parser.isExpectedStartObjectToken()) {
-            return _fromString(parser, context,
-                    context.extractScalarFromObject(parser, this, handledType()));
+        if (p.isExpectedStartObjectToken()) {
+            // 17-May-2025, tatu: [databind#4656] need to check for `null`
+            String str = ctxt.extractScalarFromObject(p, this, handledType());
+            if (str != null) {
+                return _fromString(p, ctxt, str);
+            }
+            return _handleUnexpectedToken(ctxt, p, "Expected array or string");
         }
-        if (parser.isExpectedStartArrayToken()) {
-            JsonToken t = parser.nextToken();
+        if (p.isExpectedStartArrayToken()) {
+            JsonToken t = p.nextToken();
             if (t == JsonToken.END_ARRAY) {
                 return null;
             }
-            if (context.isEnabled(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
+            if (ctxt.isEnabled(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)
                     && (t == JsonToken.VALUE_STRING || t==JsonToken.VALUE_EMBEDDED_OBJECT)) {
-                final LocalTime parsed = deserialize(parser, context);
-                if (parser.nextToken() != JsonToken.END_ARRAY) {
-                    handleMissingEndArrayForSingle(parser, context);
+                final LocalTime parsed = deserialize(p, ctxt);
+                if (p.nextToken() != JsonToken.END_ARRAY) {
+                    handleMissingEndArrayForSingle(p, ctxt);
                 }
                 return parsed;            
             }
             if (t == JsonToken.VALUE_NUMBER_INT) {
-                int hour = parser.getIntValue();
+                int hour = p.getIntValue();
     
-                parser.nextToken();
-                int minute = parser.getIntValue();
+                p.nextToken();
+                int minute = p.getIntValue();
                 LocalTime result;
     
-                t = parser.nextToken();
+                t = p.nextToken();
                 if (t == JsonToken.END_ARRAY) {
                     result = LocalTime.of(hour, minute);
                 } else {
-                    int second = parser.getIntValue();
-                    t = parser.nextToken();
+                    int second = p.getIntValue();
+                    t = p.nextToken();
                     if (t == JsonToken.END_ARRAY) {
                         result = LocalTime.of(hour, minute, second);
                     } else {
-                        int partialSecond = parser.getIntValue();
-                        if(partialSecond < 1_000 && !shouldReadTimestampsAsNanoseconds(context))
+                        int partialSecond = p.getIntValue();
+                        if(partialSecond < 1_000 && !shouldReadTimestampsAsNanoseconds(ctxt))
                             partialSecond *= 1_000_000; // value is milliseconds, convert it to nanoseconds
-                        t = parser.nextToken();
+                        t = p.nextToken();
                         if (t != JsonToken.END_ARRAY) {
-                            throw context.wrongTokenException(parser, handledType(), JsonToken.END_ARRAY,
+                            throw ctxt.wrongTokenException(p, handledType(), JsonToken.END_ARRAY,
                                     "Expected array to end");
                         }
                         result = LocalTime.of(hour, minute, second, partialSecond);
@@ -155,17 +159,17 @@ public class LocalTimeDeserializer extends JSR310DateTimeDeserializerBase<LocalT
                 }
                 return result;
             }
-            context.reportInputMismatch(handledType(),
+            ctxt.reportInputMismatch(handledType(),
                     "Unexpected token (%s) within Array, expected VALUE_NUMBER_INT",
                     t);
         }
-        if (parser.hasToken(JsonToken.VALUE_EMBEDDED_OBJECT)) {
-            return (LocalTime) parser.getEmbeddedObject();
+        if (p.hasToken(JsonToken.VALUE_EMBEDDED_OBJECT)) {
+            return (LocalTime) p.getEmbeddedObject();
         }
-        if (parser.hasToken(JsonToken.VALUE_NUMBER_INT)) {
-            _throwNoNumericTimestampNeedTimeZone(parser, context);
+        if (p.hasToken(JsonToken.VALUE_NUMBER_INT)) {
+            _throwNoNumericTimestampNeedTimeZone(p, ctxt);
         }
-        return _handleUnexpectedToken(context, parser, "Expected array or string.");
+        return _handleUnexpectedToken(ctxt, p, "Expected array or string");
     }
 
     protected boolean shouldReadTimestampsAsNanoseconds(DeserializationContext context) {

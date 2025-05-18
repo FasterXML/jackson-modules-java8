@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.time.Month;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
+
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.deser.std.DelegatingDeserializer;
@@ -21,21 +21,21 @@ public class OneBasedMonthDeserializer extends DelegatingDeserializer {
     }
 
     @Override
-    public Object deserialize(JsonParser parser, DeserializationContext context) throws IOException {
-        JsonToken token = parser.currentToken();
-        switch (token) {
-            case VALUE_NUMBER_INT:
-                return _decodeMonth(parser.getIntValue(), parser);
-            case VALUE_STRING:
-                String monthSpec = parser.getText();
-                int oneBasedMonthNumber = _decodeNumber(monthSpec);
-                if (oneBasedMonthNumber >= 0) {
-                    return _decodeMonth(oneBasedMonthNumber, parser);
-                }
-                // Otherwise fall through to default handling
-                break;
+    public Object deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+        switch (p.currentToken()) {
+        case VALUE_NUMBER_INT:
+            return _decodeMonth(p.getIntValue(), p);
+        case VALUE_STRING:
+            String monthSpec = p.getText();
+            int oneBasedMonthNumber = _decodeNumber(monthSpec);
+            if (oneBasedMonthNumber >= 0) {
+                return _decodeMonth(oneBasedMonthNumber, p);
+            }
+            // Otherwise fall through to default handling
+            break;
+        default:
         }
-        return getDelegatee().deserialize(parser, context);
+        return getDelegatee().deserialize(p, ctxt);
     }
 
     /**
