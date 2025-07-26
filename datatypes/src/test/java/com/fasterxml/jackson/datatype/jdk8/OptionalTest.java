@@ -266,6 +266,17 @@ public class OptionalTest extends ModuleTestBase
         assertTrue(t2.isCollectionLikeType());
     }
 
+    // [modules-java8#372]
+    public void testIssue372() throws Exception
+    {
+        JsonNode input = MAPPER.getNodeFactory().textNode("abc");
+        //JavaType type = MAPPER.getTypeFactory().constructType(Optional.class);
+        JavaType type = TypeFactory.defaultInstance().constructType(Optional.class);
+        //JavaType type = MAPPER.constructType(Optional.class);
+        Optional<?> value = MAPPER.readValue(MAPPER.treeAsTokens(input), type);
+        assertEquals(Optional.of("abc"), value);
+    }
+
     /*
     /**********************************************************
     /* Helper methods

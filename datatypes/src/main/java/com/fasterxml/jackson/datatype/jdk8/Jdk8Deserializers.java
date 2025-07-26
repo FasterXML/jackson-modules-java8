@@ -26,7 +26,7 @@ public class Jdk8Deserializers
     public Jdk8Deserializers(boolean cfgReadAbsentAsNull) {
         _cfgReadAbsentAsNull = cfgReadAbsentAsNull;
     }
-    
+
     @Override // since 2.7
     public JsonDeserializer<?> findReferenceDeserializer(ReferenceType refType,
             DeserializationConfig config, BeanDescription beanDesc,
@@ -49,6 +49,25 @@ public class Jdk8Deserializers
         }
         if (refType.hasRawClass(OptionalDouble.class)) {
             return OptionalDoubleDeserializer.INSTANCE;
+        }
+        return null;
+    }
+
+    // @since 2.18.5 wrt [modules-java8#372]
+    @Override
+    public JsonDeserializer<?> findBeanDeserializer(JavaType type,
+            DeserializationConfig config, BeanDescription beanDesc)
+        throws JsonMappingException
+    {
+        // 25-Jul-2025, tatu: [modules-java8#372] - work-around for misconfigured
+        //   `TypeFactory` that does not use `Jdk8TypeModifier`
+        if (type.hasRawClass(Optional.class)) {
+            // Not the cleanest but has to do: create properly resolved type;
+            // pass `null` for `contentTypeDeserializer` and `contentDeserializer`
+            // (to be resolver contextually)
+            JavaType refType = config.constructType(Optional.class);
+            return new OptionalDeserializer(refType, null, null, null,
+                    _cfgReadAbsentAsNull);
         }
         return null;
     }
