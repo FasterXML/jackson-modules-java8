@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
@@ -872,5 +873,97 @@ public class OffsetDateTimeDeserTest
 
     private static String offsetWithoutColon(String string){
         return new StringBuilder(string).deleteCharAt(string.lastIndexOf(":")).toString();
+    }
+
+    /*
+    /**********************************************************
+    /* Tests for custom formatter (#376)
+    /**********************************************************
+     */
+
+    @Test
+    public void testDeserializationWithCustomFormatter() throws Exception
+    {
+        // Create a custom formatter that can parse ISO_LOCAL_DATE_TIME and default offset to 0
+        DateTimeFormatter customFormatter = new java.time.format.DateTimeFormatterBuilder()
+                .append(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                .optionalStart()
+                .parseLenient()
+                .appendOffsetId()
+                .parseStrict()
+                .optionalEnd()
+                .parseDefaulting(java.time.temporal.ChronoField.OFFSET_SECONDS, 0)
+                .toFormatter();
+
+        // Create custom deserializer with the custom formatter
+        InstantDeserializer<OffsetDateTime> customDeserializer =
+                InstantDeserializer.withCustomFormatter(InstantDeserializer.OFFSET_DATE_TIME, customFormatter);
+
+        // Create a custom module to override the default deserializer
+        com.fasterxml.jackson.databind.module.SimpleModule customModule =
+                new com.fasterxml.jackson.databind.module.SimpleModule("CustomOffsetDateTimeModule");
+        customModule.addDeserializer(OffsetDateTime.class, customDeserializer);
+
+        // Add both JavaTimeModule (for other types) and our custom module
+        // The custom module will override OffsetDateTime deserialization
+        ObjectMapper mapper = mapperBuilder()
+                .addModule(customModule)
+                .build();
+
+        // Test deserializing date-time without offset (should default to +00:00)
+        // This is the main use case from issue #376 - parsing ISO_LOCAL_DATE_TIME with default offset
+        String jsonWithoutOffset = q("2025-01-01T22:01:05");
+        OffsetDateTime result = mapper.readValue(jsonWithoutOffset, OffsetDateTime.class);
+
+        assertNotNull(result);
+        assertEquals(2025, result.getYear());
+        assertEquals(1, result.getMonthValue());
+        assertEquals(1, result.getDayOfMonth());
+        assertEquals(22, result.getHour());
+        assertEquals(1, result.getMinute());
+        assertEquals(5, result.getSecond());
+        assertEquals(ZoneOffset.UTC, result.getOffset());
+
+        // Test that standard ISO format with offset still works
+        String jsonWithOffset = q("2025-01-01T22:01:05+02:00");
+        OffsetDateTime resultWithOffset = mapper.readValue(jsonWithOffset, OffsetDateTime.class);
+
+        assertNotNull(resultWithOffset);
+        assertEquals(2025, resultWithOffset.getYear());
+        // Verify parsing succeeded - the exact time may be adjusted based on offset conversion
+        assertTrue(resultWithOffset.toInstant().equals(OffsetDateTime.parse("2025-01-01T22:01:05+02:00").toInstant()));
+    }
+
+    @Test
+    public void testDeserializationWithCustomFormatterRoundTrip() throws Exception
+    {
+        // Create a custom formatter that can parse ISO_LOCAL_DATE_TIME and default offset to 0
+        DateTimeFormatter customFormatter = new java.time.format.DateTimeFormatterBuilder()
+                .append(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                .optionalStart()
+                .parseLenient()
+                .appendOffsetId()
+                .parseStrict()
+                .optionalEnd()
+                .parseDefaulting(java.time.temporal.ChronoField.OFFSET_SECONDS, 0)
+                .toFormatter();
+
+        InstantDeserializer<OffsetDateTime> customDeserializer =
+                InstantDeserializer.withCustomFormatter(InstantDeserializer.OFFSET_DATE_TIME, customFormatter);
+
+        com.fasterxml.jackson.databind.module.SimpleModule customModule =
+                new com.fasterxml.jackson.databind.module.SimpleModule();
+        customModule.addDeserializer(OffsetDateTime.class, customDeserializer);
+
+        ObjectMapper mapper = mapperBuilder()
+                .addModule(customModule)
+                .build();
+
+        // Verify standard ISO format still works
+        OffsetDateTime original = OffsetDateTime.of(2025, 1, 1, 22, 1, 5, 0, ZoneOffset.UTC);
+        String json = mapper.writeValueAsString(original);
+        OffsetDateTime roundTripped = mapper.readValue(json, OffsetDateTime.class);
+
+        assertIsEqual(original, roundTripped);
     }
 }

@@ -299,6 +299,22 @@ public class InstantDeserializer<T extends Temporal>
         _alwaysAllowStringifiedDateTimestamps = features.isEnabled(JavaTimeFeature.ALWAYS_ALLOW_STRINGIFIED_DATE_TIMESTAMPS);
     }
 
+    /**
+     * Factory method to create a new deserializer instance with a custom {@link DateTimeFormatter}.
+     * This is primarily intended for {@link OffsetDateTime} and {@link ZonedDateTime} deserialization,
+     * allowing customization of parsing behavior (e.g., defaulting offset values or controlling nano-second precision).
+     *
+     * @param base Base deserializer to copy settings from (typically one of the static instances like
+     *             {@link #OFFSET_DATE_TIME}, {@link #ZONED_DATE_TIME}, or {@link #INSTANT})
+     * @param formatter Custom {@link DateTimeFormatter} to use for parsing
+     * @return New deserializer instance with the custom formatter
+     * @since 2.19
+     */
+    public static <T extends Temporal> InstantDeserializer<T> withCustomFormatter(
+            InstantDeserializer<T> base, DateTimeFormatter formatter) {
+        return new InstantDeserializer<>(base, formatter);
+    }
+
     @Override
     protected InstantDeserializer<T> withDateFormat(DateTimeFormatter dtf) {
         if (dtf == _formatter) {
