@@ -6,6 +6,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.Temporal;
 import java.util.TimeZone;
 
@@ -14,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
@@ -298,7 +299,7 @@ public class OffsetDateTimeSerTest
     {
         // Create a custom formatter that displays only 3 digits of nano-seconds instead of 9
         // Use ISO_LOCAL_DATE and ISO_LOCAL_TIME separately to control nanosecond precision
-        DateTimeFormatter customFormatter = new java.time.format.DateTimeFormatterBuilder()
+        DateTimeFormatter customFormatter = new DateTimeFormatterBuilder()
                 .append(DateTimeFormatter.ISO_LOCAL_DATE)
                 .appendLiteral('T')
                 .appendValue(java.time.temporal.ChronoField.HOUR_OF_DAY, 2)
@@ -314,20 +315,9 @@ public class OffsetDateTimeSerTest
                 .appendOffsetId()
                 .toFormatter();
 
-        OffsetDateTimeSerializer customSerializer = new OffsetDateTimeSerializer(customFormatter);
-
-        com.fasterxml.jackson.databind.module.SimpleModule customModule =
-                new com.fasterxml.jackson.databind.module.SimpleModule("CustomOffsetDateTimeModule");
-        customModule.addSerializer(OffsetDateTime.class, customSerializer);
-
-        // Add both JavaTimeModule and our custom module
-        ObjectMapper mapper = mapperBuilder()
-                .addModule(customModule)
-                .build();
-
         // Create a date with nanoseconds (123456789 nanos = .123456789 seconds)
         OffsetDateTime date = OffsetDateTime.of(2025, 1, 1, 22, 1, 5, 123456789, ZoneOffset.UTC);
-        String json = mapper.writeValueAsString(date);
+        String json = _mapper(customFormatter).writeValueAsString(date);
 
         // Should output with only 3 digits of nano precision (.123 instead of .123456789)
         assertEquals(q("2025-01-01T22:01:05.123Z"), json);
@@ -337,7 +327,7 @@ public class OffsetDateTimeSerTest
     public void testSerializationWithCustomFormatterNoNanos() throws Exception
     {
         // Create a formatter without nanoseconds
-        DateTimeFormatter customFormatter = new java.time.format.DateTimeFormatterBuilder()
+        DateTimeFormatter customFormatter = new DateTimeFormatterBuilder()
                 .append(DateTimeFormatter.ISO_LOCAL_DATE)
                 .appendLiteral('T')
                 .appendValue(java.time.temporal.ChronoField.HOUR_OF_DAY, 2)
@@ -350,18 +340,8 @@ public class OffsetDateTimeSerTest
                 .appendOffsetId()
                 .toFormatter();
 
-        OffsetDateTimeSerializer customSerializer = new OffsetDateTimeSerializer(customFormatter);
-
-        com.fasterxml.jackson.databind.module.SimpleModule customModule =
-                new com.fasterxml.jackson.databind.module.SimpleModule("CustomOffsetDateTimeModule");
-        customModule.addSerializer(OffsetDateTime.class, customSerializer);
-
-        ObjectMapper mapper = mapperBuilder()
-                .addModule(customModule)
-                .build();
-
         OffsetDateTime date = OffsetDateTime.of(2025, 1, 1, 22, 1, 5, 123456789, ZoneOffset.UTC);
-        String json = mapper.writeValueAsString(date);
+        String json = _mapper(customFormatter).writeValueAsString(date);
 
         // Should output without nanoseconds
         assertEquals(q("2025-01-01T22:01:05Z"), json);
@@ -371,7 +351,7 @@ public class OffsetDateTimeSerTest
     public void testSerializationWithCustomFormatterAndOffset() throws Exception
     {
         // Create a custom formatter that displays only 3 digits of nano-seconds
-        DateTimeFormatter customFormatter = new java.time.format.DateTimeFormatterBuilder()
+        DateTimeFormatter customFormatter = new DateTimeFormatterBuilder()
                 .append(DateTimeFormatter.ISO_LOCAL_DATE)
                 .appendLiteral('T')
                 .appendValue(java.time.temporal.ChronoField.HOUR_OF_DAY, 2)
@@ -387,21 +367,22 @@ public class OffsetDateTimeSerTest
                 .appendOffsetId()
                 .toFormatter();
 
-        OffsetDateTimeSerializer customSerializer = new OffsetDateTimeSerializer(customFormatter);
-
-        com.fasterxml.jackson.databind.module.SimpleModule customModule =
-                new com.fasterxml.jackson.databind.module.SimpleModule("CustomOffsetDateTimeModule");
-        customModule.addSerializer(OffsetDateTime.class, customSerializer);
-
-        ObjectMapper mapper = mapperBuilder()
-                .addModule(customModule)
-                .build();
 
         // Create a date with a non-UTC offset
         OffsetDateTime date = OffsetDateTime.of(2025, 1, 1, 22, 1, 5, 123456789, ZoneOffset.ofHours(5));
-        String json = mapper.writeValueAsString(date);
+        String json = _mapper(customFormatter).writeValueAsString(date);
 
         // Should output with offset +05:00 and 3 digits of nano precision
         assertEquals(q("2025-01-01T22:01:05.123+05:00"), json);
+    }
+
+    private ObjectMapper _mapper(DateTimeFormatter dtf) {
+        OffsetDateTimeSerializer customSerializer = OffsetDateTimeSerializer.INSTANCE
+                .withFormatter(dtf);
+        SimpleModule customModule = new SimpleModule("CustomOffsetDateTimeModule")
+            .addSerializer(OffsetDateTime.class, customSerializer);
+        return mapperBuilder()
+                .addModule(customModule)
+                .build();
     }
 }

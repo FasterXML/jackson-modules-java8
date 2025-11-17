@@ -36,16 +36,11 @@ public class OffsetDateTimeSerializer extends InstantSerializerBase<OffsetDateTi
     }
 
     /**
-     * Constructor for creating a new serializer instance with a custom {@link DateTimeFormatter}.
-     * This allows customization of the serialization output format, such as controlling nano-second precision
-     * (e.g., 3 digits instead of 9).
-     *
-     * @param formatter Custom {@link DateTimeFormatter} to use for formatting
-     * @since 2.19
+     * @since 2.21
      */
-    public OffsetDateTimeSerializer(DateTimeFormatter formatter) {
-        // Call the protected constructor with useTimestamp=false to ensure string serialization
-        this(INSTANCE, false, formatter, JsonFormat.Shape.STRING);
+    public OffsetDateTimeSerializer withFormatter(DateTimeFormatter formatter)
+    {
+        return new OffsetDateTimeSerializer(this, _useTimestamp, formatter, _shape);
     }
 
     @Override
