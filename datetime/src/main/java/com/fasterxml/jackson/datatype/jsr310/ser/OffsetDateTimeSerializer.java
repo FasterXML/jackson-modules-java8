@@ -36,6 +36,20 @@ public class OffsetDateTimeSerializer extends InstantSerializerBase<OffsetDateTi
     }
 
     /**
+     * Method for constructing a new {@code OffsetDateTimeSerializer} with settings
+     * of this serializer but with custom {@link DateTimeFormatter} overrides.
+     * Commonly used on {@code INSTANCE} like so:
+     *<pre>
+     *  DateTimeFormatter dtf = new DateTimeFormatterBuilder()
+     *          .append(DateTimeFormatter.ISO_LOCAL_DATE)
+     *          .appendLiteral('T')
+     *          // and so on
+     *          .toFormatter();
+     *  OffsetDateTimeSerializer ser = OffsetDateTimeSerializer.INSTANCE
+     *          .withFormatter(dtf);
+     *  // register via Module
+     *</pre>
+     *
      * @since 2.21
      */
     public OffsetDateTimeSerializer withFormatter(DateTimeFormatter formatter)

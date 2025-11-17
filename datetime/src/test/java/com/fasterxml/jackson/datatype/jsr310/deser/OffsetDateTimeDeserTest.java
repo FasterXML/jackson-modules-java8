@@ -13,12 +13,11 @@ import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Feature;
+
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.json.JsonMapper;
+
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 import com.fasterxml.jackson.datatype.jsr310.MockObjectConfiguration;
@@ -876,9 +875,9 @@ public class OffsetDateTimeDeserTest
     }
 
     /*
-    /**********************************************************
-    /* Tests for custom formatter (#376)
-    /**********************************************************
+    /**********************************************************************
+    /* Tests for custom formatter (modules-java8#376)
+    /**********************************************************************
      */
 
     @Test
@@ -897,12 +896,11 @@ public class OffsetDateTimeDeserTest
 
         // Create custom deserializer with the custom formatter
         InstantDeserializer<OffsetDateTime> customDeserializer =
-                InstantDeserializer.withCustomFormatter(InstantDeserializer.OFFSET_DATE_TIME, customFormatter);
+                InstantDeserializer.OFFSET_DATE_TIME.withDateFormat(customFormatter);
 
         // Create a custom module to override the default deserializer
-        com.fasterxml.jackson.databind.module.SimpleModule customModule =
-                new com.fasterxml.jackson.databind.module.SimpleModule("CustomOffsetDateTimeModule");
-        customModule.addDeserializer(OffsetDateTime.class, customDeserializer);
+        SimpleModule customModule = new SimpleModule("CustomOffsetDateTimeModule")
+            .addDeserializer(OffsetDateTime.class, customDeserializer);
 
         // Add both JavaTimeModule (for other types) and our custom module
         // The custom module will override OffsetDateTime deserialization
@@ -949,11 +947,9 @@ public class OffsetDateTimeDeserTest
                 .toFormatter();
 
         InstantDeserializer<OffsetDateTime> customDeserializer =
-                InstantDeserializer.withCustomFormatter(InstantDeserializer.OFFSET_DATE_TIME, customFormatter);
-
-        com.fasterxml.jackson.databind.module.SimpleModule customModule =
-                new com.fasterxml.jackson.databind.module.SimpleModule();
-        customModule.addDeserializer(OffsetDateTime.class, customDeserializer);
+                InstantDeserializer.OFFSET_DATE_TIME.withDateFormat(customFormatter);
+        SimpleModule customModule = new SimpleModule("CustomOffsetDateTimeModule")
+                .addDeserializer(OffsetDateTime.class, customDeserializer);
 
         ObjectMapper mapper = mapperBuilder()
                 .addModule(customModule)
