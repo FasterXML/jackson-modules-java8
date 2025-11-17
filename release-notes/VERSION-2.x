@@ -14,6 +14,9 @@ Modules:
   negative timestamps incorrectly
  (reported by Kevin M)
  (fix by @cowtowncoder, w/ Claude code)
+#376: Allow specifying custom `DateTimeFormatter` for `OffsetDateTime` ser/deser
+  (new constructors?)
+ (requested by @ZIRAKrezovic)
 
 No changes since 2.20
 
