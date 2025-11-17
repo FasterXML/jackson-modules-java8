@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.datatype.jsr310.tofix;
+package com.fasterxml.jackson.datatype.jsr310.deser;
 
 import java.time.Instant;
 
@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.datatype.jsr310.ModuleTestBase;
-import com.fasterxml.jackson.datatype.jsr310.testutil.failure.JacksonTestFailureExpected;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -18,7 +17,6 @@ public class InstantDeserializerNegative359Test
 {
     private final ObjectReader READER = newMapper().readerFor(Instant.class);
 
-    @JacksonTestFailureExpected
     @Test
     public void testDeserializationAsFloat04()
         throws Exception

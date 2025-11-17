@@ -213,6 +213,9 @@ Kevin Mahon (@Strongbeard)
  * Fixed #291: `InstantDeserializer` fails to parse negative numeric timestamp strings
    for pre-1970 values
   (2.18.4)
+ * Reported #359: `InstantDeserializer` deserializes the nanosecond portion of fractional
+   negative timestamps incorrectly
+  (2.21.0)
 
 Joey Muia (@jmuia)
  * Reported #337: Negative `Duration` does not round-trip properly with

@@ -10,6 +10,11 @@ Modules:
 
 2.21.0 (not yet released)
 
+#359: `InstantDeserializer` deserializes the nanosecond portion of fractional
+  negative timestamps incorrectly
+ (reported by Kevin M)
+ (fix by @cowtowncoder, w/ Claude code)
+
 No changes since 2.20
 
 2.20.1 (30-Oct-2025)
