@@ -222,7 +222,7 @@ Joey Muia (@jmuia)
   `WRITE_DURATIONS_AS_TIMESTAMPS` enabled
   (2.19.0)
 
-Henning Pöttker (@ hpoettker)
+Henning Pöttker (@hpoettker)
  * Contributed #342: Lenient deserialization of `LocalDate` is not time-zone aware
   (2.19.0)
 
@@ -230,3 +230,7 @@ Boleslav Bobcik (@bbobcik)
  * Reported, contributed fix for #364: Deserialization of Month in ONE_BASED_MONTHS
    mode fails for value "12"
   (2.19.0)
+
+Albert Lovers (@AlbertLovers)
+ * Reported, contributed fix for #381: Fix a potential problem in `JavaTimeModule._findFactory()`
+  (2.21.0)
