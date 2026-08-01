@@ -234,3 +234,12 @@ Boleslav Bobcik (@bbobcik)
 Albert Lovers (@AlbertLovers)
  * Reported, contributed fix for #381: Fix a potential problem in `JavaTimeModule._findFactory()`
   (2.21.0)
+
+Ryan (@rycler)
+ * Reported #76: Missing milliseconds, when parsing Java 8 date-time, if they are zeros
+  (2.23.0)
+
+Seonwoo Jung (@seonwooj0810)
+ * Contributed fix for #76: Missing milliseconds, when parsing Java 8 date-time,
+   if they are zeros
+  (2.23.0)

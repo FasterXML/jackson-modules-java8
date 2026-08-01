@@ -22,6 +22,9 @@ import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+import com.fasterxml.jackson.core.util.JacksonFeatureSet;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeFeature;
+
 /**
  * Serializer for Java 8 temporal {@link Instant}s, {@link OffsetDateTime}, and {@link ZonedDateTime}s.
  *
@@ -57,6 +60,26 @@ public class InstantSerializer extends InstantSerializerBase<Instant>
     protected InstantSerializer(InstantSerializer base,
             Boolean useTimestamp, Boolean useNanoseconds, DateTimeFormatter formatter) {
         super(base, useTimestamp, useNanoseconds, formatter);
+    }
+
+    /**
+     * @since 2.23
+     */
+    protected InstantSerializer(InstantSerializer base, DateTimeFormatter defaultFormat) {
+        super(base, defaultFormat);
+    }
+
+    /**
+     * Method called by {@link com.fasterxml.jackson.datatype.jsr310.JavaTimeModule}
+     * to apply module-level {@link JavaTimeFeature} settings.
+     *
+     * @since 2.23
+     */
+    public InstantSerializer withFeatures(JacksonFeatureSet<JavaTimeFeature> features) {
+        if (features.isEnabled(JavaTimeFeature.ALWAYS_WRITE_SUBSECOND_DIGITS)) {
+            return new InstantSerializer(this, SubSecondFormatters.INSTANT);
+        }
+        return this;
     }
 
     @Override

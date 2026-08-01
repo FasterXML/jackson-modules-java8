@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 
+import com.fasterxml.jackson.core.util.JacksonFeatureSet;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeFeature;
+
 public class OffsetDateTimeSerializer extends InstantSerializerBase<OffsetDateTime>
 {
     private static final long serialVersionUID = 1L;
@@ -33,6 +36,27 @@ public class OffsetDateTimeSerializer extends InstantSerializerBase<OffsetDateTi
     public OffsetDateTimeSerializer(OffsetDateTimeSerializer base, Boolean useTimestamp,
             DateTimeFormatter formatter, JsonFormat.Shape shape) {
         super(base, useTimestamp, base._useNanoseconds, formatter, shape);
+    }
+
+    /**
+     * @since 2.23
+     */
+    protected OffsetDateTimeSerializer(OffsetDateTimeSerializer base,
+            DateTimeFormatter defaultFormat) {
+        super(base, defaultFormat);
+    }
+
+    /**
+     * Method called by {@link com.fasterxml.jackson.datatype.jsr310.JavaTimeModule}
+     * to apply module-level {@link JavaTimeFeature} settings.
+     *
+     * @since 2.23
+     */
+    public OffsetDateTimeSerializer withFeatures(JacksonFeatureSet<JavaTimeFeature> features) {
+        if (features.isEnabled(JavaTimeFeature.ALWAYS_WRITE_SUBSECOND_DIGITS)) {
+            return new OffsetDateTimeSerializer(this, SubSecondFormatters.OFFSET_DATE_TIME);
+        }
+        return this;
     }
 
     /**

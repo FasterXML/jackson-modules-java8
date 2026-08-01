@@ -92,6 +92,25 @@ public abstract class InstantSerializerBase<T extends Temporal>
         getNanoseconds = base.getNanoseconds;
     }
 
+    /**
+     * Copy-constructor used for replacing the "hidden" default formatter -- and only
+     * that -- of an existing serializer; needed for
+     * {@link com.fasterxml.jackson.datatype.jsr310.JavaTimeFeature#ALWAYS_WRITE_SUBSECOND_DIGITS}.
+     * Note that the default formatter must NOT be passed as {@code _formatter}, since
+     * a non-null {@code _formatter} also forces serialization as a JSON String.
+     *
+     * @since 2.23
+     */
+    protected InstantSerializerBase(InstantSerializerBase<T> base,
+            DateTimeFormatter defaultFormat)
+    {
+        super(base, base._useTimestamp, base._useNanoseconds, base._formatter, base._shape);
+        this.defaultFormat = defaultFormat;
+        getEpochMillis = base.getEpochMillis;
+        getEpochSeconds = base.getEpochSeconds;
+        getNanoseconds = base.getNanoseconds;
+    }
+
     @Override
     protected abstract JSR310FormattedSerializerBase<?> withFormat(
         Boolean useTimestamp,

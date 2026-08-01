@@ -25,8 +25,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.type.WritableTypeId;
+import com.fasterxml.jackson.core.util.JacksonFeatureSet;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeFeature;
 
 /**
  * Serializer for Java 8 temporal {@link LocalDateTime}s.
@@ -39,18 +41,49 @@ public class LocalDateTimeSerializer extends JSR310FormattedSerializerBase<Local
     private static final long serialVersionUID = 1L;
 
     public static final LocalDateTimeSerializer INSTANCE = new LocalDateTimeSerializer();
-    
+
+    /**
+     * Formatter to use instead of {@link DateTimeFormatter#ISO_LOCAL_DATE_TIME} when no
+     * explicit format is configured; {@code null} for the default.
+     *
+     * @since 2.23
+     */
+    protected final DateTimeFormatter _defaultFormat;
+
     protected LocalDateTimeSerializer() {
         this(null);
     }
 
     public LocalDateTimeSerializer(DateTimeFormatter f) {
         super(LocalDateTime.class, f);
+        _defaultFormat = null;
     }
 
     // protected in 2.14 (from private)
     protected LocalDateTimeSerializer(LocalDateTimeSerializer base, Boolean useTimestamp, Boolean useNanoseconds, DateTimeFormatter f) {
         super(base, useTimestamp, useNanoseconds, f, null);
+        _defaultFormat = base._defaultFormat;
+    }
+
+    /**
+     * @since 2.23
+     */
+    protected LocalDateTimeSerializer(LocalDateTimeSerializer base, DateTimeFormatter defaultFormat) {
+        super(base, base._useTimestamp, base._useNanoseconds, base._formatter, base._shape);
+        _defaultFormat = defaultFormat;
+    }
+
+    /**
+     * Method called by {@link com.fasterxml.jackson.datatype.jsr310.JavaTimeModule}
+     * to apply module-level {@link JavaTimeFeature} settings.
+     *
+     * @since 2.23
+     */
+    public LocalDateTimeSerializer withFeatures(JacksonFeatureSet<JavaTimeFeature> features) {
+        if (features.isEnabled(JavaTimeFeature.ALWAYS_WRITE_SUBSECOND_DIGITS)) {
+            return new LocalDateTimeSerializer(this, SubSecondFormatters.LOCAL_DATE_TIME);
+        }
+        return this;
     }
 
     @Override
@@ -59,7 +92,7 @@ public class LocalDateTimeSerializer extends JSR310FormattedSerializerBase<Local
     }
 
     protected DateTimeFormatter _defaultFormatter() {
-        return DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+        return (_defaultFormat == null) ? DateTimeFormatter.ISO_LOCAL_DATE_TIME : _defaultFormat;
     }
 
     @Override
