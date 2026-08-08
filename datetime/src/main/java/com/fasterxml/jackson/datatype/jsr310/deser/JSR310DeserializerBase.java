@@ -245,7 +245,7 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
      * Helper method to validate length of a stringified numeric Date/Time value
      * against {@link StreamReadConstraints} limits.
      *
-     * @since 2.19
+     * @since 2.18.10
      */
     protected void _validateTimestampLength(JsonParser p, String value)
         throws StreamConstraintsException
