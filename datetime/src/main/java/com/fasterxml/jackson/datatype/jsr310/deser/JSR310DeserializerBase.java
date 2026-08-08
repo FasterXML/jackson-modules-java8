@@ -22,6 +22,8 @@ import java.util.Arrays;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.StreamReadConstraints;
+import com.fasterxml.jackson.core.exc.StreamConstraintsException;
 import com.fasterxml.jackson.core.io.NumberInput;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
@@ -237,5 +239,24 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
             break;
         }
         return e;
+    }
+
+    /**
+     * Helper method to validate length of a stringified numeric Date/Time value
+     * against {@link StreamReadConstraints} limits.
+     *
+     * @since 2.19
+     */
+    protected void _validateTimestampLength(JsonParser p, String value)
+        throws StreamConstraintsException
+    {
+        final int len = value.length();
+        StreamReadConstraints constraints = p.streamReadConstraints();
+        // If there's a decimal point, it's a floating-point value; otherwise integer
+        if (value.indexOf('.') >= 0) {
+            constraints.validateFPLength(len);
+        } else {
+            constraints.validateIntegerLength(len);
+        }
     }
 }

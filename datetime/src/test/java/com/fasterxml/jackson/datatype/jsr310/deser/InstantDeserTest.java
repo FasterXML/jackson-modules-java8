@@ -9,6 +9,8 @@ import java.util.regex.Matcher;
 
 import org.junit.Test;
 
+import com.fasterxml.jackson.core.StreamReadConstraints;
+import com.fasterxml.jackson.core.exc.StreamConstraintsException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 
@@ -639,5 +641,41 @@ public class InstantDeserTest extends ModuleTestBase
 
         assertTrue("Matcher finds +0100 as an colonless offset", matcher.find());
         assertEquals("Matcher groups +0100 as an colonless offset", matcher.group(), "+0100");
+    }
+
+    // [databind#6133]: StreamReadConstraints should limit numeric string lengths
+    // parsed via _fromString to prevent excessive BigDecimal construction.
+    // NOTE: values MUST be quoted -- unquoted ones are Number tokens, limits for
+    // which are enforced by the streaming parser and not by this deserializer.
+    @Test
+    public void testNumericStringRespectsStreamReadConstraints() throws Exception
+    {
+        final int MAX_ALLOWED_LEN = StreamReadConstraints.DEFAULT_MAX_NUM_LEN;
+
+        // Normal epoch seconds as integer should work
+        assertNotNull(MAPPER.readValue(q("1234567890"), Instant.class));
+
+        // Normal epoch seconds with decimal should work
+        assertNotNull(MAPPER.readValue(q("1234567890.123456789"), Instant.class));
+
+        // A very long integer string (exceeding default 1000-digit limit) should fail
+        String longInt = repeat("1", MAX_ALLOWED_LEN + 1);
+        try {
+            MAPPER.readValue(q(longInt), Instant.class);
+            fail("Should not pass with excessively long integer string");
+        } catch (StreamConstraintsException e) {
+            verifyException(e, "Number value length");
+            verifyException(e, "exceeds the maximum allowed");
+        }
+
+        // A very long decimal string (exceeding default 1000-char limit) should fail
+        String longDecimal = "1234." + repeat("9", MAX_ALLOWED_LEN);
+        try {
+            MAPPER.readValue(q(longDecimal), Instant.class);
+            fail("Should not pass with excessively long decimal string");
+        } catch (StreamConstraintsException e) {
+            verifyException(e, "Number value length");
+            verifyException(e, "exceeds the maximum allowed");
+        }
     }
 }
