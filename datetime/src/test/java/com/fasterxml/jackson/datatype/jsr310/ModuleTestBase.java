@@ -66,6 +66,14 @@ public class ModuleTestBase
         throw new Error("Expected an exception with one of substrings ("+Arrays.asList(matches)+"): got one with message \""+msg+"\"");
     }
 
+    protected static String repeat(String s, int count) {
+        StringBuilder sb = new StringBuilder(s.length() * count);
+        for (int i = 0; i < count; i++) {
+            sb.append(s);
+        }
+        return sb.toString();
+    }
+
     protected static <T> Map<T, String> asMap(T key, String value) {
         return Collections.singletonMap(key, value);
     }
