@@ -245,15 +245,19 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
      * Helper method to validate length of a stringified numeric Date/Time value
      * against {@link StreamReadConstraints} limits.
      *
+     * @param p Parser to get constraints from
+     * @param value Stringified numeric value to validate
+     * @param isFP Whether {@code value} is a floating-point (has decimal point)
+     *    or integer number; caller knows this already so we avoid re-scanning
+     *
      * @since 2.18.10
      */
-    protected void _validateTimestampLength(JsonParser p, String value)
+    protected void _validateTimestampLength(JsonParser p, String value, boolean isFP)
         throws StreamConstraintsException
     {
         final int len = value.length();
         StreamReadConstraints constraints = p.streamReadConstraints();
-        // If there's a decimal point, it's a floating-point value; otherwise integer
-        if (value.indexOf('.') >= 0) {
+        if (isFP) {
             constraints.validateFPLength(len);
         } else {
             constraints.validateIntegerLength(len);

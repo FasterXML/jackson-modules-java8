@@ -643,7 +643,7 @@ public class InstantDeserTest extends ModuleTestBase
         assertEquals("Matcher groups +0100 as an colonless offset", matcher.group(), "+0100");
     }
 
-    // [databind#6133]: StreamReadConstraints should limit numeric string lengths
+    // [modules-java8#387]: StreamReadConstraints should limit numeric string lengths
     // parsed via _fromString to prevent excessive BigDecimal construction.
     // NOTE: values MUST be quoted -- unquoted ones are Number tokens, limits for
     // which are enforced by the streaming parser and not by this deserializer.
