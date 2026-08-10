@@ -1,6 +1,5 @@
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
@@ -14,6 +13,12 @@ import java.time.temporal.ChronoField;
  * These differ from the JDK counterparts only in the sub-second field: instead of
  * omitting it when zero, at least 3 (millisecond) digits are always written, and up
  * to 9 when the value carries higher precision (so nothing is truncated).
+ *<p>
+ * Note that there is deliberately no counterpart of {@link DateTimeFormatter#ISO_INSTANT}
+ * here: formatting an {@link java.time.Instant} through a zone-bound formatter goes via
+ * {@link java.time.LocalDateTime}, whose year range is narrower than {@code Instant}'s,
+ * so {@link java.time.Instant#MIN} / {@link java.time.Instant#MAX} would fail. See
+ * {@link InstantSerializer#formatValue} for the handling used instead.
  *
  * @since 2.23
  */
@@ -62,13 +67,4 @@ class SubSecondFormatters
             .appendZoneRegionId()
             .appendLiteral(']')
             .toFormatter();
-
-    /**
-     * Counterpart of {@link DateTimeFormatter#ISO_INSTANT} (and of
-     * {@link java.time.Instant#toString()}, which is what the default
-     * {@code Instant} serialization actually uses): UTC-based, so the
-     * offset is always rendered as {@code Z}.
-     */
-    public final static DateTimeFormatter INSTANT = OFFSET_DATE_TIME
-            .withZone(ZoneOffset.UTC);
 }

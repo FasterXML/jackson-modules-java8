@@ -10,7 +10,7 @@ Modules:
 
 2.23.0 (not yet released)
 
-#76: Missing milliseconds, when parsing Java 8 date-time, if they are zeros
+#76: Missing milliseconds, when serializing Java 8 date-time, if they are zeros
  (reported by @rycler)
  (fix contributed by Seonwoo J)
 

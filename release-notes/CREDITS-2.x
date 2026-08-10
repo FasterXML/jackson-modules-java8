@@ -236,10 +236,10 @@ Albert Lovers (@AlbertLovers)
   (2.21.0)
 
 Ryan (@rycler)
- * Reported #76: Missing milliseconds, when parsing Java 8 date-time, if they are zeros
+ * Reported #76: Missing milliseconds, when serializing Java 8 date-time, if they are zeros
   (2.23.0)
 
 Seonwoo Jung (@seonwooj0810)
- * Contributed fix for #76: Missing milliseconds, when parsing Java 8 date-time,
+ * Contributed fix for #76: Missing milliseconds, when serializing Java 8 date-time,
    if they are zeros
   (2.23.0)

@@ -3,6 +3,7 @@ package com.fasterxml.jackson.datatype.jsr310.ser;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Locale;
 
@@ -28,6 +29,13 @@ public class AlwaysWriteSubSecondDigits76Test extends ModuleTestBase
         public OffsetDateTime value;
 
         Wrapper(OffsetDateTime v) { value = v; }
+    }
+
+    static class ShapeOnlyWrapper {
+        @JsonFormat(shape = JsonFormat.Shape.STRING)
+        public Instant value;
+
+        ShapeOnlyWrapper(Instant v) { value = v; }
     }
 
     // NOTE: cannot use `ModuleTestBase.mapperBuilder()` here, since it already registers a
@@ -145,5 +153,51 @@ public class AlwaysWriteSubSecondDigits76Test extends ModuleTestBase
             assertEquals(value, MAPPER.readValue(json, Instant.class),
                     "Round-trip failed for " + raw + " (serialized as " + json + ")");
         }
+    }
+
+    // The full `Instant` range must keep working: it is wider than that of
+    // `LocalDateTime`, so the feature must not route `Instant` through a
+    // zone-bound formatter
+    @Test
+    public void testInstantMinMax() throws Exception
+    {
+        // no sub-second part -> padded
+        assertEquals(q("-1000000000-01-01T00:00:00Z"),
+                DEFAULT_MAPPER.writeValueAsString(Instant.MIN));
+        assertEquals(q("-1000000000-01-01T00:00:00.000Z"),
+                MAPPER.writeValueAsString(Instant.MIN));
+
+        // already at nanosecond precision -> unchanged
+        assertEquals(q("+1000000000-12-31T23:59:59.999999999Z"),
+                DEFAULT_MAPPER.writeValueAsString(Instant.MAX));
+        assertEquals(q("+1000000000-12-31T23:59:59.999999999Z"),
+                MAPPER.writeValueAsString(Instant.MAX));
+
+        // and just inside the `LocalDateTime` boundary, either side
+        assertEquals(q("-999999999-01-01T00:00:00.000Z"),
+                MAPPER.writeValueAsString(LocalDateTime.MIN.toInstant(ZoneOffset.UTC)));
+        assertEquals(q("-1000000000-12-31T23:59:59.000Z"),
+                MAPPER.writeValueAsString(LocalDateTime.MIN.toInstant(ZoneOffset.UTC).minusSeconds(1)));
+    }
+
+    // `Instant.toString()` writes 0, 3, 6 or 9 sub-second digits; only the
+    // zero case may be rewritten, the rest must be passed through untouched
+    @Test
+    public void testInstantSubSecondWidthsPreserved() throws Exception
+    {
+        assertEquals(q("1970-01-01T00:00:00.000000001Z"),
+                MAPPER.writeValueAsString(Instant.ofEpochSecond(0, 1)));
+        assertEquals(q("1970-01-01T00:00:00.000001Z"),
+                MAPPER.writeValueAsString(Instant.ofEpochSecond(0, 1000)));
+        assertEquals(q("1970-01-01T00:00:00.001Z"),
+                MAPPER.writeValueAsString(Instant.ofEpochSecond(0, 1000000)));
+    }
+
+    // `@JsonFormat(shape=STRING)` without a pattern must not lose the padding
+    @Test
+    public void testShapeStringWithoutPattern() throws Exception
+    {
+        assertEquals(a2q("{'value':'2017-09-14T04:28:48.000Z'}"),
+                MAPPER.writeValueAsString(new ShapeOnlyWrapper(Instant.parse("2017-09-14T04:28:48Z"))));
     }
 }
