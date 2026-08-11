@@ -157,12 +157,12 @@ public final class JavaTimeModule
         JavaTimeSerializers sers = new JavaTimeSerializers();
 
         sers.addSerializer(Duration.class, DurationSerializer.INSTANCE);
-        sers.addSerializer(Instant.class, InstantSerializer.INSTANCE);
-        sers.addSerializer(LocalDateTime.class, LocalDateTimeSerializer.INSTANCE);
+        sers.addSerializer(Instant.class, InstantSerializer.INSTANCE.withFeatures(_features));
+        sers.addSerializer(LocalDateTime.class, LocalDateTimeSerializer.INSTANCE.withFeatures(_features));
         sers.addSerializer(LocalDate.class, LocalDateSerializer.INSTANCE);
         sers.addSerializer(LocalTime.class, LocalTimeSerializer.INSTANCE);
         sers.addSerializer(MonthDay.class, MonthDaySerializer.INSTANCE);
-        sers.addSerializer(OffsetDateTime.class, OffsetDateTimeSerializer.INSTANCE);
+        sers.addSerializer(OffsetDateTime.class, OffsetDateTimeSerializer.INSTANCE.withFeatures(_features));
         sers.addSerializer(OffsetTime.class, OffsetTimeSerializer.INSTANCE);
         sers.addSerializer(Period.class, new ToStringSerializer(Period.class));
         sers.addSerializer(Year.class, YearSerializer.INSTANCE);
@@ -173,7 +173,7 @@ public final class JavaTimeModule
          *  serialization with timezone offset only, not timezone id.
          *  But this is configurable.
          */
-        sers.addSerializer(ZonedDateTime.class, ZonedDateTimeSerializer.INSTANCE);
+        sers.addSerializer(ZonedDateTime.class, ZonedDateTimeSerializer.INSTANCE.withFeatures(_features));
 
         // since 2.11: need to override Type Id handling
         // (actual concrete type is `ZoneRegion`, but that's not visible)

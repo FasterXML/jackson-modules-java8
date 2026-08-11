@@ -65,6 +65,18 @@ abstract class JSR310FormattedSerializerBase<T>
      */
     protected final DateTimeFormatter _formatter;
 
+    /**
+     * Format to use when no explicit {@link #_formatter} is configured. Unlike
+     * {@code _formatter}, a non-null value here does NOT force serialization as a
+     * JSON String -- which is exactly why the two cannot be collapsed into one.
+     *<p>
+     * May be {@code null}, in which case the sub-class decides the fallback
+     * (typically either a JDK {@code ISO_*} constant or {@code value.toString()}).
+     *
+     * @since 2.23
+     */
+    protected final DateTimeFormatter _defaultFormat;
+
     protected final JsonFormat.Shape _shape;
 
     /**
@@ -81,13 +93,22 @@ abstract class JSR310FormattedSerializerBase<T>
 
     protected JSR310FormattedSerializerBase(Class<T> supportedType,
             DateTimeFormatter formatter) {
+        this(supportedType, formatter, null);
+    }
+
+    /**
+     * @since 2.23
+     */
+    protected JSR310FormattedSerializerBase(Class<T> supportedType,
+            DateTimeFormatter formatter, DateTimeFormatter defaultFormat) {
         super(supportedType);
         _useTimestamp = null;
         _useNanoseconds = null;
         _shape = null;
         _formatter = formatter;
+        _defaultFormat = defaultFormat;
     }
-    
+
     protected JSR310FormattedSerializerBase(JSR310FormattedSerializerBase<?> base,
             Boolean useTimestamp, DateTimeFormatter dtf, JsonFormat.Shape shape)
     {
@@ -103,6 +124,27 @@ abstract class JSR310FormattedSerializerBase<T>
         _useNanoseconds = useNanoseconds;
         _formatter = dtf;
         _shape = shape;
+        _defaultFormat = base._defaultFormat;
+    }
+
+    /**
+     * Copy-constructor used for replacing the default format -- and only that --
+     * of an existing serializer; needed for
+     * {@link com.fasterxml.jackson.datatype.jsr310.JavaTimeFeature#ALWAYS_WRITE_SUBSECOND_DIGITS}.
+     * Note that the replacement must NOT be passed as {@code _formatter}, since a
+     * non-null {@code _formatter} also forces serialization as a JSON String.
+     *
+     * @since 2.23
+     */
+    protected JSR310FormattedSerializerBase(JSR310FormattedSerializerBase<?> base,
+            DateTimeFormatter defaultFormat)
+    {
+        super(base.handledType());
+        _useTimestamp = base._useTimestamp;
+        _useNanoseconds = base._useNanoseconds;
+        _formatter = base._formatter;
+        _shape = base._shape;
+        _defaultFormat = defaultFormat;
     }
 
     protected abstract JSR310FormattedSerializerBase<?> withFormat(Boolean useTimestamp,

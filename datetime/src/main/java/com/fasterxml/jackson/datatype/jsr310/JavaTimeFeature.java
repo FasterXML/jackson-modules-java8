@@ -51,7 +51,40 @@ public enum JavaTimeFeature implements JacksonFeature
      *<p>
      * Default setting is false, meaning that Month is serialized/deserialized as a zero-based index.
      */
-    ONE_BASED_MONTHS(false)
+    ONE_BASED_MONTHS(false),
+
+    /**
+     * Feature that determines whether sub-second digits are always written when
+     * serializing {@link java.time.Instant}, {@link java.time.OffsetDateTime},
+     * {@link java.time.ZonedDateTime} and {@link java.time.LocalDateTime} <b>values</b>
+     * as ISO-8601 Strings using the default format.
+     *<p>
+     * When disabled (the default), the JDK-provided ISO formatters are used and
+     * a zero sub-second value is omitted altogether -- {@code 2017-09-14T04:28:48Z}
+     * -- which means that output width varies with the value, breaking systems
+     * that expect fixed-precision timestamps (or that sort timestamps as text).
+     *<p>
+     * When enabled, at least 3 (millisecond) sub-second digits are always written,
+     * zero-padded if necessary -- {@code 2017-09-14T04:28:48.000Z}. Higher precision
+     * is preserved: a value with microsecond or nanosecond precision is written with
+     * 6 or 9 digits respectively, so no information is lost.
+     *<p>
+     * Only affects the default format: an explicit {@code DateTimeFormatter} or
+     * a {@link com.fasterxml.jackson.annotation.JsonFormat} pattern takes precedence,
+     * as does writing values as numeric timestamps.
+     *<p>
+     * Also note that this only applies to values, and NOT to {@link java.util.Map}
+     * keys: date/time keys keep being written using the JDK-provided ISO formatters,
+     * so a zero sub-second value is still omitted there. Types other than the four
+     * listed above -- notably {@link java.time.LocalTime} and
+     * {@link java.time.OffsetTime}, whose ISO formats also omit the seconds field --
+     * are likewise unaffected.
+     *<p>
+     * Default setting is disabled, for backwards compatibility.
+     *
+     * @since 2.23
+     */
+    ALWAYS_WRITE_SUBSECOND_DIGITS(false)
     ;
 
   /**

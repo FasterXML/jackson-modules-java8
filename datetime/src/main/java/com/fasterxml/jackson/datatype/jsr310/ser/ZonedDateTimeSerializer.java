@@ -7,8 +7,10 @@ import java.time.format.DateTimeFormatter;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.util.JacksonFeatureSet;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeFeature;
 
 public class ZonedDateTimeSerializer extends InstantSerializerBase<ZonedDateTime> {
     private static final long serialVersionUID = 1L;
@@ -21,7 +23,21 @@ public class ZonedDateTimeSerializer extends InstantSerializerBase<ZonedDateTime
      * @since 2.8
      */
     protected final Boolean _writeZoneId;
-    
+
+    /**
+     * Formatter to use instead of {@link DateTimeFormatter#ISO_ZONED_DATE_TIME} when
+     * writing the zone id along with the value; {@code null} for the default.
+     *<p>
+     * Separate from the inherited {@code _defaultFormat} on purpose: writing with the
+     * zone id is a second output shape that has always used {@code ISO_ZONED_DATE_TIME}
+     * regardless of the default format (including a custom one passed to
+     * {@link #ZonedDateTimeSerializer(DateTimeFormatter)}), so the two cannot be
+     * collapsed without changing existing behaviour.
+     *
+     * @since 2.23
+     */
+    protected final DateTimeFormatter _zoneIdFormat;
+
     protected ZonedDateTimeSerializer() {
         // ISO_ZONED_DATE_TIME is an extended version of ISO compliant format
         // ISO_OFFSET_DATE_TIME with additional information :Zone Id
@@ -34,6 +50,7 @@ public class ZonedDateTimeSerializer extends InstantSerializerBase<ZonedDateTime
               ZonedDateTime::toEpochSecond, ZonedDateTime::getNano,
               formatter);
         _writeZoneId = null;
+        _zoneIdFormat = null;
     }
 
     protected ZonedDateTimeSerializer(ZonedDateTimeSerializer base,
@@ -56,6 +73,31 @@ public class ZonedDateTimeSerializer extends InstantSerializerBase<ZonedDateTime
             JsonFormat.Shape shape, Boolean writeZoneId) {
         super(base, useTimestamp, useNanoseconds, formatter, shape);
         _writeZoneId = writeZoneId;
+        _zoneIdFormat = base._zoneIdFormat;
+    }
+
+    /**
+     * @since 2.23
+     */
+    protected ZonedDateTimeSerializer(ZonedDateTimeSerializer base,
+            DateTimeFormatter defaultFormat, DateTimeFormatter zoneIdFormat) {
+        super(base, defaultFormat);
+        _writeZoneId = base._writeZoneId;
+        _zoneIdFormat = zoneIdFormat;
+    }
+
+    /**
+     * Method called by {@link com.fasterxml.jackson.datatype.jsr310.JavaTimeModule}
+     * to apply module-level {@link JavaTimeFeature} settings.
+     *
+     * @since 2.23
+     */
+    public ZonedDateTimeSerializer withFeatures(JacksonFeatureSet<JavaTimeFeature> features) {
+        if (features.isEnabled(JavaTimeFeature.ALWAYS_WRITE_SUBSECOND_DIGITS)) {
+            return new ZonedDateTimeSerializer(this,
+                    SubSecondFormatters.OFFSET_DATE_TIME, SubSecondFormatters.ZONED_DATE_TIME);
+        }
+        return this;
     }
 
     @Override
@@ -89,7 +131,7 @@ public class ZonedDateTimeSerializer extends InstantSerializerBase<ZonedDateTime
                 ; // use default handling
             } else if (shouldWriteWithZoneId(provider)) {
                 // write with zone
-                g.writeString(DateTimeFormatter.ISO_ZONED_DATE_TIME.format(value));
+                g.writeString(_zoneIdFormatter().format(value));
                 return;
             }
         }
@@ -108,6 +150,13 @@ public class ZonedDateTimeSerializer extends InstantSerializerBase<ZonedDateTime
             }
         }
         return formatted;
+    }
+
+    /**
+     * @since 2.23
+     */
+    protected DateTimeFormatter _zoneIdFormatter() {
+        return (_zoneIdFormat == null) ? DateTimeFormatter.ISO_ZONED_DATE_TIME : _zoneIdFormat;
     }
 
     /**

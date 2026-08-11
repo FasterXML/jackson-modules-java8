@@ -10,7 +10,10 @@ Modules:
 
 2.23.0 (not yet released)
 
-No changes since 2.22
+#76: Missing milliseconds, when serializing Java 8 date-time if they are zeros (Add
+  `JavaTimeFeature.ALWAYS_WRITE_SUBSECOND_DIGITS`)
+ (reported by @rycler)
+ (fix contributed by Seonwoo J)
 
 2.22.1 (07-Jul-2026)
 2.22.0 (31-May-2026)

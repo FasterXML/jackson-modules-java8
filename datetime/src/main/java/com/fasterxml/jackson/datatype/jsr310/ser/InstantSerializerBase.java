@@ -47,8 +47,6 @@ import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 public abstract class InstantSerializerBase<T extends Temporal>
     extends JSR310FormattedSerializerBase<T>
 {
-    private final DateTimeFormatter defaultFormat;
-
     private final ToLongFunction<T> getEpochMillis;
 
     private final ToLongFunction<T> getEpochSeconds;
@@ -61,8 +59,7 @@ public abstract class InstantSerializerBase<T extends Temporal>
     {
         // Bit complicated, just because we actually want to "hide" default formatter,
         // so that it won't accidentally force use of textual presentation
-        super(supportedType, null);
-        this.defaultFormat = defaultFormat;
+        super(supportedType, null, defaultFormat);
         this.getEpochMillis = getEpochMillis;
         this.getEpochSeconds = getEpochSeconds;
         this.getNanoseconds = getNanoseconds;
@@ -86,7 +83,18 @@ public abstract class InstantSerializerBase<T extends Temporal>
     protected InstantSerializerBase(InstantSerializerBase<T> base, Boolean useTimestamp,
             Boolean useNanoseconds, DateTimeFormatter dtf, JsonFormat.Shape shape) {
         super(base, useTimestamp, useNanoseconds, dtf, shape);
-        defaultFormat = base.defaultFormat;
+        getEpochMillis = base.getEpochMillis;
+        getEpochSeconds = base.getEpochSeconds;
+        getNanoseconds = base.getNanoseconds;
+    }
+
+    /**
+     * @since 2.23
+     */
+    protected InstantSerializerBase(InstantSerializerBase<T> base,
+            DateTimeFormatter defaultFormat)
+    {
+        super(base, defaultFormat);
         getEpochMillis = base.getEpochMillis;
         getEpochSeconds = base.getEpochSeconds;
         getNanoseconds = base.getNanoseconds;
@@ -147,7 +155,7 @@ public abstract class InstantSerializerBase<T extends Temporal>
     // @since 2.12
     protected String formatValue(T value, SerializerProvider provider)
     {
-        DateTimeFormatter formatter = (_formatter == null) ? defaultFormat :_formatter;
+        DateTimeFormatter formatter = (_formatter == null) ? _defaultFormat :_formatter;
         if (formatter != null) {
             if (formatter.getZone() == null) { // timezone set if annotated on property
                 // If the user specified to use the context TimeZone explicitly, and the formatter provided doesn't contain a TZ
