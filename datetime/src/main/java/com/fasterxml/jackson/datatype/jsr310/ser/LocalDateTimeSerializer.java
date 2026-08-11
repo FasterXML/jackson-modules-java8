@@ -42,35 +42,24 @@ public class LocalDateTimeSerializer extends JSR310FormattedSerializerBase<Local
 
     public static final LocalDateTimeSerializer INSTANCE = new LocalDateTimeSerializer();
 
-    /**
-     * Formatter to use instead of {@link DateTimeFormatter#ISO_LOCAL_DATE_TIME} when no
-     * explicit format is configured; {@code null} for the default.
-     *
-     * @since 2.23
-     */
-    protected final DateTimeFormatter _defaultFormat;
-
     protected LocalDateTimeSerializer() {
         this(null);
     }
 
     public LocalDateTimeSerializer(DateTimeFormatter f) {
-        super(LocalDateTime.class, f);
-        _defaultFormat = null;
+        super(LocalDateTime.class, f, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
 
     // protected in 2.14 (from private)
     protected LocalDateTimeSerializer(LocalDateTimeSerializer base, Boolean useTimestamp, Boolean useNanoseconds, DateTimeFormatter f) {
         super(base, useTimestamp, useNanoseconds, f, null);
-        _defaultFormat = base._defaultFormat;
     }
 
     /**
      * @since 2.23
      */
     protected LocalDateTimeSerializer(LocalDateTimeSerializer base, DateTimeFormatter defaultFormat) {
-        super(base, base._useTimestamp, base._useNanoseconds, base._formatter, base._shape);
-        _defaultFormat = defaultFormat;
+        super(base, defaultFormat);
     }
 
     /**
@@ -92,7 +81,7 @@ public class LocalDateTimeSerializer extends JSR310FormattedSerializerBase<Local
     }
 
     protected DateTimeFormatter _defaultFormatter() {
-        return (_defaultFormat == null) ? DateTimeFormatter.ISO_LOCAL_DATE_TIME : _defaultFormat;
+        return _defaultFormat;
     }
 
     @Override

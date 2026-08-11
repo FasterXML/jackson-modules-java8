@@ -1,7 +1,9 @@
 package com.fasterxml.jackson.datatype.jsr310.ser;
 
+import java.time.chrono.IsoChronology;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.ResolverStyle;
 import java.time.temporal.ChronoField;
 
 /**
@@ -12,7 +14,10 @@ import java.time.temporal.ChronoField;
  *<p>
  * These differ from the JDK counterparts only in the sub-second field: instead of
  * omitting it when zero, at least 3 (millisecond) digits are always written, and up
- * to 9 when the value carries higher precision (so nothing is truncated).
+ * to 9 when the value carries higher precision (so nothing is truncated). They are
+ * otherwise built the same way -- including {@link ResolverStyle#STRICT} and the ISO
+ * chronology -- so that they remain drop-in replacements even though they are only
+ * ever used for printing here.
  *<p>
  * Note that there is deliberately no counterpart of {@link DateTimeFormatter#ISO_INSTANT}
  * here: formatting an {@link java.time.Instant} through a zone-bound formatter goes via
@@ -43,28 +48,44 @@ class SubSecondFormatters
     }
 
     /**
+     * {@link #_localDateTimeBuilder()} followed by the offset: the shared prefix of the
+     * offset- and zone-based formatters.
+     */
+    private static DateTimeFormatterBuilder _offsetDateTimeBuilder() {
+        return _localDateTimeBuilder().appendOffsetId();
+    }
+
+    /**
+     * Completes a builder the way the JDK completes its own {@code ISO_*} constants.
+     *<p>
+     * Note that {@link DateTimeFormatterBuilder#toFormatter()} alone would yield
+     * {@link ResolverStyle#SMART} and no chronology, which is not what the constants
+     * these replace do.
+     */
+    private static DateTimeFormatter _isoFormatter(DateTimeFormatterBuilder b) {
+        return b.toFormatter()
+                .withResolverStyle(ResolverStyle.STRICT)
+                .withChronology(IsoChronology.INSTANCE);
+    }
+
+    /**
      * Counterpart of {@link DateTimeFormatter#ISO_LOCAL_DATE_TIME}.
      */
-    public final static DateTimeFormatter LOCAL_DATE_TIME = _localDateTimeBuilder()
-            .toFormatter();
+    final static DateTimeFormatter LOCAL_DATE_TIME = _isoFormatter(_localDateTimeBuilder());
 
     /**
      * Counterpart of {@link DateTimeFormatter#ISO_OFFSET_DATE_TIME}.
      */
-    public final static DateTimeFormatter OFFSET_DATE_TIME = _localDateTimeBuilder()
-            .appendOffsetId()
-            .toFormatter();
+    final static DateTimeFormatter OFFSET_DATE_TIME = _isoFormatter(_offsetDateTimeBuilder());
 
     /**
      * Counterpart of {@link DateTimeFormatter#ISO_ZONED_DATE_TIME}, that is,
      * {@link #OFFSET_DATE_TIME} with the optional {@code [Zone/Id]} suffix.
      */
-    public final static DateTimeFormatter ZONED_DATE_TIME = new DateTimeFormatterBuilder()
-            .append(OFFSET_DATE_TIME)
+    final static DateTimeFormatter ZONED_DATE_TIME = _isoFormatter(_offsetDateTimeBuilder()
             .optionalStart()
             .appendLiteral('[')
             .parseCaseSensitive()
             .appendZoneRegionId()
-            .appendLiteral(']')
-            .toFormatter();
+            .appendLiteral(']'));
 }

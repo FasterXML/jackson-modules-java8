@@ -27,6 +27,12 @@ public class ZonedDateTimeSerializer extends InstantSerializerBase<ZonedDateTime
     /**
      * Formatter to use instead of {@link DateTimeFormatter#ISO_ZONED_DATE_TIME} when
      * writing the zone id along with the value; {@code null} for the default.
+     *<p>
+     * Separate from the inherited {@code _defaultFormat} on purpose: writing with the
+     * zone id is a second output shape that has always used {@code ISO_ZONED_DATE_TIME}
+     * regardless of the default format (including a custom one passed to
+     * {@link #ZonedDateTimeSerializer(DateTimeFormatter)}), so the two cannot be
+     * collapsed without changing existing behaviour.
      *
      * @since 2.23
      */
