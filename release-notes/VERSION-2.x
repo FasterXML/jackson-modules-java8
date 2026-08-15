@@ -17,6 +17,7 @@ No changes since 2.22
 
 No changes since 2.21
 
+2.21.6 (14-Aug-2026)
 2.21.5 (06-Jul-2026)
 2.21.4 (28-May-2026)
 2.21.3 (28-Apr-2026)
