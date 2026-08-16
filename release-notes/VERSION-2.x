@@ -8,7 +8,7 @@ Modules:
 === Releases ===
 ------------------------------------------------------------------------
 
-2.18.10 (not yet released)
+2.18.10 (15-Aug-2026)
 
 #387: Validate length of input in `InstantDeserializer`
  (fix by @pjfanning)
