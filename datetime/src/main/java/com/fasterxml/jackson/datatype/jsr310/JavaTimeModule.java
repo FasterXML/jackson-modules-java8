@@ -130,7 +130,7 @@ public final class JavaTimeModule
                 InstantDeserializer.ZONED_DATE_TIME.withFeatures(_features));
 
         // // Other deserializers
-        desers.addDeserializer(Duration.class, DurationDeserializer.INSTANCE);
+        desers.addDeserializer(Duration.class, DurationDeserializer.INSTANCE.withFeatures(_features));
         desers.addDeserializer(LocalDateTime.class, LocalDateTimeDeserializer.INSTANCE.withFeatures(_features));
         desers.addDeserializer(LocalDate.class, LocalDateDeserializer.INSTANCE.withFeatures(_features));
         desers.addDeserializer(LocalTime.class, LocalTimeDeserializer.INSTANCE);

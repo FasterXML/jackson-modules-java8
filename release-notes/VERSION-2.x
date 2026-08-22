@@ -14,6 +14,10 @@ Modules:
   `JavaTimeFeature.ALWAYS_WRITE_SUBSECOND_DIGITS`)
  (reported by @rycler)
  (fix contributed by Seonwoo J)
+#232: Add `JavaTimeFeature.ALLOW_STRINGIFIED_DURATION_VALUES` to deserialize
+  `Duration` from stringified numbers (e.g. `"3600"`)
+ (reported by @jakub-bochenski)
+ (contributed by @arimu1)
 
 2.22.2 (16-Aug-2026)
 2.22.1 (07-Jul-2026)
