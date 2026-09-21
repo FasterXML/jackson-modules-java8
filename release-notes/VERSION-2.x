@@ -14,6 +14,9 @@ Modules:
   `JavaTimeFeature.ALWAYS_WRITE_SUBSECOND_DIGITS`)
  (reported by @rycler)
  (fix contributed by Seonwoo J)
+#389: Validate embedded objects for `ZoneId`, `Period` and `ZoneOffset`
+ (reported by @manqingzhou)
+ (fix contributed by @lux-liang)
 
 2.22.2 (16-Aug-2026)
 2.22.1 (07-Jul-2026)
