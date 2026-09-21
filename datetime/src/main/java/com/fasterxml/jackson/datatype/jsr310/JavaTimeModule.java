@@ -61,14 +61,10 @@ import com.fasterxml.jackson.datatype.jsr310.ser.key.ZonedDateTimeKeySerializer;
  * local dates and times, periods, durations, zones, and more. All {@code java.time} types
  * have built-in translation to and from ISO-8601 formats.
  * <p>
- * On serialization, {@code ObjectMapper}'s default TimeZone is UTC, but that
- * default is implicit ({@code SerializationConfig.hasExplicitTimeZone()} is
- * false until {@code ObjectMapper.setTimeZone} or {@code ObjectWriter.with(TimeZone)}
- * is called). {@link ZonedDateTime} and {@link OffsetDateTime} therefore keep
- * the zone already on the value when written as ISO-8601 strings.
- * {@link com.fasterxml.jackson.databind.SerializationFeature#WRITE_DATES_WITH_CONTEXT_TIME_ZONE}
- * (enabled by default since 2.13) only converts to the mapper TimeZone when
- * that timezone was set explicitly.
+ * Note that {@code ObjectMapper}'s default TimeZone of UTC is <em>implicit</em>, and as such
+ * does not override the zone already on {@link ZonedDateTime} and {@link OffsetDateTime}
+ * values written as ISO-8601 Strings: see
+ * {@link com.fasterxml.jackson.datatype.jsr310.ser.InstantSerializerBase} for details.
  * <p>
  * Granularity of timestamps is controlled through the companion features
  * {@link com.fasterxml.jackson.databind.SerializationFeature#WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS} and
