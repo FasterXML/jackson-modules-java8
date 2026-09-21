@@ -29,10 +29,12 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.JsonTokenId;
 import com.fasterxml.jackson.core.StreamReadCapability;
 import com.fasterxml.jackson.core.io.NumberInput;
+import com.fasterxml.jackson.core.util.JacksonFeatureSet;
 
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeFeature;
 import com.fasterxml.jackson.datatype.jsr310.util.DurationUnitConverter;
 
 /**
@@ -69,10 +71,21 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
      */
     protected final Boolean _readTimestampsAsNanosOverride;
 
+    /**
+     * Flag for {@link JavaTimeFeature#ALLOW_STRINGIFIED_DURATION_VALUES}
+     *
+     * @since 2.23
+     */
+    protected final boolean _allowStringifiedDurationValues;
+
+    private final static boolean DEFAULT_ALLOW_STRINGIFIED_DURATION_VALUES
+        = JavaTimeFeature.ALLOW_STRINGIFIED_DURATION_VALUES.enabledByDefault();
+
     public DurationDeserializer() {
         super(Duration.class);
         _durationUnitConverter = null;
         _readTimestampsAsNanosOverride = null;
+        _allowStringifiedDurationValues = DEFAULT_ALLOW_STRINGIFIED_DURATION_VALUES;
     }
 
     /**
@@ -82,6 +95,7 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
         super(base, leniency);
         _durationUnitConverter = base._durationUnitConverter;
         _readTimestampsAsNanosOverride = base._readTimestampsAsNanosOverride;
+        _allowStringifiedDurationValues = base._allowStringifiedDurationValues;
     }
 
     /**
@@ -91,6 +105,7 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
         super(base, base._isLenient);
         _durationUnitConverter = converter;
         _readTimestampsAsNanosOverride = base._readTimestampsAsNanosOverride;
+        _allowStringifiedDurationValues = base._allowStringifiedDurationValues;
     }
 
     /**
@@ -103,6 +118,19 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
         super(base, leniency);
         _durationUnitConverter = converter;
         _readTimestampsAsNanosOverride = readTimestampsAsNanosOverride;
+        _allowStringifiedDurationValues = base._allowStringifiedDurationValues;
+    }
+
+    /**
+     * @since 2.23
+     */
+    protected DurationDeserializer(DurationDeserializer base,
+            JacksonFeatureSet<JavaTimeFeature> features)
+    {
+        super(base, base._isLenient);
+        _durationUnitConverter = base._durationUnitConverter;
+        _readTimestampsAsNanosOverride = base._readTimestampsAsNanosOverride;
+        _allowStringifiedDurationValues = features.isEnabled(JavaTimeFeature.ALLOW_STRINGIFIED_DURATION_VALUES);
     }
 
     @Override
@@ -112,6 +140,16 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
 
     protected DurationDeserializer withConverter(DurationUnitConverter converter) {
         return new DurationDeserializer(this, converter);
+    }
+
+    /**
+     * @since 2.23
+     */
+    public DurationDeserializer withFeatures(JacksonFeatureSet<JavaTimeFeature> features) {
+        if (_allowStringifiedDurationValues == features.isEnabled(JavaTimeFeature.ALLOW_STRINGIFIED_DURATION_VALUES)) {
+            return this;
+        }
+        return new DurationDeserializer(this, features);
     }
 
     @Override
@@ -197,12 +235,54 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
                 && _isValidTimestampString(value)) {
             return _fromTimestamp(ctxt, NumberInput.parseLong(value));
         }
+        // [modules-java8#232]: optionally accept JSON stringified numbers
+        if (_allowStringifiedDurationValues) {
+            int dots = _countPeriods(value);
+            if (dots >= 0) { // negative if not simple number
+                try {
+                    if (dots == 0) {
+                        _validateTimestampLength(parser, value, false);
+                        return _fromTimestamp(ctxt, NumberInput.parseLong(value));
+                    }
+                    if (dots == 1) {
+                        _validateTimestampLength(parser, value, true);
+                        return DecimalUtils.extractSecondsAndNanos(
+                                NumberInput.parseBigDecimal(value, false),
+                                Duration::ofSeconds, false);
+                    }
+                } catch (NumberFormatException e) {
+                    // fall through to ISO-8601 handling, to get error there
+                }
+            }
+        }
 
         try {
             return Duration.parse(value);
         } catch (DateTimeException e) {
             return _handleDateTimeException(ctxt, e, value);
         }
+    }
+
+    // Helper to find Strings of form "all digits" and "digits.digits"
+    protected int _countPeriods(String str)
+    {
+        int commas = 0;
+        int i = 0;
+        int ch = str.charAt(i);
+        if (ch == '-') {
+            ++i;
+        }
+        for (int end = str.length(); i < end; ++i) {
+            ch = str.charAt(i);
+            if (ch < '0' || ch > '9') {
+                if (ch == '.') {
+                    ++commas;
+                } else {
+                    return -1;
+                }
+            }
+        }
+        return commas;
     }
 
     protected Duration _fromTimestamp(DeserializationContext ctxt, long ts) {

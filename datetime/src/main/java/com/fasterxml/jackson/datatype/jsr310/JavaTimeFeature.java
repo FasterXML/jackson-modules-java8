@@ -84,7 +84,29 @@ public enum JavaTimeFeature implements JacksonFeature
      *
      * @since 2.23
      */
-    ALWAYS_WRITE_SUBSECOND_DIGITS(false)
+    ALWAYS_WRITE_SUBSECOND_DIGITS(false),
+
+    /**
+     * Feature that controls whether stringified numbers (JSON Strings that
+     * without quotes would be legal JSON Numbers) may be deserialized as
+     * {@link java.time.Duration} values (enabled) or not (disabled).
+     * <p>
+     * When disabled (the default), JSON Strings are parsed with
+     * {@link java.time.Duration#parse} and must be ISO-8601 duration
+     * representations such as {@code "PT1H"} -- an int-like String such as
+     * {@code "3600"} fails.
+     * When enabled, integer and decimal numeric Strings are handled the same
+     * as JSON numbers: integers use {@link com.fasterxml.jackson.annotation.JsonFormat}
+     * pattern unit conversion (or
+     * {@link com.fasterxml.jackson.databind.DeserializationFeature#READ_DATE_TIMESTAMPS_AS_NANOSECONDS}),
+     * and decimals are treated as seconds with fractional nanos.
+     * ISO-8601 duration Strings remain accepted either way.
+     * <p>
+     * Default setting is disabled, for backwards compatibility.
+     *
+     * @since 2.23
+     */
+    ALLOW_STRINGIFIED_DURATION_VALUES(false)
     ;
 
   /**

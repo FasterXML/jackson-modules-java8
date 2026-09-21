@@ -243,3 +243,12 @@ Seonwoo Jung (@seonwooj0810)
  * Contributed fix for #76: Missing milliseconds, when serializing Java 8 date-time,
    if they are zeros
   (2.23.0)
+
+Jakub Bocheński (@jakub-bochenski)
+ * Reported #232: Deserialize Duration from int-like String (e.g. `"3600"`)
+  (2.23.0)
+
+Fardan An (@arimu1)
+ * Contributed #232: Add `JavaTimeFeature.ALLOW_STRINGIFIED_DURATION_VALUES`
+   to deserialize `Duration` from stringified numbers
+  (2.23.0)
