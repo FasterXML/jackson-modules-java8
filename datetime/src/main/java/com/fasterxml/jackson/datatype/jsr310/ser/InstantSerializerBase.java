@@ -42,6 +42,15 @@ import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 /**
  * Base class for serializers used for {@link java.time.Instant} and
  * other {@link Temporal} subtypes.
+ * <p>
+ * When writing ISO-8601 strings, the mapper {@link java.util.TimeZone} is
+ * applied only if it was set explicitly
+ * ({@code SerializationConfig.hasExplicitTimeZone()} is true) and
+ * {@link com.fasterxml.jackson.databind.SerializationFeature#WRITE_DATES_WITH_CONTEXT_TIME_ZONE}
+ * is enabled (the default since 2.13). {@code ObjectMapper}'s documented
+ * default of UTC is <em>implicit</em> until {@code setTimeZone} or
+ * {@code ObjectWriter.with(TimeZone)} is called, so {@link java.time.ZonedDateTime}
+ * keeps the zone already on the value.
  */
 @SuppressWarnings("serial")
 public abstract class InstantSerializerBase<T extends Temporal>
