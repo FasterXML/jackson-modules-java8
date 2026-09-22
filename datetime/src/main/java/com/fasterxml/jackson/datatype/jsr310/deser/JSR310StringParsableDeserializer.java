@@ -129,13 +129,7 @@ public class JSR310StringParsableDeserializer
             }
             // fall through
         } else if (p.hasToken(JsonToken.VALUE_EMBEDDED_OBJECT)) {
-            // 20-Apr-2016, tatu: Related to [databind#1208], can try supporting embedded
-            //    values quite easily
-            Object value = p.getEmbeddedObject();
-            if ((value == null) || _valueClass.isInstance(value)) {
-                return value;
-            }
-            return ctxt.handleUnexpectedToken(_valueClass, p);
+            return _fromEmbedded(p, ctxt);
         } else if (p.isExpectedStartArrayToken()) {
             return _deserializeFromArray(p, ctxt);
         }

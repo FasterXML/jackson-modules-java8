@@ -14,7 +14,8 @@ Modules:
   `JavaTimeFeature.ALWAYS_WRITE_SUBSECOND_DIGITS`)
  (reported by @rycler)
  (fix contributed by Seonwoo J)
-#389: Validate embedded objects for `ZoneId`, `Period` and `ZoneOffset`
+#389: Validate embedded objects (`JsonToken.VALUE_EMBEDDED_OBJECT`) against
+  expected `java.time` type, instead of returning them as-is
  (reported by @manqingzhou)
  (fix contributed by @lux-liang)
 
