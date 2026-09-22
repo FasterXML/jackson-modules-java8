@@ -14,6 +14,10 @@ Modules:
   `JavaTimeFeature.ALWAYS_WRITE_SUBSECOND_DIGITS`)
  (reported by @rycler)
  (fix contributed by Seonwoo J)
+#389: Validate embedded objects (`JsonToken.VALUE_EMBEDDED_OBJECT`) against
+  expected `java.time` type, instead of returning them as-is
+ (reported by @manqingzhou)
+ (fix contributed by @lux-liang)
 
 2.22.3 (21-Sep-2026)
 2.22.2 (16-Aug-2026)
