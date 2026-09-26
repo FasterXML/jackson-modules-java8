@@ -131,7 +131,15 @@ public class JSR310StringParsableDeserializer
         } else if (p.hasToken(JsonToken.VALUE_EMBEDDED_OBJECT)) {
             // 20-Apr-2016, tatu: Related to [databind#1208], can try supporting embedded
             //    values quite easily
-            return p.getEmbeddedObject();
+            // [modules-java8#389]: only accept a value of this type. A byte[] must
+            // not be stored as a ZoneId, Period, or ZoneOffset.
+            Object embedded = p.getEmbeddedObject();
+            if (embedded == null || handledType().isInstance(embedded)) {
+                return embedded;
+            }
+            return _handleUnexpectedToken(ctxt, p,
+                    "Unexpected embedded value of type %s",
+                    embedded.getClass().getName());
         } else if (p.isExpectedStartArrayToken()) {
             return _deserializeFromArray(p, ctxt);
         }
