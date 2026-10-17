@@ -39,6 +39,7 @@ No changes since 2.19.0
 #364: Deserialization of Month in ONE_BASED_MONTHS mode fails for value "12"
  (reported, fix contributed by Boleslav B)
 
+2.18.12 (17-Oct-2026)
 2.18.11 (20-Sep-2026)
 
 No changes since 2.18.10
