@@ -243,3 +243,13 @@ Seonwoo Jung (@seonwooj0810)
  * Contributed fix for #76: Missing milliseconds, when serializing Java 8 date-time,
    if they are zeros
   (2.23.0)
+
+Manqing Zhou (@manqingzhou)
+ * Reported #389: Validate embedded objects (`JsonToken.VALUE_EMBEDDED_OBJECT`)
+   against expected `java.time` type, instead of returning them as-is
+  (2.23.0)
+
+Lux Liang (@lux-liang)
+ * Contributed fix for #389: Validate embedded objects (`JsonToken.VALUE_EMBEDDED_OBJECT`)
+   against expected `java.time` type, instead of returning them as-is
+  (2.23.0)

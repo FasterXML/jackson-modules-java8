@@ -105,7 +105,7 @@ public class MonthDayDeserializer extends JSR310DateTimeDeserializerBase<MonthDa
             }
             return MonthDay.of(month, day);
         } else if (p.hasToken(JsonToken.VALUE_EMBEDDED_OBJECT)) {
-            return (MonthDay) p.getEmbeddedObject();
+            return _fromEmbedded(p, ctxt);
         }
         return _handleUnexpectedToken(ctxt, p,
                 JsonToken.VALUE_STRING, JsonToken.START_ARRAY);
