@@ -163,9 +163,7 @@ public class DurationDeserializer extends JSR310DeserializerBase<Duration>
             case JsonTokenId.ID_STRING:
                 return _fromString(parser, context, parser.getText());
             case JsonTokenId.ID_EMBEDDED_OBJECT:
-                // 20-Apr-2016, tatu: Related to [databind#1208], can try supporting embedded
-                //    values quite easily
-                return (Duration) parser.getEmbeddedObject();
+                return _fromEmbedded(parser, context);
             case JsonTokenId.ID_START_ARRAY:
                 return _deserializeFromArray(parser, context);
             // 30-Sep-2020, tatu: New! "Scalar from Object" (mostly for XML)

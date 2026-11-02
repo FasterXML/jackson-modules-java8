@@ -96,7 +96,7 @@ public class YearDeserializer extends JSR310DateTimeDeserializerBase<Year>
         } else if (t == JsonToken.VALUE_NUMBER_INT) {
             return _fromNumber(ctxt, p.getIntValue());
         } else if (t == JsonToken.VALUE_EMBEDDED_OBJECT) {
-            return (Year) p.getEmbeddedObject();
+            return _fromEmbedded(p, ctxt);
         } else if (p.isExpectedStartArrayToken()){
             return _deserializeFromArray(p, ctxt);
         }

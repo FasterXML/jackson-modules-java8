@@ -149,6 +149,39 @@ abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T>
         return _isIntNumber(str) && NumberInput.inLongRange(str, (str.charAt(0) == '-'));
     }
 
+    /**
+     * Helper method called to deserialize value from an "embedded object"
+     * (see {@link JsonToken#VALUE_EMBEDDED_OBJECT}): something binary formats
+     * (CBOR, Smile, Ion) and token buffering may expose.
+     *<p>
+     * Since there is no guarantee that the embedded value actually is of the
+     * expected type -- and since generic containers (like
+     * {@code Map<String,Instant>}) perform no runtime check of their own, due
+     * to type erasure -- value is verified to be compatible with the type this
+     * deserializer handles; incompatible value is passed to
+     * {@link DeserializationContext#handleUnexpectedToken} for possible recovery,
+     * or, failing that, for reporting as
+     * {@link com.fasterxml.jackson.databind.exc.MismatchedInputException}.
+     *
+     * @since 2.23
+     */
+    @SuppressWarnings("unchecked")
+    protected T _fromEmbedded(JsonParser p, DeserializationContext ctxt)
+        throws IOException
+    {
+        // 20-Apr-2016, tatu: Related to [databind#1208], can try supporting embedded
+        //    values quite easily
+        Object value = p.getEmbeddedObject();
+        if (value == null) {
+            return getNullValue(ctxt);
+        }
+        // 21-Sep-2026, tatu: [modules-java8#389] Must verify type compatibility
+        if (_valueClass.isInstance(value)) {
+            return (T) value;
+        }
+        return (T) ctxt.handleUnexpectedToken(_valueClass, p);
+    }
+
     protected <BOGUS> BOGUS _reportWrongToken(DeserializationContext context,
             JsonToken exp, String unit) throws IOException
     {
