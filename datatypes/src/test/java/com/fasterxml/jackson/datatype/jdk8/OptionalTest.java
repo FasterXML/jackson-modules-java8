@@ -284,6 +284,7 @@ public class OptionalTest extends ModuleTestBase
     }
 
     // [modules-java8#372]
+    @Test
     public void testIssue372Deser() throws Exception
     {
         JsonNode input = MAPPER.getNodeFactory().textNode("abc");
