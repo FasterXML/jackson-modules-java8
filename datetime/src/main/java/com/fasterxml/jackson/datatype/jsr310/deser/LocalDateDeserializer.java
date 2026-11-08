@@ -168,7 +168,7 @@ public class LocalDateDeserializer extends JSR310DateTimeDeserializerBase<LocalD
                     t);
         }
         if (p.hasToken(JsonToken.VALUE_EMBEDDED_OBJECT)) {
-            return (LocalDate) p.getEmbeddedObject();
+            return _fromEmbedded(p, ctxt);
         }
         // 06-Jan-2018, tatu: Is this actually safe? Do users expect such coercion?
         if (p.hasToken(JsonToken.VALUE_NUMBER_INT)) {

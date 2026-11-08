@@ -344,7 +344,6 @@ public class InstantDeserializer<T extends Temporal>
         return deser;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public T deserialize(JsonParser parser, DeserializationContext context) throws IOException
     {
@@ -359,9 +358,7 @@ public class InstantDeserializer<T extends Temporal>
             case JsonTokenId.ID_STRING:
                 return _fromString(parser, context, parser.getText());
             case JsonTokenId.ID_EMBEDDED_OBJECT:
-                // 20-Apr-2016, tatu: Related to [databind#1208], can try supporting embedded
-                //    values quite easily
-                return (T) parser.getEmbeddedObject();
+                return _fromEmbedded(parser, context);
 
             case JsonTokenId.ID_START_ARRAY:
                 return _deserializeFromArray(parser, context);
