@@ -210,7 +210,7 @@ public class LocalDateTimeDeserializer
                     t);
         }
         if (p.hasToken(JsonToken.VALUE_EMBEDDED_OBJECT)) {
-            return (LocalDateTime) p.getEmbeddedObject();
+            return _fromEmbedded(p, ctxt);
         }
         if (p.hasToken(JsonToken.VALUE_NUMBER_INT)) {
             _throwNoNumericTimestampNeedTimeZone(p, ctxt);
